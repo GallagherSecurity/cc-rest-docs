@@ -308,7 +308,7 @@
                     <span>https</span>
                   </h5>
                   <h5>Version:
-                    <span>8.30.6</span>
+                    <span>8.40.3</span>
                   </h5>
                 </section>
               </div>
@@ -400,16 +400,22 @@
                 <p>The server will be up to date when one of the following happened recently:</p>
                 <ul>
                   <li>an operator had the item visible in the Configuration, Command Centre, or mobile clients,</li>
-                  <li>an application monitored the item via another API, or</li>
+                  <li>an application monitored the item via another API,</li>
+                  <li>a REST client used the item in an
+                    <a href="events.html#status-subscriptions">item status subscription</a>, or</li>
                   <li>a REST client followed the item&#39;s <code>updates</code> link from its details page.</li>
                 </ul>
                 <p>If it is not up to date and you request the status on an item&#39;s summary or details page, the server will report that the status is unknown.</p>
-                <p>To retrieve an item&#39;s status you should GET the item&#39;s <code>updates</code> link from its details page. If the server does not have it already, it will request an update from the item. The first status you will receive after &#39;unknown&#39; will probably be &#39;controller unknown&#39;, which means that the controller (or other hardware) has received the server&#39;s request but does not yet have an answer. No matter what you receive, you should follow the <code>next</code> link in a loop until it gives you the status you are looking for, or another status indicating why it cannot.</p>
+                <p>To retrieve the status of one item you should GET the item&#39;s <code>updates</code> link from its details page. To monitor the status of many items you should use the
+                  <a href="events.html#status-subscriptions">status subscription API</a> on the items controller (added in 8.30).</p>
+                <p>Whichever API you use, if the server does not have an item&#39;s status when you ask it will request an update from the item itself. For hardware items that may involve a conversation with another server, a hardware controller, and another piece of hardware on the end of a serial line. That all takes time, but the server answers you immediately, so the first response you receive may be &#39;unknown&#39;. The status request continues in the background.</p>
+                <p>No matter what you receive, you should follow the <code>next</code> link in a loop until it gives you a status you are looking for, or another status indicating why it cannot. Your original request started a subscription, which every subsequent request refreshes, so while you stay in that loop the server will have the item&#39;s current status for you and all other callers.</p>
+                <p>The first status you will receive after &#39;unknown&#39; will probably be &#39;controller unknown&#39;, which means that the controller (or other hardware) has received the server&#39;s request but does not yet have an answer, because of that serial line. You need something better, so stay in the loop.</p>
                 <h3 id="for-a-user-interface">For a user interface</h3>
                 <p>The <code>statusText</code> field describes the state of the item in a multi-line string taken from the server&#39;s language pack. The natural state of a door, for example, is</p> <pre>
           Closed, locked, secure access.
           </pre>
-                <p>A fence zone could be</p> <pre>
+                <p>A fence zone&#39;s status text could be</p> <pre>
           On - HV.
           Voltage: 8.2 kV.
           Seven day High Voltage min to max: 0.1kV to 9.8kV.
@@ -418,10 +424,10 @@
                 <p>For one-line display, the <code>status</code> field is the same thing with line feeds replaced by spaces.</p>
                 <p>Neither of these is intended for integrations. By all means display them in a user interface (as Gallagher software does) but do not attempt to parse information out of them.</p>
                 <h3 id="for-an-integration">For an integration</h3>
-                <p>The <code>statusFlags</code> field contains an array of string enumerations (flags) that describe the item&#39;s condition in a reliable, machine-readable way.</p>
+                <p>The <code>statusFlags</code> field contains an array of string enumerations (flags) that describe the item&#39;s condition in a reliable and machine-readable way.</p>
                 <p>Each item type has a different set of flags. Some overlap (doors, inputs, and outputs can all be closed, for example) but most flags apply to only one kind of item. The common exceptions are the flags which indicate why the server cannot return the item&#39;s actual status, covered next.</p>
                 <h4 id="abnormal-status-flags">Abnormal status flags</h4>
-                <p>These are the status flags in v8.00 that indicate the server does not have the current status of the item:</p>
+                <p>These are the status flags that indicate the server does not have the current status of the item:</p>
                 <ul>
                   <li>
                     <p><code>unsaved</code> and <code>deleted</code> are transient conditions you should not encounter in normal use. Either way, the item is in no condition to query.</p>
@@ -430,16 +436,16 @@
                     <p><code>unconfigured</code> is very common while a site is being set up. It means the item is not fully configured yet. An access zone is not configured until it has at least one door, for example.</p>
                   </li>
                   <li>
-                    <p><code>remoteServerOffline</code> in a multi-server setup means that the item is remote (on a different server) and the Command Centre server answering your REST query cannot reach it.</p>
+                    <p><code>remoteServerOffline</code> is only possible in a multi-server setup. It means that the item is remote (on a different server) and the server answering your REST query cannot reach it.</p>
                   </li>
                   <li>
                     <p><code>processOffline</code> means the Controller service that is meant to be running on the Command Centre server, and handling all the communications with hardware controllers, is not.</p>
                   </li>
                   <li>
-                    <p><code>controllerOffline</code> means the software on the server is as it should be but the hardware controller (such as a C6000) is offline: without power or networking, or needing its certificate revalidated.</p>
+                    <p><code>controllerOffline</code> means the software on the server is as it should be but the hardware controller (such as a C6000) is offline. That could mean it needs its certificate revalidated, or just that its power or networking is out.</p>
                   </li>
                   <li>
-                    <p><code>notPolled</code> means the item is &#39;shunted&#39;: Command Centre is ignoring the item&#39;s communications at the request of an operator. You normally do it to stop spurious alarms.</p>
+                    <p><code>notPolled</code> means the item is shunted: Command Centre is ignoring the item&#39;s communications at the request of an operator. You normally do it to stop spurious alarms.</p>
                   </li>
                   <li>
                     <p><code>deviceNotResponding</code> means exactly that. It means the server is in contact with the hardware controller, but there is a problem between there and the item. Probably a cable fault, unless <code>encryptionKeysTampered</code> accompanies it.</p>
@@ -456,9 +462,9 @@
                     <p><code>controllerUnknown</code> is a transient state, hopefully. The &#39;updates&#39; call often returns it the first time if the server does not have the item&#39;s status already. It means a component (such as a hardware controller) between the server and your item is working on bringing in an update. This generally resolves quickly, so if you follow the &#39;next&#39; link you will receive the latest status.</p>
                   </li>
                 </ul>
-                <p>The server will not send any other flags with one of those eleven, apart from the possible pairing of <code>encryptionKeysTampered</code> and <code>deviceNotResponding</code>, and some unusual combinations noted later. For example, if the server does not have an up-to-date status for an item, the field will contain <code>unknown</code> and none of its other flags.</p>
-                <p>Read each item&#39;s section under Operations for what it will send if it is online. A paragraph called &quot;flag rules&quot; shows how you can tell if the item is in a correct state. For the impatient: doors and outputs will be open or closed, fence zones will be on or off, and alarm and access zones will be in one of four states.</p>
+                <p>The server will not send any other flags with one of those eleven, apart from the possible pairing of <code>encryptionKeysTampered</code> and <code>deviceNotResponding</code>, and some unusual combinations noted later.</p>
                 <p>Do not go looking for all of the abnormal status flags above and assume the best if they are not there. Gallagher may add more fault conditions in future versions of the API.</p>
+                <p>Instead, read each item&#39;s section under Operations for what its flags will be when it is online. A paragraph called &quot;flag rules&quot; shows how you can tell if the item is in a correct state. For the impatient: doors, inputs, and outputs will be open or closed, fence zones will be on or off, and alarm and access zones will be in one of four zone states.</p>
                 <h3 id="staying-current">Staying current</h3>
                 <p>To receive status updates as they arrive at the server, or to force the server to subscribe to updates from remote hardware, use the <code>updates</code> link on the item&#39;s details page. If there is no update available, it will block until one arrives. If none does within a minute or so, it will return with no updates.</p>
                 <p>State changes are not queued: the API only keeps the last, so it only takes one &#39;updates&#39; call to get yourself up to date.</p>
@@ -6545,8 +6551,9 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something starts monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the <code>updates</code> link. See the
-                            <a href="#topic-Item-status">Item status</a> section for a full description of that, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
+                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something is monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the item&#39;s <code>updates</code> link or (if you are running 8.30 or better)
+                            <a href="events.html#status-subscriptions">status subscriptions</a>. See the
+                            <a href="#topic-Item-status">item status</a> section for a full description of how to stay up to date with item status, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-array-items">
@@ -7393,8 +7400,9 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something starts monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the <code>updates</code> link. See the
-                            <a href="#topic-Item-status">Item status</a> section for a full description of that, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
+                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something is monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the item&#39;s <code>updates</code> link or (if you are running 8.30 or better)
+                            <a href="events.html#status-subscriptions">status subscriptions</a>. See the
+                            <a href="#topic-Item-status">item status</a> section for a full description of how to stay up to date with item status, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-array-items">
@@ -8030,8 +8038,9 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something starts monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the <code>updates</code> link. See the
-                            <a href="#topic-Item-status">Item status</a> section for a full description of that, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
+                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something is monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the item&#39;s <code>updates</code> link or (if you are running 8.30 or better)
+                            <a href="events.html#status-subscriptions">status subscriptions</a>. See the
+                            <a href="#topic-Item-status">item status</a> section for a full description of how to stay up to date with item status, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-array-items">
@@ -8409,8 +8418,9 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something starts monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the <code>updates</code> link. See the
-                            <a href="#topic-Item-status">Item status</a> section for a full description of that, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
+                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something is monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the item&#39;s <code>updates</code> link or (if you are running 8.30 or better)
+                            <a href="events.html#status-subscriptions">status subscriptions</a>. See the
+                            <a href="#topic-Item-status">item status</a> section for a full description of how to stay up to date with item status, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-array-items">
@@ -9140,8 +9150,9 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something starts monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the <code>updates</code> link. See the
-                            <a href="#topic-Item-status">Item status</a> section for a full description of that, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
+                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something is monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the item&#39;s <code>updates</code> link or (if you are running 8.30 or better)
+                            <a href="events.html#status-subscriptions">status subscriptions</a>. See the
+                            <a href="#topic-Item-status">item status</a> section for a full description of how to stay up to date with item status, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-array-items">
@@ -9531,8 +9542,9 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something starts monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the <code>updates</code> link. See the
-                            <a href="#topic-Item-status">Item status</a> section for a full description of that, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
+                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something is monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the item&#39;s <code>updates</code> link or (if you are running 8.30 or better)
+                            <a href="events.html#status-subscriptions">status subscriptions</a>. See the
+                            <a href="#topic-Item-status">item status</a> section for a full description of how to stay up to date with item status, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-array-items">
