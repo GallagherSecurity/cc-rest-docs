@@ -394,7 +394,9 @@
           <div class="panel">
             <div class="doc-row">
               <div class="doc-copy">
-                <p>The REST API can send an item&#39;s status to you in a string ready for human consumption in a UI, or as a list of flags more suitable for an integration. You can request both using the &#39;fields&#39; parameter on an item&#39;s summary or details page, but that is not recommended for reasons given below. Instead, you should subscribe to updates by following the &#39;updates&#39; link from the item&#39;s details page, also described below.</p>
+                <p>Most items have a status. Access zones, for example, can be in one of a few different modes, and have a
+                  <em>zone count</em> that rises and falls with cardholders arriving and leaving. Inputs and outputs can be on or off. Any item can be in an unknown state when the REST server is out of touch with its hardware. Et cetera.</p>
+                <p>The REST API can send an item&#39;s status to you in a string ready for human consumption in a UI, or as a list of flags more suitable for an integration. Neither of those fields are on an item&#39;s summary or details pages by default; to obtain them reliably you need to subscribe to updates.</p>
                 <h3 id="subscribing-to-status-updates">Subscribing to status updates</h3>
                 <p>The server does not always have an item&#39;s status: to prevent unnecessary work on the controller, network, and server, it will stop requesting updates when nothing is subscribed to them. It is very important that items stay in touch with their controllers, and controllers with each other, but it is normal for controllers to limit what they send back to the server.</p>
                 <p>The server will be up to date when one of the following happened recently:</p>
@@ -411,6 +413,11 @@
                 <p>Whichever API you use, if the server does not have an item&#39;s status when you ask it will request an update from the item itself. For hardware items that may involve a conversation with another server, a hardware controller, and another piece of hardware on the end of a serial line. That all takes time, but the server answers you immediately, so the first response you receive may be &#39;unknown&#39;. The status request continues in the background.</p>
                 <p>No matter what you receive, you should follow the <code>next</code> link in a loop until it gives you a status you are looking for, or another status indicating why it cannot. Your original request started a subscription, which every subsequent request refreshes, so while you stay in that loop the server will have the item&#39;s current status for you and all other callers.</p>
                 <p>The first status you will receive after &#39;unknown&#39; will probably be &#39;controller unknown&#39;, which means that the controller (or other hardware) has received the server&#39;s request but does not yet have an answer, because of that serial line. You need something better, so stay in the loop.</p>
+                <h3 id="staying-current">Staying current</h3>
+                <p>When you use the <code>updates</code> link on the item&#39;s details page it will return immediately. When follow the <code>next</code> link in the page it returns, it will send back the status straight away if it changed since your previous call, or block until it does change. If nothing happens within a minute or so, it will return with no updates.</p>
+                <p>Whether you received an update or not, the body will contain a <code>next</code> link for you to follow for the next update.</p>
+                <p>State changes are not queued: the API only keeps the last, so it only takes one &#39;updates&#39; call to get yourself up to date.</p>
+                <p>The &#39;Site&#39; tab of the sample application shows this in operation.</p>
                 <h3 id="for-a-user-interface">For a user interface</h3>
                 <p>The <code>statusText</code> field describes the state of the item in a multi-line string taken from the server&#39;s language pack. The natural state of a door, for example, is</p> <pre>
           Closed, locked, secure access.
@@ -465,11 +472,6 @@
                 <p>The server will not send any other flags with one of those eleven, apart from the possible pairing of <code>encryptionKeysTampered</code> and <code>deviceNotResponding</code>, and some unusual combinations noted later.</p>
                 <p>Do not go looking for all of the abnormal status flags above and assume the best if they are not there. Gallagher may add more fault conditions in future versions of the API.</p>
                 <p>Instead, read each item&#39;s section under Operations for what its flags will be when it is online. A paragraph called &quot;flag rules&quot; shows how you can tell if the item is in a correct state. For the impatient: doors, inputs, and outputs will be open or closed, fence zones will be on or off, and alarm and access zones will be in one of four zone states.</p>
-                <h3 id="staying-current">Staying current</h3>
-                <p>To receive status updates as they arrive at the server, or to force the server to subscribe to updates from remote hardware, use the <code>updates</code> link on the item&#39;s details page. If there is no update available, it will block until one arrives. If none does within a minute or so, it will return with no updates.</p>
-                <p>State changes are not queued: the API only keeps the last, so it only takes one &#39;updates&#39; call to get yourself up to date.</p>
-                <p>Whether you received an update or not, the body will contain a <code>next</code> link for you to follow for the next update.</p>
-                <p>The &#39;Site&#39; tab of the sample application shows this in operation.</p>
               </div>
             </div>
           </div>
@@ -6503,7 +6505,10 @@
                         </dt>
                         <dd>
                           <p>The number of cardholders in the zone, according to its zone counting configuration.</p>
-                          <p>This is only correct if it is being monitored, so zone counts are not displayed by default. You can ask for them using the &#39;fields&#39; parameter on the details page, but the recommended way is to follow the Access Zone&#39;s &#39;updates&#39; link with <code>fields=defaults,zoneCount</code> appended after the appropriate query parameter separator.</p>
+                          <p>An access zone&#39;s count is part of its state, so
+                            <a href="#topic-Item-status">all that reading</a> applies here too. The authoritative source is the zone&#39;s hardware controller, so the REST server only has it if it is monitoring it for another reason. If it is not, it returns a zero.</p>
+                          <p>That is why zone counts are not in the default set of fields. You can ask for them using the &#39;fields&#39; parameter, but you risk receiving a zero, so the recommended way is to follow the Access Zone&#39;s &#39;updates&#39; link with <code>fields=defaults,zoneCount</code> appended after the appropriate query parameter separator.</p>
+                          <p>A zone count is correct iff the access zone is online: the status flags must contain one of &#39;secure&#39;, &#39;dualAuth&#39;, &#39;codeOrCard&#39;, or &#39;free&#39;. Even then, the zone count could be a minute out of date (depending on a server property that determines how long a hardware item can be silent before the server calls it offline).</p>
                         </dd>
                         <dt data-property-name="notes" class="has-description">
                           <span class="json-property-name">notes:</span>
