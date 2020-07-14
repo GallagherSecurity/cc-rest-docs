@@ -1248,12 +1248,12 @@
                     <li>The server looks at the configuration in the Event Defaults tab of the server properties. Again, control is per event group. There is always an action plan there, even if it does nothing more than set the priority of the event.</li>
                   </ol>
                   <p>Once it has found the action plan to run, the server will assign the event its priority (if you did not specify a priority yourself) and run the macro. These are on the Command Centre tab of the action plan&#39;s property page in the Configuration Client. The server will not use the configuration from the other tabs.</p>
+                  <p>It is not possible to submit an event with priority zero, but it is possible to submit an event with no priority, and have the action plan assign it priority zero. This will run the macro on the action plan then drop the event before it reaches the database.</p>
                   <h4 id="alarm-instructions">Alarm instructions</h4>
                   <p>Alarm instructions are marked-up text fields that Command Centre presents to security personnel when events occur. Picking an alarm instruction to use follows the same decision path as picking an action plan: Command Centre looks at the configuration of the source item first, and finding nothing there will turn to the source item&#39;s alarm zone, and finally to the server properties. If all three are unset the operator will not receive any special instructions.</p>
                   <p>So, what an operator sees when your event arrives on their board depends on the priority and the event source.</p>
                   <h4 id="when-events-become-alarms">When events become alarms</h4>
                   <p>After the server has established an event&#39;s priority, either from the body you POSTed or the action plan, it looks at the Event Priorities tab of the server properties. There is a slider there that sets the level above which an event becomes an alarm. By default it is set to two, meaning that any event with a priority of two or higher will appear as an alarm.</p>
-                  <p>It is not possible to submit an event with priority zero, but it is possible to submit an event with no priority, and have the action plan assign it priority zero. This will run the macro on the action plan then drop the event before it reaches the database.</p>
                 </section>
               </div>
             </div>

@@ -1,0 +1,3085 @@
+##
+##         Copyright Gallagher Group Ltd 2020 All Rights Reserved
+##            THIS IS PROPRIETARY DOCUMENTATION SOURCE CODE OF
+##                Gallagher Group Research and Development
+##                          Hamilton, New Zealand
+##
+
+swagger: '2.0'
+
+schemes: [https]
+produces: [application/json]
+consumes: [application/json]
+
+info:
+  version: "8.40.3"
+  title: "Command Centre REST API:  Non-cardholder items"
+
+  description: |
+    This document describes how you can use the Command Centre REST API to view and manage
+    access zones, alarm zones, fence zones, doors, macros, inputs, and outputs.
+
+    It has companion documents describing the [Cardholders](cardholders.html) and [Alarms and
+    Events](events.html) APIs, and Command Centre's handling of [PIV cards](piv.html).
+
+    It assumes some familiarity with HTTP and REST interfaces.  Before you start
+    developing against this interface, you should also read the [Authentication
+    section](#topic-Authentication) to learn how to format your queries, and Command Centre's
+    Configuration Client online help to learn how to ready the server to receive them
+    (search for 'REST API').
+
+    Each section contains a list of use cases intended as quick solutions for simple tasks
+    or a how-to to get you started toward your particular goal.  However they also serve
+    as a good introduction to the API if you step through them using a web browser,
+    starting at `/api` on port 8904 of your Command Centre server.  To do that, you will
+    need to set up Command Centre, and install a browser plugin on your web client that
+    lets you set an Authorization HTTP header, and a JSON formatter to prettify the
+    results documents.  Search the Configuration client's online help for 'test REST API'
+    for guidance.
+
+    ### Licensing
+
+    All of the GET calls described here require the RESTStatus licence.  All the POSTs require
+    RESTOverrides.  The two licences do not overlap:  to watch an item and override it, you will
+    need both.
+
+    ### Changes in 8.50
+
+    8.50 increases the number of items in its search results and sorts them differently, if the
+    query did not use query parameters to override the defaults.
+
+    ### Changes in 8.30
+
+    All changes to this document contain the text "8.30".
+
+    * A 'connectedController' field in the [door detail](#definition-Door-detail) that returns the
+      ID and name of the door's hardware controller (a C6000 controller, not an API controller).
+
+    ### Changes in 8.20
+
+    All changes to this document contain the text "8.20".
+
+    * An [update_cardholder_location](#operation--api-access_zones-update_cardholder_location-get)
+      call on the Access Zones controller that returns you the list of Access Zones into which your
+      operator is allowed to move cardholders.
+
+    ### Changes in 8.10
+
+    All changes to this document contain the text "8.10".
+
+    * An [inputs controller](#tag-Inputs) that gives you the state of
+      'input' hardware items and lets you override them.  It is very similar to the outputs
+      controller.
+
+    ### Efficiency tips
+
+    * When downloading more than one page of items, sort by ID.
+
+    * Set your page size as large as your client can handle.  The defualt used to be 100; using the
+      `top` parameter to take it to 1000 or more gives _much_ better throughput.
+
+    * (In v8.00 or later) avoid the details page by adding detail fields to the summary page with
+      the [`fields` parameter](#topic-Field-specifiers).  One huge summary page of 1,000 items is
+      much quicker to retrieve than 1,000 detail pages.
+
+      For example, to get the names, doors, and override commands of all your access zones:
+
+        `GET /api/access_zones?fields=name,doors,commands`
+
+    * (In v8.00 or later) save work generating the details page by using the [`fields`
+      parameter](#topic-Field-specifiers) to reduce the amount of data on each page.  Be explicit:
+      do not use `fields=defaults`, unless you need every field that 'defaults' gives you.
+
+    * When searching for an item by name, if you have its exact name, put it in quotes `"..."`.
+      Otherwise Command Centre will perform a substring search, which is slower and may return more
+      results than you need.  Even with quotes, the search is case-insensitive.
+
+x-spectacle-topics:
+
+  Field specifiers:
+    $ref: "cardholdersApi.yaml#/x-spectacle-topics/Field specifiers"
+
+  Item status:
+    description: |
+
+      Most items have a status.  Access zones, for example, can be in one of a few different modes,
+      and have a _zone count_ that rises and falls with cardholders arriving and leaving.  Inputs
+      and outputs can be on or off.  Any item can be in an unknown state when the REST server is out
+      of touch with its hardware.  Et cetera.
+
+      The REST API can send an item's status to you in a string ready for human consumption in a UI,
+      or as a list of flags more suitable for an integration.  Neither of those fields are on an
+      item's summary or details pages by default; to obtain them reliably you need to subscribe to
+      updates.
+
+      ### Subscribing to status updates
+
+      The server does not always have an item's status:  to prevent unnecessary work on the
+      controller, network, and server, it will stop requesting updates when nothing is subscribed to
+      them.  It is very important that items stay in touch with their controllers, and controllers
+      with each other, but it is normal for controllers to limit what they send back to the server.
+
+      The server will be up to date when one of the following happened recently:
+
+      - an operator had the item visible in the Configuration, Command Centre, or mobile clients,
+      - an application monitored the item via another API,
+      - a REST client used the item in an [item status subscription](events.html#status-subscriptions), or
+      - a REST client followed the item's `updates` link from its details page.
+
+      If it is not up to date and you request the status on an item's summary or details page, the
+      server will report that the status is unknown.
+
+      To retrieve the status of one item you should GET the item's `updates` link from its details
+      page.  To monitor the status of many items you should use the [status subscription
+      API](events.html#status-subscriptions) on the items controller (added in 8.30).
+
+      Whichever API you use, if the server does not have an item's status when you ask it will
+      request an update from the item itself.  For hardware items that may involve a conversation
+      with another server, a hardware controller, and another piece of hardware on the end of a
+      serial line.  That all takes time, but the server answers you immediately, so the first
+      response you receive may be 'unknown'.  The status request continues in the background.
+
+      No matter what you receive, you should follow the `next` link in a loop until it gives you a
+      status you are looking for, or another status indicating why it cannot.  Your original request
+      started a subscription, which every subsequent request refreshes, so while you stay in that
+      loop the server will have the item's current status for you and all other callers.
+
+      The first status you will receive after 'unknown' will probably be 'controller unknown', which
+      means that the controller (or other hardware) has received the server's request but does not
+      yet have an answer, because of that serial line.  You need something better, so stay in the
+      loop.
+
+      ### Staying current
+
+      When you use the `updates` link on the item's details page it will return immediately.  When
+      follow the `next` link in the page it returns, it will send back the status straight away if
+      it changed since your previous call, or block until it does change.  If nothing happens within
+      a minute or so, it will return with no updates.
+
+      Whether you received an update or not, the body will contain a `next` link for you to follow
+      for the next update.
+
+      State changes are not queued:  the API only keeps the last, so it only takes one 'updates'
+      call to get yourself up to date.
+
+      The 'Site' tab of the sample application shows this in operation.
+
+      ### For a user interface
+
+      The `statusText` field describes the state of the item in a multi-line string taken from the
+      server's language pack.  The natural state of a door, for example, is
+
+      <pre>
+      Closed, locked, secure access.
+      </pre>
+
+      A fence zone's status text could be
+
+      <pre>
+      On - HV.
+      Voltage: 8.2 kV.
+      Seven day High Voltage min to max: 0.1kV to 9.8kV.
+      Pre-arm check while Alarm Zone is arming.
+      </pre>
+
+      For one-line display, the `status` field is the same thing with line feeds replaced by spaces.
+
+      Neither of these is intended for integrations.  By all means display them in a user interface
+      (as Gallagher software does) but do not attempt to parse information out of them.
+
+      ### For an integration
+
+      The `statusFlags` field contains an array of string enumerations (flags) that describe the
+      item's condition in a reliable and machine-readable way.
+
+      Each item type has a different set of flags.  Some overlap (doors, inputs, and outputs can all
+      be closed, for example) but most flags apply to only one kind of item.  The common exceptions
+      are the flags which indicate why the server cannot return the item's actual status, covered
+      next.
+
+      #### Abnormal status flags
+
+      These are the status flags that indicate the server does not have the current status of the
+      item:
+
+      - `unsaved` and `deleted` are transient conditions you should not encounter in normal use.
+        Either way, the item is in no condition to query.
+
+      - `unconfigured` is very common while a site is being set up.  It means the item is not fully
+        configured yet.  An access zone is not configured until it has at least one door, for
+        example.
+
+      - `remoteServerOffline` is only possible in a multi-server setup.  It means that the item is
+        remote (on a different server) and the server answering your REST query cannot reach it.
+
+      - `processOffline` means the Controller service that is meant to be running on the Command
+        Centre server, and handling all the communications with hardware controllers, is not.
+
+      - `controllerOffline` means the software on the server is as it should be but the hardware
+        controller (such as a C6000) is offline.  That could mean it needs its certificate
+        revalidated, or just that its power or networking is out.
+
+      - `notPolled` means the item is shunted:  Command Centre is ignoring the item's
+        communications at the request of an operator.  You normally do it to stop spurious alarms.
+
+      - `deviceNotResponding` means exactly that.  It means the server is in contact with the
+         hardware controller, but there is a problem between there and the item.  Probably a cable
+         fault, unless `encryptionKeysTampered` accompanies it.
+
+      Those are fault conditions.  If you see one of those, there is a configuration or hardware
+      fault or a shunt preventing the server communicating with the item.
+
+      They are in priority order:  if you receive one near the bottom of the list you can take heart
+      in the knowledge that your item is suffering none of the preceding abnormalities.
+
+      There are two more flags that are common to most item types.
+
+      - `unknown` means everything else is in order but you caught the server in a period when it
+        simply had no need to stay in touch with the item.  You will get this on a summary or
+        details page, because they do not subscribe to updates for the item.  The 'updates' link
+        will not send you this status flag.
+
+      - `controllerUnknown` is a transient state, hopefully.  The 'updates' call often returns it
+        the first time if the server does not have the item's status already.  It means a component
+        (such as a hardware controller) between the server and your item is working on bringing in
+        an update.  This generally resolves quickly, so if you follow the 'next' link you will
+        receive the latest status.
+
+      The server will not send any other flags with one of those eleven, apart from the possible
+      pairing of `encryptionKeysTampered` and `deviceNotResponding`, and some unusual combinations
+      noted later.
+
+      Do not go looking for all of the abnormal status flags above and assume the best if they are
+      not there.  Gallagher may add more fault conditions in future versions of the API.
+
+      Instead, read each item's section under Operations for what its flags will be when it is
+      online.  A paragraph called "flag rules" shows how you can tell if the item is in a correct
+      state.  For the impatient:  doors, inputs, and outputs will be open or closed, fence zones
+      will be on or off, and alarm and access zones will be in one of four zone states.
+
+  Forward compatibility:
+    $ref: "eventsApi.yaml#/x-spectacle-topics/HATEOAS"
+
+######################################################################
+securityDefinitions:
+  "API key":
+    $ref: "eventsApi.yaml#/securityDefinitions/API key"
+security:
+  - "API key": []
+
+x-common-blocks-this-is-made-up:
+  updates_ignored: &UPDATES
+    type: object
+    properties:
+      href:
+        type: string
+        format: url
+    description: |
+      Follow the URL in the href inside this block to receive the item's current status, then follow
+      the `next` link in the results to long poll for changes to that status.
+
+      Update pages take the same `fields` parameter as summary and details pages.  You should use
+      that to request all the fields you need in the update.
+
+  notes_ignored: &NOTES
+    type: string
+    example: "Multi-line text..."
+    description: |
+      Because of their potential size, notes are only available by request.  Use the 'fields'
+      parameter:
+
+      `?fields=defaults,notes,...`
+
+  sn_ignored: &SHORTNAME
+    type: string
+    maxLength: 16
+    example: "Short text"
+    description: |
+      Short names are not displayed by default.  You must ask for them using the
+      'fields' parameter:
+
+      `?fields=shortname,...`.
+
+  fds_ignored: &FIELDSDESC_SUM
+    description: |
+      Return these fields in the search results.  The values you can list are the same as the field
+      names in the details page.  Using it you can return everything on the summary page that you
+      would find on the details page.  Separate values with commas.
+
+      Use the special value `defaults` to return the fields you would have received had you not given
+      the parameter at all.  Obviously only do that if you have more to add.
+
+      The string matches are case-insensitive.
+
+      In v8.00 you will receive the href and internal ID even if you did not ask for them.  In 8.10
+      you will not.  If you are going to send the fields parameter and need the href or ID, be
+      explicit.
+
+  fdd_ignored: &FIELDSDESC_DET
+    description: |
+      Return these fields in the details page instead of the default set.  The values you can list
+      are the same as the field names you would see in the results.  Use it to cut back on the size
+      of the response.  Separate values with commas.
+
+      The string matches are case-insensitive.
+
+      In v8.00 you will receive the href and internal ID even if you did not ask for them.  In 8.10
+      you will not.  If you are going to send the fields parameter and need the href or ID, be
+      explicit.
+
+  statusflags_ignore: &STATUSFLAGS
+    description: |
+      The search and details pages do not return status flags by default, because an item's status
+      is unknown until something is monitoring it.  If you want status flags on the search and
+      details pages you must ask for them using the `fields` parameter, but our advice is to monitor
+      them using the item's `updates` link or (if you are running 8.30 or better) [status
+      subscriptions](events.html#status-subscriptions).  See the [item status](#topic-Item-status)
+      section for a full description of how to stay up to date with item status, and this item's
+      introduction in the Operations section for what flags this item might return and what they
+      mean.
+    type: array
+    items: { type: string, example: "controllerOffline" }
+
+  acz_ignored: &ACZFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, id, name, shortName, description, division, commands, doors, zoneCount, statusFlags, status, notes, updates]
+
+  alz_ignored: &ALZFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, id, name, shortName, description, division, commands, statusFlags, status, notes, updates]
+
+  door_ignored: &DOORFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, id, name, shortName, description, division, commands, entryAccessZone, statusFlags, status, notes, updates]
+
+  fz_ignored: &FZFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, id, name, shortName, description, division, commands, voltage, statusFlags, status, notes, updates]
+
+  macro_ignored: &MACROFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, id, name, description, division, commands, notes, updates]
+
+  output_ignored: &OUTPUTFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, id, name, shortName, description, division, commands, statusFlags, status, notes, updates]
+
+definitions:
+  Access Zones:
+    tags:
+      - "Access Zones"
+    description: An array of access zone summaries, and a `next` link for more.
+    properties:
+      results:
+        type: array
+        description: An array of Access Zone summaries.
+        items: { $ref: '#/definitions/Access Zone summary' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/access_zones?skip=100"
+
+  Access Zones as move targets:
+    tags:
+      - "Access Zones"
+    description: |
+      An array of access zones, and a link to a special 'outside the system' access zone.  This is
+      the list of access zones into which your operator has the privilege to move cardholders.
+    properties:
+      results:
+        type: array
+        description: |
+          An array of Access Zone summaries, just as you would receive from the Access Zone search
+          GET.
+        items: { $ref: '#/definitions/Access Zone summary' }
+      outsideOfSystem:
+        type: object
+        description: |
+          This contains the href you should use to move a cardholder out of all Access Zones.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/access_zones/0"
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/access_zones?skip=100"
+
+  Access Zone summary:
+    description: |
+      `/api/access_zones` returns an array of these.  It is a subset of what you get from a
+      access zone's detail page at `/api/access_zones/{id}` (linked as the href in this
+      object).
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to an [access zone detail](#definition-Access-Zone-detail) object for this access
+          zone.  This is Command Centre's identifier for this access zone:  use it whenever you need
+          to specify an access zone in REST operations.
+        example: "https://localhost:8904/api/access_zones/10135"
+      id:
+        type: string
+        description: |
+          An alphanumeric identifier, unique to the server.
+
+          This is the ID to use in the `source` parameter of [event
+          filters](events.html#operation--api-events-get).
+        example: "10135"
+      name:
+        type: string
+        example: "Roswell building 2 lobby"
+
+  Access Zone detail:
+    description: |
+      [/api/access_zones/{id}](#operation--api-access_zones--id--get) returns one of these.
+
+      As well as the properties below, it contain a block called `doors`.  This is reserved for
+      future development and their behaviour could change in later versions of Command Centre.
+
+    allOf:
+
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "Receives all visitors."
+          division:
+            type: object
+            description:  The division containing this Access Zone.
+            example:
+              href: "https://localhost:8904/api/divisions/2"
+          doors:
+            type: array
+            description: A list containing names of and links to the doors that control entry to this access zone.
+            items:
+              type: object
+              properties:
+                name: {type: string}
+                href: {type: string, format: url, description: "This is the link to the [door's detail](#definition-Door-detail) (which contains a return link back to this page)."}
+              example:
+                - name: "Front door"
+                  href: "https://localhost:8904/api/doors/332"
+                - name: "West stairwell lobby door"
+                  href: "https://localhost:8904/api/doors/745"
+          zoneCount:
+            type: integer
+            description: |
+              The number of cardholders in the zone, according to its zone counting configuration.
+
+              An access zone's count is part of its state, so [all that reading](#topic-Item-status)
+              applies here too.  The authoritative source is the zone's hardware controller, so the
+              REST server only has it if it is monitoring it for another reason.  If it is not, it
+              returns a zero.
+
+              That is why zone counts are not in the default set of fields.  You can ask for them
+              using the 'fields' parameter, but you risk receiving a zero, so the recommended way is
+              to follow the Access Zone's 'updates' link with `fields=defaults,zoneCount` appended
+              after the appropriate query parameter separator.
+
+              A zone count is correct iff the access zone is online:  the status flags must contain
+              one of 'secure', 'dualAuth', 'codeOrCard', or 'free'.  Even then, the zone count could
+              be a minute out of date (depending on a server property that determines how long a
+              hardware item can be silent before the server calls it offline).
+
+            example: 365
+          notes:
+            <<: *NOTES
+          shortName:
+            <<: *SHORTNAME
+          updates:
+            <<: *UPDATES
+            example: { href: "https://localhost:8904/api/access_zones/10135/updates/0_0_0" }
+          statusFlags:
+            <<: *STATUSFLAGS
+            example: ["secure"]
+          commands:
+            type: object
+            description: |
+              A block of commands, each represented by a block containing an href that accepts a
+              POST that will send an override to the access zone, changing its state.
+
+            properties:
+              free:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/free"
+                    description: "[POST](#operation--api-access_zones--id--free-post) to this to override the zone into 'free - no PIN' access mode until the next schedule change."
+                    type: string
+                    format: url
+              freeUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/free"
+                    description: "[POST](#operation--api-access_zones--id--free-post) to this to override the zone into 'free - no PIN' access mode for a fixed time."
+                    type: string
+                    format: url
+              freePin:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/free_pin"
+                    description: "[POST](#operation--api-access_zones--id--free-post) to this to override the zone into 'free - PIN' access mode until the next schedule change."
+                    type: string
+                    format: url
+              freePinUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/free_pin"
+                    description: "[POST](#operation--api-access_zones--id--free-post) to this to override the zone into 'free - PIN' access mode for a fixed time."
+                    type: string
+                    format: url
+              secure:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/secure"
+                    description: "[POST](#operation--api-access_zones--id--secure-post) to this to override the zone into 'secure - no PIN' access mode until the next schedule change."
+                    type: string
+                    format: url
+              secureUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/secure"
+                    description: "[POST](#operation--api-access_zones--id--secure-post) to this to override the zone into 'secure - no PIN' access mode for a fixed time."
+                    type: string
+                    format: url
+              securePin:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/secure_pin"
+                    description: "[POST](#operation--api-access_zones--id--secure-post) to this to override the zone into 'secure - PIN' access mode until the next schedule change."
+                    type: string
+                    format: url
+              securePinUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/secure_pin"
+                    description: "[POST](#operation--api-access_zones--id--secure-post) to this to override the zone into 'secure - PIN' access mode for a fixed time."
+                    type: string
+                    format: url
+              codeOnly:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/code_only"
+                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code only - no PIN' access mode until the next schedule change."
+                    type: string
+                    format: url
+              codeOnlyUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/code_only"
+                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code only - no PIN' access mode for a fixed time."
+                    type: string
+                    format: url
+              codeOnlyPin:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/code_only_pin"
+                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code only - PIN' access mode until the next schedule change."
+                    type: string
+                    format: url
+              codeOnlyPinUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/code_only_pin"
+                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code only - PIN' access mode for a fixed time."
+                    type: string
+                    format: url
+              dualAuth:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/dual_auth"
+                    description: "[POST](#operation--api-access_zones--id--dual_auth-post) to this to override the zone into 'dual auth - no PIN' access mode until the next schedule change."
+                    type: string
+                    format: url
+              dualAuthUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/dual_auth"
+                    description: "[POST](#operation--api-access_zones--id--dual_auth-post) to this to override the zone into 'dual auth - no PIN' access mode for a fixed time."
+                    type: string
+                    format: url
+              dualAuthPin:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/dual_auth_pin"
+                    description: "[POST](#operation--api-access_zones--id--dual_auth-post) to this to override the zone into 'dual auth - PIN' access mode until the next schedule change."
+                    type: string
+                    format: url
+              dualAuthPinUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/dual_auth_pin"
+                    description: "[POST](#operation--api-access_zones--id--dual_auth-post) to this to override the zone into 'dual auth - PIN' access mode for a fixed time."
+                    type: string
+                    format: url
+              forgiveAntiPassback:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/forgive_anti_passback"
+                    description: "[POST](#operation--api-access_zones--id--forgive_anti_passback-post) to this to forgive anti-passback for all cardholders in the zone."
+                    type: string
+                    format: url
+              setZoneCount:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/set_zone_count"
+                    description: "[POST](#operation--api-access_zones--id--set_zone_count-post) to this set the zone's cardholder count."
+                    type: string
+                    format: url
+              lockDown:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/lock_down"
+                    description: "[POST](#operation--api-access_zones--id--lock_down-post) to this set the zone into lockdown mode."
+                    type: string
+                    format: url
+              cancelLockDown:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/cancel_lock_down"
+                    description: "[POST](#operation--api-access_zones--id--cancel_lock_down-post) to this cancel lockdown on the zone, returning it to its scheduled mode."
+                    type: string
+                    format: url
+
+              cancel:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/access_zones/333/cancel"
+                    description: |
+                      [POST](#operation--api-access_zones--id--cancel-post) to this cancel an
+                      active override on the zone, returning it to its scheduled mode.  This will
+                      not affect a lockdown.
+                    type: string
+                    format: url
+
+      - $ref: "#/definitions/Access Zone summary"
+
+  Access zone count:
+    type: object
+    properties:
+      zoneCount:
+        type: integer
+        description: Put this in the body of access zone override POSTs to set the count of cardholders in the access zone.
+        example: 100
+
+#######################################################################
+
+#######################################################################
+  Alarm Zones:
+    tags:
+      - "Alarm Zones"
+    description: An array of alarm zone summaries, and a `next` link for more.
+    properties:
+      results:
+        type: array
+        description: An array of Alarm Zone summaries.
+        items: { $ref: '#/definitions/Alarm Zone summary' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/alarm_zones?skip=100"
+
+  Alarm Zone summary:
+    description: |
+      `/api/alarm_zones` returns an array of these.  It is a subset of what you get from a
+      alarm zone's detail page at `/api/alarm_zones/{id}` (linked as the href in this
+      object).
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to an [alarm zone detail](#definition-Alarm-Zone-detail) object for this alarm
+          zone.  This is Command Centre's identifier for this alarm zone:  use it whenever you need
+          to specify an alarm zone in REST operations.
+        example: "https://localhost:8904/api/alarm_zones/10135"
+      id:
+        type: string
+        description: |
+          An alphanumeric identifier, unique to the server.
+
+          This is the ID to use in the `source` parameter of [event
+          filters](events.html#operation--api-events-get) if you want to limit your events
+          to particular alarm zones.
+        example: "10135"
+      name:
+        type: string
+        example: "Roswell building 2 ground floor"
+
+  Alarm Zone detail:
+    description: |
+      [/api/alarm_zones/{id}](#operation--api-alarm_zones--id--get) returns one of these.
+
+    allOf:
+
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "Lobby, cafeteria, inbound artefacts."
+          division:
+            type: object
+            description:  The division containing this Alarm Zone.
+            example:
+              href: "https://localhost:8904/api/divisions/2"
+          shortName:
+            type: string
+            maxLength: 16
+            example: "R2 ground floor"
+          notes:
+            <<: *NOTES
+          updates:
+            <<: *UPDATES
+            example: { href: "https://localhost:8904/api/alarm_zones/10135/updates/0_0_0" }
+          statusFlags:
+            <<: *STATUSFLAGS
+            example: ["armed"]
+          commands:
+            type: object
+            description: |
+              A block of commands, each represented by a block containing an href that
+              accepts a POST that will send an override to the alarm zone, changing its
+              state.
+
+              See the section 'Understanding Alarm Zones' in the Configuration client help
+              for a description of alarm zone states.
+            properties:
+              arm:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/alarm_zones/328/arm"
+                    description: "[POST](#operation--api-alarm_zones--id--arm-post) to this to arm this alarm zone until the next schedule change."
+                    type: string
+                    format: url
+                  name:
+                    example: "Armed"
+                    description: |
+                      Because a site can configure different names for different alarm
+                      zone states, they appear here.
+                    type: string
+                    enum: [Armed, Set]
+                    default: "Armed"
+              armUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/alarm_zones/328/arm"
+                    description: "[POST](#operation--api-alarm_zones--id--arm-post) to this to arm this alarm zone for a fixed time."
+                    type: string
+                    format: url
+                  name:
+                    example: "Armed"
+                    description: |
+                      Because a site can configure different names for different alarm
+                      zone states, they appear here.
+                    type: string
+                    enum: [Armed, Set]
+                    default: "Armed"
+              disarm:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/alarm_zones/328/disarm"
+                    description: "[POST](#operation--api-alarm_zones--id--disarm-post) to this to disarm this alarm zone until the next schedule change."
+                    type: string
+                    format: url
+                  name:
+                    example: "Disarmed"
+                    description: |
+                      Because a site can configure different names for different alarm
+                      zone states, they appear here.
+                    type: string
+                    enum: [Disarmed, Unset]
+                    default: "Disarmed"
+              disarmUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/alarm_zones/328/disarm"
+                    description: "[POST](#operation--api-alarm_zones--id--disarm-post) to this to disarm this alarm zone for a fixed time."
+                    type: string
+                    format: url
+                  name:
+                    example: "Disarmed"
+                    description: |
+                      Because a site can configure different names for different alarm
+                      zone states, they appear here.
+                    type: string
+                    enum: [Disarmed, Unset]
+                    default: "Disarmed"
+              user1:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/alarm_zones/328/user1"
+                    description: "[POST](#operation--api-alarm_zones--id--user1-post) to this to set the alarm zone's state to user1 until the next schedule change."
+                    type: string
+                    format: url
+                  name:
+                    example: "User1"
+                    description: |
+                      Because a site can configure different names for different alarm
+                      zone states, they appear here.
+                    type: string
+                    default: "User1"
+              user1Until:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/alarm_zones/328/user1"
+                    description: "[POST](#operation--api-alarm_zones--id--user1-post) to this to set the alarm zone's state to user1 for a fixed time."
+                    type: string
+                    format: url
+                  name:
+                    example: "User1"
+                    description: |
+                      Because a site can configure different names for different alarm
+                      zone states, they appear here.
+                    type: string
+                    default: "User1"
+              user2:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/alarm_zones/328/user2"
+                    description: "[POST](#operation--api-alarm_zones--id--user2-post) to this to set the alarm zone's state to user2 until the next schedule change."
+                    type: string
+                    format: url
+                  name:
+                    example: "User2"
+                    description: |
+                      Because a site can configure different names for different alarm
+                      zone states, they appear here.
+                    type: string
+                    default: "User2"
+              user2Until:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/alarm_zones/328/user2"
+                    description: "[POST](#operation--api-alarm_zones--id--user2-post) to this to set the alarm zone's state to user2 for a fixed time."
+                    type: string
+                    format: url
+                  name:
+                    example: "User2"
+                    description: |
+                      Because a site can configure different names for different alarm
+                      zone states, they appear here.
+                    type: string
+                    default: "User2"
+              cancel:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/alarm_zones/328/cancel"
+                    description: |
+                      [POST](#operation--api-alarm_zones--id--cancel-post) to this cancel an
+                      active override on the alarm zone, returning it to its scheduled mode.
+
+                      This command will not be available if the alarm zone is not
+                      controlled by a schedule (because without a schedule the alarm zone
+                      does not have the concept of a 'normal' state).
+                    type: string
+                    format: url
+
+      - $ref: "#/definitions/Alarm Zone summary"
+
+#######################################################################
+
+#######################################################################
+  Doors:
+    tags:
+      - "Doors"
+    description: An array of door summaries, and a `next` link for more.
+    properties:
+      results:
+        type: array
+        description: An array of door summaries.
+        items: { $ref: '#/definitions/Door summary' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/doors?skip=100"
+
+  Door summary:
+    description: |
+      `/api/doors` returns an array of these.  It is a subset of what you get from a
+      door's detail page at `/api/doors/{id}` (linked as the href in this object).
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to a [door detail](#definition-Door-detail) object for this door.
+        example: "https://localhost:8904/api/doors/332"
+      id:
+        type: string
+        description: |
+          An alphanumeric identifier, unique to the server.  This is the ID to use in the
+          `source` parameter of [event filters](events.html#operation--api-events-get)
+          when you are interested in events originating at this door.
+
+        example: "332"
+      name:
+        type: string
+        example: "Front door"
+
+  Door detail:
+    description: |
+      [/api/doors/{id}](#operation--api-doors--id--get) returns one of these.
+
+    allOf:
+
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "Main lobby doors."
+          division:
+            type: object
+            description:  The division containing this door.
+            example:
+              href: "https://localhost:8904/api/divisions/2"
+          entryAccessZone:
+            type: object
+            description: |
+              The name and href of the access zone to which this door allows entry.
+            properties:
+              name: {type: string, example: "Roswell building 2 lobby"}
+              href:
+                description: |
+                  This is the address of the [access zone's detail](#definition-Access-Zone-detail)
+                  page (which includes a link back here).
+                type: string
+                format: url
+                example: "https://localhost:8904/api/access_zones/10135"
+          notes: {<<: *NOTES}
+          shortName: {<<: *SHORTNAME}
+          updates:
+            <<: *UPDATES
+            example: { href: "https://localhost:8904/api/doors/332/updates/0_0_0" }
+          statusFlags:
+            <<: *STATUSFLAGS
+            example: ["secure", "closed", "locked"]
+          commands:
+            type: object
+            description: |
+              An array of commands, each represented by a block containing an href that accepts a
+              POST to send an override.  The only override you can send to a door is 'open'.
+
+              There will also be up to 17 links to commands that override the door's entry zone
+              (four each of the four access zone modes, plus 'cancel').  Remember that zone
+              overrides affect all doors entering the zone, so if you POST to the URL given in the
+              `free` block, for example, all the zone's doors will unlock.
+
+              The zone overrides are not repeated here.
+
+            properties:
+              open:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/doors/332/open"
+                    description: "[POST](#operation--api-doors--id--open-post) to this to open this door."
+                    type: string
+                    format: url
+          connectedController:
+            type: object
+            description: |
+              This block describes this door's hardware controller.
+            properties:
+              name: {type: string, example: "Third floor C6000"}
+              href:
+                type: string
+                format: url
+                example: "https://localhost:8904/api/items/508"
+                description: |
+                  This is the REST API's identifier for the hardware controller.  It is only an
+                  identifier, not a usable URL, because in 8.30 there is no interface for hardware
+                  controllers.  GETting the URL will return a 404.
+              id:
+                type: string
+                example: "508"
+                description: "A short alphanumeric identifier, unique to the server."
+
+      - $ref: "#/definitions/Door summary"
+
+#######################################################################
+
+#######################################################################
+  Fence Zones:
+    tags:
+      - "Fence Zones"
+    description: An array of fence zone summaries, and a `next` link for more.
+    properties:
+      results:
+        type: array
+        description: An array of Fence Zone summaries.
+        items: { $ref: '#/definitions/Fence Zone summary' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/fence_zones?skip=100"
+
+  Fence Zone summary:
+    description: |
+      `/api/fence_zones` returns an array of these.  It is a subset of what you get from a
+      fence zone's detail page at `/api/fence_zones/{id}` (linked as the href in this
+      object).
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to a [fence zone detail](#definition-Fence-Zone-detail) object for this fence
+          zone.  This is Command Centre's identifier for this fence zone:  use it whenever you need
+          to specify a fence zone in REST operations.
+        example: "https://localhost:8904/api/fence_zones/8487"
+      id:
+        type: string
+        description: |
+          An alphanumeric identifier, unique to the server.
+
+          This is the ID to use in the `source` parameter of [event
+          filters](events.html#operation--api-events-get) if you want to limit your events
+          to those coming from particular fence zones.
+        example: "8487"
+      name:
+        type: string
+        example: "Storage yard"
+
+  Fence Zone detail:
+    description: |
+      [/api/fence_zones/{id}](#operation--api-fence_zones--id--get) returns one of these.
+
+    allOf:
+
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "Trailers and pallets."
+          division:
+            type: object
+            description:  The division containing this Fence Zone.
+            example:
+              href: "https://localhost:8904/api/divisions/2"
+          voltage:
+            type: integer
+            minimum: 0
+            description: |
+              The last known voltage on the fence, in volts, to the nearest 100 volts, provided the
+              fence zone is online and the REST server is subscribed to its updates.  See the [item
+              status](#topic-Item-status) section for how to make sure of that.
+
+              This value is only up to date when the fence zone is on (shown in the status flags)
+              and has emitted at least one pulse.
+
+              Voltages are not displayed by default, because of the caveats around their use.  You
+              must ask for them using the 'fields' parameter: `?fields=voltage,...`.
+            example: 7300
+          notes: {<<: *NOTES}
+          shortName: {<<: *SHORTNAME}
+          updates:
+            <<: *UPDATES
+            example: { href: "https://localhost:8904/api/fence_zones/8487/updates/0_0_0" }
+          statusFlags:
+            <<: *STATUSFLAGS
+            example: ["on", "highVoltage", "voltageKnown"]
+          commands:
+            type: object
+            description: |
+              A block of commands, each represented by a block containing an href that
+              accepts a POST that will send an override to the fence zone, changing its
+              state.
+
+              See the section 'Creating a Fence Zone' in the Configuration client help
+              for a description of fence zone states.
+            properties:
+              on:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/fence_zones/8487/on"
+                    description: "[POST](#operation--api-fence_zones--id--on-post) to this to energise this fence zone."
+                    type: string
+                    format: url
+              off:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/fence_zones/8487/on"
+                    description: "[POST](#operation--api-fence_zones--id--off-post) to this to deactivate this fence zone."
+                    type: string
+                    format: url
+              shunt:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/fence_zones/8487/shunt"
+                    description: "[POST](#operation--api-fence_zones--id--shunt-post) to this to shunt this fence zone."
+                    type: string
+                    format: url
+              unshunt:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/fence_zones/8487/unshunt"
+                    description: "[POST](#operation--api-fence_zones--id--unshunt-post) to this to restore communication with fence zone."
+                    type: string
+                    format: url
+              highVoltage:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/fence_zones/8487/high_voltage"
+                    description: "[POST](#operation--api-fence_zones--id--high_voltage-post) to this to set this fence zone to 'high voltage' mode."
+                    type: string
+                    format: url
+              lowFeel:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/fence_zones/8487/low_feel"
+                    description: "[POST](#operation--api-fence_zones--id--low_feel-post) to this to set this fence zone to 'low feel' mode."
+                    type: string
+                    format: url
+              cancel:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/fence_zones/8487/cancel"
+                    description: |
+                      [POST](#operation--api-fence_zones--id--cancel-post) to this cancel an
+                      active override on the fence zone.
+
+                    type: string
+                    format: url
+
+      - $ref: "#/definitions/Fence Zone summary"
+
+#######################################################################
+
+#######################################################################
+  Macros:
+    tags:
+      - "Macros"
+    description: An array of macro summaries, and a `next` link for more.
+    properties:
+      results:
+        type: array
+        description: An array of macro summaries.
+        items: { $ref: '#/definitions/Macro summary' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/macros?skip=100"
+
+  Macro summary:
+    description: |
+      `/api/macros` returns an array of these.  It is a subset of what you get from a
+      macro's detail page at `/api/macros/{id}` (linked as the href in this object).
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to a [macro detail](#definition-Macro-detail) object for this macro.
+        example: "https://localhost:8904/api/macros/8492"
+      id:
+        type: string
+        description: |
+          An alphanumeric identifier, unique to the server.
+        example: "8492"
+      name:
+        type: string
+        example: "Arm ground floor"
+
+  Macro detail:
+    description: |
+      [/api/macros/{id}](#operation--api-macros--id--get) returns one of these.
+
+      It contains a block called `updates`.  This is reserved for future development and its
+      behaviour will change in later versions of Command Centre.
+
+    allOf:
+
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "Arms and secures all ground floor zones."
+          division:
+            type: object
+            description:  The division containing this Macro.
+            example:
+              href: "https://localhost:8904/api/divisions/2"
+          shortName: {<<: *SHORTNAME}
+          commands:
+            type: object
+            description: >-
+              The only thing you can do to a macro via REST is run it, so this block only
+              contains one block.
+            properties:
+              run:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/macros/8492/run"
+                    description: "[POST](#operation--api-macros--id--run-post) to this to run this macro."
+                    type: string
+                    format: url
+
+      - $ref: "#/definitions/Macro summary"
+
+#######################################################################
+
+#######################################################################
+  Outputs:
+    tags:
+      - "Outputs"
+    description: An array of output summaries, and a `next` link for more.
+    properties:
+      results:
+        type: array
+        description: An array of output summaries.
+        items: { $ref: '#/definitions/Output summary' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/outputs?skip=100"
+
+  Output summary:
+    description: |
+      `/api/outputs` returns an array of these.  It is a subset of what you get from a
+      output's detail page at `/api/outputs/{id}` (linked as the href in this object).
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to an [output detail](#definition-Output-detail) object for this output.
+        example: "https://localhost:8904/api/outputs/2365"
+      id:
+        type: string
+        description: |
+          An alphanumeric identifier, unique to the server. This is the ID to use in the
+          `source` parameter of [event filters](events.html#operation--api-events-get).
+        example: "2365"
+      name:
+        type: string
+        example: "Studio door red/green"
+
+  Output detail:
+    description: |
+      [/api/outputs/{id}](#operation--api-outputs--id--get) returns one of these.
+
+    allOf:
+
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "Red or green, controlled from sound desk."
+          division:
+            type: object
+            description:  The division containing this output.
+            example:
+              href: "https://localhost:8904/api/divisions/2"
+          shortName: {<<: *SHORTNAME}
+          notes: {<<: *NOTES}
+          updates:
+            <<: *UPDATES
+            example: { href: "https://localhost:8904/api/outputs/2365/updates/0_0_0" }
+          statusFlags:
+            <<: *STATUSFLAGS
+            example: ["open", "overridden"]
+          commands:
+            type: object
+            description: |
+              A block of commands, each represented by a block containing an href that accepts a
+              POST that will send an override to the output, turning it on or off.
+            properties:
+              on:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/outputs/2365/on"
+                    description: "[POST](#operation--api-outputs--id--on-post) to this to close this output."
+                    type: string
+                    format: url
+              onUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/outputs/2365/on"
+                    description: "[POST](#operation--api-outputs--id--on-post) to this to close this output for a fixed time."
+                    type: string
+                    format: url
+              off:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/outputs/2365/off"
+                    description: "[POST](#operation--api-outputs--id--off-post) to this to open this output."
+                    type: string
+                    format: url
+              offUntil:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/outputs/2365/off"
+                    description: "[POST](#operation--api-outputs--id--off-post) to this to open this output for a fixed time."
+                    type: string
+                    format: url
+
+      - $ref: "#/definitions/Output summary"
+
+#######################################################################
+
+#######################################################################
+  Inputs:
+    tags:
+      - "Inputs"
+    description: An array of input summaries, and a `next` link for more.
+    properties:
+      results:
+        type: array
+        description: An array of input summaries.
+        items: { $ref: '#/definitions/Input summary' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/inputs?skip=100"
+
+  Input summary:
+    description: |
+      `/api/inputs` returns an array of these.  It is a subset of what you get from a
+      input's detail page at `/api/inputs/{id}` (linked as the href in this object).
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to an [input detail](#definition-Input-detail) object for this input.
+        example: "https://localhost:8904/api/inputs/9701"
+      id:
+        type: string
+        description: |
+          An alphanumeric identifier, unique to the server. This is the ID to use in the
+          `source` parameter of [event filters](events.html#operation--api-events-get).
+        example: "9701"
+      name:
+        type: string
+        example: "Studio door open sensor"
+
+  Input detail:
+    description: |
+      [/api/inputs/{id}](#operation--api-inputs--id--get) returns one of these.
+
+    allOf:
+
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "Reed switch."
+          division:
+            type: object
+            description:  The division containing this input.
+            example:
+              href: "https://localhost:8904/api/divisions/2"
+          shortName: {<<: *SHORTNAME}
+          notes: {<<: *NOTES}
+          updates:
+            <<: *UPDATES
+            example: { href: "https://localhost:8904/api/inputs/9701/updates/0_0_0" }
+          statusFlags:
+            <<: *STATUSFLAGS
+            example: ["open"]
+          commands:
+            type: object
+            description: |
+              A block of commands, each represented by a block containing an href that accepts a
+              POST that will send an override to the input.
+
+              The block will be missing if your operator does not have the privilege to override an
+              input.
+            properties:
+              shunt:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/inputs/9701/shunt"
+                    description: "[POST](#operation--api-inputs--id--off-shunt) to this to shunt the input."
+                    type: string
+                    format: url
+              unshunt:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/inputs/9701/unshunt"
+                    description: "[POST](#operation--api-inputs--id--off-unshunt) to this to stop shunting the input."
+                    type: string
+                    format: url
+              isolate:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/inputs/9701/isolate"
+                    description: |
+                      [POST](#operation--api-inputs--id--off-isolate) to this to isolate the input.
+                      Isolated inputs do not prevent alarm zones from arming.
+
+                      The link will be missing if the input is shunted.
+                    type: string
+                    format: url
+              deisolate:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/inputs/9701/deisolate"
+                    description: "[POST](#operation--api-inputs--id--off-deisolate) to this to stop isolating the input.  The link will be missing if the input is shunted."
+                    type: string
+                    format: url
+
+      - $ref: "#/definitions/Input summary"
+
+  Override end time:
+    type: object
+    properties:
+      endTime:
+        type: string
+        format: date-time
+        description: |
+          Put this in the body of override POSTs to set the time at which the override
+          should cease.  The API will reject the override if the string is not empty and
+          it cannot parse it into a date-time, but it will treat the override as having no
+          end time if you mis-spell 'endTime' or if you send a blank string.
+        example: "2018-07-31T00:00:00Z"
+
+######################################################################
+tags:
+- name: "Access Zones"
+  description: |
+    These methods give you read access to Access Zones in the Command Centre database, and
+    let you change their modes, lock them down, and send other overrides.
+
+    The first use case below introduces the main entry point.  It is a paginated search
+    interface that gives you very basic data for any number of access zones.  Most
+    important is a field called 'href', which gives location of one alarm zone's details
+    page.
+
+    ### Overrides
+
+    Note:
+
+    1. End-times on overrides are not accurate to the second.  Internally, Command Centre
+       converts the end time to a duration, so you may find that submitting end times in
+       the very near future does not have the exact effect you expect.
+    2. Submitting an override without an end time makes it take effect until the next
+       mode change or 'cancel untimed overrides' entry in the access zone's schedule.
+    3. The end time you set for an override cannot be in the past or more than 24 hours into
+       the future.
+
+    ### Status flags
+
+    If the access zone is online, its `statusFlags` field may contain one or more of these flags:
+
+    - `saltoOutputOnly` means the the access zone would be considered unconfigured except that
+      it has a Salto output number assigned to it.  That is a normal operational configuration.
+    - `mobileZone` means the access zone would be considered unconfigured (missing doors) except
+      that a mobile reader is able to badge cardholders into it.
+    - `lockedDown` means only cardholders with the privilege to enter locked-down zones shall pass.
+      The zone will also be 'secure'.  When the lockdown override ends it will return to its
+      previous access mode.
+    - `usePin` means when you use a card at a reader to unlock the door or at a terminal to control
+      an alarm zone, you will also need your PIN.
+    - `zoneCountTooHigh` means the zone count is above its maximum.
+    - `zoneCountTooLow` means the zone count is below its minimum.
+    - `zoneCountInGrace` means the zone count recently became too low or high.
+
+    These four give the zone's access state.  An online access zone will always return one of these:
+
+    - `secure` means the doors are locked.
+    - `dualAuth` means the doors are locked and - depending on configuration - cardholders will need
+      a second credential to open them.
+    - `codeOrCard` means you can unlock a door either with a card, the zone's access code, or (if
+      suitably configured on the reader) a personal user code.  You will not see this flag if the
+      zone is locked down.
+    - `free` means the zone's doors are unlocked.  You will not see this when the zone is locked down.
+
+    #### Access Zone flag rules
+
+    - If and only if the zone is online and not locked down, there will be exactly one of 'secure',
+      'dualAuth', 'codeOrCard', or 'free'.
+    - If and only if the zone is online and locked down, there will be exactly one of 'secure' or
+      'dualAuth'.
+
+    - If there is 'saltoOutputOnly' there will never be 'unconfigured' or any of the others from the
+      list above.
+
+    - If there is 'mobileZone' there will always be 'secure' and never 'unconfigured' or any of the
+      others from the list above.
+
+    - If there is 'zoneCountInGrace' there will always be exactly one of 'zoneCountTooHigh' or
+      'zoneCountTooLow' (never both).
+
+    ### Use cases
+
+    #### Searching for access zones by name
+    1. `GET /api`.
+    2. Follow the link at `features.accessZones.accessZones.href`, appending a search term such as
+       `name=substring` to filter the access zones, and `fields` to tell the server what to return
+       about each.  The next section covers those query parameters.
+    3. Process the results, following the `next` link until there isn't one.
+
+    #### Changing an access zone's access mode
+    1. Find the href for the access zone using the process above.
+    2. GET it.
+    3. Find the API URL you require in the `commands` structure of the results, such as
+    `free` or `securePin`, from [the detail](#definition-Access-Zone-detail).  Use the
+    `until` variants if you are specifying an end time.
+    4. POST to that URL.  Some require a JSON object (resetting the zone count, and all
+    those with `until` in their command block keys).  The others expect an empty body.
+
+    #### Finding an access zone's status
+    1. Find the href for the access zone using the process above, and GET it.
+    3. Take the `updates` href from that page.  For a version 8.00 server append the query parameter
+       separator ('?' or '&') then `fields=defaults,zoneCount` if you need the zone count as well as
+       the default status fields.  The zone count is included by default in 8.10 and later.
+    4. GET it.
+    5. Use the flag rules above to interpret the statusFlags you receive.
+    5. Follow the `next` link to stay up to date.
+
+- name: "Alarm Zones"
+  description: |
+    These methods give you read access to Alarm Zones in the Command Centre database, and
+    let you change their states:  armed, disarmed, two user-defined states, and (if at
+    least one Fence Zone is directing its events to this Alarm Zone) 'Armed - High
+    Voltage' or 'Armed - Low Feel'.
+
+    Alarm zones may run by a schedule, but it is optional.  Alarm zones that do not have a
+    schedule change state only through manual overrides, meaning they do not have a
+    natural state.  That in turn means that you cannot override them for a duration --
+    they have no state to return to.
+
+    The first use case below introduces the main entry point.  It is a paginated search
+    interface that gives you very basic data for any number of alarm zones.  The href
+    field gives location of an alarm zone's details page.
+
+    ### Overrides
+    Note:
+
+    1. End-times on overrides are not accurate to the second.  Internally, Command Centre
+       converts the end time to a duration, so you may find that submitting end times in
+       the very near future does not have the exact effect you expect.
+    2. Submitting an override without an end time makes it take effect until the next
+       state change or 'cancel untimed overrides' entry in the alarm zone's schedule.
+    3. Overrides you submit via REST are not subject to the "manual unset" timeouts you
+       can set in the Configuration Client.  Those only affect readers, terminals, and
+       pushbuttons.
+    3. The end time you set for an override cannot be in the past or more than 24 hours into
+       the future.
+
+    ### Status flags
+
+    If the alarm zone is online, its `statusFlags` field will contain one or more of these flags:
+
+    - `armed` means the alarm zone is armed.  It will be called that even if you have changed the
+      terminology in the Server Properties.
+    - `disarmed` as above.
+    - `user1` will be called that even if you have given it a different name in Server Properties.
+    - `user2` as above.
+    - `exitDelay` means the zone is temporarily ignoring input triggers.  One of the previous four
+      flags shows you the state the zone is about to change away from.
+    - `entryDelay` means an input has triggered the alarm zone but Command Centre is giving a
+      cardholder the opportunity to disarm the zone.
+
+    - `lowFeel` means the alarm zone has a fence zone attached, and that it is in 'low feel' mode
+      (meaning it is delivering lower voltage than you would use for a strong deterrant).
+    - `highVoltage` means that the alarm zone has a fence zone attached, and that it is 'high
+      voltage' mode (meaning it is delivering a strong deterrant pulse).
+
+    #### Alarm Zone flag rules
+
+    - If and only if the zone is online, there will exactly one of 'armed', 'disarmed', 'user1', or 'user2'.
+    - 'exitDelay' and 'entryDelay' cannot appear together.
+    - If and only if the zone is online and has a fence zone, there will be exactly one of 'lowFeel'
+      or 'highVoltage'.
+
+    ### Use cases
+
+    #### Searching for alarm zones by name
+    1. `GET /api`.
+    2. Follow the link at `features.alarmZones.alarmZones.href`, appending a search term such as
+       `name=substring` to filter the access zones, and `fields` to tell the server what to return
+       about each.  The next section covers those query parameters.
+    3. Process the results, following the `next` link until there isn't one.
+
+    #### Changing an alarm zone's state
+    1. Find the href for the alarm zone using the process above.
+    2. GET it.
+    3. Find the API URL you require in the `commands` structure of the results, such as
+    `arm` or `disarm`, using [the detail](#definition-Alarm-Zone-detail).  Use the calls
+    with `Until` on the ends of their names if you are specifying an end time.
+    4. POST to that URL.  All those with `Until` in their names require a JSON object in
+    the body giving the time at which the override should end; the others do not.
+
+    #### Finding an alarm zone's status
+    1. Find the href for the alarm zone using the process above, and GET it.
+    3. Follow the `updates` href from that page.
+    4. Use the flag rules above to interpret the status flags you receive.
+    5. Follow the `next` link to stay up to date.
+
+- name: "Doors"
+  description: |-
+    These methods give you read access to basic data about Doors in the Command Centre
+    database, and let you open them.
+
+    The first use case below introduces the main entry point.  It is a paginated search
+    interface that gives you very basic data for any number of doors.  The href field for
+    each door gives the location of another page which gives more details, including the
+    URL you need to open the door.
+
+    ### Status flags
+
+    If the door is online, its `statusFlags` field will contain one or more of these flags:
+
+    - `forced` means the door was opened or unlocked while secure.
+    - `openTooLong` means the door has been open for longer than its configured DOTL time.
+    - `tamper` means one of the door's inputs is in a tampered state.  The usual cause of that is a
+      resistance moving outside nominal range, meaning the input has been cut or shorted.
+    - `open` means the door has a sensor for detecting its openness and it is reporting as such.
+    - `closed` is the inverse.  The door is closed or has no open sensor.
+    - `locked` means the door locked.  It reflects the state of the door's unlock sensor, if it has
+      one.  Otherwise it reflects the state of the door's unlock output, if it has that.  Without an
+      unlock output, a door is not capable of access control.
+    - `unlocked` means 'locked' is not set.
+    - `secure` means the door's normal state is closed and locked.
+    - `free` is the opposite of 'secure' -- nobody needs to badge to open it.
+
+    `secure` and `free` do not change when the door opens.  They are about whether the door is
+    enforcing access control, not about the current state of the door hardware.
+
+    When allowing passage, a door normally moves from closed and locked to closed and unlocked, to
+    open and unlocked (extremely briefly), then to open and locked while someone is walking through
+    it, then back to closed and locked.  It will be secure throughout.
+
+    #### Door flag rules
+
+    - If and only if the door is online, exactly one of 'closed' or 'open' will appear, and one of
+      'locked' or 'unlocked', and one of 'secure' or 'free'.
+
+    So, to establish if the door is in a normal state, look for 'closed' or 'open'.
+
+    ### Use cases
+
+    #### Listing Doors
+    1. `GET /api`.
+    2. Follow the link at `features.doors.doors.href`, appending a search term such as
+       `name=substring` to filter the selection if you have a lot of doors, and `fields` to tell the
+       server what to return about each.  The next section covers those query parameters.
+    3. Process the results, following the `next` link until there isn't one.
+
+    #### Opening a Door
+    1. Find the href for the door using the process above.
+    2. GET it.
+    3. POST to the 'open' URL in the `commands` structure of the
+       [results](#definition-Door-detail).
+
+    #### Finding a door's status
+    1. Find the href for the door  using the process above, and GET it.
+    3. Follow the `updates` href from that page.
+    4. Use the flag rules above to interpret the status flags you receive.
+    5. Follow the `next` link to stay up to date.
+
+- name: "Fence Zones"
+  description: |
+    These methods give you read access to Fence Zones in the Command Centre database, and
+    let you turn them on and off, change their modes, and shunt them.
+
+    The first use case below introduces the main entry point.  It is a paginated search
+    interface that gives you very basic data for any number of fence zones.  Most
+    important is a field called 'href', which gives location of one fence zone's details
+    page.
+
+    ### Status flags
+
+    If the fence zone is online, its `statusFlags` field may contain one or more of these flags:
+
+    - `notPolled` means the fence zone is shunted, which means intentionally ignored, and is
+      essentially offline.
+    - `overridden` means just that.
+    - `deterrentUnknown` means the controller cannot determine the state of the fence zone.  This
+      happens when there is a cabling problem between the C6000 and the fence controller
+      (energiser).
+    - `on` means the fence zone is live, energised.  Take care.
+    - `off` means the fence zone is off.
+    - `lowFeel` means the fence energiser is delivering enough voltage to detect disturbances.
+      Depending on the fence zone's configuration, it may also be a deterrant.
+    - `highVoltage` means the pulse is delivering a deterrant pulse.
+    - `hVPlusMode` means the fence voltage has increased in response to a disturbance.  After some
+      time or an override it will leave this mode.  See the description of HVPlus mode in the
+      Configuration Client's online help.
+    - `serviceMode` means a technician has manually forced service mode at the fence controller.
+      This safety measure prevents a Command Centre operator energising a hardware technician.
+    - `voltageKnown` means Command Centre has the current voltage for the zone, provided there has
+      been at least one pulse from the energiser recently.  This can only happen when the zone is
+      on, obviously.  The 'voltage' field will contain the voltage at the last pulse.
+    - `alert` means the fence voltage is outside the alert range.  Typically this means an electical problem.
+    - `warning` means the fence voltage is between the alert and warning ranges.  Typically this
+      means it has grounded somewhere.
+    - `preArm` means the zone is performing its pre-arm check.
+    - `lockedOut` means the zone has been locked out at a keypad.
+    - `parentAlert` means there is a problem with the fence controller.
+
+    #### Fence Zone flag rules
+
+    - If and only if the fence zone is online, there will be one of 'deterrentUnknown', 'on', or 'off'.
+    - If and only if the fence zone is online, there will be exactly one of 'lowFeel', 'highVoltage', or
+      'hVPlusMode'.
+    - 'hVPlusMode' will only appear if the fence zone is on.
+    - If there is 'alert' there will never be 'warning'.
+    - None of those flags will appear if the fence zone is offline.
+    - If there is 'notPolled' there will never be any from the list above.
+    - The 'voltage' field only contains a valid value if you receive 'voltageKnown' and the
+      energiser has pulsed at least once since the zone turned on.
+
+    ### Use cases
+
+    #### Searching for fence zones by name
+    1. `GET /api`.
+    2. Follow the link at `features.fenceZones.fenceZones.href`, appending a search term such as
+       `name=substring` to filter the fence zones, and `fields` to tell the server what to return
+       about each.  The next section covers those query parameters.
+    3. Process the results, following the `next` link until there isn't one.
+
+    #### Overriding a fence zone
+    1. Find the href for the fence zone using the process above.
+    2. GET it.
+    3. Find the API URL you require in the `commands` structure of the results, such as
+    `off`, `highVoltage`, or `shunt`, from [the detail](#definition-Fence-Zone-detail).
+    4. POST to that URL.  You do not need to send anything in the body of the POST.
+
+    #### Finding a fence zone's status
+    1. Find the href for the fence zone using the process above, and GET it.
+    3. Take the `updates` href from that page.  For a version 8.00 server append
+       `?fields=defaults,voltage` if you are after the fence's voltage.  It is included by default
+       in 8.10 and later.
+    4. GET it.
+    4. Use the flag rules above to interpret the status flags you receive.
+    5. Follow the `next` link to stay up to date.
+
+- name: "Macros"
+  description: |
+    These methods give you read access to basic data about the Macros in the Command
+    Centre database, and let you run them.
+
+    Reading the section 'Understanding Macros' in the Configuration client help is an
+    excellent way to do exactly that.
+
+    The first use case below introduces the main entry point.  It is a paginated search
+    interface that gives you very basic data for any number of macros.  The href field for
+    each macro gives the location of another page which gives more details, including the
+    URL you need to run the macro.
+
+    ### Overrides
+
+    You cannot use the REST API to change a macro's schedule.  You must use the Command
+    Centre or Configuration client for that.
+
+    ### Use cases
+
+    #### Listing Macros
+    1. `GET /api`.
+    2. Follow the link at `features.macros.macros.href`, appending a search term
+       (described below) to narrow the results if your
+       installation has a lot of macros.
+    3. Process the results, following the `next` link until there isn't one.
+
+    #### Running a Macro
+    1. Find the href for the macro using the process above.
+    2. GET it.
+    4. If your operator is able to run the macro, the results will contain a URL at
+       `commands.run.href`.  POST to that to run the macro - no body required.
+
+- name: "Outputs"
+  description: |-
+    These methods give you read access to Outputs in the Command Centre
+    database, and let you override them.
+
+    The first use case below introduces the main entry point.  It is a paginated search
+    interface that gives you very basic data for any number of outputs.  The href field for
+    each output gives the location of another page which gives more details, including the
+    URL you need to switch the output.
+
+    ### Override times
+
+    1. End-times on overrides are not accurate to the second.  Internally, Command Centre
+       converts the end time to a duration, so you may find that submitting end times in
+       the very near future does not have the exact effect you expect.
+    2. The end time you set for an override cannot be in the past or more than 24 hours
+       into the future.
+
+    ### Overrides always use 'on' and 'off'
+
+    The Configuration client allows you to assign different display strings to the two normal output
+    states, on and off.  On could be 'green', for example, and off could be 'red'.  Regardless, the
+    overrides you apply to an output are called 'on' and 'off'.
+
+    ### Status flags
+
+    Status flags, on the other hand, use the language of the relays on the hardware modules.  They
+    will report 'closed' for an output that is on, and 'open' for one that is off.
+
+    If the output is online, its `statusFlags` field may contain one or more of these flags:
+
+    - `relayStateUnknown` means the controller does not know what the output should be doing.
+    - `closed` means the output relay is closed.
+    - `open` means the output relay is open.
+
+    - `pulsed` means the relay's change in state is momentary.
+    - `switchingDisabled` means switching this output is disabled.
+    - `overridden` means the output is under the effect of an override.
+
+    #### Output flag rules
+
+    - If and only if the output is online, one of 'relayStateUnknown', 'closed', or 'open' will appear.
+    - Of the above, only 'overridden' can appear when the output is offline.
+
+    ### Use cases
+
+    #### Listing Outputs
+    1. `GET /api`.
+    2. Follow the link at `features.outputs.outputs.href`, appending a search term such as
+       `name=substring` to select the outputs, and `fields` to tell the server what to return about
+       each.  The next section covers those query parameters.
+    3. Process the results, following the `next` link until there isn't one.
+
+    #### Switching an Output
+    1. Find the href for the output using the process above.
+    2. GET it.
+    3. Find the API URL to turn the output on, off, or cancel a previous override in the
+       `commands` structure of the [results](#definition-Output-detail).  Use the
+       `until` variants if you are specifying an end time.
+    4. POST to that URL.  Those with `until` in their command block keys require a JSON
+       object in the body; the others expect it empty.
+
+    #### Finding an output's status
+    1. Find the href for the output using the process above, and GET it.
+    3. Take the `updates` href from that page.  Append '?' or '&' (whichever is appropriate) then
+       `fields=defaults,voltage` if you are after the fence's voltage
+    4. GET it.
+    4. Use the flag rules above to interpret the status flags you receive.
+    5. Follow the `next` link to stay up to date.
+
+- name: "Inputs"
+  description: |-
+    These methods, introduced in v8.10, give you read and override access to Input items.
+
+    The first use case below introduces the main entry point.  It is a paginated search interface
+    that gives you basic data for any number of inputs.  The href field for each input gives the
+    location of another page which gives more details, including the URLs you need to shunt or
+    isolate it.
+
+    ### Status flags
+
+    Even though the Configuration client lets you set your own state names for open, closed,
+    tampered open, and tampered short, status flags will always use 'closed' or 'open', and possibly
+    'tamper'.
+
+    Two-state inputs cannot report a tamper, because it is impossible to detect.  They can only be
+    open or closed.  Hence the name.
+
+    Three-state inputs can report a tamper, but only one of tampered open or tampered closed,
+    depending on their end-of-line resistance settings.
+
+    Four-state inputs can report tampered open or closed.
+
+    If the input is online, its `statusFlags` field may contain one or more of these flags:
+
+    - `closed` means the input circuit is closed.
+    - `open` means the input circuit is open.
+
+    - `tamper` means the input circuit is shorted or open.
+    - `notPolled` means the input is shunted, which means intentionally ignored, and is essentially
+      offline.
+    - `isolated` means the input state will not prevent arming an alarm zone.
+
+    #### Input flag rules
+
+    - If and only if the input is online and not shunted, exactly one of 'closed' or 'open' will appear.
+    - 'closed' or 'open' may still appear if the input is tampered.
+
+    So, to establish if the input is in a completely normal state, look for 'closed' or 'open', and
+    make sure 'tamper' is _not_ there.
+
+    ### Use cases
+
+    #### Listing Inputs
+    1. `GET /api`.
+    2. Follow the link at `features.inputs.inputs.href`, appending a search term such as
+       `name=substring` to select the inputs, `top` if you expect lots of them, and `fields` to tell
+       the server what to return about each.  The next section covers those query parameters.
+    3. Process the results, following the `next` link if there is one.
+
+    #### Overriding an Input
+    1. Find the href for the input using the process above.
+    2. GET it.
+    3. Find the API URL to for the override you need in the `commands` structure of the
+       [results](#definition-Input-detail).
+    4. POST to that URL with an empty body.
+
+    #### Finding an input's status
+    1. Find the href for the input using the process above, and GET it.
+    3. Take the `updates` href from that page.
+    4. GET it.
+    4. Use the flag rules above to interpret the status flags you receive.
+    5. Follow the `next` link to stay up to date.
+
+paths:
+######################################################################
+
+  /api/access_zones:
+    get:
+      tags:
+        - "Access Zones"
+      summary: Search access zones
+      description: |
+        This returns a summary of the access zones matching your search criteria.
+
+        The result will contain no more than 100 access zones, or as many as you asked for more in
+        your request; you should follow the `next` link, if it is present, to collect the next
+        batch.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the 'href' field in the `features.accessZones.accessZones` section of
+        `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *ACZFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Access Zones'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            that allows viewing access zones such as 'View Site', 'Edit Site', or 'Override'.
+
+  /api/access_zones/update_cardholder_location:
+    get:
+      tags:
+        - "Access Zones"
+      summary: Search targetable access zones
+      description: |
+        This returns a list of the access zones to which your operator is allowed to move cardholders,
+        and a special zone you can use as a target to move a cardholder from all access zones.
+
+        Like all other paginated queries in this API, the result will contain no more than 100
+        access zones, or as many as you asked for more in your request; you should follow the `next`
+        link, if it is present, to collect the next batch.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the 'href' field in the `features.cardholders.updateLocationAccessZones`
+        section of `/api`.
+
+        Added in 8.20.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *ACZFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Access Zones as move targets'}
+        4xx:
+          description: |
+            The site does not have the RESTCardholders licence, or the operator does not have a privilege
+            that allows moving cardholders between zones, such as 'Manage Cardholder Location'.
+
+  /api/access_zones/{id}:
+    get:
+      tags:
+        - "Access Zones"
+      summary: Get details of an access zone
+      description: |
+        This returns the detail of one access zone.
+
+        Follow the 'href' field in an [access zone summary](#definition-Access-Zone-summary) to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+      - name: "fields"
+        <<: *FIELDSDESC_DET
+        <<: *ACZFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Access Zone detail'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            on the zone's division that allows viewing access zones, such as 'View Site', 'Edit
+            Site', or 'Override'."
+
+  /api/access_zones/{id}/free:
+    post:
+      tags: ["Access Zones"]
+      summary: Set an access zone to free
+      description: |
+        Sends an override to an access zone to change its mode to 'free - no PIN', meaning the doors
+        will be free and you will not need a PIN to perform an override on a terminal.
+
+        The same URL with `_pin` on the end will send an override to an access zone to change its
+        mode to 'free - PIN', meaning you _will_ need a PIN on a terminal.
+
+        If you do not give it an end time in the body, the override will remain in place until the
+        next scheduled change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
+      - in: body
+        name: ignored
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+
+  /api/access_zones/{id}/secure:
+    post:
+      tags: ["Access Zones"]
+      summary: Set an access zone to secure
+      description: |
+        Sends an override to an access zone to change its mode to 'secure - no PIN', meaning you
+        will need a card, but not a PIN, to open its doors or perform overrides on terminals.
+
+        The same URL with `_pin` on the end will send an override to the access zone to change its
+        mode to 'secure - PIN', meaning you _will_ need a PIN on the door and on a terminal.
+
+        If you do not give it an end time in the body, the override will remain in place until the
+        next scheduled change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
+      - in: body
+        name: ignored
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+
+  /api/access_zones/{id}/code_only:
+    post:
+      tags: ["Access Zones"]
+      summary: Set an access zone to code only
+      description: |
+        Sends an override to an access zone to change its mode to 'code only - card and no PIN',
+        meaning you can use your user code or the zone's 'code-only code' to open its doors,
+        depending on the reader's configuration.  You will not need a PIN on a terminal.
+
+        The same URL with `_pin` on the end will override the access zone into 'code only - card and
+        PIN', meaning you _will_ need a PIN when you use a card.
+
+        If you do not give it an end time in the body, the override will remain in place until the
+        next scheduled change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
+      - in: body
+        name: body_names_not_rendered
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+
+  /api/access_zones/{id}/dual_auth:
+    post:
+      tags: ["Access Zones"]
+      summary: Set an access zone to dual auth
+      description: |
+        Sends an override to an access zone to change its mode to 'dual auth - no PIN', meaning you
+        will need two cardholders to open its doors, and they will not need a PIN.  Terminal
+        functions will require a card but no PIN.
+
+        The same URL with `_pin` on the end will override the zone into 'dual auth - PIN' mode,
+        meaning each cardholder will need a PIN for access, and terminal functions will also require
+        a PIN.
+
+        If you do not give it an end time in the body, the override will remain in place until the
+        next scheduled change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
+      - in: body
+        name: body_names_not_rendered
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+
+  /api/access_zones/{id}/forgive_anti_passback:
+    post:
+      tags: ["Access Zones"]
+      summary: Forgive antipassback on a zone
+      description: |
+        Sends an override to an access zone to forgive anti-passback for all cardholders in the zone.
+
+      parameters: [{in: path, name: id, required: true, description: "The ID of the access zone.", type: string}]
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+
+  /api/access_zones/{id}/lock_down:
+    post:
+      tags: ["Access Zones"]
+      summary: Lock a zone down
+      description: |
+        Locks down an access zone.  In this mode, cardholders will need the 'Entry allowed during
+        lockdown' privilege to enter the zone, in addition to normal access.
+
+        It takes no parameters.  The lockdown will remain in place until cancelled, or the access
+        zone receives an override to another mode.
+      parameters: [{in: path, name: id, required: true, description: "The ID of the access zone.", type: string}]
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+
+  /api/access_zones/{id}/cancel_lock_down:
+    post:
+      tags: ["Access Zones"]
+      summary: Cancel a zone lockdown
+      description: |
+        Cancels a lockdown, returning it to its scheduled state.
+
+      parameters: [{in: path, name: id, required: true, description: "The ID of the access zone.", type: string}]
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+
+  /api/access_zones/{id}/set_zone_count:
+    post:
+      tags: ["Access Zones"]
+      summary: Set a zone count
+      description: |
+        Sets the count of cardholders inside a zone.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
+      - in: body
+        name: body
+        required: true
+        description: "The new cardholder count for the zone."
+        schema: {$ref: "#/definitions/Access zone count" }
+
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+
+  /api/access_zones/{id}/cancel:
+    post:
+      tags: ["Access Zones"]
+      summary: Cancel mode override
+      description: |
+        Cancels an override, returning the access zone to its scheduled state.
+
+        This command will achieve nothing if the alarm zone is not controlled by a
+        schedule, because without a schedule the alarm zone does not have the concept of a
+        'normal' state.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
+
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+
+######################################################################
+
+  /api/alarm_zones:
+    get:
+      tags:
+        - "Alarm Zones"
+      summary: Search alarm zones
+      description: |
+        This returns a summary of the alarm zones matching your search criteria.
+
+        The result will contain no more than 100 alarm zones, or as many as you asked for more in
+        your request; you should follow the `next` link, if it is present, to collect the next
+        batch.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the 'href' field in the `features.alarmZones.alarmZones` section of
+        `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *ALZFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Alarm Zones'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            that allows viewing alarms zones such as 'View Site', 'Edit Site', or 'Override'."
+
+  /api/alarm_zones/{id}:
+    get:
+      tags:
+        - "Alarm Zones"
+      summary: Get details of an alarm zone
+      description: |
+        This returns the detail of one alarm zone.
+
+        Follow the 'href' field in an [alarm zone summary](#definition-Alarm-Zone-summary) to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the alarm zone.
+      - name: "fields"
+        <<: *FIELDSDESC_DET
+        <<: *ALZFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Alarm Zone detail'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            on the zone's division that allows viewing alarms zones, such as 'View Site', 'Edit
+            Site', or 'Override'."
+
+  /api/alarm_zones/{id}/arm:
+    post:
+      tags: ["Alarm Zones"]
+      summary: Arm an alarm zone
+      description: |
+        Sends an override to an alarm zone to arm it.
+
+        If you send an end time in the body, and the alarm zone has a schedule to consult
+        to find the state that it should return to, the override will only stay in effect
+        until then.
+
+        If you do not, the override will remain in place until the next scheduled or
+        manual change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
+      - in: body
+        name: ignored
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+
+  /api/alarm_zones/{id}/disarm:
+    post:
+      tags: ["Alarm Zones"]
+      summary: Disarm an alarm zone
+      description: |
+        Sends an override to an alarm zone to disarm it.
+
+        If you send an end time in the body, and the alarm zone has a schedule to consult
+        to find the state that it should return to, the override will only stay in effect
+        until then.
+
+        If you do not, the override will remain in place until the next scheduled or
+        manual change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
+      - in: body
+        name: ignored
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+
+  /api/alarm_zones/{id}/user1:
+    post:
+      tags: ["Alarm Zones"]
+      summary: Change an alarm zone to user1
+      description: |
+        Sends an override to an alarm zone to set its state to 'user1', one of the custom states.
+
+        If you send an end time in the body, and the alarm zone has a schedule to consult
+        to find the state that it should return to, the override will only stay in effect
+        until then.
+
+        If you do not, the override will remain in place until the next scheduled or
+        manual change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
+      - in: body
+        name: ignored
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+
+  /api/alarm_zones/{id}/user2:
+    post:
+      tags: ["Alarm Zones"]
+      summary: Change an alarm zone to user2
+      description: |
+        Sends an override to an alarm zone to set its state to 'user2', the other of of the custom states.
+
+        If you send an end time in the body, and the alarm zone has a schedule to consult
+        to find the state that it should return to, the override will only stay in effect
+        until then.
+
+        If you do not, the override will remain in place until the next scheduled or
+        manual change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
+      - in: body
+        name: ignored
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+
+  /api/alarm_zones/{id}/armHighVoltage:
+    post:
+      tags: ["Alarm Zones"]
+      summary: Arm an alarm zone (high voltage)
+      description: |
+        Sends an override to an alarm zone to set its state to 'armed - high voltage'.
+
+        If you send an end time in the body, and the alarm zone has a schedule to consult
+        to find the state that it should return to, the override will only stay in effect
+        until then.
+
+        If you do not, the override will remain in place until the next scheduled or
+        manual change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
+      - in: body
+        name: ignored
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+
+  /api/alarm_zones/{id}/armLowFeel:
+    post:
+      tags: ["Alarm Zones"]
+      summary: Arm an alarm zone (low feel)
+      description: |
+        Sends an override to an alarm zone to set its state to 'armed - low feel'.
+
+        If you send an end time in the body, and the alarm zone has a schedule to consult
+        to find the state that it should return to, the override will only stay in effect
+        until then.
+
+        If you do not, the override will remain in place until the next scheduled or
+        manual change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
+      - in: body
+        name: ignored
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+
+  /api/alarm_zones/{id}/cancel:
+    post:
+      tags: ["Alarm Zones"]
+      summary: Cancel mode override
+      description: |
+        Cancels an override, returning the alarm zone to its scheduled state.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+
+######################################################################
+
+  /api/doors:
+    get:
+      tags:
+        - "Doors"
+      summary: Search doors
+      description: |
+        This returns a summary of the doors matching your search criteria.
+
+        The result will contain no more than 100 doors, or as many as you asked for more in
+        your request; you should follow the `next` link, if it is present, to collect the next
+        batch.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the 'href' field in the `features.doors.doors` section of
+        `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *DOORFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Doors'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            that allows viewing doors such as 'View Site', 'Edit Site', or 'Override - Open Door'."
+
+  /api/doors/{id}:
+    get:
+      tags:
+        - "Doors"
+      summary: Get details of a door
+      description: |
+        This returns the detail of one door.
+
+        Follow the 'href' field in a [door summary](#definition-Door-summary) to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the door.
+      - name: "fields"
+        <<: *FIELDSDESC_DET
+        <<: *DOORFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Door detail'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            on the zone's division that allows viewing doors, such as 'View Site', 'Edit Site', or
+            'Override - Open Door'."
+
+  /api/doors/{id}/open:
+    post:
+      tags: ["Doors"]
+      summary: Open a door
+      description: |
+        Sends an override to unlock a door.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the door.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxdooroverride" }
+
+######################################################################
+
+  /api/fence_zones:
+    get:
+      tags:
+        - "Fence Zones"
+      summary: Search fence zones
+      description: |
+        This returns a summary of the fence zones matching your search criteria.
+
+        The result will contain no more than 100 fence zones, or as many as you asked for more in
+        your request; you should follow the `next` link, if it is present, to collect the next
+        batch.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the 'href' field in the `features.fenceZones.fenceZones` section of
+        `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *FZFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Fence Zones'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            that allows viewing fence zones such as 'View Site', 'Edit Site', or 'Maintenance
+            Override'."
+
+  /api/fence_zones/{id}:
+    get:
+      tags:
+        - "Fence Zones"
+      summary: Get details of a fence zone
+      description: |
+        This returns the detail of one fence zone.
+
+        Follow the 'href' field in an [fence zone summary](#definition-Fence-Zone-summary) to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the fence zone.
+      - name: "fields"
+        <<: *FIELDSDESC_DET
+        <<: *MACROFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Fence Zone detail'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            on the zone's division that allows viewing fence zones, such as 'View Site', 'Edit
+            Site', or 'Maintenance Override'."
+
+  /api/fence_zones/{id}/on:
+    post:
+      tags: ["Fence Zones"]
+      summary: Turn on a fence zone
+      description: |
+        Sends an override to an alarm zone to turn it on until the next scheduled or
+        manual change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+
+  /api/fence_zones/{id}/off:
+    post:
+      tags: ["Fence Zones"]
+      summary: Turn off a fence zone
+      description: |
+        Sends an override to an alarm zone to turn it off until the next scheduled or
+        manual change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+
+  /api/fence_zones/{id}/shunt:
+    post:
+      tags: ["Fence Zones"]
+      summary: Shunt a fence zone
+      description: |
+        Sends an override to an alarm zone to shunt it, effectively preventing all
+        communication with it.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+
+  /api/fence_zones/{id}/unshunt:
+    post:
+      tags: ["Fence Zones"]
+      summary: Unshunt a fence zone
+      description: |
+        Sends an override to an alarm zone to unshunt it, re-enabling its communication.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+
+  /api/fence_zones/{id}/high_voltage:
+    post:
+      tags: ["Fence Zones"]
+      summary: Change to high voltage
+      description: |
+        Sends an override to an alarm zone to change it to high voltage mode until the
+        next scheduled or manual change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+
+  /api/fence_zones/{id}/low_feel:
+    post:
+      tags: ["Fence Zones"]
+      summary: Change to low feel
+      description: |
+        Sends an override to an alarm zone to change it to 'low feel' mode until the
+        next scheduled or manual change.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+
+  /api/fence_zones/{id}/cancel:
+    post:
+      tags: ["Fence Zones"]
+      summary: Cancel an override
+      description: |
+        Cancels an active override.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+
+######################################################################
+
+  /api/macros:
+    get:
+      tags:
+        - "Macros"
+      summary: Search macros
+      description: |
+        This returns a summary of the macros matching your search criteria.
+
+        The result will contain no more than 100 macros, or as many as you asked for more in
+        your request; you should follow the `next` link, if it is present, to collect the next
+        batch.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the 'href' field in the `features.macros.macros` section of
+        `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *MACROFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Macros'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            that allows viewing macros such as 'View Site', 'Run Macros', or 'Schedule and Run
+            Macros'.
+
+  /api/macros/{id}:
+    get:
+      tags:
+        - "Macros"
+      summary: Get details of a macro
+      description: |
+        This returns the detail of one macro.
+
+        Follow the 'href' field in an [macro summary](#definition-Macro-summary) to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the macro.
+      - name: "fields"
+        <<: *FIELDSDESC_DET
+        <<: *MACROFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Macro detail'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            on the macro's division that allows viewing it, such as 'View Site', 'Run Macros', or
+            'Schedule and Run Macros'.
+
+  /api/macros/{id}/run:
+    post:
+      tags: ["Macros"]
+      summary: Run a macro
+      description: |
+        Sends a run request to a macro.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the macro.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxmacrooverride" }
+
+######################################################################
+
+  /api/outputs:
+    get:
+      tags:
+        - "Outputs"
+      summary: Search outputs
+      description: |
+        This returns a summary of the outputs matching your search criteria.
+
+        The result will contain no more than 100 outputs, or as many as you asked for more in
+        your request; you should follow the `next` link, if it is present, to collect the next
+        batch.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the 'href' field in the `features.outputs.outputs` section of
+        `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - name: "fields"
+        <<: *FIELDSDESC_DET
+        <<: *OUTPUTFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Outputs'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            that allows viewing outputs, such as 'View Site', 'Edit Site', or 'Override'.
+
+  /api/outputs/{id}:
+    get:
+      tags:
+        - "Outputs"
+      summary: Get details of an output
+      description: |
+        This returns the detail of one output.
+
+        Follow the 'href' field in an [output summary](#definition-Output-summary) to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the output.
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *OUTPUTFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Output detail'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            on the zone's division that allows viewing outputs, such as 'View Site', 'Edit Site', or
+            'Override'."
+
+  /api/outputs/{id}/on:
+    post:
+      tags: ["Outputs"]
+      summary: Turn on an output
+      description: |
+        Sends an override to close an output.
+
+        If you send an end time in the body, the override will only stay in effect until
+        then.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the output.", type: string}
+      - in: body
+        name: ignored
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxoutputoverride" }
+
+  /api/outputs/{id}/off:
+    post:
+      tags: ["Outputs"]
+      summary: Turn off an output
+      description: |
+        Sends an override to open an output.
+
+        If you send an end time in the body, the override will only stay in effect until
+        then.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the output.", type: string}
+      - in: body
+        name: ignored
+        description: Optional
+        schema: { $ref: "#/definitions/Override end time" }
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxoutputoverride" }
+
+  /api/outputs/{id}/cancel:
+    post:
+      tags: ["Outputs"]
+      summary: Cancel an override
+      description: |
+        Cancels an override, returning the output to its previous state.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the output.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxoutputoverride" }
+
+######################################################################
+
+  /api/inputs:
+    get:
+      tags:
+        - "Inputs"
+      summary: Search inputs
+      description: |
+        This returns a summary of the inputs matching your search criteria.
+
+        The result will contain no more than 100 inputs, or as many as you asked for more in
+        your request; you should follow the `next` link, if it is present, to collect the next
+        batch.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the 'href' field in the `features.inputs.inputs` section of
+        `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - name: "fields"
+        <<: *FIELDSDESC_DET
+        <<: *OUTPUTFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Inputs'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            that allows viewing inputs such as 'View Site', 'Edit Site', or 'Maintenance Override'."
+
+  /api/inputs/{id}:
+    get:
+      tags:
+        - "Inputs"
+      summary: Get details of an input
+      description: |
+        This returns the detail of one input.
+
+        Follow the 'href' field in an [input summary](#definition-Input-summary) to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the input.
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *OUTPUTFIELDS
+
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Input detail'}
+        4xx:
+          description: |
+            The site does not have the RESTStatus licence, or the operator does not have a privilege
+            on the zone's division that allows viewing inputs, such as 'View Site', 'Edit Site', or
+            'Maintenance Override'."
+
+  /api/inputs/{id}/shunt:
+    post:
+      tags: ["Inputs"]
+      summary: Shunt an input
+      description: |
+        Sends an override to shunt an input, preventing all communication.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxinputoverride" }
+
+  /api/inputs/{id}/unshunt:
+    post:
+      tags: ["Inputs"]
+      summary: Unshunt an input
+      description: |
+        Sends an override to unshunt an input, re-enabling communication.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxinputoverride" }
+
+  /api/inputs/{id}/isolate:
+    post:
+      tags: ["Inputs"]
+      summary: Isolate an input
+      description: |
+        Sends an override to isolate an input.  An isolated input will not prevent an alarm zone
+        from arming.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxinputoverride" }
+
+  /api/inputs/{id}/deisolate:
+    post:
+      tags: ["Inputs"]
+      summary: De-isolate an input
+      description: |
+        Sends an override to end the isolation of an input.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
+      responses:
+        204: { description: Success }
+        4xx: { $ref: "#/responses/4xxinputoverride" }
+
+######################################################################
+
+responses:
+  4xxaccesszoneoverride:
+    description: |
+      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
+      allows overriding access zones (such as 'Override').
+  4xxalarmzoneoverride:
+    description: |
+      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
+      allows overriding alarm zones (such as 'Override').
+  4xxfencezoneoverride:
+    description: |
+      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
+      allows overriding fence zones (such as 'Override', or 'Maintenance Override' for shunts).
+  4xxdooroverride:
+    description: |
+      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
+      allows overriding doors (such as 'Override - Open Door').
+  4xxoutputoverride:
+    description: |
+      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
+      allows overriding outputs (such as 'Override', or 'Maintenance Override' for shunts).
+  4xxinputoverride:
+    description: |
+      The site does not have the RESTOverrides licence, or the operator does not have the
+      'Maintenance Override' privilege.
+  4xxmacrooverride:
+    description: |
+      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
+      allows running macros ('Run Macro' or 'Schedule and Run Macro', unsurprisingly).
+
+######################################################################
+######################################################################
+######################################################################

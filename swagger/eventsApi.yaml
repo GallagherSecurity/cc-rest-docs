@@ -1,0 +1,2225 @@
+##
+##         Copyright Gallagher Group Ltd 2020 All Rights Reserved
+##            THIS IS PROPRIETARY DOCUMENTATION SOURCE CODE OF
+##                Gallagher Group Research and Development
+##                          Hamilton, New Zealand
+##
+
+swagger: '2.0'
+
+info:
+  version: "8.40.3"
+  title: "Command Centre REST API:  Alarms and Events"
+  description: |
+    This document describes how you can use the Command Centre REST API to download, monitor, and
+    create events, and monitor and manage alarms.
+
+    It has companion documents describing the APIs for [Cardholders](cardholders.html) and
+    [non-cardholder items](rest.html).
+
+    See the [events section](#tag-Events) for examples of how to create events, download events,
+    search for events using various criteria, and receive new events as they arrive.
+
+    See the [alarms section](#tag-Alarms) for the methods you can use to download all
+    current alarms, receive notifications as they change state, and manage them.  These
+    methods offer similar alarm-management functions to those in the Premier and Command
+    Centre clients.
+
+    Helper methods allow you to look up Command Centre's internal identifiers for
+    cardholders, divisions, and other items, so that you can use those identifiers in
+    search filters.
+
+    ### Licensing
+
+    All of the GETs in this document and the POSTs that manage alarms require the RESTEvents
+    licence.  The POST to create a new event requires RESTCreateEvents.
+
+    ### Alarms and events API changes in 8.40
+
+    The body of this document clearly indicates the 8.40 features so that readers with older
+    versions of Command Centre know not to use them.
+
+    - Operator add, modify, and delete events contain a link to the affected item.
+
+    - The [item search](#operation--api-items-get) can now filter multiple item types.
+
+    - Events now show their origin when they have arrived from a remote server (in a multiserver
+      environment).
+
+    ### Alarms and events API changes in 8.30
+
+    - The [items API](#tag-Items) has methods that let you monitor the status of large numbers of
+      items.
+
+    - Doors related to guard tour events now appear in an event's `door` block.
+
+    ### Alarms and events API changes in 8.20
+
+    - Alarms and events with a related cardholder now show the cardholder's current first and last
+      name in separate fields.
+
+    - The `name` field on an alarm or event with a related cardholder is now the cardholder's name
+      at the time of the event, rather than at the time of the request.
+
+    - You can use the 'fields' parameter to add the 'details' field to an event summary.
+
+    ### Alarms and events API changes in 8.10
+
+    - [Incoming events](#operation--api-events-post)
+    - Events now show their related [access groups and doors](#definition-EventSummary)
+      for external event types.
+
+schemes:
+  - https
+produces:
+  - application/json
+consumes:
+  - application/json
+
+tags:
+- name: Alarms
+  description: |
+
+    Use these methods to download, monitor, and manage Command Centre alarms.
+
+    ### Use cases
+
+    #### Downloading and managing unprocessed alarms
+    1. `GET /api`
+    2. Follow the link at `features.alarms.alarms`.  You will receive up to 100 alarms,
+       each containing links to its management functions.
+    3. If step 2 returned results and there is a link at `next.href`, follow it and
+       repeat.
+
+    #### Staying up to date
+    After getting all the current alarms using the process above, follow the link at
+    `updates.href`.  It will block until there is a new alarm or a change to an
+    existing alarm.
+
+- name: Events
+  description: |
+    Use the GET methods in this API for historical searches or to stay up to date with new events as
+    they occur.  Use the POST method (added in version 8.10) to create events of your own.
+
+    There are no PATCH actions on events, because they are immutable.  If an event is also an alarm
+    it carries some changeable state and a log of activity and comments, but the underlying event
+    never changes.
+
+    ### Use cases
+
+    #### Downloading the entire event database
+    1. `GET /api`
+    2. Follow the link at `features.events.events.href`.
+    3. Process the events you receive in that call.
+    4. If there were results, follow the link at `next.href` and repeat.
+
+    If you then wish to stay up to date, switch to following the link at `updates.href` in
+    the results.
+
+    #### Downloading the most recent events
+    1. `Get /api`
+    2. Take the link at `features.events.events.href` and append `previous=true&top=20`.  Add the
+       appropriate query separator '?' or '&' first, depending on whether there is a query parameter
+       in the URL already, and change the 20 as appropriate.  The default is 1000, which is probably
+       more than you want.
+    3. Process the events you receive in that call.
+    4. Follow the link at `previous.href` to get earlier events, or `next.href` or `updates.href`
+       for later events.  The latter is a long poll, which means that if no events are ready when
+       you make the call it will block until new events arrive.
+
+    #### Receiving new events as they occur
+    1. `GET /api`
+    2. Follow the link at `features.events.updates.href`.  That will block until an event occurs.
+    3. Process the events you receive in that call.  Often there is only one - the first that
+    arrived after you made the call.
+
+    4. Keep following the link at `updates.href` in the results.  It will return immediately if
+    there are new events waiting, or it will block until new events arrive.  Sleep a little between
+    each call to reduce chatter.
+
+    #### Searching for events related to particular cardholders
+    1. `GET /api`
+
+    2. Follow the link at `features.items.items.href`, adding `name="your_cardholder_name"&type=1`
+       to the query after the appropriate separator ('?' or '&').
+
+       The 'items' controller necessary for that step is available with the RESTEvents licence.  If
+       you also have the RESTCardholders licence you could use the link at
+       `features.cardholders.cardholders.href` instead, adding a separator and
+       `name="your_cardholder_name"`.
+
+       In either case, remove the quotes if you want a substring search and can handle more than
+       one cardholder in the results.
+
+    1. Extract the item ID of your cardholder or cardholders from that page, repeating as
+       necessary for additional cardholders.
+
+    1. Follow the link on the `/api` page at `features.events.events.href` appending the separator
+       and `cardholder=XX` or `cardholder=XX,YY,ZZ` with the cardholders' IDs.
+
+    To further improve the efficiency of your search, filter by event types and a time
+    range.
+
+    #### Searching for events coming from other items
+
+    Events such as 'access granted' and 'zone count maximum' come from doors and access zones.  To
+    search for them, follow the same process as the previous use case but use the `source` filter
+    parameter instead of `cardholder`.  If you have the RESTStatus licence (added in v8.00), you can
+    use [that API](rest.html) to search for access zones, alarm zones, fence zones, macros, outputs,
+    doors, and (in 8.10) inputs.  If you do not, or if your source is not one of those types, use
+    the [items API](#tag-Items) with a suitable `type` filter.
+
+    #### Reporting on events over a period.
+
+    1. `GET /api`
+
+    2. Follow the link at `features.events.updates.href` appending
+       `after=2017-01-01Z&before=2017-02-01Z`, or whatever timestamps are appropriate.
+
+    Remember that some remote systems take their time sending events to Command Centre, so
+    do not be too hasty running your reports.  If you fire them off at the stroke of
+    midnight, you may miss events that occurred before midnight but have not yet arrived
+    at Command Centre.
+
+    #### Creating a new event
+
+    1. `GET /api`
+    2. POST to the link at `features.events.events.href`.
+
+    There are some rules around creating events, so you should first have a careful read of the
+    [POST documentation](#operation--api-events-post).
+
+    ### Licensing
+
+    * The GETs that collect alarms and events require the RESTEvents licence.
+
+    * The POST that creates events requires RESTCreateEvents.
+
+    * The GET to collect event types requires RESTEvents or RESTCreateEvents.
+
+    ### Efficiency tips
+
+    * Use search parameters to reduce the filtering burden on the server.
+
+    * When downloading a significant number of events, leave `top` at 1000 or more,
+      provided your client can handle results over a megabyte (events are
+      around 1 KB each).  Performance tests have shown that throughput decreases
+      dramatically if `top` is too low.
+
+    * If you have reached the head of the event queue and are using the `updates` link to keep up to
+      date, set `deadline` high and sleep between calls for as long as your requirements allow.
+      Doing the first will reduce unnecessary chatter between you and Command Centre when nothing is
+      happening, and the second will improve the likelihood of your collecting more than one event
+      when it is busy.<br>For example, if Command Centre is generating two events per second and you
+      do not sleep between REST calls, you will be calling `updates` twice per second for one event
+      each time.  However if you sleep for ten seconds after each call you will receive 20 events at
+      a time, saving CPU and I/O.
+
+- name: Divisions
+  description: |
+    These methods provide access to the Command Centre divisions that are available to the REST
+    client.  Call `/api` and use the link at `features.{your_feature}.divisions.href` to retrieve
+    the divisions in which the REST operator has privileges for that feature, alarms or events.
+    Pick out the ones of interest and use those IDs in event, alarm, or item searches to make them
+    more efficient.
+
+    ### Licensing
+
+    Every REST licence enables the divisions controller:  RESTEvents, RESTCreateEvents, RESTCardholders,
+    RESTStatus, and RESTOverrides.
+
+- name: Items
+  description: |
+
+    These methods let you find items for your search filters and events, and monitor their states.
+    They return all items, including those that this API does not yet support in depth, and items
+    added by customisations.  However because they do not have deep knowledge of item types they can
+    only give you the most basic fields.
+
+    ### Searching for items
+
+    Use the search methods when you are building a filter for an [event
+    search](#operation--api-events-get) and need the ID of an item or an item type, or when you are
+    [creating an event](#operation--api-events-post) and need an href to use as the event source.
+
+    To find an item, pass a substring of its name to the link at `features.items.items.href` in the
+    results of a call to `/api`.  If you are sure of its name, place the name inside `"` quotes, and
+    it will use a full (though case-insensitive) string match.
+
+    To limit the search to items of a particular type, first get the ID of the type you
+    are after using the link at `features.items.itemTypes.href` in the results of `/api`.
+    Add that ID as the `type` parameter to the call above.  You can specify multiple item
+    types if, for example, you are interested in all the different kinds of doors.
+
+    For example, if you were after a list of divisions, following the instructions above on the
+    current versions of Command Centre would produce the URL `/api/items?type=15`.
+
+    ### Status subscriptions
+
+    If you have CC version 8.30 or later, you can use the status subscription methods to monitor a
+    collection of items.  The [item-specific APIs](rest.html) also return the state of items but
+    only one at a time, and are therefore not suitable for monitoring large collections.  We have
+    tested subscriptions of up to 1000 items, and while these calls do not impose an upper bound on
+    that we suggest keeping a watchful eye on the performance of the overall system if you go much
+    higher.
+
+    The basic operations for monitoring item states is:
+
+      1.  Get all the IDs of the items you wish to monitor.  You can do that using this API's own
+      [search](#operation--api-items-get) with a `name`, `division`, or `type` parameter.  If you're
+      searching by division you'll need a division ID which (slighly recursively) is best found by
+      using the same search function filtering for just divisions.  If you're searching by type
+      you'll need a [type ID](#operation--api-items-types-get).
+
+      1.  [POST](#operation--api-items-updates-post) to create a subscription.  Your program should
+      get the URL from `GET /api`.
+
+      1.  Take the current state of your items from the results of that call.  If that's all you
+      need, terrific.
+
+      1.  But if you want to monitor their state, [GET](#operation--api-items-updates-get) a link
+      that came in the results of the POST.  The call will block until something changes state.  The
+      results are in the same format as the results of the POST.
+
+      1.  Loop.
+
+    ### Licensing
+
+    Every REST licence enables the items controller:  RESTEvents, RESTCreateEvents, RESTCardholders,
+    RESTStatus, and RESTOverrides.
+
+securityDefinitions:
+  "API key":
+    type: apiKey
+    name: Authorization
+    in: header
+    description: |
+      Clients authenticate by including a pre-shared API key in the `Authorization` header of each
+      request.  Command Centre generates an API key when you create an endpoint for your clients to
+      connect to.  Search the Configuration Client online help for 'REST API' for how do do that.
+
+      The API key will be in the format `xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx` and should be in
+      the header following an authorisation method of `GGL-API-KEY`.  Both should be in upper case.
+      For example:
+
+      `Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB`
+
+      Depending on Command Centre's site configuration, its REST API may also require a client
+      certificate with each request.  Command Centre must have the thumbprint of the client's
+      certificate in order to 'pin' it. See the Configuration Client help for instructions on where
+      to enter the thumbprint.
+
+      Also note that if IP filtering is enabled on the REST Client item in Command Centre,
+      the API will only accept connections from specific IP address ranges.
+
+      If a connection attempt fails, Command Centre will raise an event indicating its
+      reason for refusing the request.
+
+x-spectacle-topics:
+  HATEOAS:
+    description: |
+      This is a self-referencing REST API that follows the principles of HATEOAS.  Other than the
+      initial `GET` to `/api` when it first connects, your source code should not contain any URLs,
+      as they are subject to change.  You should append the query parameters this document describes
+      for operations such as filtering and searching, but everying in the path should come from the
+      results of `/api` or pages linked from it.
+
+      Be prepared to append query parameters to URLs that already have their own:  do not assume
+      that you can simply add a question mark and your parameters.
+
+security:
+  - "API key": []
+
+######################################################################
+parameters:
+  fields:
+    name: fields
+    in: query
+    type: string
+    required: false
+    enum: [ defaults, details, cardholder.pdf_* ]
+    description: |
+      Allows you to add one Personal Data Field and/or (in 8.20 and later) the 'details' field to
+      the result for each event.
+
+      Whether you ask for a PDF value, the details field, or both, the parameter must start with
+      `fields=defaults`.
+
+      If you wish to include the details field add `,details`.
+
+      If you wish to include a PDF in your results add `,cardholder.pdf_XXXX`, where XXXX is the ID
+      of the PDF.  Find that ID with a query to the [items controller](#operation--api-items-get)
+      with either `name=your_pdf_name` or `type=33`.  33 is, for the moment, the ID of the PDF item
+      type.  You can confirm _that_ by searching the [item types](#operation--api-items-types-get)
+      for 'Personal Data Field'.
+
+      The PDF will only appear on events that have a related cardholder, such as access events, and
+      only if your REST operator has the appropriate privileges on that cardholder and PDF.
+
+paths:
+
+######################################################################
+
+  /api/alarms:
+    get:
+      tags:
+        - Alarms
+      summary: Get current alarms
+      description: |
+        This returns the current list of unprocessed alarms.  The result will contain no more
+        than 100 alarms; you should follow the `next` link, if it is present, to collect
+        more.
+
+        You can tell when you have loaded all the current alarms because there will not be
+        a `next` link.  Instead, there will be an `updates` link, which you may then
+        follow to long-poll for live updates to alarms.
+
+        The alarm summary only contains unprocessed alarms, but you can still access
+        processed alarms by finding them in the [event summary](#definition-EventSummary)
+        and following its `alarm.href` link to the alarm details.
+
+        Do not code this URL into your application.  Take it from `alarms.alarms.href` in the
+        results of `GET /api`.
+
+      security:
+      - "API key": []
+      responses:
+        200:
+          description: Success
+          schema: {$ref: '#/definitions/Alarms'}
+        403:
+          description: The site does not have a RESTEvents licence.
+
+  /api/alarms/updates:
+    get:
+      tags:
+        - Alarms
+      summary: Get changes to alarms (or wait)
+      description: |
+        Long poll this link for live updates to alarms.  You *must* *not* bookmark or generate this
+        link.  You should only use this call after following it from the `/api/alarms` response, as
+        it uses unspecified query parameters to track state.
+
+        This request should always complete succesfully. If there are no alarm updates, the server
+        will return a valid response containing an empty `updates` array. The client should simply
+        follow the `next` link in the poll responses forever.
+
+        Command Centre does not tell you which alarms were added, removed, or modified. It is up to
+        you to match the incoming alarms against your own internal alarm list and determine the
+        differences.
+
+        Do not code this URL into your application.  Take it from `alarms.updates.href` in the
+        results of `GET /api`, or from `updates` in the results of `GET /api/alarms`.
+
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/AlarmUpdates'
+        403:
+          description: The site does not have a RESTEvents licence.
+
+  /api/alarms/{id}:
+    get:
+      tags:
+        - Alarms
+      summary: Get details of an alarm
+      description: Full details for an alarm. Follow the `href` in the alarm summary to get here.
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the alarm.
+      responses: 
+        200: 
+          description: "Success"
+          schema: { $ref: '#/definitions/AlarmDetail' }
+        404: { description: "The alarm ID is invalid or you do not have privileges for the alarm." }
+
+  /api/alarms/{id}/view:
+    post:
+      summary: Mark an alarm as viewed
+      description: Mark the alarm as viewed.  Follow the `view` link in the alarm summary to get here.
+      tags:
+        - Alarms
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the alarm.
+      - name: body
+        description: Optional comment.
+        in: body
+        required: false
+        schema: { $ref: '#/definitions/AlarmUpdateRequest' }
+      responses: 
+        200: { description: "Success" }
+        404: { description: "Alarm ID is invalid or you do not have privileges for the alarm." }
+
+  /api/alarms/{id}/comment:
+    post:
+      summary: Add a comment to an alarm
+      description: Follow the `comment` link in the alarm summary to get here.
+      tags:
+        - Alarms
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the alarm.
+      - name: body
+        description: The comment string.
+        in: body
+        required: true
+        schema: { $ref: '#/definitions/AlarmUpdateRequest' }
+      responses: 
+        200: { description: "Success" }
+        404: { description: "Alarm ID is invalid or you do not have privileges for the alarm." }
+
+  /api/alarms/{id}/acknowledge:
+    post:
+      summary: Mark an alarm as acknowledged
+      description: Follow the `acknowledgeWithComment` or the `acknowledge` link in the alarm summary to get here.
+      tags:
+        - Alarms
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the alarm.
+      - name: body
+        description: Optional comment.
+        in: body
+        required: false
+        schema: { $ref: '#/definitions/AlarmUpdateRequest' }
+      responses: 
+        200: { description: "Success" }
+        404: { description: "Alarm ID is invalid or you do not have privileges for the alarm." }
+
+  /api/alarms/{id}/process:
+    post:
+      summary: Mark an alarm as processed
+      description: Follow the `processWithComment` or the `process` link in the alarm summary to get here
+      tags:
+        - Alarms
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: number
+        description: The ID of the alarm.
+      - name: body
+        description: Optional comment.
+        in: body
+        required: false
+        schema: { $ref: '#/definitions/AlarmUpdateRequest' }
+      responses: 
+        200: { description: "Success" }
+        404: { description: "Alarm ID is invalid or you do not have privileges for the alarm." }
+
+#######################################################################
+
+  /api/events:
+    post:
+      tags:
+      - Events
+      summary: Add an event
+      description: |
+        Use this method to create an event in Command Centre v8.10 or later.
+
+        Do not code this URL into your application.  Take it from `events.events.href` in the
+        results of `GET /api`.
+
+        Each field has particular rules and has its own effects on the event and subsequent reports,
+        and misconfiguration (such as inadvertently causing a macro to run itself) can land you in
+        real trouble, so have a good look at the documentation below and the example [POST
+        body](#definition-Event-POST-body).
+
+        Events are immutable:  you cannot PATCH them after you create them.
+
+        #### Usable event types
+
+        You must supply an [event type](#operation--api-events-groups-get).  8.10 ships with 30
+        external event types you can use, each in its own event type group.
+
+        You can create 970 of your own event types using the External Event Type Configuration
+        Utility, a separate Windows application that lets you create external event types and make
+        them appear on items' Event Response and Alarm Instructions tabs in the Configuration
+        Client.  You will find the release note for that utility in the Documentation folder on the
+        installation media.
+
+        1000 event types sounds like a lot, but be aware that you cannot delete event types, or
+        modify anything about them except their names after you create them.  Their event type group
+        and item types are permanent once you save them from the utility.  Please plan carefully.
+
+        #### Action plans
+
+        An event can fire an action plan, which will
+        * set the priority if the REST client did not set one in the body of the POST, and
+        * run a macro on the server.
+
+        Macros are extremely powerful, and a thorough treatment requires more room than we have, so
+        it is sufficient to say that you should not aim for a dramatic first test.  A good first
+        result is to turn on a virtual output made for the purpose.  Just make sure that it will not
+        trigger another macro because it is possible to create loops, causing havoc.
+
+        You do not pick an action plan to run when you POST your event.  Command Centre does that in
+        three steps:
+
+          1. The server looks at the configuration of the source item.  The relevant entries appear
+             in the Event Response tab of the item's property page in the Configuration Client.  If
+             there is an entry for the event type's _group_ that is not "use default", Command
+             Centre will fire that action plan and skip the next steps.
+          2. The server looks at the configuration of the source item's alarm zone.  That is in the
+             Event Defaults tab of the alarm zone's property page in the Configuration Client.
+             Again the control is per event group, not per event type.  If the event group's action
+             plan is not 'use default' the server fires it and goes no further.
+          3. The server looks at the configuration in the Event Defaults tab of the server
+             properties.  Again, control is per event group.  There is always an action plan there,
+             even if it does nothing more than set the priority of the event.
+
+        Once it has found the action plan to run, the server will assign the event its priority (if
+        you did not specify a priority yourself) and run the macro.  These are on the Command Centre
+        tab of the action plan's property page in the Configuration Client.  The server will not use
+        the configuration from the other tabs.
+
+        It is not possible to submit an event with priority zero, but it is possible to submit an
+        event with no priority, and have the action plan assign it priority zero.  This will run the
+        macro on the action plan then drop the event before it reaches the database.
+
+        #### Alarm instructions
+
+        Alarm instructions are marked-up text fields that Command Centre presents to security
+        personnel when events occur.  Picking an alarm instruction to use follows the same decision
+        path as picking an action plan:  Command Centre looks at the configuration of the source
+        item first, and finding nothing there will turn to the source item's alarm zone, and finally
+        to the server properties.  If all three are unset the operator will not receive any special
+        instructions.
+
+        So, what an operator sees when your event arrives on their board depends on the priority and
+        the event source.
+
+        #### When events become alarms
+
+        After the server has established an event's priority, either from the body you POSTed or the
+        action plan, it looks at the Event Priorities tab of the server properties.  There is a
+        slider there that sets the level above which an event becomes an alarm.  By default it is
+        set to two, meaning that any event with a priority of two or higher will appear as an alarm.
+
+      parameters:
+      - name: "not rendered"
+        in: body
+        required: true
+        schema: {$ref: '#/definitions/Event POST body'}
+        description: |
+          You can specify many things on an event but the only mandatory field is the type.  When
+          you are developing, start with just that.
+      responses:
+        201:
+          description: "Success."
+          headers:
+            location:
+              type: string
+              format: url
+              description: The href of the new event.
+        204:
+          description: "Success with no event created, probably because the priority in the action plan was zero."
+        400:
+          description: |
+            The parameters are invalid.  Check the body for an error message.
+        403:
+          description: |
+            The site does not have the RESTCreateEvents licence (in which case the body of the
+            response will say so) or operator does not have the 'Create Events and Alarms'
+            privilege.
+
+    get:
+      tags:
+      - Events
+      summary: Search events
+      description: |
+        This returns the next batch of events matching the supplied filters starting
+        at the beginning of the database, or at the time specified by the
+        `after` parameter.
+
+        By default the result will contain no more than 1000 events; for
+        efficient transfer of large numbers of events you should increase this
+        with the `top` parameter in the request URL.
+
+        Each response will contain a `next` and an `updates` link.  Following
+        the `next` link will return the next batch of events, or an empty list
+        if there are no more available.  Following the `updates` link will also
+        return immediately if more events are available, but if there are none,
+        it becomes a long poll.  It will will block until an event is available
+        that matches the specified filters, or a timeout passes.
+
+        Do not code this URL into your application.  Take it from `events.events.href` in the
+        results of `GET /api`.
+
+      parameters:
+      - name: "top"
+        in: query
+        required: false
+        type: integer
+        minimum: 1
+        maximum: 10000
+        default: 1000
+        description: The maximum number of events to return per page.
+      - name: "after"
+        in: query
+        required: false
+        type: string
+        format: date-time
+        description: |
+          An ISO-8601 date or date-time string that restricts events to those that occurred at or
+          after this time.
+      - name: "before"
+        in: query
+        required: false
+        type: string
+        format: date-time
+        description: |
+          An ISO-8601 date or date-time string that restricts events to those that occurred before
+          this time.  Events that occurred at this exact time (to the second) will not appear in the
+          results.  For example, to collect all events that occurred on 1 January 2017, use
+          `after=2017-01-01Z,before=2017-01-02Z`.  You will not receive any events from 2 January.
+      - name: "source"
+        in: query
+        required: false
+        type: string
+
+        description: |
+          Restricts events to those whose source item has this ID.  Separate multiple IDs with
+          commas.  Use the [items API](#tag-Items) to search Command Centre's items.
+      - name: "type"
+        in: query
+        required: false
+        type: string
+        description: Restricts events to those whose type has this ID.  Separate multiple IDs with commas.  Use the [event groups call](#operation--api-events-groups-get) to see all event types and groups.
+      - name: "group"
+        in: query
+        required: false
+        type: string
+        description: Restricts events to those with this event group ID.  Separate multiple IDs with commas.  Use the [event groups call](#operation--api-events-groups-get) to see all event types and groups.
+      - name: "cardholder"
+        in: query
+        required: false
+        type: string
+        description: "Restricts events to those associated with the cardholder that has this Command Centre ID.  Separate multiple IDs with commas.\n\nExample:  `cardholder=325`"
+      - name: "division"
+        in: query
+        required: false
+        type: string
+        description: "Restricts events to those in this division (including its child divisions).  Separate multiple IDs with commas.\n\nExample:  `division=2,101`\n\nA more secure option is to set the operator's privileges so that it only has access to those divisions."
+      - $ref: "#/parameters/fields"
+      - name: "previous"
+        in: query
+        required: false
+        type: boolean
+        default: false
+        description: |
+          Without this option, the API will return events starting from the epoch.  If you set this
+          to `true`, it will return the most recent events, the last of which will be the latest to
+          arrive at the server.
+
+          In both cases you can move backward and forward in arrival time with the 'next' and
+          'previous' links.
+      - name: "pos"
+        in: query
+        required: false
+        type: integer
+        minimum: 0
+        description: |
+          Restricts events to those with event IDs greater than this parameter (or less than and
+          including, if you set `previous=true`).
+
+          DEPRECATED.  Retain the `next` link in your application instead.
+
+      responses:
+        200:
+          description: Success
+          schema: { $ref: '#/definitions/Events' }
+        403:
+          description: The site does not have a RESTEvents licence.
+
+  /api/events/updates:
+    get:
+      tags:
+      - Events
+      summary: Get new events (or wait)
+      description: |
+        Poll this link to receive events that match the specified filters.  If there are none ready,
+        the call will block until one arrives or a deadline passes.
+
+        Each response will contain a `next` and an `updates` link, already described.
+
+        Do not code this URL into your application.  Take it from `events.updates.href` in the
+        results of `GET /api`, or from `updates` in the results of `GET /api/events`.
+
+      parameters:
+      - name: "top"
+        in: query
+        required: false
+        type: integer
+        minimum: 1
+        maximum: 10000
+        description: The maximum number of events to return per page.
+      - name: "deadline"
+        in: query
+        required: false
+        type: integer
+        minimum: 1
+        maximum: 86400
+        description: |
+          The number of seconds to wait for an event, if none are ready when you make the call.  If
+          none arrive during that time, the result set will be empty. If not specified, a default
+          will apply.
+      - name: "after"
+        in: query
+        required: false
+        type: string
+        format: date-time
+        description: |
+          An ISO-8601 date or date-time string.  Restricts events to those that occurred at or after
+          this time.  Because 'updates' links carry their own bookmark, it is unusual to use this
+          parameter in an 'updates' call.
+      - name: "before"
+        in: query
+        required: false
+        type: string
+        format: date-time
+        description: |
+          An ISO-8601 date or date-time string.  Restricts events to those that occurred before this
+          time.  If no events arrive with an occurrence time earlier than this parameter, the call
+          will time out.
+      - name: "source"
+        in: query
+        required: false
+        type: string
+        description: Restricts events to those whose source item has this ID.  Separate multiple IDs with commas.  Use `/api/items` to search Command Centre's items.
+      - name: "type"
+        in: query
+        required: false
+        type: string
+        description: Restricts events to those with this event type ID.  Separate multiple IDs with commas.  Use `/api/events/groups` to see all of Command Centre's event types and groups.
+      - name: "group"
+        in: query
+        required: false
+        type: string
+        description: Restricts events to those with this event group ID.  Separate multiple IDs with commas.  Use `/api/events/groups` to see all of Command Centre's event types and groups.
+      - name: "cardholder"
+        in: query
+        required: false
+        type: string
+        description: "Restricts events to those associated with the cardholder with this Command Centre ID.  Separate multiple IDs with commas.\n\nExample:  `cardholder=325`"
+      - $ref: "#/parameters/fields"
+      - name: "division"
+        in: query
+        required: false
+        type: string
+        description: "Restricts events to those in the division with this ID and its decendent divisions.  Separate multiple IDs with commas.\n\nExample:  `division=2,101`"
+      - name: "pos"
+        in: query
+        required: false
+        type: integer
+        minimum: 0
+        description: |
+          Restricts events to those with event IDs greater than this parameter.  DEPRECATED.  This
+          is how Command Centre tracks the events you have seen already, but you should not set it
+          yourself.
+      responses:
+        200:
+          description: Success
+          schema: { $ref: '#/definitions/Events' }
+        403:
+          description: The site does not have a RESTEvents licence.
+
+  /api/events/{id}:
+    get:
+      tags:
+      - Events
+      summary: Get details of an event
+      description: Full details for an event. Follow the `href` in the event summary to get here.
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the event.
+      responses: 
+        200: 
+          description: "Success"
+          schema: { $ref: '#/definitions/EventDetail' }
+        403: { description: The site does not have a RESTEvents licence. }
+        404: { description: "Event ID is invalid or you do not have privileges for the event." }
+
+  /api/events/groups:
+    get:
+      tags:
+      - Events
+      summary: List event types
+      description: |
+        Retrieves the list of event type groups and the event types within those groups. Useful for
+        obtaining IDs to use in event filters.  There are about 1000 event types, divided into
+        about 150 groups.  Each event type is in one group.
+
+        Event type identifiers do not often change between Command Centre versions, but group
+        assignments do.  Therefore if you choose to use type groups in event filters we advise using
+        this function at run-time rather than at build-time.  If you hard-code a group ID into your
+        application you run the risk of event filters not later versions.
+
+        Do not code this URL into your application.  Take it from `events.eventGroups.href` in the
+        results of `GET /api`.
+
+      responses:
+        200:
+          description: Success
+          schema: { $ref: '#/definitions/EventGroups' }
+        403: { description: The site does not have a RESTEvents licence. }
+
+######################################################################
+
+  /api/divisions/view_events:
+    get:
+      tags:
+      - Divisions
+      summary: List divisions searchable for events
+      description: |
+        Retrieves the list of divisions in which the REST operator has privileges to view events.
+        This does not check whether you have the RESTEvents licence.
+
+        `/api/divisions/view_alarms` and other methods inside `/api/divisions/` retrieve
+        the divisions in which the operator can perform other functions.  They return the
+        same data structure, so this documentation will only cover it once.
+
+        Do not code this URL into your application.  Take it from `events.divisions.href` in the
+        results of `GET /api`.
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/DivisionsResult'
+        403: { description: The site does not have a REST licence. }
+
+  /api/divisions/{id}:
+    get:
+      tags:
+      - Divisions
+      summary: Get the details of a division.
+      description: Details of a division.  Follow the `href` in a division summary to get here.
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the division.
+      responses: 
+        200: 
+          description: "Success"
+          schema: { $ref: '#/definitions/Division' }
+        403: { description: The site does not have a REST licence. }
+        404: { description: "Division ID is invalid or you do not have privileges to read divisions (View Site, Configure Site, or Advanced User)." }
+
+######################################################################
+
+  /api/items:
+    get:
+      tags:
+      - Items
+      summary: Search items
+      description: |
+        This returns a batch of items matching the applied filters. By default, each page will
+        contain up to 1000 items although this can be changed by setting the `top`
+        parameter in the request URL.
+
+        You will only receive items for which the REST operator has the necessary
+        privilege.  To view PDFs, for example, the operator must have View Personal Data
+        Definitions.
+
+        If more items are available, the response will contain a `next` link. Following
+        that will return the next batch of items.
+
+        Items will be in ID order unless you change it with `sort`.
+
+        Do not code this URL into your application.  Take it from `items.items.href` in the results
+        of `GET /api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - name: "division"
+        in: query
+        required: false
+        type: string
+        description: Only return items that are in these divisions, specified by their alphanumeric IDs. Separate multiple IDs with commas.
+      - name: "type"
+        in: query
+        required: false
+        type: string
+        description: |
+          Only return items that are of a type with this ID.  In versions up to 8.30 you could only
+          specify one, but in 8.40 and later this can be a comma-separated list.
+      - name: "top"
+        in: query
+        required: false
+        description: The maximum number of items to return per page.
+        type: integer
+        minimum: 1
+        default: 100
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      responses:
+        200:
+          description: Success
+          schema: { $ref: '#/definitions/Items' }
+        403: { description: The site does not have a REST licence. }
+
+  /api/items/types:
+    get:
+      tags:
+      - Items
+      summary: List item types
+      description: |
+        Retrieves the list of all item types in the Command Centre system.  There are about 200.
+        This is useful for obtaining type IDs to use in item search filters.
+
+        Note that some item types have a blank name.  These types are vestigial - disregard them.
+
+        Do not code this URL into your application.  Take it from `items.itemTypes.href` in the
+        results of `GET /api`.
+
+      responses:
+        200:
+          description: Success
+          schema: { $ref: '#/definitions/ItemTypes' }
+        403: { description: The site does not have a REST licence. }
+
+  /api/items/updates:
+    post:
+      tags: [Items]
+      summary: Subscribe to status updates
+      description: |
+        Creates a subscription to status changes.  You POST a list of item IDs and the server
+        returns the current state of those items plus a link.  When you GET that link some time
+        later the server will return the items that changed state between the two calls.
+
+        If you do not GET the link within thirty seconds of the POST returning the server will drop
+        your subscription.  This makes it quite a good way to collect the status of a lot of items
+        in one call.
+
+        Your operator must have view privileges on every item in the subscription.
+
+      parameters:
+        - name: "name not rendered for body params"
+          in: body
+          description: |
+            The body of the POST needs to contain a list of item IDs in an array called `itemIds`.
+            Even though they look like small integers, these IDs are actually strings so don't
+            forget the quotes.
+
+          schema: {$ref: "#/definitions/ItemUpdateSubscription"}
+
+          example: { "itemIds": ["508", "526"] }
+
+      responses:
+        200:
+          description: Success
+          schema: { $ref: '#/definitions/ItemUpdate' }
+
+          example: {
+            "updates": [
+              {
+                "id": "508",
+                "status": "Controller offline. 62 message(s) pending.",
+                "statusText": "Controller offline.\n62 message(s) pending.",
+                "statusFlags": [ "controllerOffline" ]
+              }, {
+                "id": "526",
+                "status": "Disarmed.",
+                "statusText": "Disarmed.",
+                "statusFlags": [ "disarmed" ]
+              }
+            ],
+            "next": {
+                "href": "https://localhost:8904/api/items/updates?bookmark=3ec613a1-de01c6e_0"
+            }
+          }
+
+        401: { description: The operator does not have privilege to view the monitored items. }
+        403: { description: The site does not have a REST licence. }
+
+    get:
+      tags: [Items]
+      summary: Retrieve status updates
+      description: |
+        Collects status updates from a subscription created using the [/api/items/updates
+        POST](#operation--api-items-updates-post).
+
+        This is a long poll, so if there are no updates waiting when you make the call it will block
+        until some arrive or a timeout passes (about 50 seconds).
+
+        If you receive a 404 from this call it means that either too long has passed since the
+        server sent the link, or the server has restarted.  You will need to create a new
+        subscription with a fresh POST.
+
+        Therefore your loop can be:
+
+        1. create a subscription with a POST
+        2. process the statuses in the results, if there are any
+        3. wait a second or two to avoid tight loops
+        4. GET the link from the results
+        5. if 404, go to 1
+        6. go to 2.
+
+        ...plus the necessary exception handling, of course.
+
+      parameters:
+        - name: "bookmark"
+          in: query
+          required: true
+          type: string
+          description: |
+            The identifier of your subscription plus a marker for your progress though it.  You do
+            not need to set this parameter:  it will be in the link that the server sends back to
+            you.
+
+      responses:
+        200:
+          description: Success
+          schema: { $ref: '#/definitions/ItemUpdate' }
+          example: {
+            "updates": [
+              {
+                "id": "508",
+                "status": "Controller offline. 62 message(s) pending.",
+                "statusText": "Controller offline.\n62 message(s) pending.",
+                "statusFlags": [ "controllerOffline" ]
+              }, {
+                "id": "526",
+                "status": "Disarmed.",
+                "statusText": "Disarmed.",
+                "statusFlags": [ "disarmed" ]
+              }
+            ],
+            "next": {
+                "href": "https://localhost:8904/api/items/updates?bookmark=3ec613a1-de01c6e_0"
+            }
+          }
+        404: { description: "The subscription does not exist, which probably means you waited too long between calls." }
+        403: { description: "The site does not have a REST licence." }
+
+####################################################################################################
+####################################################################################################
+definitions:
+
+  Alarms:
+    description: |
+      An array of alarm summaries, and either a 'next' or an 'updates' link you should follow to
+      retrieve more alarms.
+    type: object
+    properties:
+      alarms:
+        type: array
+        description: An array of alarm summaries.
+        items:
+          { $ref: '#/definitions/AlarmSummary' }
+      next:
+        type: object
+        description: The link to the next page of alarms. Missing if you have retrieved all the current alarms.
+        properties:
+          href: { type: string }
+        example:
+          href: "https://localhost:8904/api/alarms/next?start=92143&pos=61320"
+      updates:
+        type: object
+        description: The link to follow to long-poll for alarm changes.  Missing if you have not yet retrieved all the current alarms.
+        properties:
+          href: { type: string }
+        example:
+          href: "https://localhost:8904/api/alarms/updates?id=92143.1"
+
+  AlarmUpdates:
+    type: object
+    properties:
+      updates:
+        type: array
+        description: An array of summaries of alarms created or modified since the previous call.
+        items:
+          { $ref: '#/definitions/AlarmSummary' }
+      next:
+        type: object
+        description: Follow this link to perform another long poll.
+        properties:
+          href:
+            type: string
+            example: "https://localhost:8904/api/alarms/updates?id=10135"
+
+  AlarmSummary:
+    description: "`/api/alarms` returns an array of these, and `/api/alarms/{id}` returns one with more fields."
+    type: object
+    properties:
+      href:
+        type: string
+        format: url
+        description: A link to an AlarmDetail object for this alarm.
+        example: "https://localhost:8904/api/alarms/10135"
+      id:
+        type: string
+        description: An alphanumeric identifier for this alarm, unique to the server.
+        example: "10135"
+      time: 
+        type: string
+        description: The time the alarm occurred.
+        example: "2016-02-18T19:21:52Z"
+      message:
+        type: string
+        description: The alarm's message.
+        example:  "External bulk loading bay door has been forced"
+      source: 
+        type: object
+        description: The ID and href are new to 8.10.
+        properties:
+          id:
+            type: string
+            description: |
+              The alphanumeric ID of the alarm's source item.
+            example: "1321"
+          name:
+            type: string
+            description: The name of the alarm's source item at the time of the event.
+            example: "External bulk loading bay door"
+          href:
+            type: string
+            format: url
+            description: Link to the source item.
+            example: "https://localhost:8904/api/doors/1321"
+      type:
+        type: string
+        description: The Event Group name
+        example: "Door forced"
+      priority:
+        type: integer
+        description: Numeric priority.  9 is critical and 0 is not an event.
+        minimum: 0
+        maximum: 9
+        example: 8
+      state:
+        type: string
+        description: The state of the alarm.  Alarms start at "unacknowledged".
+        enum: [ unacknowledged, acknowledged, processed ]
+        example: "unacknowledged"
+      active: 
+        type: boolean
+        description: Clients cannot process active alarms.
+        example: false
+      division:
+        type: object
+        description: The division entity representing the division of the item. GET the href for full details.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/divisions/2"
+      notePresets:
+        type: array
+        items: 
+          type: string
+        description: Preset alarm notes to use for this specific alarm. Missing if the alarm does not have specific notes; in this case the client should fall back to the server defaults.
+        example:
+          - "False alarm confirmed by surveillance"
+          - "Security staff dispatched"
+      view:
+        type: object
+        description: POST an AlarmUpdateRequest JSON object to the href to indicate the operator has viewed the alarm.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/alarms/92210/view"
+      comment:
+        type: object
+        description: POST an AlarmUpdateRequest JSON object to the href to place an arbitrary alarm note against the alarm.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/alarms/92210/comment"
+      acknowledgeWithComment:
+        type: object
+        description: POST an AlarmUpdateRequest JSON object to the href to acknowledge an alarm and place an alarm note against it.  Missing if the alarm is already acknowledged.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/alarms/92210/acknowledge"
+      acknowledge:
+        type: object
+        description: POST an AlarmUpdateRequest JSON object to the href to acknowledge an alarm. Missing if the system has mandatory alarm notes on for this alarm, or if the alarm is already acknowledged.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/alarms/92210/acknowledge"
+      processWithComment:
+        type: object
+        description: POST an AlarmUpdateRequest JSON object to the href to process an alarm and place an alarm note against it.  Missing if the alarm cannot be processed (if it is active, for example).
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/alarms/92210/process"
+      process:
+        type: object
+        description: POST an AlarmUpdateRequest JSON object to the href to process an alarm. Missing if the system has mandatory alarm notes on for this alarm.  Missing if the alarm cannot be processed (if it is active, for example).
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/alarms/92210/process"
+
+  AlarmDetail:
+    description: |
+      [/api/alarms/{id}](#operation--api-alarms--id--get) returns one of these.  It contains
+      everything from the alarm summary results, plus some extra fields that are too expensive to
+      compute and return for large result sets.
+    allOf:
+
+      - type: object
+        properties:
+          details:
+            type: string
+            description: |
+              The full alarm details text.  This may be up to 2048 UTF-8 characters, each of which
+              could (theoretically) be four bytes long.
+            example: "Door forced"
+          history:
+            type: array
+            description: An array of alarm history entries.  Missing if there is no history.
+            items: { $ref: '#/definitions/AlarmHistoryEntry' }
+          instruction:
+            type: object
+            description: GET this link to retrieve the alarm instruction body inside an HTML document.  Missing if there is no alarm instruction for this alarm.
+            properties:
+              href: { type: string, format: url }
+            example:
+              href: "https://localhost:8904/api/alarms/92210/instructions"
+          cardholder:
+            type: object
+            description: The cardholder entity associated with this alarm. GET the href for full details. Missing if this alarm does not have an associated cardholder.
+            properties:
+              href: { type: string, format: url, example: https://localhost:8904/api/cardholders/325 }
+              name:
+                type: string
+                description: |
+                  In versions up to and including 8.10 this is the current name of the cardholder.
+                  In 8.20 it is the name of the cardholder at the time of the event.
+                example: "Smith, Jane"
+              firstName:
+                type: string
+                description: The current value of the firstName field of this cardholder.  Added in 8.20.
+                example: "Jane"
+              lastName:
+                type: string
+                description: The current value of the lastName field of this cardholder.  Added in 8.20.
+                example: "Smith-Jones"
+      - $ref: "#/definitions/AlarmSummary"
+
+  AlarmHistoryEntry:
+    type: object
+    properties:
+      time:
+        type: string
+        description: The time the history entry was added.
+        example: "2016-02-18T19:21:52Z"
+      action:
+        type: string
+        description: The type of the history entry.
+        enum: [ legacy, comment, acknowledge, process, acknowledgeActive, escalated, viewed ]
+        example: "viewed"
+      comment:
+        type: string
+        description: The added comment, or a textual description of some occurrence related to the alarm.
+        example: "Operator viewed alarm properties"
+      operator:
+        type: object
+        description: The operator that created the history event.
+        example:
+          name: "System Operator"
+
+  AlarmUpdateRequest:
+    type: object
+    properties:
+      comment:
+        type: string
+        description: "Optional for some methods that update alarms.  Contains a comment placed by the operator."
+        example: "Alarm was adequately explained."
+
+  Events:
+    description: "`/api/events` and `/api/events/updates` return this structure."
+
+    type: object
+    properties:
+      events:
+        type: array
+        description: A list of EventSummary events.
+        items: { $ref: "#/definitions/EventSummary" }
+      previous:
+        type: object
+        description: |
+          Follow this link to make a non-blocking call to collect the previous page of events (in
+          order of arrival).  It will return an empty page if no more events are available.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/events/next?previous=True&pos=61320"
+      next:
+        type: object
+        description: |
+          Follow this link to make a non-blocking call to collect the next page of events, moving
+          forward in arrival time.  It will return an empty page if no more events are available.
+
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/events/next?pos=61320"
+
+      updates:
+        type: object
+        description: |
+          This is a link to an [updates](#operation--api-events-updates-get) call.  Follow it to
+          make a blocking call to collect more events.  If there are none, the call will block until
+          one arrives or the call times out.  This link will contain your column select, pagination,
+          and filtering parameters (fields, top, after, before, source, type, etc.) but it drops
+          'deadline'.  You need to add that to each call.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/events/updates?pos=61320"
+
+  EventSummary:
+    type: object
+    description: |
+      `/api/events` and `/api/events/updates` return an array of these, and `/api/events/{id}`
+      returns one with more fields.
+
+      The message and event type in this example indicate an operator attempting to log in with an
+      incorrect password, but for the sake of illustration the example also contains references to
+      items that would never appear on such an event.  The card, cardholder, and access zones, for
+      example.
+
+    properties:
+      href:
+        type: string
+        format: url
+        description: A link to an EventDetail object for this event.
+        example: "https://localhost:8904/api/events/61320"
+      id:
+        type: string
+        description: An alphanumeric identifier for this event, unique to the server.
+        example: "61320"
+      serverDisplayName:
+        type: string
+        description: |
+          The host name of this event's origin server, if it was aggregated from a remote host.
+          Absent for local events.
+
+          Note that this is not the descriptive name of the remote server's item, but the host name
+          used for address resolution.
+
+          New to 8.40.
+        example: "Ruatoria satellite campus"
+      time: 
+        type: string
+        format: date-time
+        description: The time the event occurred.
+        example: "2016-02-18T19:21:52Z"
+      message:
+        type: string
+        description: "The event's message."
+        example: "Operator logon failed for FT Workstation on GNZ-PC1439"
+      occurrences:
+        type: integer
+        description: |
+          If an event arrives with the same essential properties as a previous event, the server
+          will start counting them.  Each is still individually addressable, but the first in the
+          group will also have this property.  It only appears on the first, and it does not appear
+          if the event is a singleton.
+
+          If present on an event's detail or alarm page, there will also be a `lastOccurrenceTime`.
+
+          Outside of the `alarm` block, which contains an alarm's state, this is the only field on
+          an event that can change.
+        minimum: 2
+        example: 2
+      priority:
+        type: integer
+        description: Numeric priority.  9 is critical and 0 is not an event.
+        minimum: 0
+        maximum: 9
+        example: 3
+      alarm:
+        type: object
+        description: |
+          If an event is of a high enough priority to consider it an alarm, this object will contain
+          its state and a link to its details page in the alarms controller.
+
+          Only the first event in a group (see the `occurrences` field) can become an alarm.
+        properties:
+          state:
+            description: Alarms start unacknowledged.  Acknowledging or processing them changes that.
+            type: string
+            enum: [ "unacknowledged", "acknowledged", "processed" ]
+            example: "unacknowledged"
+          href:
+            type: string
+            format: url
+            description: Link to the alarm entity corresponding to the event. GET the href for full alarm details.
+            example: "https://localhost:8904/api/alarms/61320"
+      operator:
+        description: |
+          The href of the operator behind this event, if there is one.  This will appear when an
+          operator has modified an item.  If he or she modified a cardholder or an access group, an
+          href to that item item will appear in another block.  New in v8.00.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            description: Link to the operator who caused this event by editing an item.  New in 8.00.
+            example: "https://localhost:8904/api/cardholders/325"
+
+      source: 
+        type: object
+        description: ID and name of the source of the event, as recorded at the time of the event.
+        properties:
+          id:
+            type: string
+            description: |
+              The alphanumeric ID of the event source item.  Search for events with the same source
+              as this one with `source=321` in the query parameters.
+            example: "321"
+          name:
+            type: string
+            description: This could be different from the current name of the source item.
+            example: "FT Workstation on GNZ-PC1439"
+          href:
+            type: string
+            format: url
+            description: Link to the source item.  New in 8.00.
+            example: "https://localhost:8904/api/items/321"
+      group: 
+        type: object
+        description: |
+          ID and name of the event group this event belongs to.  Do not confuse this with an access
+          group or operator group:  this is the event type group to which the event's type belongs.
+          There are about 150 and you can list them at
+          [/events/groups](#operation--api-events-groups-get).
+        properties:
+          id:
+            type: string
+            description: |
+              The alphanumeric ID of the event group.  Search for events of the same rough category
+              as this one with `type=35` in the query parameters.
+            example: "35"
+          name:
+            type: string
+            description: The name of the event group.
+            example: "Invalid Logon"
+      type: 
+        type: object
+        description: ID and name of the event's type.  There is a long list of them at
+          [/events/groups](#operation--api-events-groups-get).
+        properties:
+          id:
+            type: string
+            description: |
+              The alphanumeric ID of the event type.  Search for events of the same type as this
+              example by putting `type=601` in the query parameters.
+            example: "601"
+          name:
+            type: string
+            description: The name of the event type.
+            example: "Operator logon failed"
+
+      division:
+        type: object
+        description: |
+          ID and href of the event's division (which is the division of the event's source).
+        properties:
+          id:
+            type: string
+            description: |
+              The alphanumeric ID of the source's division.  Search for other events from items in
+              the same division as this example by putting `division=2` in the query parameters.
+            example: "2"
+          href:
+            type: string
+            format: url
+            description: The link to the division entity. GET the href for full details.
+            example: "https://localhost:8904/api/divisions/2"
+
+      cardholder:
+        type: object
+        description: |
+          Summary information about an event's cardholder, if there is one.  This will be the
+          cardholder who badged their card at a door in an access event, or the cardholder an
+          operator modified in an operator event.  Search for other events related to this example's
+          cardholder with `cardholder=325` in the query parameters.
+        properties:
+          href:
+            type: string
+            format: url
+            description: Link to the cardholder entity representing the cardholder of the event. GET the href for full details.
+            example: "https://localhost:8904/api/cardholders/325"
+          id:
+            type: string
+            description: The alphanumeric ID of the cardholder associated with this event.
+            example: "325"
+          name:
+            type: string
+            description: |
+              In versions up to and including 8.10 this is the current name of the cardholder.  In
+              8.20 it is the name of the cardholder at the time of the event.
+            example:  "Bruce, Jennifer"
+          firstName:
+            type: string
+            description: The current value of the firstName field of this cardholder.  Added in 8.20.
+            example: "Jennifer"
+          lastName:
+            type: string
+            description: The current value of the lastName field of this cardholder.  Added in 8.20.
+            example: "Caitlin"
+
+      entryAccessZone:
+        description: |
+          The name and href of the entry access zone related to the event.  In the case of card
+          events, it is the zone into which a cardholder was attempting to gain access.
+        properties:
+          href:
+            type: string
+            format: url
+            description: |
+              Link to the access zone entity representing the entry access zone related to this
+              event.  GET the href for the access zone's full details.  This will be missing if the
+              server lacks the RESTStatus licence, or your operator lacks the necessary privileges
+              (such as 'View Site').
+            example: "https://localhost:8904/api/access_zones/333"
+          name:
+            type: string
+            description: |
+              The current name of the access zone.  Expect a future version of Command Centre to
+              change this to change to the name of the access zone at the time of the event.
+            example:  "Brookwood showroom"
+          id:
+            deprecated: true
+            type: string
+            description: Deprecated.
+            example: "333"
+
+      exitAccessZone:
+        description: |
+          The name and href of the exit access zone related to the event.  In card events, it is the
+          zone from which a cardholder was attempting to leave, if the door had an exit zone
+          configured (many do not).
+        properties:
+          href:
+            type: string
+            format: url
+            description: |
+              Link to the access zone entity representing the exit access zone related to this
+              event.  This will be missing if the server lacks the RESTStatus licence, or your
+              operator lacks the necessary privileges (such as 'View Site').
+            example: "https://localhost:8904/api/access_zones/913"
+          name:
+            type: string
+            description: |
+              The current name of the exit access zone.  Expect a future version of Command Centre
+              to change this to change to the name of the exit access zone at the time of the event.
+            example:  "Compressor room"
+          id:
+            deprecated: true
+            type: string
+            description: Deprecated.
+            example: "913"
+
+      door:
+        description: |
+          The name and href of the door related to the event.  These are not as common as you may
+          think, because when a door is relevant (to card events, for example) it is usually the
+          event's source.  New in 8.10.
+
+        properties:
+          href:
+            type: string
+            format: url
+            description: |
+              Link to the entity representing the door related to this event.  This will be missing
+              if the server lacks the RESTStatus licence or your operator lacks the necessary
+              privileges (such as 'View Site').
+            example: "https://localhost:8904/api/doors/745"
+          name:
+            type: string
+            description: The name the door had when the event occurred.
+            example:  "Main hoist door"
+
+      accessGroup:
+        deprecated: true
+        description: |
+          The href of the access group that a cardholder just gained or lost in a 'Membership
+          Activated' or 'Membership Expired' event.
+
+          DEPRECATED for the events generated when an operator creates, modifies, or deletes an
+          access group, replaced by the 'modifiedItem' field in 8.40.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            description: Link to the access group that this event modified.
+            example: "https://localhost:8904/api/cardholders/352"
+
+      card:
+        description: Details of the card associated with the event.
+        type: object
+        properties:
+          facilityCode:
+            type: string
+            description: |
+              The card's facility code at the time of the event expressed as one letter followed by
+              up to five digits.
+            example: "A12345"
+          number:
+            type: string
+            description: |
+              The card's number at the time of the event.  Despite the name it may not necessarily
+              be an actual number; mobile card numbers are arbitrary strings, for example.
+            example: "78745"
+          issueLevel:
+            type: integer
+            example: 1
+            description: |
+              The issue level of the card at the time.
+
+      modifiedItem:
+        description: |
+          The href and type of the item that an operator created, changed, or deleted, for those
+          kinds of events.
+
+          New in 8.40.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            description: Link to the item that this event modified.
+            example: "https://localhost:8904/api/cardholders/325"
+          type:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "1"
+                description: |
+                  A short alphanum identifying the item's type.
+              name:
+                type: string
+                example: "Cardholder"
+                description: |
+                  A human-readable name of the item's type, suitable for display.
+
+  EventAlarm:
+    type: object
+    description: "Part of the results of an `/api/events` call, containing a summary of an alarm-priority event. GET the contained href for full alarm details."
+    properties:
+      state:
+        description: Alarms start unacknowledged.
+        type: string
+        enum: [ "unacknowledged", "acknowledged", "processed" ]
+        example: "unacknowledged"
+      href:
+        type: string
+        format: url
+        description: Link to the alarm entity corresponding to the event. GET the href for full alarm details.
+        example: "https://localhost:8904/api/alarms/61320"
+
+  EventDetail:
+    description: |
+      [/api/events/{id}](#operation--api-events--id--get) returns one of these.  It contains
+      everything from the event summary results, plus some extra fields that are too expensive to
+      compute and return for large result sets.
+
+      Like the example in the [summary](#definition-AlarmSummary), this is somewhat forced:  no
+      actual Command Centre event will contain all of these fields, unless you create one yourself.
+
+    allOf:
+
+      - type: object
+        properties:
+          lastOccurrenceTime:
+            type: string
+            format: date-time
+            description: |
+              When the event has occurred multiple times due to flooding, this will show the time it
+              occurred most recently.  It only appears with `occurrences`, and you will only see it
+              on the first event in a group.
+            example: "2016-02-18T19:21:59Z"
+          details:
+            type: string
+            description: |
+              The full alarm details text.  This may be up to 2048 UTF-8 characters, each of which
+              could (theoretically) be four bytes long.
+            example: "Originating IP address: 192.168.2.3"
+      - $ref: "#/definitions/EventSummary"
+
+  Event POST body:
+    properties:
+      priority:
+        type: integer
+        minimum: 1
+        maximum: 9
+        example: 2
+      time:
+        type: string
+        format: date-time
+        example: "2019-02-21T14:55:00Z"
+      message:
+        type: string
+        example: "Glass break detected in southwest sauna"
+        description: |
+          This is the first thing an operator will see when they look at this event.  Some
+          interactive clients do not give it a lot of room on screen so put the important
+          parts of your message first.  It has a limit of 1024 characters.
+      details:
+        type: string
+        description: |
+          Command Centre will attach this string to event, as it does the message, but
+          operators will have to look more closely at the event to see it.  On the upside,
+          it can be longer than the message:  2048 characters in 8.10.
+
+        example: ""
+      type:
+        description: |
+          This is the only mandatory field in an event.  Without it, the POST will fail.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/events/types/4000
+            description: |
+              Take this href from the list of [event types](#operation--api-events-groups-get).
+              Note that you can only use event types in one of the thirty external event groups with
+              IDs 57-66 and 190-209.  Command Centre ships with one event type per group, IDs
+              4000-4009 and 6010-6029, but you can create 970 more using the External Event Type
+              Configuration utility.
+      source:
+        description: |
+          This should be the href of the item you wish to use as the source of your event.  If
+          you do not supply it, Command Centre will use the REST Client item identified by the
+          the API key in the Authorization header.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/doors/745
+            description: |
+              This can be the href of any site item to which your operator has view access including
+              all hardware items, access zones, fence zones, doors, lockers, car parks, servers,
+              external systems, and many other item types.  Get the href using the API controller
+              for that item type (such as [doors](rest.html#tag-Doors)) or from `/items`.
+      cardholder:
+        description: |
+          If you wish to attach a cardholder to your event, link it here.  Reports can show or
+          filter by the cardholder.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/cardholders/325
+            description: |
+              This can be the href of any cardholder to which your operator has view access.  Get
+              the href from the the [cardholders controller](cardholders.html#tag-Cardholders).
+      operator:
+        description: |
+          If you wish to attach an operator to your event, link it here.  Like the cardholder,
+          reports can show or filter by the operator.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/cardholders/5398
+            description: |
+              This can be the href of any cardholder to which your operator has view access.  It
+              does not need to be an operator (a member of an operator group).
+      entryAccessZone:
+        description: |
+          If you wish to attach an access zone to your event, link it here.  Reports can filter by
+          and show the entry access zone on events.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/access_zones/333
+            description: |
+              This can be the href of any access zone to which your operator has view access.  Get
+              the href using the [access zones controller](rest.html#tag-Access-Zones) or from
+              `/items`.
+      accessGroup:
+        description: |
+          If you wish to attach an access group to your event, link it here.
+
+          Unlike cardholders, operators, and entry access zones, access groups do not appear in
+          Command Centre activity reports.  You can add a filter to restrict an activity report by
+          access groups, but the group that allowed an event into the report will not appear in a
+          column.
+
+          Like all the other items you link to your event it will, of course, appear when you GET
+          the event from the API later.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/access_groups/352
+            description: |
+              This can be the href of any access group to which your operator has view access.  Get
+              the href using the [groups](cardholders.html#tag-Access-groups) or [items](#tag-Items)
+              controller.
+      lockerBank:
+        description: |
+          If you wish to attach a locker bank to your event, link it here.  Command Centre does not
+          require that the locker is in the locker bank, but downstream reporting software may
+          assume it.
+
+          Like an event's access group, you can filter a Command Centre activity report to events
+          that involve a locker bank, but the bank will not appear in the report itself.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/locker_banks/4566
+            description: |
+              This can be the href of any locker bank to which your operator has view access.  Get
+              the href using the [locker banks](cardholders.html#tag-Lockers) or
+              [items](#tag-Items) controller.
+      locker:
+        description: |
+          If you wish to link a locker to your event, do it here.  Like an event's access group and
+          locker bank, you can filter a Command Centre activity report to events that involve a
+          locker, but the locker will not appear in the report itself.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/lockers/3456
+            description: |
+              This can be the href of any locker your operator can view.  Get the href from the
+              [items](#tag-Items) controller or the `lockers` field of [a locker
+              bank](cardholders.html#definition-Locker-bank-detail).
+      door:
+        description: |
+          If you wish to link a door to your event for later extraction or a report filter, do it
+          here.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/doors/745
+            description: |
+              This can be the href of any door your operator can see.  Get the href using the
+              [doors](rest.html#tag-Doors) or [items](#tag-Items) controller.
+
+  EventGroups:
+    description:  Calls to `/api/events/groups/` return this object, which is a named array of groups of event types.
+    type: object
+    properties:
+      eventGroups:
+        type: array
+        description: An array of event group objects.  There will be about 150.  Most groups contain fewer than 100 event types;  one contains around 200.
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The alphanumeric ID of the event group.  Use this ID in the `group` filter when requesting events.
+              example: "35"
+            name:
+              type: string
+              description: The name of the event group.
+              example: "Invalid Logon"
+            eventTypes:
+              type: array
+              description: An array of all the event types in the group.
+              items: 
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The alphanumeric ID of the event type.  Use this ID in the `type` filter when requesting events.
+                  name: {type: string}
+        example:
+          - id: 35
+            name: Invalid Logon
+            eventTypes:
+              - href: https://localhost:8904/api/events/types/601
+                id: "601"
+                name: Operator logon failed
+              - href: https://localhost:8904/api/events/types/20065
+                id: "20065"
+                name: "Terminal: Invalid User Code"
+              - href: https://localhost:8904/api/events/types/23052
+                id: "23052"
+                name: Wrong Code only Code
+
+  DivisionsResult:
+    type: object
+    description: |
+      Calls inside `/api/divisions/` return this object, which is simply a named array of
+      objects each containing some information about a division.
+    properties:
+      results:
+        type: array
+        description: An array of division objects.
+        items: { $ref: '#/definitions/Division' }
+
+  Division:
+    type: object
+    description: |
+      When a REST call returns the division of a Command Centre item such as a cardholder or access
+      group, or when you ask it for the divisions in which an operator has a particular privilege,
+      it will give an href inside `/divisions/`.  Following that href will return one of these.
+    properties:
+      href:
+        type: string
+        format: url
+        description: A self reference.
+        example: "https://localhost:8904/divisions/2707"
+      id:
+        type: string
+        description: The alphanumeric ID of the division.  Use this ID in the `division` filter when requesting events.
+        example: "2707"
+      name:
+        type: string
+        description: The description of the division.
+        example: "Root division"
+      parent:
+        description: "An object containing an href to the division entity representing the current division's parent. GET the href for full details."
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/divisions/2"
+
+  Items:
+    type: object
+    description:  Calls to `/api/items` return this object.
+    properties:
+      results:
+        description: A list of item objects, each containing the alphanumeric ID of the item, its name, and its type.
+
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: |
+                Use this ID in the `source` filter when requesting events to limit events to those
+                with that source.  Card events such as 'access granted', for example, have a door as
+                their source.
+            name: {type: string}
+            type:
+              type: object
+              description: The `type` object contains the ID and name of the item's type.
+              properties:
+                id:
+                  type: string
+                  description:  |
+                    Use this ID in the `type` filter when requesting items if you wish to restrict
+                    the results to items of a certain type.
+                name: {type: string}
+        example:
+          - id: "325"
+            name: "Brick, Eva"
+            type:
+              id: "1"
+              name: "Cardholder"
+          - id: "2707"
+            name: "Brewer, Amy"
+            type:
+              id: "1"
+              name: "Cardholder"
+      next:
+        type: object
+        description: An href to the next page of results.  Missing if there are no more results.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/items?pos=2"
+
+  ItemTypes:
+    type: object
+    description:  Calls to `/api/items/types` return this object, an array of item types.
+    properties:
+      itemTypes:
+        description: A list of item types.
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The alphanumeric ID of the item type.  Use this ID in the `type` filter when requesting items.
+              example: "1"
+            name:
+              type: string
+              description: The name of the item type.
+              example: "Cardholder"
+    example:
+      itemTypes:
+        - id: "1"
+          name: "Cardholder"
+        - id: "2"
+          name: "Access Group"
+
+  ItemUpdate:
+    type: object
+    description: |
+      POSTs and GETs to `/api/items/updates` return this object.  It contains an array of updates
+      and a `next` link to collect more.
+
+      Added in 8.30.
+    properties:
+      updates:
+        description: |
+          A list of items and their statuses.
+
+          On your first two calls -- the POST and the first GET -- this will contain all the items
+          in your subscription (provided they are the types of item that have statuses).  On
+          subsequent GETs it will only contain the items that received status updates since your
+          previous call.  Note that an item will be in this array if it received any status update
+          at all, even the status flags did not change.  Prepare to receive updates that do not
+          contain novel data.
+
+          This array is not paginated:  it could contain every one of the items you put in your
+          POST.
+
+          After about 50 seconds the call will time out and return an empty array here.
+
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: |
+                The item's ID, from the list you sent in the POST that created this subscription.
+            statusFlags:
+              type: array
+              description: |
+                An array of string enumerations (flags) that describe the item's condition in a
+                reliable, machine-readable way.
+
+                The item types that the REST API supports (such as fence zones and inputs) have a
+                full set of status flags, described in [their own sections](rest.html) of this
+                documentation.
+
+                Items that the REST API does not support yet (such as readers) will return error
+                flags if they are in an unusual state, or nothing if they are online and reporting
+                normally.  Therefore an empty array is a good sign.
+            statusText:
+              type: string
+              description: |
+                The state of the item in a multi-line string taken from the server's language pack.
+            status:
+              type: string
+              description: |
+                The item's status text with end-of-line characters replaced by spaces.
+      next:
+        description: |
+          A link to GET more status updates.  Do not wait longer than thirty seconds before using
+          this link or your subscription will expire and you will need to submit another POST to
+          create a new one.
+    example: {
+      "updates": [
+        {
+            "id": "508",
+            "status": "Controller offline. 62 message(s) pending.",
+            "statusText": "Controller offline.\n62 message(s) pending.",
+            "statusFlags": [
+                "controllerOffline"
+            ]
+        },
+        {
+            "id": "526",
+            "status": "Disarmed.",
+            "statusText": "Disarmed.",
+            "statusFlags": [
+                "disarmed"
+            ]
+        },
+        {
+            "id": "530",
+            "status": "This Input is Closed.  ",
+            "statusText": "This Input is Closed.  ",
+            "statusFlags": [
+                "closed"
+            ]
+        },
+        {
+            "id": "531",
+            "status": "Awaiting status from Controller.",
+            "statusText": "Awaiting status from Controller.",
+            "statusFlags": [
+                "controllerUnknown"
+            ]
+        },
+        {
+            "id": "532",
+            "status": "This Output is Off.  ",
+            "statusText": "This Output is Off.  ",
+            "statusFlags": [
+                "open"
+            ]
+        },
+        {
+            "id": "533",
+            "status": "Secure.",
+            "statusText": "Secure.",
+            "statusFlags": [
+                "secure"
+            ]
+        }
+      ],
+      "next": {
+        "href": "https://localhost:8904/api/items/updates?bookmark=3ec613a1-de01c6e_0"
+      }
+    }
+
+  ItemUpdateSubscription:
+    type: objecct
+    description: |
+      Contains a list of item IDs (short alphanums).  Send it in the body of a
+      [POST](#operation--api-items-updates-post) to create a subscription to status updates to the
+      items with these IDs.
+    properties:
+      itemIds:
+        type: array
+        items:
+          type: string
+          example: "506"
+
