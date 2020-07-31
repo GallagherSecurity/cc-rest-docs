@@ -197,15 +197,15 @@
                 <p>Each section contains a list of use cases intended as quick solutions for simple tasks or a how-to to get you started toward your particular goal. However they also serve as a good introduction to the API if you step through them using a web browser, starting at <code>/api</code> on your Command Centre server. To do that, you will need a browser plugin that lets you set an Authorization HTTP header, and a JSON formatter to prettify the results documents. Search the Configuration client&#39;s online help for &#39;test REST API&#39; for guidance. You will also need to prepare Command Centre, as above.</p>
                 <h3 id="licensing">Licensing</h3>
                 <p>All of the API calls described here require the RESTCardholders licence.</p>
-                <h3 id="api-changes-in-8-50">API changes in 8.50</h3>
+                <h3 id="api-changes-in-850">API changes in 8.50</h3>
                 <p>8.50 increases the number of items in its search results and sorts them differently, if the query did not use query parameters to override the defaults.</p>
-                <h3 id="cardholder-api-changes-in-8-40">Cardholder API changes in 8.40</h3>
+                <h3 id="cardholder-api-changes-in-840">Cardholder API changes in 8.40</h3>
                 <p>The body of this document clearly indicates the 8.40 features so that readers with older versions of Command Centre know not to use them.</p>
                 <ul>
                   <li>Access groups have 22 new fields showing the privileges and access they grant their members. These new fields are in the default set for the
                     <a href="#definition-Access-group-detail">detail view</a>.</li>
                 </ul>
-                <h3 id="cardholder-api-changes-in-8-30">Cardholder API changes in 8.30</h3>
+                <h3 id="cardholder-api-changes-in-830">Cardholder API changes in 8.30</h3>
                 <ul>
                   <li>
                     <p>Cardholder
@@ -218,7 +218,7 @@
                     <p>A cardholder&#39;s card object now contain a Boolean field called <code>trace</code> indicating whether its trace flag is set. A card with tracing on generates an event every time it is used.</p>
                   </li>
                 </ul>
-                <h3 id="cardholder-api-changes-in-8-20">Cardholder API changes in 8.20</h3>
+                <h3 id="cardholder-api-changes-in-820">Cardholder API changes in 8.20</h3>
                 <ul>
                   <li>
                     <p>A new field <code>update_location</code> on a cardholder gives a link to a
@@ -238,7 +238,7 @@
                       <a href="#definition-Cardholder-relationship">relationships block</a> now contains the role holder&#39;s two name fields. The <code>name</code> field, present since 7.90, is simply these two fields joined with a space, and is therefore ambiguous when a cardholder only has one name.</p>
                   </li>
                 </ul>
-                <h3 id="cardholder-api-changes-in-8-10-1112">Cardholder API changes in 8.10.1112</h3>
+                <h3 id="cardholder-api-changes-in-8101112">Cardholder API changes in 8.10.1112</h3>
                 <ul>
                   <li>
                     <p>You can send an
@@ -251,7 +251,7 @@
                       <a href="#opening-a-locker">use cases</a> section shows how.</p>
                   </li>
                 </ul>
-                <h3 id="cardholder-api-changes-in-8-10">Cardholder API changes in 8.10</h3>
+                <h3 id="cardholder-api-changes-in-810">Cardholder API changes in 8.10</h3>
                 <p>All changes contain the text &quot;8.10&quot;.</p>
                 <ul>
                   <li>A
@@ -460,7 +460,7 @@
                   <p>v8.00 or earlier: follow the link at <code>features.items.items.href</code>, appending the query <code>?name=&quot;employee_id&quot;</code>. This will return every item in the system with that name. Pick the one with a type name of &#39;Personal Data Field&#39;. Or you could append <code>&amp;type=33</code> to the item search: you will only be shown PDFs.</p>
                 </li>
                 <li>
-                  <p>v8.10 or later: follow the link at <code>features.personalDatafields.personalDatafields.href</code>, appending the query <code>?name=&quot;employee_id&quot;</code>. This will return every PDF in the system with that name (there should only be one, since PDFs must have different names).</p>
+                  <p>v8.10 or later: follow the link at <code>features.personalDataFields.personalDataFields.href</code>, appending the query <code>?name=&quot;employee_id&quot;</code>. This will return every PDF in the system with that name (there should only be one, since PDFs must have different names).</p>
                 </li>
                 <li>
                   <p>Note the ID of the item. It will be a short alphanumeric.</p>
@@ -470,14 +470,14 @@
               <p>Now you can use that PDF ID in a cardholder search.</p>
               <ol>
                 <li>Recall the JSON object you received from <code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.cardholders.cardholders.href</code>, adding a query separator and <code>pdf_{your_pdf_id}={your_pdf_value}</code>, without braces.</li>
+                <li>Follow the link at <code>features.cardholders.cardholders.href</code>, adding a query separator and <code>pdf_&lt;your_pdf_id&gt;=&lt;your_pdf_value&gt;</code>, without the angle brackets.</li>
               </ol>
               <p>The results will only include cardholders who have
-                <em>your_pdf_value</em> as a substring of the Personal Data Field with ID
-                <em>your_pdf_id</em>. Again, the search is case-insensitive and quotes anchor it at each end. In our example we would <code>GET
+                <em>&lt;your_pdf_value&gt;</em> as a substring of the Personal Data Field with ID
+                <em>&lt;your_pdf_id&gt;</em>. Again, the search is case-insensitive and quotes anchor it at each end. In our example we would <code>GET
             /api/cardholders?pdf_345=&quot;EID8888&quot;</code>.</p>
               <p>Use a percent sign <code>%</code> for
-                <em>your_pdf_value</em> if you want to see all cardholders who have a non-blank value for that PDF.</p>
+                <em>&lt;your_pdf_value&gt;</em> if you want to see all cardholders who have a non-blank value for that PDF.</p>
               <p>The server will reply with a default set of fields for your cardholder. If they are not what you&#39;d like, you can use the <code>fields</code> query parameter to change them.</p>
               <p>See the
                 <a href="#operation--api-cardholders-get">cardholder GET</a> for more.</p>
@@ -539,7 +539,7 @@
                 <li>PATCH the cardholder&#39;s href according to the
                   <a href="#definition-Cardholder-PATCH-example">cardholder patch schema</a>.</li>
               </ol>
-              <h4 id="deleting-a-cardholder-s-pdf-value">Deleting a cardholder&#39;s PDF value</h4>
+              <h4 id="deleting-a-cardholders-pdf-value">Deleting a cardholder&#39;s PDF value</h4>
               <ol>
                 <li>Find the URL of your cardholder using one of the processes above.</li>
                 <li>
@@ -550,7 +550,7 @@
                 <li>Find your cardholder using one of the processes above.</li>
                 <li>Send an HTTP DELETE to the cardholder&#39;s href.</li>
               </ol>
-              <h4 id="updating-a-cardholder-s-location">Updating a cardholder&#39;s location</h4>
+              <h4 id="updating-a-cardholders-location">Updating a cardholder&#39;s location</h4>
               <ol start="2">
                 <li>Find the href of your target access zone using the link at <code>features.cardholders.updateLocationAccessZones</code> in the results of <code>GET /api</code>.</li>
                 <li>Find your cardholder using one of the processes above. If you are using
@@ -583,7 +583,7 @@
               <p>This is the list you can choose from in 8.30:</p>
               <p><code>href</code>, <code>id</code>, <code>firstName</code>, <code>lastName</code>, <code>shortName</code>, <code>description</code>, <code>authorised</code>, <code>lastSuccessfulAccessTime</code>, <code>lastSuccessfulAccessZone</code>, <code>division</code>, <code>personalDataFields</code>, <code>cards</code>, <code>accessGroups</code>, <code>competencies</code>, <code>notes</code>, <code>notifications</code>, <code>relationships</code>, <code>lockers</code>, <code>cards.href</code>, <code>cards.number</code>, <code>cards.from</code>, <code>cards.until</code>, <code>cards.cardSerialNumber</code>, <code>cards.type</code>, <code>cards.status</code>, <code>cards.invitation</code>, <code>cards.issueLevel</code>, <code>cards.pivData</code>, <code>cards.pivData.chuid</code>, <code>cards.pivData.pivStatus</code>, <code>cards.pivData.lastCheckTime</code>, <code>cards.pivData.chuid.hash</code>, <code>cards.pivData.chuid.fascn</code>, <code>cards.pivData.chuid.duns</code>, <code>cards.pivData.chuid.orgIdentifier</code>, <code>cards.invitation.href</code>, <code>cards.invitation.singleFactorOnly</code>, <code>cards.invitation.email</code>, <code>cards.invitation.mobile</code>, <code>cards.notifications.enabled</code>, <code>cards.notifications.from</code>, <code>cards.notifications.until</code>, <code>cards.accessGroups.href</code>, <code>cards.accessGroups.accessGroup</code>, <code>cards.accessGroups.from</code>, <code>cards.accessGroups.until</code>, <code>cards.accessGroups.status</code>, <code>cards.relationships.href</code>, <code>cards.relationships.cardholder</code>, <code>cards.relationships.role</code>, <code>cards.lockers.href</code>, <code>cards.lockers.locker</code>, <code>cards.lockers.from</code>, <code>cards.lockers.until</code></p>
               <p>A special value <code>default</code> applies a default set of fields that varies with the call you&#39;re making.</p>
-              <p><code>personalDataFields</code> is also special. It will give you the personalDataDefinitions block plus all the PDF values at the root level (with their names preceded by &#39;@&#39;-signs).</p>
+              <p><code>personalDataFields</code> is also special. It will give you the personalDataDefinitions block plus all the PDF values at the root level with their names preceded by &#39;@&#39;-signs.</p>
             </div>
           </div>
           <div id="operation--api-cardholders-get" class="operation panel" data-traverse-target="operation--api-cardholders-get">
@@ -2652,7 +2652,7 @@
               <p>They also provide the links you need to manage memberships. Those links are hrefs to cardholders, to which you would send
                 <a href="#definition-Cardholder-PATCH-example">PATCH</a> requests containing your updates. Your REST operator will need &#39;Edit Cardholder&#39; privilege on the cardholder for that.</p>
               <h3 id="use-cases">Use cases</h3>
-              <h4 id="finding-members-of-an-access-group-and-managing-memberships-">Finding members of an access group, and managing memberships.</h4>
+              <h4 id="finding-members-of-an-access-group-and-managing-memberships">Finding members of an access group, and managing memberships.</h4>
               <ol>
                 <li>
                   <p><code>GET /api</code>.</p>
@@ -2672,7 +2672,7 @@
                   <p>Get the link at <code>cardholders</code> (which is the same on the search results and the details page) and manage each membership as you require. Send a DELETE to a membership&#39;s href to remove it, or an HTTP PATCH to the cardholder href to update it.</p>
                 </li>
               </ol>
-              <h4 id="building-the-group-hierarchy-">Building the group hierarchy.</h4>
+              <h4 id="building-the-group-hierarchy">Building the group hierarchy.</h4>
               <ol>
                 <li><code>GET /api</code>.</li>
                 <li>Follow the link at <code>features.accessGroups.accessGroups.href</code>. If you follow the efficiency tips in the cardholder section you will add <code>top</code> and <code>sort</code> parameters.</li>
@@ -4385,7 +4385,7 @@
             <div class="doc-copy">
               <p>The PDF API lets you see the definitions and configuration of all the personal data fields in the system.</p>
               <h3 id="use-cases">Use cases</h3>
-              <h4 id="finding-all-a-cardholder-s-pdfs">Finding all a cardholder&#39;s PDFs</h4>
+              <h4 id="finding-all-a-cardholders-pdfs">Finding all a cardholder&#39;s PDFs</h4>
               <p>Recall that a PDF is attached to an access group and appears on all members of that access group and its children. To find a cardholder&#39;s PDFs, including those for which the cardholder has no value, you must find all the cardholder&#39;s groups, then find all the PDFs on those groups.</p>
               <ol>
                 <li>GET the cardholder&#39;s access groups from the cardholder&#39;s detail page, or the search page with <code>fields=accessGroups</code> added to the query.</li>
@@ -4393,12 +4393,12 @@
                 <li>For each access group detail page, record the hrefs from the <code>personalDataDefinitions</code> block and add the <code>parent.href</code> link to the list of groups to check (unless you have already seen it, of course).</li>
               </ol>
               <p>Now you have a list of hrefs to PDF definition detail pages.</p>
-              <h4 id="finding-a-pdf-s-regular-expression">Finding a PDF&#39;s regular expression</h4>
+              <h4 id="finding-a-pdfs-regular-expression">Finding a PDF&#39;s regular expression</h4>
               <ol>
                 <li><code>GET /api</code></li>
-                <li>Follow the link at <code>features.personalDataFields.personalDatafields.href</code>, adding a search term to the query to thin out the results and a <code>fields</code> parameter to add the regular expression to the results. For example, add <code>name=&quot;PDF name&quot;</code> to only return the PDF definitions with that name.</li>
+                <li>Follow the link at <code>features.personalDataFields.personalDataFields.href</code>, adding a search term to the query to thin out the results. For example, add <code>name=&quot;PDF name&quot;</code> to only return the PDF definitions with that name.</li>
               </ol>
-              <h4 id="setting-a-cardholder-s-pdf-value">Setting a cardholder&#39;s PDF value</h4>
+              <h4 id="setting-a-cardholders-pdf-value">Setting a cardholder&#39;s PDF value</h4>
               <p>You do that by
                 <a href="#definition-Cardholder-PATCH-example">PATCHing a cardholder</a> with a field named after the PDF following an &#39;@&#39;.</p>
             </div>

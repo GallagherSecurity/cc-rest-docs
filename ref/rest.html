@@ -252,21 +252,21 @@
                 <p>Each section contains a list of use cases intended as quick solutions for simple tasks or a how-to to get you started toward your particular goal. However they also serve as a good introduction to the API if you step through them using a web browser, starting at <code>/api</code> on port 8904 of your Command Centre server. To do that, you will need to set up Command Centre, and install a browser plugin on your web client that lets you set an Authorization HTTP header, and a JSON formatter to prettify the results documents. Search the Configuration client&#39;s online help for &#39;test REST API&#39; for guidance.</p>
                 <h3 id="licensing">Licensing</h3>
                 <p>All of the GET calls described here require the RESTStatus licence. All the POSTs require RESTOverrides. The two licences do not overlap: to watch an item and override it, you will need both.</p>
-                <h3 id="changes-in-8-50">Changes in 8.50</h3>
+                <h3 id="changes-in-850">Changes in 8.50</h3>
                 <p>8.50 increases the number of items in its search results and sorts them differently, if the query did not use query parameters to override the defaults.</p>
-                <h3 id="changes-in-8-30">Changes in 8.30</h3>
+                <h3 id="changes-in-830">Changes in 8.30</h3>
                 <p>All changes to this document contain the text &quot;8.30&quot;.</p>
                 <ul>
                   <li>A &#39;connectedController&#39; field in the
                     <a href="#definition-Door-detail">door detail</a> that returns the ID and name of the door&#39;s hardware controller (a C6000 controller, not an API controller).</li>
                 </ul>
-                <h3 id="changes-in-8-20">Changes in 8.20</h3>
+                <h3 id="changes-in-820">Changes in 8.20</h3>
                 <p>All changes to this document contain the text &quot;8.20&quot;.</p>
                 <ul>
                   <li>An
                     <a href="#operation--api-access_zones-update_cardholder_location-get">update_cardholder_location</a> call on the Access Zones controller that returns you the list of Access Zones into which your operator is allowed to move cardholders.</li>
                 </ul>
-                <h3 id="changes-in-8-10">Changes in 8.10</h3>
+                <h3 id="changes-in-810">Changes in 8.10</h3>
                 <p>All changes to this document contain the text &quot;8.10&quot;.</p>
                 <ul>
                   <li>An
@@ -278,7 +278,7 @@
                     <p>When downloading more than one page of items, sort by ID.</p>
                   </li>
                   <li>
-                    <p>Set your page size as large as your client can handle. The default used to be 100; using the <code>top</code> parameter to take it to 1000 or more gives
+                    <p>Set your page size as large as your client can handle. The defualt used to be 100; using the <code>top</code> parameter to take it to 1000 or more gives
                       <em>much</em> better throughput.</p>
                   </li>
                   <li>
@@ -539,7 +539,7 @@
                 <li>Follow the link at <code>features.accessZones.accessZones.href</code>, appending a search term such as <code>name=substring</code> to filter the access zones, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
                 <li>Process the results, following the <code>next</code> link until there isn&#39;t one.</li>
               </ol>
-              <h4 id="changing-an-access-zone-s-access-mode">Changing an access zone&#39;s access mode</h4>
+              <h4 id="changing-an-access-zones-access-mode">Changing an access zone&#39;s access mode</h4>
               <ol>
                 <li>Find the href for the access zone using the process above.</li>
                 <li>GET it.</li>
@@ -547,7 +547,7 @@
                   <a href="#definition-Access-Zone-detail">the detail</a>. Use the <code>until</code> variants if you are specifying an end time.</li>
                 <li>POST to that URL. Some require a JSON object (resetting the zone count, and all those with <code>until</code> in their command block keys). The others expect an empty body.</li>
               </ol>
-              <h4 id="finding-an-access-zone-s-status">Finding an access zone&#39;s status</h4>
+              <h4 id="finding-an-access-zones-status">Finding an access zone&#39;s status</h4>
               <ol>
                 <li>Find the href for the access zone using the process above, and GET it.</li>
                 <li>Take the <code>updates</code> href from that page. For a version 8.00 server append the query parameter separator (&#39;?&#39; or &#39;&amp;&#39;) then <code>fields=defaults,zoneCount</code> if you need the zone count as well as the default status fields. The zone count is included by default in 8.10 and later.</li>
@@ -1999,7 +1999,7 @@
                 <li>Follow the link at <code>features.alarmZones.alarmZones.href</code>, appending a search term such as <code>name=substring</code> to filter the access zones, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
                 <li>Process the results, following the <code>next</code> link until there isn&#39;t one.</li>
               </ol>
-              <h4 id="changing-an-alarm-zone-s-state">Changing an alarm zone&#39;s state</h4>
+              <h4 id="changing-an-alarm-zones-state">Changing an alarm zone&#39;s state</h4>
               <ol>
                 <li>Find the href for the alarm zone using the process above.</li>
                 <li>GET it.</li>
@@ -2007,7 +2007,7 @@
                   <a href="#definition-Alarm-Zone-detail">the detail</a>. Use the calls with <code>Until</code> on the ends of their names if you are specifying an end time.</li>
                 <li>POST to that URL. All those with <code>Until</code> in their names require a JSON object in the body giving the time at which the override should end; the others do not.</li>
               </ol>
-              <h4 id="finding-an-alarm-zone-s-status">Finding an alarm zone&#39;s status</h4>
+              <h4 id="finding-an-alarm-zones-status">Finding an alarm zone&#39;s status</h4>
               <ol>
                 <li>Find the href for the alarm zone using the process above, and GET it.</li>
                 <li>Follow the <code>updates</code> href from that page.</li>
@@ -3097,7 +3097,7 @@
                 <li>POST to the &#39;open&#39; URL in the <code>commands</code> structure of the
                   <a href="#definition-Door-detail">results</a>.</li>
               </ol>
-              <h4 id="finding-a-door-s-status">Finding a door&#39;s status</h4>
+              <h4 id="finding-a-doors-status">Finding a door&#39;s status</h4>
               <ol>
                 <li>Find the href for the door using the process above, and GET it.</li>
                 <li>Follow the <code>updates</code> href from that page.</li>
@@ -3560,7 +3560,7 @@
                   <a href="#definition-Fence-Zone-detail">the detail</a>.</li>
                 <li>POST to that URL. You do not need to send anything in the body of the POST.</li>
               </ol>
-              <h4 id="finding-a-fence-zone-s-status">Finding a fence zone&#39;s status</h4>
+              <h4 id="finding-a-fence-zones-status">Finding a fence zone&#39;s status</h4>
               <ol>
                 <li>Find the href for the fence zone using the process above, and GET it.</li>
                 <li>Take the <code>updates</code> href from that page. For a version 8.00 server append <code>?fields=defaults,voltage</code> if you are after the fence&#39;s voltage. It is included by default in 8.10 and later.</li>
@@ -4825,7 +4825,7 @@
                 <li>End-times on overrides are not accurate to the second. Internally, Command Centre converts the end time to a duration, so you may find that submitting end times in the very near future does not have the exact effect you expect.</li>
                 <li>The end time you set for an override cannot be in the past or more than 24 hours into the future.</li>
               </ol>
-              <h3 id="overrides-always-use-on-and-off-">Overrides always use &#39;on&#39; and &#39;off&#39;</h3>
+              <h3 id="overrides-always-use-on-and-off">Overrides always use &#39;on&#39; and &#39;off&#39;</h3>
               <p>The Configuration client allows you to assign different display strings to the two normal output states, on and off. On could be &#39;green&#39;, for example, and off could be &#39;red&#39;. Regardless, the overrides you apply to an output are called &#39;on&#39; and &#39;off&#39;.</p>
               <h3 id="status-flags">Status flags</h3>
               <p>Status flags, on the other hand, use the language of the relays on the hardware modules. They will report &#39;closed&#39; for an output that is on, and &#39;open&#39; for one that is off.</p>
@@ -4870,7 +4870,7 @@
                   <a href="#definition-Output-detail">results</a>. Use the <code>until</code> variants if you are specifying an end time.</li>
                 <li>POST to that URL. Those with <code>until</code> in their command block keys require a JSON object in the body; the others expect it empty.</li>
               </ol>
-              <h4 id="finding-an-output-s-status">Finding an output&#39;s status</h4>
+              <h4 id="finding-an-outputs-status">Finding an output&#39;s status</h4>
               <ol>
                 <li>Find the href for the output using the process above, and GET it.</li>
                 <li>Take the <code>updates</code> href from that page. Append &#39;?&#39; or &#39;&amp;&#39; (whichever is appropriate) then <code>fields=defaults,voltage</code> if you are after the fence&#39;s voltage</li>
@@ -5536,7 +5536,7 @@
                   <a href="#definition-Input-detail">results</a>.</li>
                 <li>POST to that URL with an empty body.</li>
               </ol>
-              <h4 id="finding-an-input-s-status">Finding an input&#39;s status</h4>
+              <h4 id="finding-an-inputs-status">Finding an input&#39;s status</h4>
               <ol>
                 <li>Find the href for the input using the process above, and GET it.</li>
                 <li>Take the <code>updates</code> href from that page.</li>

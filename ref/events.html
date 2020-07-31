@@ -143,15 +143,15 @@
                 <p>Helper methods allow you to look up Command Centre&#39;s internal identifiers for cardholders, divisions, and other items, so that you can use those identifiers in search filters.</p>
                 <h3 id="licensing">Licensing</h3>
                 <p>All of the GETs in this document and the POSTs that manage alarms require the RESTEvents licence. The POST to create a new event requires RESTCreateEvents.</p>
-                <h3 id="alarms-and-events-api-changes-in-8-40">Alarms and events API changes in 8.40</h3>
+                <h3 id="alarms-and-events-api-changes-in-840">Alarms and events API changes in 8.40</h3>
                 <p>The body of this document clearly indicates the 8.40 features so that readers with older versions of Command Centre know not to use them.</p>
                 <ul>
                   <li>
-                    <p>Operator add, modify, and delete events now contain a link to the affected item.</p>
+                    <p>Operator add, modify, and delete
+                      <a href="#definition-EventSummary">events</a> now contain a link to the affected item.</p>
                   </li>
                   <li>
-                    <p>
-                      <a href="#definition-EventSummary">Operator events</a> contain a new field giving the operator&#39;s name at the time.</p>
+                    <p>All operator events now contain the operator&#39;s name at the time.</p>
                   </li>
                   <li>
                     <p>The
@@ -161,7 +161,7 @@
                     <p>Events now show their origin when they have arrived from a remote server (in a multiserver environment).</p>
                   </li>
                 </ul>
-                <h3 id="alarms-and-events-api-changes-in-8-30">Alarms and events API changes in 8.30</h3>
+                <h3 id="alarms-and-events-api-changes-in-830">Alarms and events API changes in 8.30</h3>
                 <ul>
                   <li>
                     <p>The
@@ -171,7 +171,7 @@
                     <p>Doors related to guard tour events now appear in an event&#39;s <code>door</code> block.</p>
                   </li>
                 </ul>
-                <h3 id="alarms-and-events-api-changes-in-8-20">Alarms and events API changes in 8.20</h3>
+                <h3 id="alarms-and-events-api-changes-in-820">Alarms and events API changes in 8.20</h3>
                 <ul>
                   <li>
                     <p>Alarms and events with a related cardholder now show the cardholder&#39;s current first and last name in separate fields.</p>
@@ -183,7 +183,7 @@
                     <p>You can use the &#39;fields&#39; parameter to add the &#39;details&#39; field to an event summary.</p>
                   </li>
                 </ul>
-                <h3 id="alarms-and-events-api-changes-in-8-10">Alarms and events API changes in 8.10</h3>
+                <h3 id="alarms-and-events-api-changes-in-810">Alarms and events API changes in 8.10</h3>
                 <ul>
                   <li>
                     <a href="#operation--api-events-post">Incoming events</a>
@@ -1160,7 +1160,7 @@
               <p>Events such as &#39;access granted&#39; and &#39;zone count maximum&#39; come from doors and access zones. To search for them, follow the same process as the previous use case but use the <code>source</code> filter parameter instead of <code>cardholder</code>. If you have the RESTStatus licence (added in v8.00), you can use
                 <a href="rest.html">that API</a> to search for access zones, alarm zones, fence zones, macros, outputs, doors, and (in 8.10) inputs. If you do not, or if your source is not one of those types, use the
                 <a href="#tag-Items">items API</a> with a suitable <code>type</code> filter.</p>
-              <h4 id="reporting-on-events-over-a-period-">Reporting on events over a period.</h4>
+              <h4 id="reporting-on-events-over-a-period">Reporting on events over a period.</h4>
               <ol>
                 <li>
                   <p><code>GET /api</code></p>
@@ -1691,7 +1691,7 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main hoist door&quot;</span>
       },
       <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/352&quot;</span>
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
       },
       <span class="hljs-attr">&quot;card&quot;</span>: {
         <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
@@ -2011,7 +2011,7 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main hoist door&quot;</span>
       },
       <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/352&quot;</span>
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
       },
       <span class="hljs-attr">&quot;card&quot;</span>: {
         <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
@@ -2190,7 +2190,7 @@
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main hoist door&quot;</span>
   },
   <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/352&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
   },
   <span class="hljs-attr">&quot;card&quot;</span>: {
     <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
@@ -3456,7 +3456,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The Event Group name</p>
+                      <p>The name of this alarm&#39;s event type.</p>
                     </dd>
                     <dt data-property-name="priority" class="has-description">
                       <span class="json-property-name">priority:</span>
@@ -4181,7 +4181,7 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main hoist door&quot;</span>
       },
       <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/352&quot;</span>
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
       },
       <span class="hljs-attr">&quot;card&quot;</span>: {
         <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
@@ -4676,7 +4676,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>Link to the access group that this event modified.</p>
+                            <p>Link to the access group related to this event.</p>
                           </dd>
                         </dl>
                       </section>
@@ -4834,7 +4834,7 @@
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main hoist door&quot;</span>
   },
   <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/352&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
   },
   <span class="hljs-attr">&quot;card&quot;</span>: {
     <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
@@ -5025,7 +5025,7 @@
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main hoist door&quot;</span>
   },
   <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/352&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
   },
   <span class="hljs-attr">&quot;card&quot;</span>: {
     <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,

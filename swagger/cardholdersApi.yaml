@@ -252,7 +252,7 @@ tags:
        one with a type name of 'Personal Data Field'.  Or you could append `&type=33` to the item
        search:  you will only be shown PDFs.
 
-    2. v8.10 or later:  follow the link at `features.personalDatafields.personalDatafields.href`,
+    2. v8.10 or later:  follow the link at `features.personalDataFields.personalDataFields.href`,
        appending the query `?name="employee_id"`.  This will return every PDF in the system with
        that name (there should only be one, since PDFs must have different names).
 
@@ -266,14 +266,14 @@ tags:
 
     1. Recall the JSON object you received from `GET /api`.
     2. Follow the link at `features.cardholders.cardholders.href`, adding a query
-    separator and `pdf_{your_pdf_id}={your_pdf_value}`, without braces.
+    separator and `pdf_<your_pdf_id>=<your_pdf_value>`, without the angle brackets.
 
-    The results will only include cardholders who have *your_pdf_value* as a substring of
-    the Personal Data Field with ID *your_pdf_id*.  Again, the search is
+    The results will only include cardholders who have *\<your_pdf_value>* as a substring of
+    the Personal Data Field with ID *\<your_pdf_id>*.  Again, the search is
     case-insensitive and quotes anchor it at each end.  In our example we would `GET
     /api/cardholders?pdf_345="EID8888"`.
 
-    Use a percent sign `%` for *your_pdf_value* if you want to see all cardholders who have a
+    Use a percent sign `%` for *\<your_pdf_value>* if you want to see all cardholders who have a
     non-blank value for that PDF.
 
     The server will reply with a default set of fields for your cardholder.  If they are not what
@@ -327,7 +327,8 @@ tags:
     2. Follow the link at `features.cardTypes.cardTypes.href` to find the href for the new card's type.
     3. If you want to create a card in a state other than the default, get the state from the same page.
     4. Find the href for the cardholder using one of the search methods above.
-    5. Optional:  follow the link at `edit.href` on the cardholder page.  If there is a link at `update.href`, your REST client has permission to modify the cardholder.
+    5. Optional:  follow the link at `edit.href` on the cardholder page.  If there is a link at
+       `update.href`, your REST client has permission to modify the cardholder.
     4. PATCH the cardholder's href according to the [cardholder patch schema](#definition-Cardholder-PATCH-example).
 
     #### Deleting a cardholder's PDF value
@@ -397,7 +398,7 @@ tags:
     making.
 
     `personalDataFields` is also special.  It will give you the personalDataDefinitions block plus
-    all the PDF values at the root level (with their names preceded by '@'-signs).
+    all the PDF values at the root level with their names preceded by '@'-signs.
 
 - name: Cardholder changes
   description: |
@@ -620,10 +621,9 @@ tags:
     #### Finding a PDF's regular expression
 
     1. `GET /api`
-    2. Follow the link at `features.personalDataFields.personalDatafields.href`, adding a search
-       term to the query to thin out the results and a `fields` parameter to add the regular
-       expression to the results.  For example, add `name="PDF name"` to only return the PDF
-       definitions with that name.
+    2. Follow the link at `features.personalDataFields.personalDataFields.href`, adding a search
+       term to the query to thin out the results.  For example, add `name="PDF name"` to only return
+       the PDF definitions with that name.
 
     #### Setting a cardholder's PDF value
 
@@ -3349,6 +3349,7 @@ paths:
         in: query
         required: false
         type: string
+
         description: |
           Only return cardholders with a name that matches this string.  By default, it is
           a substring search against the first name or the last name or the concatenation

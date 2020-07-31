@@ -39,10 +39,10 @@ info:
     The body of this document clearly indicates the 8.40 features so that readers with older
     versions of Command Centre know not to use them.
 
-    - Operator add, modify, and delete events now contain a link to the affected item.
+    - Operator add, modify, and delete [events](#definition-EventSummary) now contain a link to the
+      affected item.
 
-    - [Operator events](#definition-EventSummary) contain a new field giving the operator's name at
-      the time.
+    - All operator events now contain the operator's name at the time.
 
     - The [item search](#operation--api-items-get) can now filter multiple item types.
 
@@ -1200,7 +1200,7 @@ definitions:
             example: "https://localhost:8904/api/doors/1321"
       type:
         type: string
-        description: The Event Group name
+        description: The name of this alarm's event type.
         example: "Door forced"
       priority:
         type: integer
@@ -1686,8 +1686,8 @@ definitions:
           href:
             type: string
             format: url
-            description: Link to the access group that this event modified.
-            example: "https://localhost:8904/api/cardholders/352"
+            description: Link to the access group related to this event.
+            example: "https://localhost:8904/api/access_groups/352"
 
       card:
         description: Details of the card associated with the event.
