@@ -677,6 +677,7 @@
                       <p>Only return cardholders with a name that matches this string. By default, it is a substring search against the first name or the last name or the concatenation &#39;lastName, firstName&#39;; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact search.</p>
                       <p>Without quotes, a percent sign <code>%</code> inside your search string will anchor the search (so it will no longer be a substring search) and the <code>%</code> will match any substring. For example, <code>boothroyd,%</code> will only match cardholders whose last name is Boothroyd.</p>
                       <p>The search is always case-insensitive.</p>
+                      <p>The <code>name</code> and <code>pdf_{id}</code> search parameters form a logical conjunction. They are ANDed together. Therefore if you search for <code>name=Mary&amp;pdf_1315=nanny</code> you will only get back cardholders with &#39;Mary&#39; in their name and &#39;nanny&#39; in the PDF with ID 1315.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -692,6 +693,7 @@
                       <p>Only return cardholders with a value for the Personal Data Field with this ID that matches the parameter.</p>
                       <p>By default, it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring. A lone <code>%</code> will return any cardholder with this PDF set to a non-null value.</p>
                       <p>The search is always case-insensitive.</p>
+                      <p>The <code>name</code> and <code>pdf_{id}</code> search parameters form a logical conjunction. They are ANDed together. Therefore the search <code>pdf_1315=nanny&amp;pdf_1315=paratrooper</code> will only return cardholders whose PDF 1315 contains the strings &#39;nanny&#39; and &#39;paratrooper&#39;.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">

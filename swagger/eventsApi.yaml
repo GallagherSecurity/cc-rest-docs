@@ -694,7 +694,6 @@ paths:
         in: query
         required: false
         type: string
-
         description: |
           Restricts events to those whose source item has this ID.  Separate multiple IDs with
           commas.  Use the [items API](#tag-Items) to search Command Centre's items.
@@ -1021,16 +1020,13 @@ paths:
             The body of the POST needs to contain a list of item IDs in an array called `itemIds`.
             Even though they look like small integers, these IDs are actually strings so don't
             forget the quotes.
-
           schema: {$ref: "#/definitions/ItemUpdateSubscription"}
-
           example: { "itemIds": ["508", "526"] }
 
       responses:
         200:
           description: Success
           schema: { $ref: '#/definitions/ItemUpdate' }
-
           example: {
             "updates": [
               {
@@ -1288,7 +1284,6 @@ definitions:
       everything from the alarm summary results, plus some extra fields that are too expensive to
       compute and return for large result sets.
     allOf:
-
       - type: object
         properties:
           details:
@@ -1763,7 +1758,6 @@ definitions:
       actual Command Centre event will contain all of these fields, unless you create one yourself.
 
     allOf:
-
       - type: object
         properties:
           lastOccurrenceTime:
@@ -1806,7 +1800,6 @@ definitions:
           Command Centre will attach this string to event, as it does the message, but
           operators will have to look more closely at the event to see it.  On the upside,
           it can be longer than the message:  2048 characters in 8.10.
-
         example: ""
       type:
         description: |
@@ -2035,7 +2028,6 @@ definitions:
     properties:
       results:
         description: A list of item objects, each containing the alphanumeric ID of the item, its name, and its type.
-
         type: array
         items:
           type: object

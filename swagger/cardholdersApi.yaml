@@ -787,7 +787,6 @@ definitions:
       development and its behaviour will change in later versions of Command Centre.
 
     allOf:
-
       - type: object
         properties:
           lastSuccessfulAccessTime:
@@ -801,7 +800,6 @@ definitions:
             readOnly: true
             description: The last zone the cardholder entered.
             example:
-
               href: "https://localhost:8904/api/access_zones/333"
               name: "Twilight zone"
           division:
@@ -1216,7 +1214,6 @@ definitions:
         type: string
         required: false
         example: "1"
-
       cardSerialNumber:
         description: |
           The serial number of a physical access card, as a hex string without a leading '0x'.  This
@@ -1307,7 +1304,6 @@ definitions:
             type: string
             format: url
             example: "https://localhost:8904/api/card_types/354"
-
           name: {type: string, example: "Card type no. 1"}
       invitation:
         description: |
@@ -1358,14 +1354,12 @@ definitions:
         type: string
         format: date-time
         example: "2017-12-31T11:59:59Z"
-
       credentialClass:
         readOnly: true
         description: "This indicates the type of card.  Added in 8.00."
         type: string
         enum: ['card', 'piv', 'mobile']
         example: mobile
-
       trace:
         description: |
           If set, badging this card will generate an event.
@@ -2187,7 +2181,6 @@ definitions:
 
           Generally, this block is less useful than the current state of the cardholder, described
           next.
-
         example: {
           firstName: "Gavin",
           competencies: [
@@ -2271,7 +2264,6 @@ definitions:
       `/api/access_groups/{id}` (linked as the href in this object) returns one with more fields.
 
     properties:
-
       id:
         type: string
         description: "An alphanumeric identifier for this access group."
@@ -2321,7 +2313,6 @@ definitions:
       Groups'.
 
     allOf:
-
       - type: object
         properties:
           children:
@@ -2353,7 +2344,6 @@ definitions:
 
           personalDataDefinitions:
             type: object[]
-
             description: |
               The names and hrefs of the PDFs that this access group gives to its members.
             example: [ {
@@ -2609,7 +2599,6 @@ definitions:
 
           access:
             type: object[]
-
             description: |
               Names and hrefs of the access zones to which this access group gives access, and the
               schedules that govern it.
@@ -2821,7 +2810,6 @@ definitions:
       division:
         type: object
         description: The division containing this locker bank.
-
       notes:
         type: string
       lockers:
@@ -3166,7 +3154,6 @@ definitions:
 
       id: {type: string, example: "600"}
       name: {type: string, example: "Red DESFire visitor badge"}
-
       facilityCode:
         type: string
         description: |
@@ -3240,7 +3227,6 @@ definitions:
         description: |
           An alphanumeric identifier, unique to the server.  Use it to filter cardholder searches
           and to add your external ID to the results of an event search.
-
       name:
         type: string
         example: "email"
@@ -3271,7 +3257,6 @@ definitions:
         example: false
         description:  If true, every cardholder with a value for this PDF must have a different value.
       privilege:
-
         description: Reserved for future use.  Do not use.
       sortPriority:
         description: |
@@ -3363,6 +3348,10 @@ paths:
 
           The search is always case-insensitive.
 
+          The `name` and `pdf_{id}` search parameters form a logical conjunction.  They are ANDed
+          together.  Therefore if you search for `name=Mary&pdf_1315=nanny` you will only get back
+          cardholders with 'Mary' in their name and 'nanny' in the PDF with ID 1315.
+
       - name: "pdf_{id}"
         in: query
         required: false
@@ -3377,6 +3366,10 @@ paths:
           `%` will return any cardholder with this PDF set to a non-null value.
 
           The search is always case-insensitive.
+
+          The `name` and `pdf_{id}` search parameters form a logical conjunction.  They are ANDed
+          together.  Therefore the search `pdf_1315=nanny&pdf_1315=paratrooper` will only return
+          cardholders whose PDF 1315 contains the strings 'nanny' and 'paratrooper'.
 
       - name: "fields"
         in: query
@@ -3446,7 +3439,6 @@ paths:
           description: "Success."
           headers:
             location:
-
               type: string
               format: url
               description: The href of the new cardholder.
@@ -3620,7 +3612,6 @@ paths:
     delete:
       tags:
         - Cardholders
-
       summary: Remove an access group membership
 
       description: |
@@ -3789,7 +3780,6 @@ paths:
           in: body
           required: true
           schema: {$ref: '#/definitions/Cardholder Update Location POST example'}
-
           example: {"accessZone":{"href": "https://localhost:8904/items/412"}}
           description: |
             This should contain the href of the target access zone.  The example here came from the
@@ -4039,7 +4029,6 @@ paths:
           required: false
           type: string
           enum: [href, id, name, description, parent, division, children, notes, personalDataDefinitions, access, saltoAccess, ...]
-
           description: |
             Return these fields.  The values you can list are the same as the field names in the
             [detail results](#definition-Access-group-detail).  Use it to return less data than
@@ -4192,7 +4181,6 @@ paths:
         4xx: { description: "Your REST operator does not have the right privileges, or the installation lacks a cardholders licence." }
 
 ######################################################################
-
   /api/card_types/assign:
     get:
       tags: [ "Card types" ]
@@ -4218,7 +4206,6 @@ paths:
         4xx: { description: "The installation lacks a cardholders licence." }
 
 ######################################################################
-
   /api/locker_banks:
     get:
       tags: [ "Lockers" ]
@@ -4375,7 +4362,6 @@ paths:
             'Override - Open Locker' privilege.
 
 ######################################################################
-
   /api/personal_data_fields:
     get:
       tags: [ "PDF definitions" ]
