@@ -2219,7 +2219,8 @@ paths:
       tags: ["Access Zones"]
       summary: Cancel a zone lockdown
       description: |
-        Cancels a lockdown, returning it to its scheduled state.
+        Cancels a lockdown, returning it to its scheduled state.  It will not cancel any other kind
+        of override.
 
       parameters: [{in: path, name: id, required: true, description: "The ID of the access zone.", type: string}]
       responses:
@@ -2255,6 +2256,8 @@ paths:
         This command will achieve nothing if the alarm zone is not controlled by a
         schedule, because without a schedule the alarm zone does not have the concept of a
         'normal' state.
+
+        It will not cancel a lockdown.  For that you need `cancel_lock_down`.
 
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
