@@ -40,7 +40,8 @@ info:
     versions of Command Centre know not to use them.
 
     - Operator add, modify, and delete [events](#definition-EventSummary) now contain a link to the
-      affected item.
+      affected item in a new `modifiedItem` block, deprecating the `accessGroup` block for those
+      event types.
 
     - All operator events now contain the operator's name at the time.
 
@@ -331,23 +332,6 @@ x-spectacle-topics:
       that you can simply add a question mark and your parameters.
 
 x-common-blocks-this-is-made-up:
-  eventType_ignored: &EVENTTYPE
-    type: object
-    description: |
-      ID and name of the event's or alarm's type.  There is a long list of them at
-      [/events/groups](#operation--api-events-groups-get).
-    properties:
-      id:
-        type: string
-        description: |
-          The alphanumeric ID of the event type.  To search for events of the same type as this
-          example, put `type=23035` in the query parameters of 
-          [/events](#operation--api-events-get).
-        example: "23035"
-      name:
-        type: string
-        description: The name of the event type.
-        example: "Forced door"
 
 security:
   - "API key": []
@@ -1219,11 +1203,7 @@ definitions:
         description: |
           The name of this alarm's event type.
 
-          DEPRECATED in 8.40, replaced by the `eventType` block.  The server will continue returning
-          this field for the foreseeable future, but new development should use `eventType`.
         example: "Door forced"
-      eventType:
-        <<: *EVENTTYPE
       priority:
         type: integer
         description: Numeric priority.  9 is critical and 0 is not an event.
@@ -1560,14 +1540,20 @@ definitions:
       type:
         type: object
         description: |
-          DEPRECATED in 8.40, replaced by the `eventType` block, which is identical.  The server
-          will continue returning this block for the foreseeable future, but new development should
-          use `eventType`.
-      eventType:
-        <<: *EVENTTYPE
-        example:
-          id: "601"
-          name: "Operator logon failed"
+          ID and name of the event's type.  There is a long list of them at
+          [/events/groups](#operation--api-events-groups-get).
+        properties:
+          id:
+            type: string
+            description: |
+              The alphanumeric ID of the event type.  To search for events of the same type as this
+              example, put `type=23035` in the query parameters of
+              [/events](#operation--api-events-get).
+            example: "601"
+          name:
+            type: string
+            description: The name of the event type.
+            example: "Operator logon failed"
       division:
         type: object
         description: |
