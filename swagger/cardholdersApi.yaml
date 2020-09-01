@@ -216,6 +216,10 @@ x-common-blocks-this-is-made-up:
       If you are running a multiserver installation and this item is homed on a remote server, this
       field will contain the name of that server.  This field is missing from items that are held on
       the machine that served the API request.
+  409_ignored: &409CH
+    description: |
+      The cardholder is locked for editing by another operator.  The body of the response will
+      tell you which operator is holding the lock.
 
 ######################################################################    
 tags:
@@ -3309,6 +3313,10 @@ paths:
 
         When you have loaded all the cardholders there will be no `next` link.
 
+        If your result set is empty it means your operator does not have the privilege to view any
+        cardholders.  Perhaps there are none in the divisions in which your operator has privileges,
+        or your operator has no privileges at all.
+
         Adding or modifying cardholders between calls to this API will not affect the pagination of
         its results if you sort by ID.
 
@@ -3402,10 +3410,11 @@ paths:
 
       responses:
         200:
-          description: Success
+          description: |
+            Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Cardholders'}
         4xx:
-          description: The site does not have the RESTCardholders licence, or the operator does not have a privilege that allows viewing cardholders.
+          description: The site does not have the RESTCardholders licence.
 
     post:
       tags:
@@ -3495,7 +3504,7 @@ paths:
           description: "Success."
           schema: { $ref: '#/definitions/Cardholder detail' }
         404: { description: "That is not the URL of a cardholder." }
-        4xx: { description: "The operator does not have a privilege that allows viewing cardholders." }
+        4xx: { description: "The operator does not have the privilege to view that cardholder." }
 
     patch: 
       tags: [ Cardholders ]
@@ -3558,16 +3567,17 @@ paths:
           description: "Success."
         400:
           description: |
-            The parameters are invalid, or other errors that prevented the update, such as the
-            cardholder being locked for editing by an interactive client.
+            The parameters are invalid, or other errors that prevented the update.
 
             If you receive 'No fields have been defined for update', check that your submission body
             is valid JSON.
+        409:
+          <<: *409CH
         4xx:
           description: |
-            The site does not have a REST licence, or the operator does not have a privilege that
-            allows editing cardholders, or you attempted to set a field for which you have no
-            privilege (such as 'notes').
+            The site does not have a REST licence, or the operator does not have the privilege to
+            modify that cardholder, or you attempted to set a field for which you have no privilege
+            (such as 'notes').
 
     delete:
       tags: [ Cardholders ]
@@ -3582,8 +3592,18 @@ paths:
           description: "The identifier of the cardholder."
       responses: 
         204: { description: "Success." }
-        404: { description: "There is no such cardholder, or you do not have access to the cardholder's division." }
-        4xx: { description: "The operator does not have a privilege that allows editing cardholders." }
+        404:
+          description: |
+            There is no such cardholder, or the operator do not have any permissions on it.
+        403:
+          description: |
+            The operator does not have permission to delete this cardholder.
+        409:
+          <<: *409CH
+        400:
+          description: |
+            Deleting the cardholder failed.  This happens when the cardholder is critical part of
+            another construct (a personalised notification, for example).
 
   /api/cardholders/{id}/cards/{card_id}:
     delete:
@@ -3609,8 +3629,10 @@ paths:
           description: "An opaque identifier for the card."
       responses: 
         204: { description: "Success." }
-        404: { description: "Maybe it was deleted already." }
-        4xx: { description: "The operator does not have a privilege that allows editing cardholders." }
+        404: { description: "That card is not on that cardholder.  Maybe it was deleted already." }
+        409:
+          <<: *409CH
+        4xx: { description: "The operator does not have a privilege that allows editing that cardholder." }
 
   /api/cardholders/{id}/access_groups/{membership_id}:
     delete:
@@ -3639,6 +3661,8 @@ paths:
         204: 
           description: "Success."
         404: { description: "The parameters in the path are invalid." }
+        409:
+          <<: *409CH
         4xx: { description: "The operator does not have a privilege that allows editing cardholders." }
 
   /api/cardholders/{id}/competencies/{link_id}:
@@ -3791,12 +3815,11 @@ paths:
       responses: 
         204: 
           description: "Success."
-        400:
+        4xx:
           description: |
             The parameters are invalid, or other errors that prevented the update, such as the
-            cardholder being locked for editing by an interactive client.
-
-        4xx: { description: "The operator does not have a privilege that allows moving this cardholder to the target zone." }
+            cardholder being locked for editing by an interactive client, or the operator does not
+            have a privilege that allows moving this cardholder to the target zone.
 
   /api/cardholders/{id}/edit:
     get:
@@ -3942,12 +3965,11 @@ paths:
 
       responses:
         200:
-          description: Success
+          description: Success.
           schema: {$ref: '#/definitions/Cardholder changes'}
         4xx:
           description: |
-            The site does not have the RESTCardholders licence, or the operator does not have a
-            privilege that allows viewing cardholders.
+            The site does not have the RESTCardholders licence.
 
 ######################################################################
 
@@ -3965,6 +3987,10 @@ paths:
         should follow the `next` link, if it is present, to collect the next batch.
 
         When you have loaded all the access groups there will be no `next` link.
+
+        If your result set is empty it means your operator does not have the privilege to view any
+        access groups.  Perhaps there are none in the divisions in which your operator has 'View
+        access groups' or 'Edit access groups', or your operator has no privileges at all.
 
         This request does not return the group's cardholders.  That would make the results unwieldy.
         Instead, it provides a separate link.
@@ -4007,7 +4033,9 @@ paths:
           include them.
 
       responses: 
-        200: { description: "Success.", schema: { $ref: '#/definitions/Access groups' } }
+        200:
+          description: |
+            Success.  See the note in the description about privileges if your result set is empty.
         404: { description: "There is no group at that URL." }
         4xx: { description: "The operator does not have a privilege that allows viewing access groups." }
 
@@ -4111,6 +4139,10 @@ paths:
         The result will contain no more than 100 competencies, unless you ask for more in your
         request;  you should follow the `next` link (if present) for the next batch.
 
+        If your result set is empty it means your operator does not have the privilege to view any
+        competencies.  Perhaps there are none in the divisions in which your operator has 'View
+        site' or 'Edit site', or your operator has no privileges at all.
+
         A bug in 7.90 meant that this call did not provide `next` links for sites that had more than
         100 competencies.  If this is you, set the 'top' parameter as high as you can (as
         recommended in the efficiency tips).  Command Centre clamps that to a maximum of ten
@@ -4146,7 +4178,8 @@ paths:
 
       responses:
         200:
-          description: "Success."
+          description: |
+            Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Competencies'}
         4xx: { description: "The installation lacks a cardholders licence." }
 
@@ -4197,6 +4230,11 @@ paths:
         Since a site usually has only a few card types, and each is small, the search, sorting, and
         pagination parameters are probably of little use to you.  But they work.
 
+        If your result set is empty it means your operator does not have the privilege to view any
+        card types.  Perhaps there are none in the divisions in which your operator has 'View site',
+        'Configure site', or the other privileges that allow assign cards and credentials to
+        cardholders.
+
         You can find this URL in `features.cardTypes.assign`in `/api`.  It was new in 8.10.
 
       parameters:
@@ -4221,6 +4259,9 @@ paths:
 
         The result will contain no more than 100 objects; you should follow the `next` link, if it
         is present, to collect more.
+
+        If the result set is empty it means there are no locker banks in the divisions in which the
+        operator has a privilege that allows listing them, such as 'View lockers and assignments'.
 
         When you have loaded all the locker banks there will no `next` link.
 
@@ -4315,7 +4356,7 @@ paths:
   /api/lockers/{id}:
     get:
       tags: [ "Lockers" ]
-      summary: Search locker banks
+      summary: Get details of a locker
       description: |
         This returns details for a locker.  Follow the href in the [locker bank
         summary](#definition-Locker-bank-summary) or [locker bank

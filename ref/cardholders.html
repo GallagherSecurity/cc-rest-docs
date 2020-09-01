@@ -118,7 +118,7 @@
                 <a href="#operation--api-locker_banks--id--get"> Get details of a locker bank </a>
               </li>
               <li>
-                <a href="#operation--api-lockers--id--get"> Search locker banks </a>
+                <a href="#operation--api-lockers--id--get"> Get details of a locker </a>
               </li>
               <li>
                 <a href="#operation--api-lockers--id--open-post"> Open a locker </a>
@@ -620,6 +620,7 @@
                   <p>This call returns cardholders matching your search criteria.</p>
                   <p>The result will contain no more than 100 cardholders, or as many as you asked for in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
                   <p>When you have loaded all the cardholders there will be no <code>next</code> link.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any cardholders. Perhaps there are none in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
                   <p>Adding or modifying cardholders between calls to this API will not affect the pagination of its results if you sort by ID.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.cardholders.cardholders</code> section of <code>/api</code>.</p>
                 </section>
@@ -740,7 +741,7 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -748,7 +749,7 @@
                       <div class="prop-title">4xx </div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTCardholders licence, or the operator does not have a privilege that allows viewing cardholders.</p>
+                      <p>The site does not have the RESTCardholders licence.</p>
                     </div>
                   </div>
                 </section>
@@ -1089,7 +1090,7 @@
                       <div class="prop-title">4xx </div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have a privilege that allows viewing cardholders.</p>
+                      <p>The operator does not have the privilege to view that cardholder.</p>
                     </div>
                   </div>
                 </section>
@@ -1496,8 +1497,16 @@
                       <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The parameters are invalid, or other errors that prevented the update, such as the cardholder being locked for editing by an interactive client.</p>
+                      <p>The parameters are invalid, or other errors that prevented the update.</p>
                       <p>If you receive &#39;No fields have been defined for update&#39;, check that your submission body is valid JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The cardholder is locked for editing by another operator. The body of the response will tell you which operator is holding the lock.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -1505,7 +1514,7 @@
                       <div class="prop-title">4xx </div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have a REST licence, or the operator does not have a privilege that allows editing cardholders, or you attempted to set a field for which you have no privilege (such as &#39;notes&#39;).</p>
+                      <p>The site does not have a REST licence, or the operator does not have the privilege to modify that cardholder, or you attempted to set a field for which you have no privilege (such as &#39;notes&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -1574,18 +1583,34 @@
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">404 Not Found</div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>There is no such cardholder, or you do not have access to the cardholder&#39;s division.</p>
+                      <p>Deleting the cardholder failed. This happens when the cardholder is critical part of another construct (a personalised notification, for example).</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have a privilege that allows editing cardholders.</p>
+                      <p>The operator does not have permission to delete this cardholder.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>There is no such cardholder, or the operator do not have any permissions on it.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The cardholder is locked for editing by another operator. The body of the response will tell you which operator is holding the lock.</p>
                     </div>
                   </div>
                 </section>
@@ -1673,7 +1698,15 @@
                       <div class="prop-title">404 Not Found</div>
                     </div>
                     <div class="prop-value">
-                      <p>Maybe it was deleted already.</p>
+                      <p>That card is not on that cardholder. Maybe it was deleted already.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The cardholder is locked for editing by another operator. The body of the response will tell you which operator is holding the lock.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -1681,7 +1714,7 @@
                       <div class="prop-title">4xx </div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have a privilege that allows editing cardholders.</p>
+                      <p>The operator does not have a privilege that allows editing that cardholder.</p>
                     </div>
                   </div>
                 </section>
@@ -1770,6 +1803,14 @@
                     </div>
                     <div class="prop-value">
                       <p>The parameters in the path are invalid.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The cardholder is locked for editing by another operator. The body of the response will tell you which operator is holding the lock.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2234,18 +2275,10 @@
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">400 Bad Request</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The parameters are invalid, or other errors that prevented the update, such as the cardholder being locked for editing by an interactive client.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
                       <div class="prop-title">4xx </div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have a privilege that allows moving this cardholder to the target zone.</p>
+                      <p>The parameters are invalid, or other errors that prevented the update, such as the cardholder being locked for editing by an interactive client, or the operator does not have a privilege that allows moving this cardholder to the target zone.</p>
                     </div>
                   </div>
                 </section>
@@ -2555,7 +2588,7 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2563,7 +2596,7 @@
                       <div class="prop-title">4xx </div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTCardholders licence, or the operator does not have a privilege that allows viewing cardholders.</p>
+                      <p>The site does not have the RESTCardholders licence.</p>
                     </div>
                   </div>
                 </section>
@@ -2718,6 +2751,7 @@
                   <p>This returns access groups matching your search criteria.</p>
                   <p>The result will contain no more than 100 groups, unless you ask for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
                   <p>When you have loaded all the access groups there will be no <code>next</code> link.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any access groups. Perhaps there are none in the divisions in which your operator has &#39;View access groups&#39; or &#39;Edit access groups&#39;, or your operator has no privileges at all.</p>
                   <p>This request does not return the group&#39;s cardholders. That would make the results unwieldy. Instead, it provides a separate link.</p>
                   <p>Adding, deleting, or modifying access groups between calls to this API will not affect the pagination of its results if you sort by ID.</p>
                   <p>You can find the URL for this call in the <code>features.accessGroups.accessGroups.href</code> field of <code>/api</code>.</p>
@@ -2825,15 +2859,9 @@
                   <div class="prop-row prop-group">
                     <div class="prop-name">
                       <div class="prop-title">200 OK</div>
-                      <div class="prop-ref">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Access groups">Access groups</a>
-                        </span>
-                      </div>
-                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success.</p>
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2854,42 +2882,7 @@
                   </div>
                 </section>
               </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Response Example
-                    <span>(200 OK)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;results&quot;</span>: [
-    {
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;352&quot;</span>,
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;R&amp;D special projects group.&quot;</span>,
-      <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Deep underground.&quot;</span>,
-      <span class="hljs-attr">&quot;parent&quot;</span>: {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/100&quot;</span>,
-        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;All R&amp;D&quot;</span>
-      },
-      <span class="hljs-attr">&quot;division&quot;</span>: {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
-      },
-      <span class="hljs-attr">&quot;cardholders&quot;</span>: {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352/cardholders&quot;</span>
-      }
-    }
-  ],
-  <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups?skip=61320&quot;</span>
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
+              <div class="doc-examples"> </div>
             </div>
           </div>
           <div id="operation--api-access_groups--id--get" class="operation panel" data-traverse-target="operation--api-access_groups--id--get">
@@ -3287,6 +3280,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns competencies matching your search criteria.</p>
                   <p>The result will contain no more than 100 competencies, unless you ask for more in your request; you should follow the <code>next</code> link (if present) for the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any competencies. Perhaps there are none in the divisions in which your operator has &#39;View site&#39; or &#39;Edit site&#39;, or your operator has no privileges at all.</p>
                   <p>A bug in 7.90 meant that this call did not provide <code>next</code> links for sites that had more than 100 competencies. If this is you, set the &#39;top&#39; parameter as high as you can (as recommended in the efficiency tips). Command Centre clamps that to a maximum of ten thousand. If that is not enough competencies for you, you are probably already in contact with Gallagher technical support.</p>
                   <p>Get this URL from <code>features.competencies.competencies.href</code> in <code>/api</code>.</p>
                 </section>
@@ -3401,7 +3395,7 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success.</p>
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -3616,6 +3610,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns the card types you are privileged to assign to a cardholder.</p>
                   <p>Since a site usually has only a few card types, and each is small, the search, sorting, and pagination parameters are probably of little use to you. But they work.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any card types. Perhaps there are none in the divisions in which your operator has &#39;View site&#39;, &#39;Configure site&#39;, or the other privileges that allow assign cards and credentials to cardholders.</p>
                   <p>You can find this URL in <code>features.cardTypes.assign</code>in <code>/api</code>. It was new in 8.10.</p>
                 </section>
               </div>
@@ -3822,6 +3817,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns locker banks matching your search criteria.</p>
                   <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more.</p>
+                  <p>If the result set is empty it means there are no locker banks in the divisions in which the operator has a privilege that allows listing them, such as &#39;View lockers and assignments&#39;.</p>
                   <p>When you have loaded all the locker banks there will no <code>next</code> link.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.lockerBanks.lockerBanks</code> section of <code>/api</code>.</p>
                 </section>
@@ -4174,7 +4170,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Search locker banks</span>
+              <span class="operation-summary">Get details of a locker</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
