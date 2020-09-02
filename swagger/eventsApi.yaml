@@ -320,7 +320,7 @@ securityDefinitions:
       reason for refusing the request.
 
 x-spectacle-topics:
-  HATEOAS:
+  Forward compatibility (HATEOAS):
     description: |
       This is a self-referencing REST API that follows the principles of HATEOAS.  Other than the
       initial `GET` to `/api` when it first connects, your source code should not contain any URLs,
@@ -331,7 +331,79 @@ x-spectacle-topics:
       Be prepared to append query parameters to URLs that already have their own:  do not assume
       that you can simply add a question mark and your parameters.
 
-x-common-blocks-this-is-made-up:
+  Operator privileges:
+    description: |
+      First, some background on operators, operator groups, and divisions.
+
+      To determine your REST client's privileges, the server starts by searching the list of REST
+      Client items in its configuration for the one with the API key in the Authorization header of
+      your request.  Assuming it finds one, it takes the cardholder from that REST Client item.
+
+      To be any use at all that cardholder must be a member of at least one operator group.  Being
+      in an operator group makes a cardholder an _operator_.
+
+      After the server has your operator, it needs to check whether that operator has access to the
+      items or events in the request.  To explain that, it is necessary to cover divisions.
+
+      Aside from some special items such as day categories, every item in Command Centre is in a
+      _division_.  Divisions are hierarchical, with all divisions (but the root) being a child of
+      another.  Multi-server installations have one division tree per server.
+
+      Events are not items, but the server considers them to be in the division of their source
+      item.  Card events, for example, typically use a door as a source item; when an operator
+      modifies an item, the event recording that change uses that operator's workstation as the
+      source item.  Alarms are the same, because they are basically events with a few more fields.
+      A 'door forced' alarm, for example, has the door as the source and an alarm that the server
+      generates when you send a bad API key uses the server itself as the source.
+
+      To link privileges to items and events, an operator group contains a list of privileges and a
+      list of divisions.  Its operators enjoy those privileges on all the items that are in those
+      divisions, and therefore all events and alarms that are on those items.  Having a privilege on
+      a division also grants an operator that privilege on that division's descendants.  Therefore,
+      an operator with a privilege on the root division has that privilege on all that server's
+      items and events.
+
+      A common misconception is that the division an operator is in, or the division an operator
+      group is in, have a bearing on the operator's privileges.  They do not.  It is all about the
+      divisions in the operator group's 'Operator privileges' list.
+
+      ### If your privileges do not seem to be working
+
+      First, to protect Command Centre from accident and malice, you should strive to grant your
+      REST clients the fewest and lowest-level privileges you can.  Do not give them 'advanced
+      user'.  Reaching a point where you do not receive the results you want is a good thing:
+      it means you have screwed things down a little too tightly.
+
+      **If changing privileges in Command Centre does not seem to make any difference**, remember to
+      push the 'Refresh operator privileges' button in the properties window of your REST Client
+      item.
+
+      Here are some general rules that may help if you are still not receiving the results you
+      expect.
+
+      - Receiving a 403 from a GET means the server may not have a license for the retrieval you are
+        attempting or your operator does not have the privilege to view that object.  If it is a
+        licensing problem, the body of the response will describe it.
+
+      - Receiving a 403 from a PATCH, POST, or DELETE means your operator does not have the
+        necessary privilege to perform that operation.  You need one of the privileges beginning
+        with 'Edit', 'Modify', or 'Create'.
+
+      - Receiving a 404 when trying to get one item or event means it either does not exist or your
+        operator does not have the privilege to view it.
+
+      - Receiving a 200 and an empty result set from a search means you are licensed for that search
+        but your operator could not see any items or events that matched.  One possible cause is
+        that your operator is not licensed to see _any_ items or events of that kind.  Make sure
+        that one of the operator groups that your operator is in has a 'View' privilege such as
+        'View events' or 'View cardholders' - whatever is appropriate.  If it does, and you have hit
+        the button mentioned above, then check that the divisions on the operator group contain the
+        items you expect.  If it is events you are searching for, check the source item on those
+        events either by using a REST operator with 'View events' on the root division or by looking
+        at them in one of the thick clients.
+
+  Field specifiers:
+    $ref: "cardholdersApi.yaml#/x-spectacle-topics/Field specifiers"
 
 security:
   - "API key": []
@@ -826,7 +898,7 @@ paths:
         in: query
         required: false
         type: string
-        description: "Restricts events to those in the division with this ID and its decendent divisions.  Separate multiple IDs with commas.\n\nExample:  `division=2,101`"
+        description: "Restricts events to those in the division with this ID and its descendant divisions.  Separate multiple IDs with commas.\n\nExample:  `division=2,101`"
       - name: "pos"
         in: query
         required: false
@@ -894,15 +966,16 @@ paths:
       - Divisions
       summary: List divisions searchable for events
       description: |
-        Retrieves the list of divisions in which the REST operator has privileges to view events.
-        This does not check whether you have the RESTEvents licence.
+        The functions inside `/api/divisions/` retrieve the divisions in which the operator can
+        perform other functions.  They return the same data structure, so this documentation only
+        covers one.
 
-        `/api/divisions/view_alarms` and other methods inside `/api/divisions/` retrieve
-        the divisions in which the operator can perform other functions.  They return the
-        same data structure, so this documentation will only cover it once.
+        `/api/divisions/view_events`, for example, retrieves the list of divisions in which the REST
+        operator has privileges to view events, and `/api/division/view_alarms` does the same for
+        alarms.  These do not check whether you have the RESTEvents licence.
 
-        Do not code this URL into your application.  Take it from `events.divisions.href` in the
-        results of `GET /api`.
+        Do not code these URLs into your application.  Take them from `events.divisions.href` or
+        `alarms.division.href` in the results of `GET /api`.
       responses:
         200:
           description: Success

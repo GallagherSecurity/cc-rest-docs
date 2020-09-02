@@ -20,7 +20,9 @@
           <h5>Topics</h5>
           <a href="#introduction">Introduction</a>
           <a href="#authentication">Authentication</a>
-          <a href="#topic-HATEOAS">HATEOAS</a>
+          <a href="#topic-Forward-compatibility--HATEOAS-">Forward compatibility (HATEOAS)</a>
+          <a href="#topic-Operator-privileges">Operator privileges</a>
+          <a href="#topic-Field-specifiers">Field specifiers</a>
           <h5>Operations</h5>
           <section>
             <a href="#tag-Alarms">Alarms</a>
@@ -250,12 +252,79 @@
               </div>
             </div>
           </div>
-          <h1 id="topic-HATEOAS" data-traverse-target="topic-HATEOAS">HATEOAS</h1>
+          <h1 id="topic-Forward-compatibility--HATEOAS-" data-traverse-target="topic-Forward-compatibility--HATEOAS-">Forward compatibility (HATEOAS)</h1>
           <div class="panel">
             <div class="doc-row">
               <div class="doc-copy">
                 <p>This is a self-referencing REST API that follows the principles of HATEOAS. Other than the initial <code>GET</code> to <code>/api</code> when it first connects, your source code should not contain any URLs, as they are subject to change. You should append the query parameters this document describes for operations such as filtering and searching, but everying in the path should come from the results of <code>/api</code> or pages linked from it.</p>
                 <p>Be prepared to append query parameters to URLs that already have their own: do not assume that you can simply add a question mark and your parameters.</p>
+              </div>
+            </div>
+          </div>
+          <h1 id="topic-Operator-privileges" data-traverse-target="topic-Operator-privileges">Operator privileges</h1>
+          <div class="panel">
+            <div class="doc-row">
+              <div class="doc-copy">
+                <p>First, some background on operators, operator groups, and divisions.</p>
+                <p>To determine your REST client&#39;s privileges, the server starts by searching the list of REST Client items in its configuration for the one with the API key in the Authorization header of your request. Assuming it finds one, it takes the cardholder from that REST Client item.</p>
+                <p>To be any use at all that cardholder must be a member of at least one operator group. Being in an operator group makes a cardholder an
+                  <em>operator</em>.</p>
+                <p>After the server has your operator, it needs to check whether that operator has access to the items or events in the request. To explain that, it is necessary to cover divisions.</p>
+                <p>Aside from some special items such as day categories, every item in Command Centre is in a
+                  <em>division</em>. Divisions are hierarchical, with all divisions (but the root) being a child of another. Multi-server installations have one division tree per server.</p>
+                <p>Events are not items, but the server considers them to be in the division of their source item. Card events, for example, typically use a door as a source item; when an operator modifies an item, the event recording that change uses that operator&#39;s workstation as the source item. Alarms are the same, because they are basically events with a few more fields. A &#39;door forced&#39; alarm, for example, has the door as the source and an alarm that the server generates when you send a bad API key uses the server itself as the source.</p>
+                <p>To link privileges to items and events, an operator group contains a list of privileges and a list of divisions. Its operators enjoy those privileges on all the items that are in those divisions, and therefore all events and alarms that are on those items. Having a privilege on a division also grants an operator that privilege on that division&#39;s descendants. Therefore, an operator with a privilege on the root division has that privilege on all that server&#39;s items and events.</p>
+                <p>A common misconception is that the division an operator is in, or the division an operator group is in, have a bearing on the operator&#39;s privileges. They do not. It is all about the divisions in the operator group&#39;s &#39;Operator privileges&#39; list.</p>
+                <h3 id="if-your-privileges-do-not-seem-to-be-working">If your privileges do not seem to be working</h3>
+                <p>First, to protect Command Centre from accident and malice, you should strive to grant your REST clients the fewest and lowest-level privileges you can. Do not give them &#39;advanced user&#39;. Reaching a point where you do not receive the results you want is a good thing: it means you have screwed things down a little too tightly.</p>
+                <p>
+                  <strong>If changing privileges in Command Centre does not seem to make any difference</strong>, remember to push the &#39;Refresh operator privileges&#39; button in the properties window of your REST Client item.</p>
+                <p>Here are some general rules that may help if you are still not receiving the results you expect.</p>
+                <ul>
+                  <li>
+                    <p>Receiving a 403 from a GET means the server may not have a license for the retrieval you are attempting or your operator does not have the privilege to view that object. If it is a licensing problem, the body of the response will describe it.</p>
+                  </li>
+                  <li>
+                    <p>Receiving a 403 from a PATCH, POST, or DELETE means your operator does not have the necessary privilege to perform that operation. You need one of the privileges beginning with &#39;Edit&#39;, &#39;Modify&#39;, or &#39;Create&#39;.</p>
+                  </li>
+                  <li>
+                    <p>Receiving a 404 when trying to get one item or event means it either does not exist or your operator does not have the privilege to view it.</p>
+                  </li>
+                  <li>
+                    <p>Receiving a 200 and an empty result set from a search means you are licensed for that search but your operator could not see any items or events that matched. One possible cause is that your operator is not licensed to see
+                      <em>any</em> items or events of that kind. Make sure that one of the operator groups that your operator is in has a &#39;View&#39; privilege such as &#39;View events&#39; or &#39;View cardholders&#39; - whatever is appropriate. If it does, and you have hit the button mentioned above, then check that the divisions on the operator group contain the items you expect. If it is events you are searching for, check the source item on those events either by using a REST operator with &#39;View events&#39; on the root division or by looking at them in one of the thick clients.</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <h1 id="topic-Field-specifiers" data-traverse-target="topic-Field-specifiers">Field specifiers</h1>
+          <div class="panel">
+            <div class="doc-row">
+              <div class="doc-copy">
+                <p>You can specify the fields you want in the results of a query. This lets you:</p>
+                <ul>
+                  <li>save calls by adding more fields to search results, which are terse by default</li>
+                  <li>save bandwidth by putting fewer fields on detail pages, which are verbose by default, and</li>
+                  <li>retrieve more data by adding fields to detail pages that are not normally there, such as an item&#39;s status, short name, and notes.</li>
+                </ul>
+                <p>You do this using the query parameter <code>fields</code> to the search, detail, and updates pages. It takes a comma-separated list of field names. They are case-sensitive: copy them carefully from this document. The special field name <code>defaults</code> adds in the fields the server would have sent had you not set the <code>fields</code> parameter at all.</p>
+                <p>Example GETs:</p>
+                <ul>
+                  <li>
+                    <p><code>/api/cardholders?name=Smith&amp;fields=defaults,cards,competencies</code> will list all cardholders with &#39;Smith&#39; in the first or last name, showing the fields you normally get on a search page plus their cards and competencies.</p>
+                  </li>
+                  <li>
+                    <p><code>/api/access_groups/123?fields=children,cardholders</code> will show just the child groups of access group 123 and a link to retrieve its cardholders - nothing else.</p>
+                  </li>
+                  <li>
+                    <p><code>/api/outputs?fields=name,shortname,id</code> will show the name, short name, and ID of your outputs.</p>
+                  </li>
+                  <li>
+                    <p><code>/api/access_zones?fields=name,doors</code> will show the name and attached doors of your access zones.</p>
+                  </li>
+                </ul>
+                <p>Each controller has different optional fields - see their sections under Operations.</p>
               </div>
             </div>
           </div>
@@ -1898,7 +1967,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Restricts events to those in the division with this ID and its decendent divisions. Separate multiple IDs with commas.</p>
+                      <p>Restricts events to those in the division with this ID and its descendant divisions. Separate multiple IDs with commas.</p>
                       <p>Example: <code>division=2,101</code></p>
                     </div>
                   </div>
@@ -2345,9 +2414,9 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>Retrieves the list of divisions in which the REST operator has privileges to view events. This does not check whether you have the RESTEvents licence.</p>
-                  <p><code>/api/divisions/view_alarms</code> and other methods inside <code>/api/divisions/</code> retrieve the divisions in which the operator can perform other functions. They return the same data structure, so this documentation will only cover it once.</p>
-                  <p>Do not code this URL into your application. Take it from <code>events.divisions.href</code> in the results of <code>GET /api</code>.</p>
+                  <p>The functions inside <code>/api/divisions/</code> retrieve the divisions in which the operator can perform other functions. They return the same data structure, so this documentation only covers one.</p>
+                  <p><code>/api/divisions/view_events</code>, for example, retrieves the list of divisions in which the REST operator has privileges to view events, and <code>/api/division/view_alarms</code> does the same for alarms. These do not check whether you have the RESTEvents licence.</p>
+                  <p>Do not code these URLs into your application. Take them from <code>events.divisions.href</code> or <code>alarms.division.href</code> in the results of <code>GET /api</code>.</p>
                 </section>
               </div>
             </div>
