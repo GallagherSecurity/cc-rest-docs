@@ -760,7 +760,7 @@ definitions:
         type: string
         readOnly: true
         description: |
-          An alphanumeric identifier, unique to the server.
+          An alphanumeric identifier, unique to the server.  No API calls use cardholder IDs.
 
           Deprecated.  Use the href instead.
         example: "10135"
@@ -2277,7 +2277,8 @@ definitions:
     properties:
       id:
         type: string
-        description: "An alphanumeric identifier for this access group."
+        description: |
+          An alphanumeric identifier for this access group.  No API calls use access group IDs.
         example: "352"
       href:
         type: string
@@ -2300,6 +2301,7 @@ definitions:
         type: object
         description:  "The division that contains this access group."
         example:
+          id: "2"
           href: "https://localhost:8904/api/divisions/2"
       cardholders:
         type: object
@@ -2753,11 +2755,11 @@ definitions:
           - name: "Lobby"
             href: "https://localhost:8904/api/locker_banks/4566"
             description: "Behind reception"
-            division: {href: "https://localhost:8904/api/divisions/2" }
+            division: { id: "2", href: "https://localhost:8904/api/divisions/2" }
           - name: "Bank A"
             href: "https://localhost:8904/api/locker_banks/4567"
             description: "Level 4 east A"
-            division: {href: "https://localhost:8904/api/divisions/2" }
+            division: { id: "2", href: "https://localhost:8904/api/divisions/2" }
       next:
         type: object
         description: The link to the next page of results.  Absent if you have retrieved them all.
@@ -2796,7 +2798,7 @@ definitions:
       name: "Lobby, building 28"
       shortName: "Lobby"
       description: "Behind reception"
-      division: {href: "https://localhost:8904/api/divisions/2" }
+      division: { id: "2", href: "https://localhost:8904/api/divisions/2" }
 
   Locker bank detail:
     description: |
@@ -2886,7 +2888,7 @@ definitions:
       name: "Lobby"
       href: "https://localhost:8904/api/locker_banks/4566"
       description: "Behind reception"
-      division: {href: "https://localhost:8904/api/divisions/2" }
+      division: { id: "2", href: "https://localhost:8904/api/divisions/2" }
       lockers:
         - name: "Lobby locker 1"
           shortName: "L1"
@@ -2940,7 +2942,7 @@ definitions:
       division:
         type: object
         description: The division containing this locker.
-        example: {href: "https://localhost:8904/api/divisions/2" }
+        example: { id: "2", href: "https://localhost:8904/api/divisions/2" }
       notes:
         type: string
         description: The notes field is not in the default result set.  You must ask for it using `fields`.
@@ -3062,7 +3064,8 @@ definitions:
       description: {type: string, example: "Required for access to chem sheds."}
       division:
         type: object
-        properties: { href: { type: string, format: url, example: "https://localhost:8904/api/divisions/2" } }
+        description: The division containing this competency.
+        example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
       notes: {type: string, example: ""}
       shortName: {type: string, example: ""}
       expiryNotify:
@@ -3071,8 +3074,8 @@ definitions:
         description: |
           Set if notifications should go out before a cardholder loses this competency.  How long
           before is in the 'noticePeriod' block.  Who the notification goes to, in addition to the
-          cardholder, depends on the cardholder's relationships and what notifications are set on
-          the relationship's role.
+          cardholder holding the competency, depends on the cardholder's relationships and what
+          notifications are set on the relationship's role.
       noticePeriod:
         description: |
           How long before expiry Command Centre should send its notification and display 'expiry
@@ -3249,7 +3252,7 @@ definitions:
       division:
         type: object
         description: The division containing this PDF definition.
-        example: {href: "https://localhost:8904/api/divisions/2" }
+        example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
       type:
         type: string
         description: "The type of PDF: string, image, email address, etc."
@@ -3416,7 +3419,7 @@ paths:
           description: |
             Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Cardholders'}
-        4xx:
+        403:
           description: The site does not have the RESTCardholders licence.
 
     post:
@@ -3470,7 +3473,7 @@ paths:
             If you see 'Invalid cardholder', the server could not parse the JSON in the body of your
             POST.  Remember to quote all strings, especially those than contain @ symbols.
 
-        4xx: { description: "The operator does not have a privilege that allows creating cardholders, or you attempted to set a field for which the operator has no privilege (probably 'notes')." }
+        403: { description: "The operator does not have a privilege that allows creating cardholders, or you attempted to set a field for which the operator has no privilege (probably 'notes')." }
 
   /api/cardholders/{id}:
     get:
@@ -3506,8 +3509,10 @@ paths:
         200: 
           description: "Success."
           schema: { $ref: '#/definitions/Cardholder detail' }
-        404: { description: "That is not the URL of a cardholder." }
-        4xx: { description: "The operator does not have the privilege to view that cardholder." }
+        404:
+          description: |
+            That is not the URL of a cardholder, or the operator does not have the privilege to view
+            that cardholder.
 
     patch: 
       tags: [ Cardholders ]
@@ -3576,11 +3581,14 @@ paths:
             is valid JSON.
         409:
           <<: *409CH
+        403:
+          description: |
+            The site does not have a RESTCardholders licence, or you attempted to set a PDF for
+            which you have no privilege.
         4xx:
           description: |
-            The site does not have a REST licence, or the operator does not have the privilege to
-            modify that cardholder, or you attempted to set a field for which you have no privilege
-            (such as 'notes').
+            The operator does not have the privilege to modify that cardholder, or you attempted to
+            set a field for which you have no privilege (such as 'notes').
 
     delete:
       tags: [ Cardholders ]
@@ -3595,18 +3603,15 @@ paths:
           description: "The identifier of the cardholder."
       responses: 
         204: { description: "Success." }
-        404:
-          description: |
-            There is no such cardholder, or the operator do not have any permissions on it.
-        403:
-          description: |
-            The operator does not have permission to delete this cardholder.
-        409:
-          <<: *409CH
         400:
           description: |
             Deleting the cardholder failed.  This happens when the cardholder is critical part of
             another construct (a personalised notification, for example).
+        403:
+          description: |
+            There is no such cardholder, or the operator does not have permissions to delete it.
+        409:
+          <<: *409CH
 
   /api/cardholders/{id}/cards/{card_id}:
     delete:
@@ -3632,10 +3637,10 @@ paths:
           description: "An opaque identifier for the card."
       responses: 
         204: { description: "Success." }
-        404: { description: "That card is not on that cardholder.  Maybe it was deleted already." }
+        403: { description: "The operator does not have a privilege that allows editing that cardholder." }
+        404: { description: "That card is not on that cardholder." }
         409:
           <<: *409CH
-        4xx: { description: "The operator does not have a privilege that allows editing that cardholder." }
 
   /api/cardholders/{id}/access_groups/{membership_id}:
     delete:
@@ -3663,10 +3668,16 @@ paths:
       responses: 
         204: 
           description: "Success."
-        404: { description: "The parameters in the path are invalid." }
+        403:
+          description: |
+            The operator does not have a privilege that allows editing that cardholder.
+        404: { description: "That is not the href of an access group membership." }
         409:
           <<: *409CH
-        4xx: { description: "The operator does not have a privilege that allows editing cardholders." }
+        4xx:
+          description: |
+            The operator does not have a privilege that allows editing that cardholder's access
+            group memberships (such as 'Modify access control').
 
   /api/cardholders/{id}/competencies/{link_id}:
     delete:
@@ -3692,8 +3703,8 @@ paths:
           description: "An opaque identifier for the link between the cardholder and the competency."
       responses: 
         204: { description: "Success." }
-        404: { description: "The parameters are invalid." }
-        4xx: { description: "The operator does not have a privilege that allows editing cardholders." }
+        403: { description: "The operator does not have a privilege that allows editing that cardholder." }
+        404: { description: "That is not the href of a cardholder's competency." }
 
   /api/cardholders/{id}/competencies/{link_id}/credit:
     post:
@@ -3724,8 +3735,8 @@ paths:
           description: "The amount to adjust the competency credit.  This can be positive or negative."
       responses: 
         204: { description: "Success." }
+        403: { description: "The operator does not have a privilege that allows editing that cardholder." }
         404: { description: "The parameters are invalid." }
-        4xx: { description: "The operator does not have a privilege that allows editing cardholders." }
 
   /api/cardholders/{id}/roles/{relationship_id}:
     delete:
@@ -3755,8 +3766,8 @@ paths:
       responses: 
         204: 
           description: "Success."
+        403: { description: "The operator does not have a privilege that allows editing that cardholder." }
         404: { description: "That is not the URL of a relationship.  Perhaps it is deleted already." }
-        4xx: { description: "The operator does not have a privilege that allows editing cardholders." }
 
   /api/cardholders/{id}/lockers/{assignment_id}:
     delete:
@@ -3776,9 +3787,9 @@ paths:
           description:  Success.
         404:
           description: |
-            That is not the URL of a cardholder's locker assignment.  Take the href from a
-            cardholder detail, a locker bank detail, or a locker bank.  The message in the results
-            document will tell you more.
+            That is not the URL of a cardholder's locker assignment.  You can take an href from the
+            'lockers' block of a cardholder detail, or the 'assignments' block of a locker or locker
+            bank detail.  The message in the results document will tell you more about the problem.
         4xx: { description: "You do not have privileges for the operation." }
 
   /api/cardholders/{id}/update_location:
@@ -4039,8 +4050,8 @@ paths:
         200:
           description: |
             Success.  See the note in the description about privileges if your result set is empty.
+        403: { description: "The site does not have the RESTCardholders licence." }
         404: { description: "There is no group at that URL." }
-        4xx: { description: "The operator does not have a privilege that allows viewing access groups." }
 
   /api/access_groups/{id}:
     get:
@@ -4081,8 +4092,8 @@ paths:
         200: 
           description: "Success."
           schema: { $ref: '#/definitions/Access group detail' }
+        403: { description: "The operator does not have a privilege that allows viewing that access groups." }
         404: { description: "That is not the URL of an access group." }
-        4xx: { description: "The operator does not have a privilege that allows viewing access groups." }
 
   /api/access_groups/{id}/cardholders:
     get:
@@ -4127,7 +4138,11 @@ paths:
                   href: "https://localhost:8904/api/cardholders/5398"
                 from: "2016-11-18T00:00:00Z"
 
-        4xx: { description: "The ID is invalid, or it is valid but you do not have privileges for the access group, or you do not have a privilege that allows viewing cardholders."}
+        4xx:
+          description: |
+            The ID is invalid, or it is valid but you do not have privileges for the access group,
+            or you do not have a privilege that allows viewing cardholders.  Check the body of the
+            result for a description of the problem.
 
 ######################################################################
 
@@ -4184,7 +4199,7 @@ paths:
           description: |
             Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Competencies'}
-        4xx: { description: "The installation lacks a cardholders licence." }
+        403: { description: "The installation lacks a cardholders licence." }
 
   /api/competencies/{id}:
     get:
@@ -4220,7 +4235,10 @@ paths:
         200:
           description: "Success."
           schema: {$ref: '#/definitions/Competency detail'}
-        4xx: { description: "Your REST operator does not have the right privileges, or the installation lacks a cardholders licence." }
+        403: { description: "The installation lacks a cardholders licence." }
+        404:
+          description: |
+            Your REST operator does not have the privilege to view this competency.
 
 ######################################################################
   /api/card_types/assign:
@@ -4250,7 +4268,7 @@ paths:
           description: "Success."
           schema: {$ref: '#/definitions/Card types'}
 
-        4xx: { description: "The installation lacks a cardholders licence." }
+        403: { description: "The installation lacks a cardholders licence." }
 
 ######################################################################
   /api/locker_banks:
@@ -4318,7 +4336,7 @@ paths:
         200: 
           description: "Success."
           schema: {$ref: '#/definitions/Locker banks'}
-        4xx: { description: "The installation lacks a lockers licence." }
+        403: { description: "The installation lacks a lockers licence." }
 
   /api/locker_banks/{id}:
     get:
@@ -4354,7 +4372,10 @@ paths:
         200: 
           description: "Success."
           schema: {$ref: '#/definitions/Locker bank detail'}
-        4xx: { description: "Your REST operator does not have the right privileges, or the installation lacks a lockers licence." }
+        403: { description: "The installation lacks a lockers licence." }
+        404:
+          description: |
+            Your REST operator does not have the privilege to view that locker bank.
 
   /api/lockers/{id}:
     get:
@@ -4387,10 +4408,11 @@ paths:
         200: 
           description: "Success."
           schema: {$ref: '#/definitions/Locker detail'}
-        4xx:
+        403: { description: "The installation lacks a lockers licence." }
+        404:
           description: |
-            The installation lacks a lockers licence or your REST operator does not have a 'Locker
-            Assignments' privilege.
+            Your REST operator does not have the privilege to view that locker bank ('Locker
+            assignments').
 
   /api/lockers/{id}/open:
     post:
@@ -4406,10 +4428,10 @@ paths:
       - {in: path, name: id, required: true, description: "The ID of the locker to open.", type: string}
       responses:
         204: { description: Success }
-        4xx:
+        403: { description: "The installation lacks the RESTOverrides licence." }
+        404:
           description: |
-            The site does not have the RESTOverrides licence or the operator does not have the
-            'Override - Open Locker' privilege.
+            Your REST operator does not have 'Override - Open Locker' on the locker's division.
 
 ######################################################################
   /api/personal_data_fields:
@@ -4442,7 +4464,7 @@ paths:
         200: 
           description: "Success."
           schema: {$ref: '#/definitions/PDF definitions'}
-        4xx:
+        403:
           description: The site does not have the RESTCardholders or RESTEvents licence.
 
   /api/personal_data_fields/{id}:
@@ -4467,7 +4489,10 @@ paths:
           schema: {$ref: '#/definitions/PDF definition'}
         403:
           description: |
-            The site does not have the RESTCardholders or RESTEvents licence, or the operator does
-            not have a privilege that allows viewing that PDF's definition ('View' or 'Edit Personal
-            Data Definition').
+            The site does not have the RESTCardholders or RESTEvents licence
+        404:
+          description: |
+            The operator does not have a privilege that allows viewing that PDF's definition ('View'
+            or 'Edit Personal Data Definition'), or the PDF's own access control is hiding it from
+            the operator.
 
