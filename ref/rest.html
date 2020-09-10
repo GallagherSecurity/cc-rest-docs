@@ -537,13 +537,27 @@
               <h3 id="status-flags">Status flags</h3>
               <p>If the access zone is online, its <code>statusFlags</code> field may contain one or more of these flags:</p>
               <ul>
-                <li><code>saltoOutputOnly</code> means the the access zone would be considered unconfigured except that it has a Salto output number assigned to it. That is a normal operational configuration.</li>
-                <li><code>mobileZone</code> means the access zone would be considered unconfigured (missing doors) except that a mobile reader is able to badge cardholders into it.</li>
-                <li><code>lockedDown</code> means only cardholders with the privilege to enter locked-down zones shall pass. The zone will also be &#39;secure&#39;. When the lockdown override ends it will return to its previous access mode.</li>
-                <li><code>usePin</code> means when you use a card at a reader to unlock the door or at a terminal to control an alarm zone, you will also need your PIN.</li>
-                <li><code>zoneCountTooHigh</code> means the zone count is above its maximum.</li>
-                <li><code>zoneCountTooLow</code> means the zone count is below its minimum.</li>
-                <li><code>zoneCountInGrace</code> means the zone count recently became too low or high.</li>
+                <li>
+                  <p><code>saltoOutputOnly</code> means the the access zone would be considered unconfigured, and therefore offline, except that it has a Salto output number assigned to it. That is a normal operational configuration.</p>
+                </li>
+                <li>
+                  <p><code>mobileZone</code> means the access zone would be considered unconfigured (missing doors), and therefore offline, except that a mobile reader is able to badge cardholders into it.</p>
+                </li>
+                <li>
+                  <p><code>lockedDown</code> means only cardholders with the privilege to enter locked-down zones shall pass. The zone will also be &#39;secure&#39;. When the lockdown override ends it will return to its previous access mode.</p>
+                </li>
+                <li>
+                  <p><code>usePin</code> means when you use a card at a reader to unlock the door or at a terminal to control an alarm zone, you will also need your PIN.</p>
+                </li>
+                <li>
+                  <p><code>zoneCountTooHigh</code> means the zone count is above its maximum.</p>
+                </li>
+                <li>
+                  <p><code>zoneCountTooLow</code> means the zone count is below its minimum.</p>
+                </li>
+                <li>
+                  <p><code>zoneCountInGrace</code> means the zone count recently became too low or high.</p>
+                </li>
               </ul>
               <p>These four give the zone&#39;s access state. An online access zone will always return one of these:</p>
               <ul>
@@ -555,16 +569,16 @@
               <h4 id="access-zone-flag-rules">Access Zone flag rules</h4>
               <ul>
                 <li>
-                  <p>If and only if the zone is online and not locked down, there will be exactly one of &#39;secure&#39;, &#39;dualAuth&#39;, &#39;codeOrCard&#39;, or &#39;free&#39;.</p>
+                  <p>If and only if the zone online and not locked down, there will be exactly one of &#39;secure&#39;, &#39;dualAuth&#39;, &#39;codeOrCard&#39;, or &#39;free&#39;.</p>
                 </li>
                 <li>
-                  <p>If and only if the zone is online and locked down, there will be exactly one of &#39;secure&#39; or &#39;dualAuth&#39;.</p>
+                  <p>If and only if the zone online and locked down, there will be exactly one of &#39;secure&#39; or &#39;dualAuth&#39;.</p>
                 </li>
                 <li>
-                  <p>If there is &#39;saltoOutputOnly&#39; there will never be &#39;unconfigured&#39; or any of the others from the list above.</p>
+                  <p>If there is &#39;saltoOutputOnly&#39; there will never be &#39;unconfigured&#39; or any of the other error flags, nor any from the list above.</p>
                 </li>
                 <li>
-                  <p>If there is &#39;mobileZone&#39; there will always be &#39;secure&#39; and never &#39;unconfigured&#39; or any of the others from the list above.</p>
+                  <p>If there is &#39;mobileZone&#39; there will always be &#39;secure&#39; and never &#39;unconfigured&#39; or any of the other error flags, nor any from the list above.</p>
                 </li>
                 <li>
                   <p>If there is &#39;zoneCountInGrace&#39; there will always be exactly one of &#39;zoneCountTooHigh&#39; or &#39;zoneCountTooLow&#39; (never both).</p>
@@ -3576,12 +3590,12 @@
               </ul>
               <h4 id="fence-zone-flag-rules">Fence Zone flag rules</h4>
               <ul>
-                <li>If and only if the fence zone is online, there will be one of &#39;deterrentUnknown&#39;, &#39;on&#39;, or &#39;off&#39;.</li>
-                <li>If and only if the fence zone is online, there will be exactly one of &#39;lowFeel&#39;, &#39;highVoltage&#39;, or &#39;hVPlusMode&#39;.</li>
+                <li>If and only if the fence zone is online, there will be exactly one of &#39;deterrentUnknown&#39;, &#39;on&#39;, or &#39;off&#39;.</li>
+                <li>If &#39;on&#39;, there will be exactly one of &#39;lowFeel&#39;, &#39;highVoltage&#39;, or &#39;hVPlusMode&#39;.</li>
+                <li>If &#39;off&#39;, there will be exactly one of &#39;lowFeel&#39; or &#39;highVoltage&#39;.</li>
                 <li>&#39;hVPlusMode&#39; will only appear if the fence zone is on.</li>
                 <li>If there is &#39;alert&#39; there will never be &#39;warning&#39;.</li>
-                <li>None of those flags will appear if the fence zone is offline.</li>
-                <li>If there is &#39;notPolled&#39; there will never be any from the list above.</li>
+                <li>None of the flags above will appear if the fence zone is offline and only &#39;notPolled&#39; will appear if it is not polled. </li>
                 <li>The &#39;voltage&#39; field only contains a valid value if you receive &#39;voltageKnown&#39; and the energiser has pulsed at least once since the zone turned on.</li>
               </ul>
               <h3 id="use-cases">Use cases</h3>

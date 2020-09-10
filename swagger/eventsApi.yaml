@@ -405,6 +405,60 @@ x-spectacle-topics:
   Field specifiers:
     $ref: "cardholdersApi.yaml#/x-spectacle-topics/Field specifiers"
 
+x-common-blocks-this-is-made-up:
+  fds_ignored: &FIELDSDESC_SUM
+    description: |
+      Return these fields in the search results.  The values you can list are the same as the field
+      names in the details page.  Using it you can return everything on the summary page that you
+      would find on the details page.  Separate values with commas.
+
+      Use the special value `defaults` to return the fields you would have received had you not given
+      the parameter at all.  Obviously only do that if you have more to add.
+
+      The string matches are case-insensitive.
+
+  fdd_ignored: &FIELDSDESC_DET
+    description: |
+      Return these fields in the details page instead of the default set.  The values you can list
+      are the same as the field names you would see in the results.  Use it to cut back on the size
+      of the response.  Separate values with commas.
+
+      The string matches are case-insensitive.
+
+  fds840_ignored: &FIELDSDESC_SUM_840
+    description: |
+      Return these fields in the search results.  The values you can list are the same as the field
+      names in the details page.  Using it you can return everything on the summary page that you
+      would find on the details page.  Separate values with commas.
+
+      Use the special value `defaults` to return the fields you would have received had you not given
+      the parameter at all.  Obviously only do that if you have more to add.
+
+      The string matches are case-insensitive.
+
+      Added in 8.40.
+
+  fdd840_ignored: &FIELDSDESC_DET_840
+    description: |
+      Return these fields in the details page instead of the default set.  The values you can list
+      are the same as the field names you would see in the results.  Use it to cut back on the size
+      of the response.  Separate values with commas.
+
+      The string matches are case-insensitive.
+
+      Added in 8.40.
+
+  item_ignored: &ITEMFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, id, name, type, division]
+  division_ignored_but_must_be_unique: &DIVFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, id, name, parent]
+
 security:
   - "API key": []
 
@@ -975,6 +1029,10 @@ paths:
 
         Do not code these URLs into your application.  Take them from `events.divisions.href` or
         `alarms.division.href` in the results of `GET /api`.
+      parameters:
+      - name: "fields"
+        <<: *FIELDSDESC_DET
+        <<: *DIVFIELDS
       responses:
         200:
           description: Success
@@ -994,6 +1052,9 @@ paths:
         required: true
         type: string
         description: The ID of the division.
+      - name: "fields"
+        <<: *FIELDSDESC_DET
+        <<: *DIVFIELDS
       responses: 
         200: 
           description: "Success"
@@ -1047,6 +1108,10 @@ paths:
         minimum: 1
         default: 100
       - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *ITEMFIELDS
+
       responses:
         200:
           description: Success
@@ -1070,6 +1135,10 @@ paths:
         required: true
         type: string
         description: The ID of the alarm.
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *ITEMFIELDS
+
       responses:
         200:
           description: Success

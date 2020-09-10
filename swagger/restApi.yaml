@@ -1540,10 +1540,13 @@ tags:
 
     If the access zone is online, its `statusFlags` field may contain one or more of these flags:
 
-    - `saltoOutputOnly` means the the access zone would be considered unconfigured except that
-      it has a Salto output number assigned to it.  That is a normal operational configuration.
-    - `mobileZone` means the access zone would be considered unconfigured (missing doors) except
-      that a mobile reader is able to badge cardholders into it.
+    - `saltoOutputOnly` means the the access zone would be considered unconfigured, and therefore
+      offline, except that it has a Salto output number assigned to it.  That is a normal
+      operational configuration.
+
+    - `mobileZone` means the access zone would be considered unconfigured (missing doors), and
+      therefore offline, except that a mobile reader is able to badge cardholders into it.
+
     - `lockedDown` means only cardholders with the privilege to enter locked-down zones shall pass.
       The zone will also be 'secure'.  When the lockdown override ends it will return to its
       previous access mode.
@@ -1565,16 +1568,17 @@ tags:
 
     #### Access Zone flag rules
 
-    - If and only if the zone is online and not locked down, there will be exactly one of 'secure',
+    - If and only if the zone online and not locked down, there will be exactly one of 'secure',
       'dualAuth', 'codeOrCard', or 'free'.
-    - If and only if the zone is online and locked down, there will be exactly one of 'secure' or
+
+    - If and only if the zone online and locked down, there will be exactly one of 'secure' or
       'dualAuth'.
 
-    - If there is 'saltoOutputOnly' there will never be 'unconfigured' or any of the others from the
-      list above.
+    - If there is 'saltoOutputOnly' there will never be 'unconfigured' or any of the other error
+      flags, nor any from the list above.
 
     - If there is 'mobileZone' there will always be 'secure' and never 'unconfigured' or any of the
-      others from the list above.
+      other error flags, nor any from the list above.
 
     - If there is 'zoneCountInGrace' there will always be exactly one of 'zoneCountTooHigh' or
       'zoneCountTooLow' (never both).
@@ -1790,13 +1794,14 @@ tags:
 
     #### Fence Zone flag rules
 
-    - If and only if the fence zone is online, there will be one of 'deterrentUnknown', 'on', or 'off'.
-    - If and only if the fence zone is online, there will be exactly one of 'lowFeel', 'highVoltage', or
-      'hVPlusMode'.
+    - If and only if the fence zone is online, there will be exactly one of 'deterrentUnknown',
+      'on', or 'off'.
+    - If 'on', there will be exactly one of 'lowFeel', 'highVoltage', or 'hVPlusMode'.
+    - If 'off', there will be exactly one of 'lowFeel' or 'highVoltage'.
     - 'hVPlusMode' will only appear if the fence zone is on.
     - If there is 'alert' there will never be 'warning'.
-    - None of those flags will appear if the fence zone is offline.
-    - If there is 'notPolled' there will never be any from the list above.
+    - None of the flags above will appear if the fence zone is offline and only 'notPolled'
+      will appear if it is not polled.  
     - The 'voltage' field only contains a valid value if you receive 'voltageKnown' and the
       energiser has pulsed at least once since the zone turned on.
 
