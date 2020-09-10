@@ -1441,18 +1441,19 @@ definitions:
 
       Less obvious is that a cardholder can have many memberships to the same group.  This is useful
       because a membership has a validity period, expressed with `from` and `until` date-times.
-      Outside those moments, Command Centre does not regard the cardholder as being a member of the
+      Outside those moments Command Centre does not regard the cardholder as being a member of the
       group.  If there exists one membership with `from` in the past or unset and `until` in the
       future or unset, the cardholder is a member.
 
-      Presence in an access group affects physical access rights, among other things.
+      Presence in an access group affects physical access rights and possession of PDFs, among other
+      things.
 
     properties:
       href:
         type: string (url)
         description: |
-          DELETE this URL to remove this group membership, and use it to identify memberships you
-          want to modify.
+          DELETE this URL to remove this group membership, and use it in the body of a PATCH to a
+          cardholder to identify memberships you want to modify.
 
           Note that changing an access group membership with a PATCH will change this href.  Do not
           cache it.

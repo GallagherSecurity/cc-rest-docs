@@ -960,19 +960,18 @@ paths:
 
 ######################################################################
 
-  /api/divisions/view_events:
+  /api/divisions/{operation}:
     get:
       tags:
       - Divisions
-      summary: List divisions searchable for events
+      summary: List divisions
       description: |
         The functions inside `/api/divisions/` retrieve the divisions in which the operator can
-        perform other functions.  They return the same data structure, so this documentation only
-        covers one.
+        perform other functions.  They return the same data structure.
 
-        `/api/divisions/view_events`, for example, retrieves the list of divisions in which the REST
-        operator has privileges to view events, and `/api/division/view_alarms` does the same for
-        alarms.  These do not check whether you have the RESTEvents licence.
+        `/api/divisions/view_events` retrieves the list of divisions in which the REST operator has
+        privileges to view events, and `/api/division/view_alarms` does the same for alarms.  These
+        do not check whether you have the RESTEvents licence.
 
         Do not code these URLs into your application.  Take them from `events.divisions.href` or
         `alarms.division.href` in the results of `GET /api`.
@@ -987,7 +986,7 @@ paths:
     get:
       tags:
       - Divisions
-      summary: Get the details of a division.
+      summary: Get details of a division
       description: Details of a division.  Follow the `href` in a division summary to get here.
       parameters:
       - name: "id"
@@ -1053,6 +1052,29 @@ paths:
           description: Success
           schema: { $ref: '#/definitions/Items' }
         403: { description: The site does not have a REST licence. }
+
+  /api/items/{id}:
+    get:
+      tags:
+      - Items
+      summary: Get details of an item
+      description: |
+        This returns some basic fields for one item.  It returns the same information as the [item
+        search](#operation--api-items-get) plus the item's division.
+
+        Added in 8.40.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the alarm.
+      responses:
+        200:
+          description: Success
+          schema: { $ref: '#/definitions/ItemDetail' }
+        404: { description: That is not the href of an item. }
 
   /api/items/types:
     get:
@@ -2126,26 +2148,7 @@ definitions:
       results:
         description: A list of item objects, each containing the alphanumeric ID of the item, its name, and its type.
         type: array
-        items:
-          type: object
-          properties:
-            id:
-              type: string
-              description: |
-                Use this ID in the `source` filter when requesting events to limit events to those
-                with that source.  Card events such as 'access granted', for example, have a door as
-                their source.
-            name: {type: string}
-            type:
-              type: object
-              description: The `type` object contains the ID and name of the item's type.
-              properties:
-                id:
-                  type: string
-                  description:  |
-                    Use this ID in the `type` filter when requesting items if you wish to restrict
-                    the results to items of a certain type.
-                name: {type: string}
+        items: { $ref: "#/definitions/ItemSummary" }
         example:
           - id: "325"
             name: "Brick, Eva"
@@ -2165,6 +2168,52 @@ definitions:
             type: string
             format: url
             example: "https://localhost:8904/api/items?pos=2"
+
+  ItemSummary:
+    type: object
+    description: |
+      `/api/items` returns an array of these.  Because it can contain an item of any type, it only
+      contains some fields that are common to all item types.
+    properties:
+      id:
+        type: string
+        description: |
+          Use this ID in the `source` filter when requesting events to limit events to those with
+          that source.  Card events such as 'access granted', for example, have a door as their
+          source.
+        example: "325"
+      name: { type: string, example: "Brick, Eva" }
+      type:
+        type: object
+        description: The `type` object contains the ID and name of the item's type.
+        properties:
+          id:
+            type: string
+            description:  |
+              Use this ID in the `type` filter when requesting items if you wish to restrict the
+              results to items of a certain type.
+            example: "1"
+          name: { type: string, example: "Cardholder" }
+
+  ItemDetail:
+    type: object
+    description: |
+      A call to `/api/items/{id}` (added in 8.40) returns one of these.  It adds the item's division
+      to the summary object.
+    allOf:
+      - type: object
+        properties:
+          division:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "2"
+              href:
+                type: string
+                format: url
+                example: "https://localhost:8904/api/divisions/2"
+      - $ref: "#/definitions/ItemSummary"
 
   ItemTypes:
     type: object

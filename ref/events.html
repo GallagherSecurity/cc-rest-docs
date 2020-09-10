@@ -74,10 +74,10 @@
             <a href="#tag-Divisions">Divisions</a>
             <ul>
               <li>
-                <a href="#operation--api-divisions-view_events-get"> List divisions searchable for events </a>
+                <a href="#operation--api-divisions--operation--get"> List divisions </a>
               </li>
               <li>
-                <a href="#operation--api-divisions--id--get"> Get the details of a division. </a>
+                <a href="#operation--api-divisions--id--get"> Get details of a division </a>
               </li>
             </ul>
           </section>
@@ -86,6 +86,9 @@
             <ul>
               <li>
                 <a href="#operation--api-items-get"> Search items </a>
+              </li>
+              <li>
+                <a href="#operation--api-items--id--get"> Get details of an item </a>
               </li>
               <li>
                 <a href="#operation--api-items-types-get"> List item types </a>
@@ -114,6 +117,8 @@
           <a href="#definition-DivisionsResult"> DivisionsResult </a>
           <a href="#definition-Division"> Division </a>
           <a href="#definition-Items"> Items </a>
+          <a href="#definition-ItemSummary"> ItemSummary </a>
+          <a href="#definition-ItemDetail"> ItemDetail </a>
           <a href="#definition-ItemTypes"> ItemTypes </a>
           <a href="#definition-ItemUpdate"> ItemUpdate </a>
           <a href="#definition-ItemUpdateSubscription"> ItemUpdateSubscription </a>
@@ -2391,7 +2396,7 @@
               <p>Every REST licence enables the divisions controller: RESTEvents, RESTCreateEvents, RESTCardholders, RESTStatus, and RESTOverrides.</p>
             </div>
           </div>
-          <div id="operation--api-divisions-view_events-get" class="operation panel" data-traverse-target="operation--api-divisions-view_events-get">
+          <div id="operation--api-divisions--operation--get" class="operation panel" data-traverse-target="operation--api-divisions--operation--get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
@@ -2401,21 +2406,21 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">List divisions searchable for events</span>
+              <span class="operation-summary">List divisions</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-path">
                   <span class="operation-method">GET</span>
-                  <span class="operation-path">/api/divisions/view_events</span>
+                  <span class="operation-path">/api/divisions/{operation}</span>
                 </section>
               </div>
             </div>
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>The functions inside <code>/api/divisions/</code> retrieve the divisions in which the operator can perform other functions. They return the same data structure, so this documentation only covers one.</p>
-                  <p><code>/api/divisions/view_events</code>, for example, retrieves the list of divisions in which the REST operator has privileges to view events, and <code>/api/division/view_alarms</code> does the same for alarms. These do not check whether you have the RESTEvents licence.</p>
+                  <p>The functions inside <code>/api/divisions/</code> retrieve the divisions in which the operator can perform other functions. They return the same data structure.</p>
+                  <p><code>/api/divisions/view_events</code> retrieves the list of divisions in which the REST operator has privileges to view events, and <code>/api/division/view_alarms</code> does the same for alarms. These do not check whether you have the RESTEvents licence.</p>
                   <p>Do not code these URLs into your application. Take them from <code>events.divisions.href</code> or <code>alarms.division.href</code> in the results of <code>GET /api</code>.</p>
                 </section>
               </div>
@@ -2488,7 +2493,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Get the details of a division.</span>
+              <span class="operation-summary">Get details of a division</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -2800,6 +2805,110 @@
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items?pos=2&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-items--id--get" class="operation panel" data-traverse-target="operation--api-items--id--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Items">Items</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get details of an item</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/items/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns some basic fields for one item. It returns the same information as the
+                    <a href="#operation--api-items-get">item search</a> plus the item&#39;s division.</p>
+                  <p>Added in 8.40.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the alarm.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/ItemDetail">ItemDetail</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the href of an item.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;325&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Brick, Eva&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+  },
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   }
 }
 </code></pre> </body>
@@ -5732,7 +5841,11 @@
                   <dl>
                     <dt data-property-name="results" class="has-description">
                       <span class="json-property-name">results:</span>
-                      <span class="json-property-type">object[]</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/ItemSummary">ItemSummary</a>
+                        </span>
+                      </span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
@@ -5740,54 +5853,13 @@
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-array-items">
-                        <span class="json-property-type">object</span>
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/ItemSummary">ItemSummary</a>
+                          </span>
+                        </span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <div class="json-inner-schema">
-                          <section class="json-schema-properties">
-                            <dl>
-                              <dt data-property-name="id" class="has-description">
-                                <span class="json-property-name">id:</span>
-                                <span class="json-property-type">string</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>Use this ID in the <code>source</code> filter when requesting events to limit events to those with that source. Card events such as &#39;access granted&#39;, for example, have a door as their source.</p>
-                              </dd>
-                              <dt data-property-name="name">
-                                <span class="json-property-name">name:</span>
-                                <span class="json-property-type">string</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dt data-property-name="type" class="has-description">
-                                <span class="json-property-name">type:</span>
-                                <span class="json-property-type">object</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>The <code>type</code> object contains the ID and name of the item&#39;s type.</p>
-                              </dd>
-                              <dt class="json-inner-schema">
-                                <section class="json-schema-properties">
-                                  <dl>
-                                    <dt data-property-name="id" class="has-description">
-                                      <span class="json-property-name">id:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>Use this ID in the <code>type</code> filter when requesting items if you wish to restrict the results to items of a certain type.</p>
-                                    </dd>
-                                    <dt data-property-name="name">
-                                      <span class="json-property-name">name:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                  </dl>
-                                </section>
-                              </dt>
-                            </dl>
-                          </section>
-                        </div>
+                        <div class="json-inner-schema"> </div>
                       </section>
                     </dt>
                     <dt data-property-name="next" class="has-description">
@@ -5840,6 +5912,163 @@
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items?pos=2&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-ItemSummary" class="definition panel" data-traverse-target="definition-ItemSummary">
+            <h2 class="panel-title">
+              <a name="/definitions/ItemSummary"></a>ItemSummary: object
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p><code>/api/items</code> returns an array of these. Because it can contain an item of any type, it only contains some fields that are common to all item types.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="id" class="has-description">
+                      <span class="json-property-name">id:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Use this ID in the <code>source</code> filter when requesting events to limit events to those with that source. Card events such as &#39;access granted&#39;, for example, have a door as their source.</p>
+                    </dd>
+                    <dt data-property-name="name">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="type" class="has-description">
+                      <span class="json-property-name">type:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The <code>type</code> object contains the ID and name of the item&#39;s type.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="id" class="has-description">
+                            <span class="json-property-name">id:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>Use this ID in the <code>type</code> filter when requesting items if you wish to restrict the results to items of a certain type.</p>
+                          </dd>
+                          <dt data-property-name="name">
+                            <span class="json-property-name">name:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;325&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Brick, Eva&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-ItemDetail" class="definition panel" data-traverse-target="definition-ItemDetail">
+            <h2 class="panel-title">
+              <a name="/definitions/ItemDetail"></a>ItemDetail: object
+              <!-- <span class="json-property-type"><span class="json-property-type"></span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>A call to <code>/api/items/{id}</code> (added in 8.40) returns one of these. It adds the item&#39;s division to the summary object.</p>
+                </section>
+                <section class="json-schema-allOf">
+                  <section class="json-schema-allOf-inherited">
+                    <ul>
+                      <span class="">
+                        <a class="json-schema-ref" href="#/definitions/ItemSummary">ItemSummary</a>
+                      </span>
+                    </ul>
+                  </section>
+                  <section class="json-schema-allOf-additional">
+                    <section class="json-schema-properties">
+                      <dl>
+                        <dt data-property-name="division">
+                          <span class="json-property-name">division:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="id">
+                                <span class="json-property-name">id:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt data-property-name="href">
+                                <span class="json-property-name">href:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-format">(url)</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                            </dl>
+                          </section>
+                        </dt>
+                      </dl>
+                    </section>
+                  </section>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;325&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Brick, Eva&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+  },
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   }
 }
 </code></pre> </body>

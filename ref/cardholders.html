@@ -6407,8 +6407,8 @@
                   <p>An
                     <em>access group</em> is an object in Command Centre. The connection between an access group and a cardholder is a
                     <em>membership</em>. A cardholder can be a member of many groups, and groups usually have more than one member.</p>
-                  <p>Less obvious is that a cardholder can have many memberships to the same group. This is useful because a membership has a validity period, expressed with <code>from</code> and <code>until</code> date-times. Outside those moments, Command Centre does not regard the cardholder as being a member of the group. If there exists one membership with <code>from</code> in the past or unset and <code>until</code> in the future or unset, the cardholder is a member.</p>
-                  <p>Presence in an access group affects physical access rights, among other things.</p>
+                  <p>Less obvious is that a cardholder can have many memberships to the same group. This is useful because a membership has a validity period, expressed with <code>from</code> and <code>until</code> date-times. Outside those moments Command Centre does not regard the cardholder as being a member of the group. If there exists one membership with <code>from</code> in the past or unset and <code>until</code> in the future or unset, the cardholder is a member.</p>
+                  <p>Presence in an access group affects physical access rights and possession of PDFs, among other things.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -6418,7 +6418,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>DELETE this URL to remove this group membership, and use it to identify memberships you want to modify.</p>
+                      <p>DELETE this URL to remove this group membership, and use it in the body of a PATCH to a cardholder to identify memberships you want to modify.</p>
                       <p>Note that changing an access group membership with a PATCH will change this href. Do not cache it.</p>
                       <p>DELETE is the only verb you can use on this URL. GET will always return a 404.</p>
                     </dd>
