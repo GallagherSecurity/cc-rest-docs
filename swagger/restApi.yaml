@@ -1515,6 +1515,7 @@ definitions:
 ######################################################################
 tags:
 - name: "Access Zones"
+
   description: |
     These methods give you read access to Access Zones in the Command Centre database, and
     let you change their modes, lock them down, and send other overrides.
@@ -1540,12 +1541,13 @@ tags:
 
     If the access zone is online, its `statusFlags` field may contain one or more of these flags:
 
-    - `saltoOutputOnly` means the the access zone would be considered unconfigured, and therefore
-      offline, except that it has a Salto output number assigned to it.  That is a normal
-      operational configuration.
+    - `saltoOutputOnly` means the the access zone would be considered unconfigured because it is
+      missing doors, and therefore offline, except that it has a Salto output number assigned to it.
+      That is a normal operational configuration.
 
-    - `mobileZone` means the access zone would be considered unconfigured (missing doors), and
-      therefore offline, except that a mobile reader is able to badge cardholders into it.
+    - `mobileZone` also means the access zone would be considered unconfigured (missing doors) and
+      therefore offline, except that a mobile reader is able to badge cardholders into it, making it
+      a perfectly useful access zone.  It will also have a `secure` flag.
 
     - `lockedDown` means only cardholders with the privilege to enter locked-down zones shall pass.
       The zone will also be 'secure'.  When the lockdown override ends it will return to its
@@ -1556,7 +1558,8 @@ tags:
     - `zoneCountTooLow` means the zone count is below its minimum.
     - `zoneCountInGrace` means the zone count recently became too low or high.
 
-    These four give the zone's access state.  An online access zone will always return one of these:
+    The following four give the zone's access state.  An online access zone will always return one
+    of them.
 
     - `secure` means the doors are locked.
     - `dualAuth` means the doors are locked and - depending on configuration - cardholders will need
@@ -1574,14 +1577,17 @@ tags:
     - If and only if the zone online and locked down, there will be exactly one of 'secure' or
       'dualAuth'.
 
-    - If there is 'saltoOutputOnly' there will never be 'unconfigured' or any of the other error
-      flags, nor any from the list above.
+    - Because 'saltoOutputOnly' and 'mobileZone' are variations of the unconfigured offline
+      condition, 'saltoOutputOnly' will be alone and only 'secure' will accompany 'mobileZone'.
 
-    - If there is 'mobileZone' there will always be 'secure' and never 'unconfigured' or any of the
-      other error flags, nor any from the list above.
+    - If a zone has both a Salto output number and mobile access, only 'saltoOutputOnly' will
+      appear.
 
     - If there is 'zoneCountInGrace' there will always be exactly one of 'zoneCountTooHigh' or
       'zoneCountTooLow' (never both).
+
+    Using the first three rules above, your test for an access zone being in error is 'secure',
+    'dualAuth', 'codeOrCard', 'free', 'saltoOutputOnly', and 'mobileZone' all missing.
 
     ### Use cases
 
@@ -1661,7 +1667,8 @@ tags:
 
     #### Alarm Zone flag rules
 
-    - If and only if the zone is online, there will exactly one of 'armed', 'disarmed', 'user1', or 'user2'.
+    - If and only if the zone is online, there will exactly one of 'armed', 'disarmed', 'user1', or
+      'user2'.  That is your test for whether an alarm zone is in error.
     - 'exitDelay' and 'entryDelay' cannot appear together.
     - If and only if the zone is online and has a fence zone, there will be exactly one of 'lowFeel'
       or 'highVoltage'.
@@ -1729,7 +1736,8 @@ tags:
     - If and only if the door is online, exactly one of 'closed' or 'open' will appear, and one of
       'locked' or 'unlocked', and one of 'secure' or 'free'.
 
-    So, to establish if the door is in a normal state, look for 'closed' or 'open'.
+    So, to establish if the door is in a normal state, look for 'closed' or 'open'.  If neither is
+    present, your door is in an error state.
 
     ### Use cases
 
@@ -1795,7 +1803,7 @@ tags:
     #### Fence Zone flag rules
 
     - If and only if the fence zone is online, there will be exactly one of 'deterrentUnknown',
-      'on', or 'off'.
+      'on', or 'off'.  That is your test for whether a fence zone is in error.
     - If 'on', there will be exactly one of 'lowFeel', 'highVoltage', or 'hVPlusMode'.
     - If 'off', there will be exactly one of 'lowFeel' or 'highVoltage'.
     - 'hVPlusMode' will only appear if the fence zone is on.
@@ -1897,14 +1905,16 @@ tags:
     - `relayStateUnknown` means the controller does not know what the output should be doing.
     - `closed` means the output relay is closed.
     - `open` means the output relay is open.
-
     - `pulsed` means the relay's change in state is momentary.
     - `switchingDisabled` means switching this output is disabled.
-    - `overridden` means the output is under the effect of an override.
+
+    - `overridden` can appear whether the output is online or offline.  It means the output has an
+      override in effect.
 
     #### Output flag rules
 
-    - If and only if the output is online, one of 'relayStateUnknown', 'closed', or 'open' will appear.
+    - If and only if the output is online, one of 'relayStateUnknown', 'closed', or 'open' will
+      appear.  That is your test for whether an output is in error.
     - Of the above, only 'overridden' can appear when the output is offline.
 
     ### Use cases
@@ -1968,11 +1978,14 @@ tags:
 
     #### Input flag rules
 
-    - If and only if the input is online and not shunted, exactly one of 'closed' or 'open' will appear.
+    - If and only if the input is online and not shunted ('notPolled' status flag), exactly one of
+      'closed' or 'open' will appear.
+
     - 'closed' or 'open' may still appear if the input is tampered.
 
     So, to establish if the input is in a completely normal state, look for 'closed' or 'open', and
-    make sure 'tamper' is _not_ there.
+    make sure 'tamper' is _not_ there.  However bear in mind that inputs are often shunted for
+    ordinary reasons.
 
     ### Use cases
 

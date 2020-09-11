@@ -154,6 +154,9 @@
                 <p>The body of this document clearly indicates the 8.40 features so that readers with older versions of Command Centre know not to use them.</p>
                 <ul>
                   <li>
+                    <p>You may now use the <code>fields</code> query parameter to tailor the fields that come back for events and alarms.</p>
+                  </li>
+                  <li>
                     <p>Operator add, modify, and delete
                       <a href="#definition-EventSummary">events</a> now contain a link to the affected item in a new <code>modifiedItem</code> block, deprecating the <code>accessGroup</code> block for those event types.</p>
                   </li>
@@ -327,6 +330,9 @@
                   </li>
                   <li>
                     <p><code>/api/access_zones?fields=name,doors</code> will show the name and attached doors of your access zones.</p>
+                  </li>
+                  <li>
+                    <p><code>/api/alarms?fields=time,message,details</code> will return the time, message text, and details text of your alarms. Not only does that save a lot of data by removing default fields, but it adds the details field which does not normally come out of an alarm search.</p>
                   </li>
                 </ul>
                 <p>Each controller has different optional fields - see their sections under Operations.</p>
@@ -1272,6 +1278,9 @@
                   <p>When downloading a significant number of events, leave <code>top</code> at 1000 or more, provided your client can handle results over a megabyte (events are around 1 KB each). Performance tests have shown that throughput decreases dramatically if <code>top</code> is too low.</p>
                 </li>
                 <li>
+                  <p>If using 8.40 or later, use its <code>field</code> query parameter to cut back on the fields the server sends to you. Not only will it save bandwidth, but it will save the server looking up all those values and serialising them for you.</p>
+                </li>
+                <li>
                   <p>If you have reached the head of the event queue and are using the <code>updates</code> link to keep up to date, set <code>deadline</code> high and sleep between calls for as long as your requirements allow. Doing the first will reduce unnecessary chatter between you and Command Centre when nothing is happening, and the second will improve the likelihood of your collecting more than one event when it is busy.
                     <br>For example, if Command Centre is generating two events per second and you do not sleep between REST calls, you will be calling <code>updates</code> twice per second for one event each time. However if you sleep for ten seconds after each call you will receive 20 events at a time, saving CPU and I/O.</p>
                 </li>
@@ -1621,23 +1630,18 @@
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
                         <span class="json-property-type">string</span>
-                        <span class="json-property-enum" title="Possible values">
-                          <span class="json-property-enum-item">defaults</span>,
-                          <span class="json-property-enum-item">details</span>,
-                          <span class="json-property-enum-item">cardholder.pdf_*</span>
-                        </span>
                         <span class="json-property-range" title="Value limits"></span>
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Allows you to add one Personal Data Field and/or (in 8.20 and later) the &#39;details&#39; field to the result for each event.</p>
-                      <p>Whether you ask for a PDF value, the details field, or both, the parameter must start with <code>fields=defaults</code>.</p>
-                      <p>If you wish to include the details field add <code>,details</code>.</p>
-                      <p>If you wish to include a PDF in your results add <code>,cardholder.pdf_XXXX</code>, where XXXX is the ID of the PDF. Find that ID with a query to the
-                        <a href="#operation--api-items-get">items controller</a> with either <code>name=your_pdf_name</code> or <code>type=33</code>. 33 is, for the moment, the ID of the PDF item type. You can confirm
-                        <em>that</em> by searching the
-                        <a href="#operation--api-items-types-get">item types</a> for &#39;Personal Data Field&#39;.</p>
-                      <p>The PDF will only appear on events that have a related cardholder, such as access events, and only if your REST operator has the appropriate privileges on that cardholder and PDF.</p>
+                      <p>Allows you to specify which fields you want in your results.</p>
+                      <p>In versions up to 8.30 you can only add fields, not remove them. The parameter is optional but if you send it, it must start with <code>fields=defaults,</code>.</p>
+                      <p>In any version of CC you can add a PDF to your results by appending <code>cardholder.pdf_XXXX</code>, where XXXX is the ID of the PDF. Find that ID with a query to the
+                        <a href="cardholders.html#operation--api-personal_data_fields-get">PDFs controller</a>.</p>
+                      <p>You can only pick one PDF. It will only appear on events that have a related cardholder, such as access events, because without a cardholder there is no PDF. The security model applies too, so it will only appear if your REST operator has the appropriate privileges on that cardholder and PDF.</p>
+                      <p>In 8.40 and later the values you can list are the same as the field names in the details page, plus the special value for a Personal Data Field. You can pick whichever fields you want, including <code>defaults</code> (though we urge you to cut back to just the fields you need), and you can list them in any order.</p>
+                      <p>In 8.20 and 8.30 you are limited to adding the details field by appending <code>details</code>, making sure you have a separating comma after <code>defaults</code> or <code>cardholder.pdf_XXXX</code>.</p>
+                      <p>An event detail string can be kilobytes long so we left it optional. It was the only event field lacking from the search results, by the way, so if you are running 8.20 or later you no longer need to GET an event&#39;s details page after doing a search.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -1943,23 +1947,18 @@
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
                         <span class="json-property-type">string</span>
-                        <span class="json-property-enum" title="Possible values">
-                          <span class="json-property-enum-item">defaults</span>,
-                          <span class="json-property-enum-item">details</span>,
-                          <span class="json-property-enum-item">cardholder.pdf_*</span>
-                        </span>
                         <span class="json-property-range" title="Value limits"></span>
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Allows you to add one Personal Data Field and/or (in 8.20 and later) the &#39;details&#39; field to the result for each event.</p>
-                      <p>Whether you ask for a PDF value, the details field, or both, the parameter must start with <code>fields=defaults</code>.</p>
-                      <p>If you wish to include the details field add <code>,details</code>.</p>
-                      <p>If you wish to include a PDF in your results add <code>,cardholder.pdf_XXXX</code>, where XXXX is the ID of the PDF. Find that ID with a query to the
-                        <a href="#operation--api-items-get">items controller</a> with either <code>name=your_pdf_name</code> or <code>type=33</code>. 33 is, for the moment, the ID of the PDF item type. You can confirm
-                        <em>that</em> by searching the
-                        <a href="#operation--api-items-types-get">item types</a> for &#39;Personal Data Field&#39;.</p>
-                      <p>The PDF will only appear on events that have a related cardholder, such as access events, and only if your REST operator has the appropriate privileges on that cardholder and PDF.</p>
+                      <p>Allows you to specify which fields you want in your results.</p>
+                      <p>In versions up to 8.30 you can only add fields, not remove them. The parameter is optional but if you send it, it must start with <code>fields=defaults,</code>.</p>
+                      <p>In any version of CC you can add a PDF to your results by appending <code>cardholder.pdf_XXXX</code>, where XXXX is the ID of the PDF. Find that ID with a query to the
+                        <a href="cardholders.html#operation--api-personal_data_fields-get">PDFs controller</a>.</p>
+                      <p>You can only pick one PDF. It will only appear on events that have a related cardholder, such as access events, because without a cardholder there is no PDF. The security model applies too, so it will only appear if your REST operator has the appropriate privileges on that cardholder and PDF.</p>
+                      <p>In 8.40 and later the values you can list are the same as the field names in the details page, plus the special value for a Personal Data Field. You can pick whichever fields you want, including <code>defaults</code> (though we urge you to cut back to just the fields you need), and you can list them in any order.</p>
+                      <p>In 8.20 and 8.30 you are limited to adding the details field by appending <code>details</code>, making sure you have a separating comma after <code>defaults</code> or <code>cardholder.pdf_XXXX</code>.</p>
+                      <p>An event detail string can be kilobytes long so we left it optional. It was the only event field lacking from the search results, by the way, so if you are running 8.20 or later you no longer need to GET an event&#39;s details page after doing a search.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2696,7 +2695,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns a batch of items matching the applied filters. By default, each page will contain up to 1000 items although this can be changed by setting the <code>top</code> parameter in the request URL.</p>
-                  <p>You will only receive items for which the REST operator has the necessary privilege. To view PDFs, for example, the operator must have View Personal Data Definitions.</p>
+                  <p>You will only receive items for which the REST operator has the necessary privilege. To view PDFs, for example, the operator must have the &#39;View Personal Data Definitions&#39; privilege.</p>
                   <p>If more items are available, the response will contain a <code>next</code> link. Following that will return the next batch of items.</p>
                   <p>Items will be in ID order unless you change it with <code>sort</code>.</p>
                   <p>Do not code this URL into your application. Take it from <code>items.items.href</code> in the results of <code>GET /api</code>.</p>

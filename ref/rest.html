@@ -432,6 +432,9 @@
                   <li>
                     <p><code>/api/access_zones?fields=name,doors</code> will show the name and attached doors of your access zones.</p>
                   </li>
+                  <li>
+                    <p><code>/api/alarms?fields=time,message,details</code> will return the time, message text, and details text of your alarms. Not only does that save a lot of data by removing default fields, but it adds the details field which does not normally come out of an alarm search.</p>
+                  </li>
                 </ul>
                 <p>Each controller has different optional fields - see their sections under Operations.</p>
               </div>
@@ -538,10 +541,10 @@
               <p>If the access zone is online, its <code>statusFlags</code> field may contain one or more of these flags:</p>
               <ul>
                 <li>
-                  <p><code>saltoOutputOnly</code> means the the access zone would be considered unconfigured, and therefore offline, except that it has a Salto output number assigned to it. That is a normal operational configuration.</p>
+                  <p><code>saltoOutputOnly</code> means the the access zone would be considered unconfigured because it is missing doors, and therefore offline, except that it has a Salto output number assigned to it. That is a normal operational configuration.</p>
                 </li>
                 <li>
-                  <p><code>mobileZone</code> means the access zone would be considered unconfigured (missing doors), and therefore offline, except that a mobile reader is able to badge cardholders into it.</p>
+                  <p><code>mobileZone</code> also means the access zone would be considered unconfigured (missing doors) and therefore offline, except that a mobile reader is able to badge cardholders into it, making it a perfectly useful access zone. It will also have a <code>secure</code> flag.</p>
                 </li>
                 <li>
                   <p><code>lockedDown</code> means only cardholders with the privilege to enter locked-down zones shall pass. The zone will also be &#39;secure&#39;. When the lockdown override ends it will return to its previous access mode.</p>
@@ -559,7 +562,7 @@
                   <p><code>zoneCountInGrace</code> means the zone count recently became too low or high.</p>
                 </li>
               </ul>
-              <p>These four give the zone&#39;s access state. An online access zone will always return one of these:</p>
+              <p>The following four give the zone&#39;s access state. An online access zone will always return one of them.</p>
               <ul>
                 <li><code>secure</code> means the doors are locked.</li>
                 <li><code>dualAuth</code> means the doors are locked and - depending on configuration - cardholders will need a second credential to open them.</li>
@@ -575,15 +578,16 @@
                   <p>If and only if the zone online and locked down, there will be exactly one of &#39;secure&#39; or &#39;dualAuth&#39;.</p>
                 </li>
                 <li>
-                  <p>If there is &#39;saltoOutputOnly&#39; there will never be &#39;unconfigured&#39; or any of the other error flags, nor any from the list above.</p>
+                  <p>Because &#39;saltoOutputOnly&#39; and &#39;mobileZone&#39; are variations of the unconfigured offline condition, &#39;saltoOutputOnly&#39; will be alone and only &#39;secure&#39; will accompany &#39;mobileZone&#39;.</p>
                 </li>
                 <li>
-                  <p>If there is &#39;mobileZone&#39; there will always be &#39;secure&#39; and never &#39;unconfigured&#39; or any of the other error flags, nor any from the list above.</p>
+                  <p>If a zone has both a Salto output number and mobile access, only &#39;saltoOutputOnly&#39; will appear.</p>
                 </li>
                 <li>
                   <p>If there is &#39;zoneCountInGrace&#39; there will always be exactly one of &#39;zoneCountTooHigh&#39; or &#39;zoneCountTooLow&#39; (never both).</p>
                 </li>
               </ul>
+              <p>Using the first three rules above, your test for an access zone being in error is &#39;secure&#39;, &#39;dualAuth&#39;, &#39;codeOrCard&#39;, &#39;free&#39;, &#39;saltoOutputOnly&#39;, and &#39;mobileZone&#39; all missing.</p>
               <h3 id="use-cases">Use cases</h3>
               <h4 id="searching-for-access-zones-by-name">Searching for access zones by name</h4>
               <ol>
@@ -2041,7 +2045,7 @@
               </ul>
               <h4 id="alarm-zone-flag-rules">Alarm Zone flag rules</h4>
               <ul>
-                <li>If and only if the zone is online, there will exactly one of &#39;armed&#39;, &#39;disarmed&#39;, &#39;user1&#39;, or &#39;user2&#39;.</li>
+                <li>If and only if the zone is online, there will exactly one of &#39;armed&#39;, &#39;disarmed&#39;, &#39;user1&#39;, or &#39;user2&#39;. That is your test for whether an alarm zone is in error.</li>
                 <li>&#39;exitDelay&#39; and &#39;entryDelay&#39; cannot appear together.</li>
                 <li>If and only if the zone is online and has a fence zone, there will be exactly one of &#39;lowFeel&#39; or &#39;highVoltage&#39;.</li>
               </ul>
@@ -3135,7 +3139,7 @@
               <ul>
                 <li>If and only if the door is online, exactly one of &#39;closed&#39; or &#39;open&#39; will appear, and one of &#39;locked&#39; or &#39;unlocked&#39;, and one of &#39;secure&#39; or &#39;free&#39;.</li>
               </ul>
-              <p>So, to establish if the door is in a normal state, look for &#39;closed&#39; or &#39;open&#39;.</p>
+              <p>So, to establish if the door is in a normal state, look for &#39;closed&#39; or &#39;open&#39;. If neither is present, your door is in an error state.</p>
               <h3 id="use-cases">Use cases</h3>
               <h4 id="listing-doors">Listing Doors</h4>
               <ol>
@@ -3590,7 +3594,7 @@
               </ul>
               <h4 id="fence-zone-flag-rules">Fence Zone flag rules</h4>
               <ul>
-                <li>If and only if the fence zone is online, there will be exactly one of &#39;deterrentUnknown&#39;, &#39;on&#39;, or &#39;off&#39;.</li>
+                <li>If and only if the fence zone is online, there will be exactly one of &#39;deterrentUnknown&#39;, &#39;on&#39;, or &#39;off&#39;. That is your test for whether a fence zone is in error.</li>
                 <li>If &#39;on&#39;, there will be exactly one of &#39;lowFeel&#39;, &#39;highVoltage&#39;, or &#39;hVPlusMode&#39;.</li>
                 <li>If &#39;off&#39;, there will be exactly one of &#39;lowFeel&#39; or &#39;highVoltage&#39;.</li>
                 <li>&#39;hVPlusMode&#39; will only appear if the fence zone is on.</li>
@@ -4900,12 +4904,12 @@
                   <p><code>switchingDisabled</code> means switching this output is disabled.</p>
                 </li>
                 <li>
-                  <p><code>overridden</code> means the output is under the effect of an override.</p>
+                  <p><code>overridden</code> can appear whether the output is online or offline. It means the output has an override in effect.</p>
                 </li>
               </ul>
               <h4 id="output-flag-rules">Output flag rules</h4>
               <ul>
-                <li>If and only if the output is online, one of &#39;relayStateUnknown&#39;, &#39;closed&#39;, or &#39;open&#39; will appear.</li>
+                <li>If and only if the output is online, one of &#39;relayStateUnknown&#39;, &#39;closed&#39;, or &#39;open&#39; will appear. That is your test for whether an output is in error.</li>
                 <li>Of the above, only &#39;overridden&#39; can appear when the output is offline.</li>
               </ul>
               <h3 id="use-cases">Use cases</h3>
@@ -5569,11 +5573,15 @@
               </ul>
               <h4 id="input-flag-rules">Input flag rules</h4>
               <ul>
-                <li>If and only if the input is online and not shunted, exactly one of &#39;closed&#39; or &#39;open&#39; will appear.</li>
-                <li>&#39;closed&#39; or &#39;open&#39; may still appear if the input is tampered.</li>
+                <li>
+                  <p>If and only if the input is online and not shunted (&#39;notPolled&#39; status flag), exactly one of &#39;closed&#39; or &#39;open&#39; will appear.</p>
+                </li>
+                <li>
+                  <p>&#39;closed&#39; or &#39;open&#39; may still appear if the input is tampered.</p>
+                </li>
               </ul>
               <p>So, to establish if the input is in a completely normal state, look for &#39;closed&#39; or &#39;open&#39;, and make sure &#39;tamper&#39; is
-                <em>not</em> there.</p>
+                <em>not</em> there. However bear in mind that inputs are often shunted for ordinary reasons.</p>
               <h3 id="use-cases">Use cases</h3>
               <h4 id="listing-inputs">Listing Inputs</h4>
               <ol>
