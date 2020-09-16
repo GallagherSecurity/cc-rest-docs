@@ -320,8 +320,8 @@ securityDefinitions:
       certificate in order to 'pin' it. See the Configuration Client help for instructions on where
       to enter the thumbprint.
 
-      Also note that if IP filtering is enabled on the REST Client item in Command Centre,
-      the API will only accept connections from specific IP address ranges.
+      Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API
+      will only accept connections from the IP address ranges configurated into that client item.
 
       If a connection attempt fails, Command Centre will raise an event indicating its
       reason for refusing the request.
@@ -464,7 +464,7 @@ x-common-blocks-this-is-made-up:
       Use the special value `defaults` to return the fields you would have received had you not given
       the parameter at all.  Obviously only do that if you have more to add.
 
-      The string matches are case-insensitive.
+      Treat the string matches as case-sensitive.
 
   fds840_ignored: &FIELDSDESC_SUM_840
     description: |
@@ -475,7 +475,7 @@ x-common-blocks-this-is-made-up:
       Use the special value `defaults` to return the fields you would have received had you not given
       the parameter at all.  Obviously only do that if you have more to add.
 
-      The string matches are case-insensitive.
+      Treat the string matches as case-sensitive.
 
       Added in 8.40.
 
@@ -485,7 +485,7 @@ x-common-blocks-this-is-made-up:
       are the same as the field names you would see in the results.  Use it to cut back on the size
       of the response.  Separate values with commas.
 
-      The string matches are case-insensitive.
+      Treat the string matches as case-sensitive.
 
   fdd840_ignored: &FIELDSDESC_DET_840
     description: |
@@ -493,7 +493,7 @@ x-common-blocks-this-is-made-up:
       are the same as the field names you would see in the results.  Use it to cut back on the size
       of the response.  Separate values with commas.
 
-      The string matches are case-insensitive.
+      Treat the string matches as case-sensitive.
 
       Added in 8.40.
 
@@ -513,12 +513,37 @@ security:
 
 ######################################################################
 parameters:
-  fields:
+
+  alarmid:
+    name: "id"
+    in: path
+    required: true
+    type: string
+    description: |
+      The ID of the alarm.  This is not really a parameter you should insert into your request.
+      Instead you should get the URL of this call from other results: the alarm summary or details,
+      in this case.
+
+  alarmfields:
     name: fields
     in: query
     type: string
     required: false
 
+    enum: [ href, id, time, message, source, type, priority, state, active, division, notePresets,
+    view, comment, acknowledgeWithComment, acknowledge, processWithComment, process, details,
+    history, instruction, cardholder ]
+
+    description: |
+      Allows you to specify which fields you want in your results.  Separate fields with commas.
+
+      New to 8.40.
+
+  eventfields:
+    name: fields
+    in: query
+    type: string
+    required: false
     enum: [ defaults, details, cardholder.pdf_*, href, id, serverDisplayName, time, message,
     occurrences, priority, alarm, operator, source, group, type, division, cardholder,
     entryAccessZone, exitAccesZone, door, accessGroup, card, modifiedItem, lastOccurrenceTime]
@@ -526,9 +551,8 @@ parameters:
     description: |
       Allows you to specify which fields you want in your results.
 
-      The list of valid fields for 8.40
-
-      This has [its own topic](#topic-Event-field-specifiers).
+      This is the list of valid fields for 8.40, but it varies with the server version, so check
+      with the topic [on event field specifiers](#topic-Event-field-specifiers).
 
 paths:
 
@@ -555,8 +579,8 @@ paths:
         Do not code this URL into your application.  Take it from `alarms.alarms.href` in the
         results of `GET /api`.
 
-      security:
-      - "API key": []
+      parameters:
+      - $ref: "#/parameters/alarmfields"
       responses:
         200:
           description: Success
@@ -585,6 +609,8 @@ paths:
         Do not code this URL into your application.  Take it from `alarms.updates.href` in the
         results of `GET /api`, or from `updates` in the results of `GET /api/alarms`.
 
+      parameters:
+        - $ref: "#/parameters/alarmfields"
       responses:
         200:
           description: Success
@@ -600,11 +626,8 @@ paths:
       summary: Get details of an alarm
       description: Full details for an alarm. Follow the `href` in the alarm summary to get here.
       parameters:
-      - name: "id"
-        in: path
-        required: true
-        type: string
-        description: The ID of the alarm.
+      - $ref: "#/parameters/alarmid"
+      - $ref: "#/parameters/alarmfields"
       responses: 
         200: 
           description: "Success"
@@ -618,11 +641,7 @@ paths:
       tags:
         - Alarms
       parameters:
-      - name: "id"
-        in: path
-        required: true
-        type: string
-        description: The ID of the alarm.
+      - $ref: "#/parameters/alarmid"
       - name: body
         description: Optional comment.
         in: body
@@ -639,11 +658,7 @@ paths:
       tags:
         - Alarms
       parameters:
-      - name: "id"
-        in: path
-        required: true
-        type: string
-        description: The ID of the alarm.
+      - $ref: "#/parameters/alarmid"
       - name: body
         description: The comment string.
         in: body
@@ -660,11 +675,7 @@ paths:
       tags:
         - Alarms
       parameters:
-      - name: "id"
-        in: path
-        required: true
-        type: string
-        description: The ID of the alarm.
+      - $ref: "#/parameters/alarmid"
       - name: body
         description: Optional comment.
         in: body
@@ -677,15 +688,11 @@ paths:
   /api/alarms/{id}/process:
     post:
       summary: Mark an alarm as processed
-      description: Follow the `processWithComment` or the `process` link in the alarm summary to get here
+      description: Follow the `processWithComment` or the `process` link in the alarm summary to get here.
       tags:
         - Alarms
       parameters:
-      - name: "id"
-        in: path
-        required: true
-        type: number
-        description: The ID of the alarm.
+      - $ref: "#/parameters/alarmid"
       - name: body
         description: Optional comment.
         in: body
@@ -804,7 +811,7 @@ paths:
           description: "Success with no event created, probably because the priority in the action plan was zero."
         400:
           description: |
-            The parameters are invalid.  Check the body for an error message.
+            The parameters are invalid.  Check the body of the response for an error message.
         403:
           description: |
             The site does not have the RESTCreateEvents licence (in which case the body of the
@@ -888,7 +895,7 @@ paths:
         required: false
         type: string
         description: "Restricts events to those in this division (including its child divisions).  Separate multiple IDs with commas.\n\nExample:  `division=2,101`\n\nA more secure option is to set the operator's privileges so that it only has access to those divisions."
-      - $ref: "#/parameters/fields"
+      - $ref: "#/parameters/eventfields"
       - name: "previous"
         in: query
         required: false
@@ -989,12 +996,12 @@ paths:
         required: false
         type: string
         description: "Restricts events to those associated with the cardholder with this Command Centre ID.  Separate multiple IDs with commas.\n\nExample:  `cardholder=325`"
-      - $ref: "#/parameters/fields"
       - name: "division"
         in: query
         required: false
         type: string
         description: "Restricts events to those in the division with this ID and its descendant divisions.  Separate multiple IDs with commas.\n\nExample:  `division=2,101`"
+      - $ref: "#/parameters/eventfields"
       - name: "pos"
         in: query
         required: false
@@ -1026,7 +1033,7 @@ paths:
         required: true
         type: string
         description: The ID of the event.
-      - $ref: "#/parameters/fields"
+      - $ref: "#/parameters/eventfields"
       responses: 
         200: 
           description: "Success"
@@ -1034,7 +1041,7 @@ paths:
         403: { description: The site does not have a RESTEvents licence. }
         404:
           description: |
-            That is not the URL of an event, or if it is, you do not have privileges to read events
+            That is not the URL of an event, or it is but you do not have privileges to read events
             in its source item's division.
 
   /api/events/groups:
@@ -1183,7 +1190,7 @@ paths:
         in: path
         required: true
         type: string
-        description: The ID of the alarm.
+        description: The ID of the item.
       - name: "fields"
         <<: *FIELDSDESC_SUM
         <<: *ITEMFIELDS
@@ -1192,7 +1199,10 @@ paths:
         200:
           description: Success
           schema: { $ref: '#/definitions/ItemDetail' }
-        404: { description: That is not the href of an item. }
+        404:
+          description: |
+            That is not the href of an item.  At least not one that your operator has the privilege
+            to view.
 
   /api/items/types:
     get:
@@ -1203,7 +1213,7 @@ paths:
         Retrieves the list of all item types in the Command Centre system.  There are about 200.
         This is useful for obtaining type IDs to use in item search filters.
 
-        Note that some item types have a blank name.  These types are vestigial - disregard them.
+        Note that some item types have a blank name.  These types are vestigial:  disregard them.
 
         Do not code this URL into your application.  Take it from `items.itemTypes.href` in the
         results of `GET /api`.
@@ -1224,8 +1234,7 @@ paths:
         later the server will return the items that changed state between the two calls.
 
         If you do not GET the link within thirty seconds of the POST returning the server will drop
-        your subscription.  This makes it quite a good way to collect the status of a lot of items
-        in one call.
+        your subscription and free up the resources it had allocated to servicing it.
 
         Your operator must have view privileges on every item in the subscription.
 
@@ -1260,6 +1269,7 @@ paths:
             }
           }
 
+        400: { description: The server could not parse the request body.  Check your JSON. }
         401: { description: The operator does not have privilege to view the monitored items. }
         403: { description: The site does not have a REST licence. }
 
@@ -1279,12 +1289,12 @@ paths:
 
         Therefore your loop can be:
 
-        1. create a subscription with a POST
-        2. process the statuses in the results, if there are any
-        3. wait a second or two to avoid tight loops
-        4. GET the link from the results
-        5. if 404, go to 1
-        6. go to 2.
+        1. Create a subscription with a [POST](#operation--api-items-updates-post).
+        2. Process the statuses in the results, if there are any.
+        3. Wait a second or two to avoid tight loops.
+        4. GET the link from the results.  It may take up to a minute to respond.
+        5. If 404, go to 1.
+        6. Go to 2.
 
         ...plus the necessary exception handling, of course.
 
