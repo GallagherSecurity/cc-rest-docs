@@ -12,7 +12,7 @@ produces: [application/json]
 consumes: [application/json]
 
 info:
-  version: "8.40.3"
+  version: "8.40.4"
   title: "Command Centre REST API:  Non-cardholder items"
   description: |
     This document describes how you can use the Command Centre REST API to view and manage
@@ -78,8 +78,8 @@ info:
       `top` parameter to take it to 1000 or more gives _much_ better throughput.
 
     * (In v8.00 or later) avoid the details page by adding detail fields to the summary page with
-      the [`fields` parameter](#topic-Field-specifiers).  One huge summary page of 1,000 items is
-      much quicker to retrieve than 1,000 detail pages.
+      the [`fields` parameter](#topic-Field-specifiers).  One summary page of 1,000 items, while
+      huge, is much quicker to retrieve than 1,000 detail pages.
 
       For example, to get the names, doors, and override commands of all your access zones:
 
@@ -128,7 +128,7 @@ x-spectacle-topics:
 
       - an operator had the item visible in the Configuration, Command Centre, or mobile clients,
       - an application monitored the item via another API,
-      - a REST client used the item in an [item status subscription](events.html#status-subscriptions), or
+      - a REST client used the item in a [status subscription](events.html#status-subscriptions), or
       - a REST client followed the item's `updates` link from its details page.
 
       If it is not up to date and you request the status on an item's summary or details page, the
@@ -164,8 +164,10 @@ x-spectacle-topics:
       Whether you received an update or not, the body will contain a `next` link for you to follow
       for the next update.
 
-      State changes are not queued:  the API only keeps the last, so it only takes one 'updates'
-      call to get yourself up to date.
+      State changes are not queued:  the API only keeps the last, so it only takes one call to get
+      yourself up to date with the server.  Remember that the server itself may not have been up to
+      date, and your making the call will have started it on its own little journey of discovery,
+      which will cause more updates.
 
       The 'Site' tab of the sample application shows this in operation.
 
@@ -342,6 +344,17 @@ x-common-blocks-this-is-made-up:
     type: array
     items: { type: string, example: "controllerOffline" }
 
+  update_fields_desc_ignored: &UPDFIELDS
+    in: query
+    required: false
+    type: string
+    description: |
+      Return these fields in the update, instead of the default set.  Note that removing fields also
+      saves you from updates to those fields.
+
+  update_fields_ignore: &UPDFIELDSENUM
+    enum: [ status, statusText, statusFlags ]
+
   acz_ignored: &ACZFIELDS
     in: query
     required: false
@@ -439,7 +452,7 @@ definitions:
           A link to an [access zone detail](#definition-Access-Zone-detail) object for this access
           zone.  This is Command Centre's identifier for this access zone:  use it whenever you need
           to specify an access zone in REST operations.
-        example: "https://localhost:8904/api/access_zones/10135"
+        example: "https://localhost:8904/api/access_zones/328"
       id:
         type: string
         description: |
@@ -447,7 +460,7 @@ definitions:
 
           This is the ID to use in the `source` parameter of [event
           filters](events.html#operation--api-events-get).
-        example: "10135"
+        example: "328"
       name:
         type: string
         example: "Roswell building 2 lobby"
@@ -510,7 +523,7 @@ definitions:
             <<: *SHORTNAME
           updates:
             <<: *UPDATES
-            example: { href: "https://localhost:8904/api/access_zones/10135/updates/0_0_0" }
+            example: { href: "https://localhost:8904/api/access_zones/328/updates/0_0_0" }
           statusFlags:
             <<: *STATUSFLAGS
             example: ["secure"]
@@ -736,7 +749,7 @@ definitions:
           A link to an [alarm zone detail](#definition-Alarm-Zone-detail) object for this alarm
           zone.  This is Command Centre's identifier for this alarm zone:  use it whenever you need
           to specify an alarm zone in REST operations.
-        example: "https://localhost:8904/api/alarm_zones/10135"
+        example: "https://localhost:8904/api/alarm_zones/328"
       id:
         type: string
         description: |
@@ -745,10 +758,10 @@ definitions:
           This is the ID to use in the `source` parameter of [event
           filters](events.html#operation--api-events-get) if you want to limit your events
           to particular alarm zones.
-        example: "10135"
+        example: "328"
       name:
         type: string
-        example: "Roswell building 2 ground floor"
+        example: "Roswell building 2 lobby"
 
   Alarm Zone detail:
     description: |
@@ -768,12 +781,12 @@ definitions:
           shortName:
             type: string
             maxLength: 16
-            example: "R2 ground floor"
+            example: "R2 lobby"
           notes:
             <<: *NOTES
           updates:
             <<: *UPDATES
-            example: { href: "https://localhost:8904/api/alarm_zones/10135/updates/0_0_0" }
+            example: { href: "https://localhost:8904/api/alarm_zones/328/updates/0_0_0" }
           statusFlags:
             <<: *STATUSFLAGS
             example: ["armed"]
@@ -998,7 +1011,7 @@ definitions:
                   page (which includes a link back here).
                 type: string
                 format: url
-                example: "https://localhost:8904/api/access_zones/10135"
+                example: "https://localhost:8904/api/access_zones/328"
           notes: {<<: *NOTES}
           shortName: {<<: *SHORTNAME}
           updates:
@@ -1244,7 +1257,7 @@ definitions:
         example: "8492"
       name:
         type: string
-        example: "Arm ground floor"
+        example: "Arm lobby"
 
   Macro detail:
     description: |
@@ -1258,7 +1271,7 @@ definitions:
         properties:
           description:
             type: string
-            example: "Arms and secures all ground floor zones."
+            example: "Arms and secures all lobby zones."
           division:
             type: object
             description:  The division containing this Macro.
@@ -1938,7 +1951,7 @@ tags:
     #### Finding an output's status
     1. Find the href for the output using the process above, and GET it.
     3. Take the `updates` href from that page.  Append '?' or '&' (whichever is appropriate) then
-       `fields=defaults,voltage` if you are after the fence's voltage
+       `fields=defaults,voltage` if you are after the fence's voltage.
     4. GET it.
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
@@ -1964,7 +1977,7 @@ tags:
     Three-state inputs can report a tamper, but only one of tampered open or tampered closed,
     depending on their end-of-line resistance settings.
 
-    Four-state inputs can report tampered open or closed.
+    Four-state inputs can report tampered open (an open circuit) or tampered closed (a short).
 
     If the input is online, its `statusFlags` field may contain one or more of these flags:
 
@@ -2025,6 +2038,11 @@ paths:
         your request; you should follow the `next` link, if it is present, to collect the next
         batch.
 
+        If your result set is empty it means your operator does not have the privilege to view any
+        access zones, such as 'View Site', 'Edit Site', or 'Override'.  Perhaps there are no access
+        zones in the divisions in which your operator has privileges, or your operator has no
+        privileges at all.
+
         When you have loaded them all there will be no `next` link.
 
         Take this URL from the 'href' field in the `features.accessZones.accessZones` section of
@@ -2040,12 +2058,11 @@ paths:
 
       responses:
         200:
-          description: Success
-          schema: {$ref: '#/definitions/Access Zones'}
-        4xx:
           description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            that allows viewing access zones such as 'View Site', 'Edit Site', or 'Override'.
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Access Zones'}
+        403:
+          description: The site does not have the RESTStatus licence.
 
   /api/access_zones/update_cardholder_location:
     get:
@@ -2053,12 +2070,17 @@ paths:
         - "Access Zones"
       summary: Search targetable access zones
       description: |
-        This returns a list of the access zones to which your operator is allowed to move cardholders,
-        and a special zone you can use as a target to move a cardholder from all access zones.
+        This returns a list of the access zones to which your operator is allowed to move
+        cardholders, and a special zone you can use as a target to move a cardholder from all access
+        zones.
 
         Like all other paginated queries in this API, the result will contain no more than 100
         access zones, or as many as you asked for more in your request; you should follow the `next`
         link, if it is present, to collect the next batch.
+
+        If your result set is empty it means there are no access zones in the divisions in which
+        your operator has the privilege to move cardholders, 'Manage Cardholder Location', or your
+        operator does not have it at all.
 
         When you have loaded them all there will be no `next` link.
 
@@ -2077,12 +2099,11 @@ paths:
 
       responses:
         200:
-          description: Success
-          schema: {$ref: '#/definitions/Access Zones as move targets'}
-        4xx:
           description: |
-            The site does not have the RESTCardholders licence, or the operator does not have a privilege
-            that allows moving cardholders between zones, such as 'Manage Cardholder Location'.
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Access Zones as move targets'}
+        403:
+          description: The site does not have the RESTCardholders licence.
 
   /api/access_zones/{id}:
     get:
@@ -2092,7 +2113,8 @@ paths:
       description: |
         This returns the detail of one access zone.
 
-        Follow the 'href' field in an [access zone summary](#definition-Access-Zone-summary) to get here.
+        Follow the 'href' field in an [access zone summary](#definition-Access-Zone-summary) to get
+        here.
 
       parameters:
       - name: "id"
@@ -2105,13 +2127,11 @@ paths:
 
       responses:
         200:
-          description: Success
+          description: Success.
           schema: {$ref: '#/definitions/Access Zone detail'}
-        4xx:
-          description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            on the zone's division that allows viewing access zones, such as 'View Site', 'Edit
-            Site', or 'Override'."
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404accesszone"}
 
   /api/access_zones/{id}/free:
     post:
@@ -2133,8 +2153,9 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403accesszoneoverride" }
 
   /api/access_zones/{id}/secure:
     post:
@@ -2156,8 +2177,9 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403accesszoneoverride" }
 
   /api/access_zones/{id}/code_only:
     post:
@@ -2180,8 +2202,9 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403accesszoneoverride" }
 
   /api/access_zones/{id}/dual_auth:
     post:
@@ -2205,8 +2228,9 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403accesszoneoverride" }
 
   /api/access_zones/{id}/forgive_anti_passback:
     post:
@@ -2217,8 +2241,8 @@ paths:
 
       parameters: [{in: path, name: id, required: true, description: "The ID of the access zone.", type: string}]
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403accesszoneoverride" }
 
   /api/access_zones/{id}/lock_down:
     post:
@@ -2232,8 +2256,8 @@ paths:
         zone receives an override to another mode.
       parameters: [{in: path, name: id, required: true, description: "The ID of the access zone.", type: string}]
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403accesszoneoverride" }
 
   /api/access_zones/{id}/cancel_lock_down:
     post:
@@ -2245,8 +2269,8 @@ paths:
 
       parameters: [{in: path, name: id, required: true, description: "The ID of the access zone.", type: string}]
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403accesszoneoverride" }
 
   /api/access_zones/{id}/set_zone_count:
     post:
@@ -2264,8 +2288,9 @@ paths:
         schema: {$ref: "#/definitions/Access zone count" }
 
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403accesszoneoverride" }
 
   /api/access_zones/{id}/cancel:
     post:
@@ -2284,8 +2309,51 @@ paths:
       - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
 
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxaccesszoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403accesszoneoverride" }
+
+  /api/access_zones/{id}/updates:
+    get:
+      tags:
+        - "Access Zones"
+      summary: Monitor an access zone
+      description: |
+        See the [item status topic](#topic-Item-status) for how to use the updates APIs.
+
+        Note that this API call is good for watching one item only; if you want to monitor several,
+        you are better off with a [status subscription](events.html#status-subscriptions).
+
+        Follow the 'updates' field in an access zone [summary](#definition-Access-Zone-summary) or
+        [details](#definition-Access-Zone-detail) pages to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the access zone.
+      - name: "fields"
+        <<: *UPDFIELDS
+        enum: [ status, statusText, statusFlags, zoneCount ]
+
+      responses:
+        200:
+          description: |
+            Success.  The [introduction](#tag-Access-Zones) describes the three status fields and
+            the [access zone detail](#definition-Access-Zone-detail) describes `zoneCount`.
+          schema:
+            example: {
+              updates: {
+                status: Secure.,
+                statusText: Secure.,
+                statusFlags: [ secure ],
+                zoneCount: 100
+              },
+              next: { href: https://localhost:8904/api/access_zones/328/updates/9_1 }
+            }
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404accesszone"}
 
 ######################################################################
 
@@ -2300,6 +2368,11 @@ paths:
         The result will contain no more than 100 alarm zones, or as many as you asked for more in
         your request; you should follow the `next` link, if it is present, to collect the next
         batch.
+
+        If your result set is empty it means your operator does not have the privilege to view any
+        alarm zones, such as 'View Site', 'Edit Site', or 'Override'.  Perhaps there are no alarm
+        zones in the divisions in which your operator has privileges, or your operator has no
+        privileges at all.
 
         When you have loaded them all there will be no `next` link.
 
@@ -2316,12 +2389,11 @@ paths:
 
       responses:
         200:
-          description: Success
-          schema: {$ref: '#/definitions/Alarm Zones'}
-        4xx:
           description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            that allows viewing alarms zones such as 'View Site', 'Edit Site', or 'Override'."
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Alarm Zones'}
+        403:
+          description: The site does not have the RESTStatus licence.
 
   /api/alarm_zones/{id}:
     get:
@@ -2345,13 +2417,11 @@ paths:
 
       responses:
         200:
-          description: Success
-          schema: {$ref: '#/definitions/Alarm Zone detail'}
-        4xx:
-          description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            on the zone's division that allows viewing alarms zones, such as 'View Site', 'Edit
-            Site', or 'Override'."
+          description: Success.
+          schema: {$ref: '#/definitions/Access Zones'}
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404alarmzone"}
 
   /api/alarm_zones/{id}/arm:
     post:
@@ -2373,8 +2443,9 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403alarmzoneoverride" }
 
   /api/alarm_zones/{id}/disarm:
     post:
@@ -2396,8 +2467,9 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403alarmzoneoverride" }
 
   /api/alarm_zones/{id}/user1:
     post:
@@ -2419,15 +2491,17 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403alarmzoneoverride" }
 
   /api/alarm_zones/{id}/user2:
     post:
       tags: ["Alarm Zones"]
       summary: Change an alarm zone to user2
       description: |
-        Sends an override to an alarm zone to set its state to 'user2', the other of of the custom states.
+        Sends an override to an alarm zone to set its state to 'user2', the other of of the custom
+        states.
 
         If you send an end time in the body, and the alarm zone has a schedule to consult
         to find the state that it should return to, the override will only stay in effect
@@ -2442,8 +2516,9 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403alarmzoneoverride" }
 
   /api/alarm_zones/{id}/armHighVoltage:
     post:
@@ -2465,8 +2540,9 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403alarmzoneoverride" }
 
   /api/alarm_zones/{id}/armLowFeel:
     post:
@@ -2488,8 +2564,9 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403alarmzoneoverride" }
 
   /api/alarm_zones/{id}/cancel:
     post:
@@ -2501,8 +2578,49 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxalarmzoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403alarmzoneoverride" }
+
+  /api/alarm_zones/{id}/updates:
+    get:
+      tags:
+        - "Alarm Zones"
+      summary: Monitor an alarm zone
+      description: |
+        See the [item status topic](#topic-Item-status) for how to use the updates APIs.
+
+        Note that this API call is good for watching one item only; if you want to monitor several,
+        you are better off with a [status subscription](events.html#status-subscriptions).
+
+        Follow the 'updates' field in an alarm zone [summary](#definition-Alarm-Zone-summary) or
+        [details](#definition-Alarm-Zone-detail) pages to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the alarm zone.
+      - name: "fields"
+        <<: *UPDFIELDS
+        <<: *UPDFIELDSENUM
+
+      responses:
+        200:
+          description: |
+            Success.  The [introduction](#tag-Alarm-Zones) describes the three status fields.
+          schema:
+            example: {
+              updates: {
+                status: Disarmed.,
+                statusText: Disarmed.,
+                statusFlags: [ disarmed ]
+              },
+              next: { href: https://localhost:8904/api/alarm_zones/328/updates/9_1 }
+            }
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404alarmzone"}
 
 ######################################################################
   /api/doors:
@@ -2516,6 +2634,11 @@ paths:
         The result will contain no more than 100 doors, or as many as you asked for more in
         your request; you should follow the `next` link, if it is present, to collect the next
         batch.
+
+        If your result set is empty it means your operator does not have the privilege to view any
+        doors, such as 'View Site', 'Edit Site', or 'Override - Open Door'.  Perhaps there are no
+        doors in the divisions in which your operator has privileges, or your operator has no
+        privileges at all.
 
         When you have loaded them all there will be no `next` link.
 
@@ -2532,12 +2655,11 @@ paths:
 
       responses:
         200:
-          description: Success
-          schema: {$ref: '#/definitions/Doors'}
-        4xx:
           description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            that allows viewing doors such as 'View Site', 'Edit Site', or 'Override - Open Door'."
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Doors'}
+        403:
+          description: The site does not have the RESTStatus licence.
 
   /api/doors/{id}:
     get:
@@ -2561,13 +2683,11 @@ paths:
 
       responses:
         200:
-          description: Success
+          description: Success.
           schema: {$ref: '#/definitions/Door detail'}
-        4xx:
-          description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            on the zone's division that allows viewing doors, such as 'View Site', 'Edit Site', or
-            'Override - Open Door'."
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404door"}
 
   /api/doors/{id}/open:
     post:
@@ -2579,8 +2699,50 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the door.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxdooroverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403dooroverride" }
+
+  /api/doors/{id}/updates:
+    get:
+      tags:
+        - "Doors"
+      summary: Monitor a door
+      description: |
+        See the [item status topic](#topic-Item-status) for how to use the updates APIs.
+
+        Note that this API call is good for watching one item only; if you want to monitor several,
+        you are better off with a [status subscription](events.html#status-subscriptions).
+
+        Follow the 'updates' field in a door [summary](#definition-Door-summary) or
+        [details](#definition-Door-detail) pages to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the door.
+      - name: "fields"
+        <<: *UPDFIELDS
+        <<: *UPDFIELDSENUM
+
+      responses:
+        200:
+          description: |
+            Success.  See the [introduction](#tag-Doors) for a description of the three status
+            fields.
+          schema:
+            example: {
+              updates: {
+                status: "Closed, Locked, Secure access.",
+                statusText: "Closed, Locked, Secure access.",
+                statusFlags: [ closed, locked, secure ]
+              },
+              next: { href: https://localhost:8904/api/doors/332/updates/9_1 }
+            }
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404door"}
 
 ######################################################################
   /api/fence_zones:
@@ -2594,6 +2756,11 @@ paths:
         The result will contain no more than 100 fence zones, or as many as you asked for more in
         your request; you should follow the `next` link, if it is present, to collect the next
         batch.
+
+        If your result set is empty it means your operator does not have the privilege to view any
+        fence zones, such as 'View Site', 'Edit Site', or 'Maintenance Override'.  Perhaps there are
+        no fence zones in the divisions in which your operator has privileges, or your operator has
+        no privileges at all.
 
         When you have loaded them all there will be no `next` link.
 
@@ -2610,13 +2777,11 @@ paths:
 
       responses:
         200:
-          description: Success
-          schema: {$ref: '#/definitions/Fence Zones'}
-        4xx:
           description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            that allows viewing fence zones such as 'View Site', 'Edit Site', or 'Maintenance
-            Override'."
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Fence Zones'}
+        403:
+          description: The site does not have the RESTStatus licence.
 
   /api/fence_zones/{id}:
     get:
@@ -2640,13 +2805,11 @@ paths:
 
       responses:
         200:
-          description: Success
           schema: {$ref: '#/definitions/Fence Zone detail'}
-        4xx:
-          description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            on the zone's division that allows viewing fence zones, such as 'View Site', 'Edit
-            Site', or 'Maintenance Override'."
+          description: Success.
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404fencezone"}
 
   /api/fence_zones/{id}/on:
     post:
@@ -2658,8 +2821,8 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403fencezoneoverride" }
 
   /api/fence_zones/{id}/off:
     post:
@@ -2671,8 +2834,8 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403fencezoneoverride" }
 
   /api/fence_zones/{id}/shunt:
     post:
@@ -2684,8 +2847,8 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403fencezoneoverride" }
 
   /api/fence_zones/{id}/unshunt:
     post:
@@ -2696,8 +2859,8 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403fencezoneoverride" }
 
   /api/fence_zones/{id}/high_voltage:
     post:
@@ -2709,8 +2872,8 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403fencezoneoverride" }
 
   /api/fence_zones/{id}/low_feel:
     post:
@@ -2722,8 +2885,8 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403fencezoneoverride" }
 
   /api/fence_zones/{id}/cancel:
     post:
@@ -2735,8 +2898,51 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the fence zone.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxfencezoneoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403fencezoneoverride" }
+
+  /api/fence_zones/{id}/updates:
+    get:
+      tags:
+        - "Fence Zones"
+      summary: Monitor a fence zone
+      description: |
+        See the [item status topic](#topic-Item-status) for how to use the updates APIs.
+
+        Note that this API call is good for watching one item only; if you want to monitor several,
+        you are better off with a [status subscription](events.html#status-subscriptions).
+
+        Follow the 'updates' field in a door [summary](#definition-Fence-Zone-summary) or
+        [details](#definition-Fence-Zone-detail) pages to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the fence zone.
+      - name: "fields"
+        <<: *UPDFIELDS
+        enum: [ status, statusText, statusFlags, voltage ]
+
+      responses:
+        200:
+          description: |
+            Success.  See the [introduction](#tag-Fence-Zones) for a description of the three status
+            fields and the [detail page](#definition-Fence-Zone-detail) for `voltage`.
+          schema:
+            example: {
+              updates: {
+                status: "On - HV.",
+                statusText: "On - HV.",
+                statusFlags: [ on, highVoltage ],
+                voltage: 7300
+              },
+              next: { href: https://localhost:8904/api/fence_zones/556/updates/9_1 }
+            }
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404fencezone"}
 
 ######################################################################
   /api/macros:
@@ -2751,10 +2957,14 @@ paths:
         your request; you should follow the `next` link, if it is present, to collect the next
         batch.
 
+        If your result set is empty it means your operator does not have the privilege to view any
+        macros, such as 'View Site', 'Run Macros', or 'Schedule and Run Macros'.  Perhaps there are
+        no macros in the divisions in which your operator has privileges, or your operator has no
+        privileges at all.
+
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the 'href' field in the `features.macros.macros` section of
-        `/api`.
+        Take this URL from the 'href' field in the `features.macros.macros` section of `/api`.
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -2766,13 +2976,11 @@ paths:
 
       responses:
         200:
-          description: Success
-          schema: {$ref: '#/definitions/Macros'}
-        4xx:
           description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            that allows viewing macros such as 'View Site', 'Run Macros', or 'Schedule and Run
-            Macros'.
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Macros'}
+        403:
+          description: The site does not have the RESTStatus licence.
 
   /api/macros/{id}:
     get:
@@ -2796,13 +3004,11 @@ paths:
 
       responses:
         200:
-          description: Success
+          description: Success.
+        403:
+          description: The site does not have the RESTStatus licence.
           schema: {$ref: '#/definitions/Macro detail'}
-        4xx:
-          description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            on the macro's division that allows viewing it, such as 'View Site', 'Run Macros', or
-            'Schedule and Run Macros'.
+        404: {$ref: "#responses/404macro"}
 
   /api/macros/{id}/run:
     post:
@@ -2813,8 +3019,8 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the macro.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxmacrooverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403macrooverride" }
 
 ######################################################################
   /api/outputs:
@@ -2828,6 +3034,11 @@ paths:
         The result will contain no more than 100 outputs, or as many as you asked for more in
         your request; you should follow the `next` link, if it is present, to collect the next
         batch.
+
+        If your result set is empty it means your operator does not have the privilege to view any
+        outputs, such as 'View Site', 'Edit Site', or 'Override'.  Perhaps there are no outputs in
+        the divisions in which your operator has privileges, or your operator has no privileges at
+        all.
 
         When you have loaded them all there will be no `next` link.
 
@@ -2844,12 +3055,11 @@ paths:
 
       responses:
         200:
-          description: Success
-          schema: {$ref: '#/definitions/Outputs'}
-        4xx:
           description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            that allows viewing outputs, such as 'View Site', 'Edit Site', or 'Override'.
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Outputs'}
+        403:
+          description: The site does not have the RESTStatus licence.
 
   /api/outputs/{id}:
     get:
@@ -2873,13 +3083,11 @@ paths:
 
       responses:
         200:
-          description: Success
+          description: Success.
           schema: {$ref: '#/definitions/Output detail'}
-        4xx:
-          description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            on the zone's division that allows viewing outputs, such as 'View Site', 'Edit Site', or
-            'Override'."
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404output"}
 
   /api/outputs/{id}/on:
     post:
@@ -2898,8 +3106,9 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxoutputoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403outputoverride" }
 
   /api/outputs/{id}/off:
     post:
@@ -2918,8 +3127,9 @@ paths:
         description: Optional
         schema: { $ref: "#/definitions/Override end time" }
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxoutputoverride" }
+        204: { description: Success. }
+        400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403outputoverride" }
 
   /api/outputs/{id}/cancel:
     post:
@@ -2931,8 +3141,50 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the output.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxoutputoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403outputoverride" }
+
+  /api/outputs/{id}/updates:
+    get:
+      tags:
+        - "Outputs"
+      summary: Monitor an output
+      description: |
+        See the [item status topic](#topic-Item-status) for how to use the updates APIs.
+
+        Note that this API call is good for watching one item only; if you want to monitor several,
+        you are better off with a [status subscription](events.html#status-subscriptions).
+
+        Follow the 'updates' field in an output [summary](#definition-Output-summary) or
+        [details](#definition-Output-detail) pages to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the output.
+      - name: "fields"
+        <<: *UPDFIELDS
+        <<: *UPDFIELDSENUM
+
+      responses:
+        200:
+          description: |
+            Success.  See the [introduction](#tag-Outputs) for a description of the three status
+            fields.
+          schema:
+            example: {
+              updates: {
+                status: "This Output is Off.",
+                statusText: "This Output is Off.",
+                statusFlags: [ open ]
+              },
+              next: { href: https://localhost:8904/api/outputs/2365/updates/9_1 }
+            }
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404output"}
 
 ######################################################################
   /api/inputs:
@@ -2946,6 +3198,11 @@ paths:
         The result will contain no more than 100 inputs, or as many as you asked for more in
         your request; you should follow the `next` link, if it is present, to collect the next
         batch.
+
+        If your result set is empty it means your operator does not have the privilege to view any
+        inputs, such as 'View Site', 'Edit Site', or 'Maintenance Override'.  Perhaps there are no
+        inputs in the divisions in which your operator has privileges, or your operator has no
+        privileges at all.
 
         When you have loaded them all there will be no `next` link.
 
@@ -2962,12 +3219,11 @@ paths:
 
       responses:
         200:
-          description: Success
-          schema: {$ref: '#/definitions/Inputs'}
-        4xx:
           description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            that allows viewing inputs such as 'View Site', 'Edit Site', or 'Maintenance Override'."
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Inputs'}
+        403:
+          description: The site does not have the RESTStatus licence.
 
   /api/inputs/{id}:
     get:
@@ -2991,13 +3247,11 @@ paths:
 
       responses:
         200:
-          description: Success
+          description: Success.
           schema: {$ref: '#/definitions/Input detail'}
-        4xx:
-          description: |
-            The site does not have the RESTStatus licence, or the operator does not have a privilege
-            on the zone's division that allows viewing inputs, such as 'View Site', 'Edit Site', or
-            'Maintenance Override'."
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404input"}
 
   /api/inputs/{id}/shunt:
     post:
@@ -3009,8 +3263,8 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxinputoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403inputoverride" }
 
   /api/inputs/{id}/unshunt:
     post:
@@ -3022,8 +3276,8 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxinputoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403inputoverride" }
 
   /api/inputs/{id}/isolate:
     post:
@@ -3036,8 +3290,8 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxinputoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403inputoverride" }
 
   /api/inputs/{id}/deisolate:
     post:
@@ -3049,39 +3303,127 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
       responses:
-        204: { description: Success }
-        4xx: { $ref: "#/responses/4xxinputoverride" }
+        204: { description: Success. }
+        403: { $ref: "#/responses/403inputoverride" }
+
+  /api/inputs/{id}/updates:
+    get:
+      tags:
+        - "Inputs"
+      summary: Monitor an input
+      description: |
+        See the [item status topic](#topic-Item-status) for how to use the updates APIs.
+
+        Note that this API call is good for watching one item only; if you want to monitor several,
+        you are better off with a [status subscription](events.html#status-subscriptions).
+
+        Follow the 'updates' field in an input [summary](#definition-Input-summary) or
+        [details](#definition-Input-detail) pages to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the input.
+      - name: "fields"
+        <<: *UPDFIELDS
+        <<: *UPDFIELDSENUM
+
+      responses:
+        200:
+          description: |
+            Success.  See the [introduction](#tag-Inputs) for a description of the three status
+            fields.
+          schema:
+            example: {
+              updates: {
+                status: "This Input is Open-Circuit Tampered.",
+                statusText: "This Input is Open-Circuit Tampered.",
+                statusFlags: [ open, tamper ]
+              },
+              next: { href: https://localhost:8904/api/inputs/2365/updates/9_1 }
+            }
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404input"}
 
 ######################################################################
 responses:
-  4xxaccesszoneoverride:
+  400badbody:
     description: |
-      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
-      allows overriding access zones (such as 'Override').
-  4xxalarmzoneoverride:
+      The server could not parse the POST parameters.  There could be a syntax error in your JSON.
+
+  403accesszoneoverride:
     description: |
-      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
-      allows overriding alarm zones (such as 'Override').
-  4xxfencezoneoverride:
+      The site does not have the RESTOverrides licence (in which case the body of the result will
+      say so), or the operator does not have a privilege that allows overriding access zones (such
+      as 'Override').
+  403alarmzoneoverride:
     description: |
-      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
-      allows overriding fence zones (such as 'Override', or 'Maintenance Override' for shunts).
-  4xxdooroverride:
+      The site does not have the RESTOverrides licence (in which case the body of the result will
+      say so), or the operator does not have a privilege that allows overriding alarm zones (such as
+      'Override').
+  403fencezoneoverride:
     description: |
-      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
-      allows overriding doors (such as 'Override - Open Door').
-  4xxoutputoverride:
+      The site does not have the RESTOverrides licence (in which case the body of the result will
+      say so), or the operator does not have a privilege that allows overriding fence zones (such as
+      'Override', or 'Maintenance Override' for shunts).
+  403dooroverride:
     description: |
-      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
-      allows overriding outputs (such as 'Override', or 'Maintenance Override' for shunts).
-  4xxinputoverride:
+      The site does not have the RESTOverrides licence (in which case the body of the result will
+      say so), or the operator does not have a privilege that allows overriding doors (such as
+      'Override - Open Door').
+  403outputoverride:
     description: |
-      The site does not have the RESTOverrides licence, or the operator does not have the
-      'Maintenance Override' privilege.
-  4xxmacrooverride:
+      The site does not have the RESTOverrides licence (in which case the body of the result will
+      say so), or the operator does not have a privilege that allows overriding outputs (such as
+      'Override', or 'Maintenance Override' for shunts).
+  403inputoverride:
     description: |
-      The site does not have the RESTOverrides licence, or the operator does not have a privilege that
-      allows running macros ('Run Macro' or 'Schedule and Run Macro', unsurprisingly).
+      The site does not have the RESTOverrides licence (in which case the body of the result will
+      say so), or the operator does not have the 'Maintenance Override' privilege.
+  403macrooverride:
+    description: |
+      The site does not have the RESTOverrides licence (in which case the body of the result will
+      say so), or the operator does not have a privilege that allows running macros ('Run Macro' or
+      'Schedule and Run Macro', unsurprisingly).
+
+  404accesszone:
+    description: |
+      The request's URL does not represent an access zone, or the operator does not have a privilege
+      on the zone's division that allows viewing access zones, such as 'View Site', 'Edit Site', or
+      'Override'."
+  404alarmzone:
+    description: |
+      The request's URL does not represent an alarm zone, or the operator does not have a privilege
+      on the zone's division that allows viewing alarm zones, such as 'View Site', 'Edit Site', or
+      'Override'."
+  404door:
+    description: |
+      The request's URL does not represent a door, or the operator does not have a privilege on the
+      door's division that allows viewing them, such as 'View Site', 'Edit Site', or 'Override -
+      Open Door'."
+  404fencezone:
+    description: |
+      The request's URL does not represent a fence zone, or the operator does not have a privilege
+      on the zone's division that allows viewing fence zones, such as 'View Site', 'Edit Site', or
+      'Maintenance Override'."
+  404macro:
+    description: |
+      The request's URL does not represent a macro, or the operator does not have a privilege on the
+      macro's division that allows viewing it, such as 'View Site', 'Run Macros', or 'Schedule and
+      Run Macros'.
+  404output:
+    description: |
+      The request's URL does not represent an output, or the operator does not have a privilege on
+      the output's division that allows viewing outputs, such as 'View Site', 'Edit Site', or
+      'Override'."
+  404input:
+    description: |
+      The request's URL does not represent an input, or the operator does not have a privilege on
+      the input's division that allows viewing inputs, such as 'View Site', 'Edit Site', or
+      'Maintenance Override'."
 
 ######################################################################
 ######################################################################

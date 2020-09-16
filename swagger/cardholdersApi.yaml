@@ -182,7 +182,7 @@ x-spectacle-topics:
   Operator privileges:
     $ref: "eventsApi.yaml#/x-spectacle-topics/Operator privileges"
 
-  Field specifiers:
+  Field specifiers:  
     description: |
       You can specify the fields you want in the results of a query.  This lets you:
 
@@ -2679,7 +2679,8 @@ definitions:
                       enum: ['saltoAccessZone', 'saltoDoor' ]
                 saltoItem:
                   description: |
-                    The name and href of the Salto zone or door to which this access group gives access.
+                    The name and href of the Salto zone or Salto door to which this access group
+                    gives access.
 
             example: [ {
               "saltoItemType": {
@@ -2704,6 +2705,24 @@ definitions:
               "schedule": {
                 "href": "https://localhost:8904/api/items/557",
                 "name": "8am-5pm weekdays"
+              } } ]
+
+          alarmZones:
+            type: object[]
+            description: |
+              Names and hrefs of the alarm zones to which members of this access group have the
+              20-odd management privileges listed above.
+
+              Added in 8.40.
+
+            example: [ {
+              "alarmZone": {
+                "href": "https://localhost:8904/api/alarm_zones/328",
+                "name": "Roswell building 2 lobby"
+              } }, {
+              "alarmZone": {
+                "href": "https://localhost:8904/api/alarm_zones/10135",
+                "name": "Roswell building 3 lobby"
               } } ]
 
       - $ref: "#/definitions/Access group summary"
@@ -3481,17 +3500,18 @@ paths:
         403: { description: "The operator does not have a privilege that allows creating cardholders, or you attempted to set a field for which the operator has no privilege (probably 'notes')." }
 
   /api/cardholders/{id}:
+    parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the cardholder.
     get:
       tags:
         - Cardholders
       summary: Get details of a cardholder
       description: Full details for a cardholder.  Follow the href in the [cardholder search](#definition-Cardholders) to get here.
       parameters:
-      - name: "id"
-        in: path
-        required: true
-        type: string
-        description: The ID of the cardholder.
       - name: "fields"
         in: query
         required: false
@@ -3600,12 +3620,6 @@ paths:
       summary: Remove a cardholder
       description: |
         This call removes a cardholder from Command Centre.
-      parameters:
-        - name: "id"
-          in: path
-          required: true
-          type: string
-          description: "The identifier of the cardholder."
       responses: 
         204: { description: "Success." }
         400:
@@ -4432,7 +4446,7 @@ paths:
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the locker to open.", type: string}
       responses:
-        204: { description: Success }
+        204: { description: Success. }
         403: { description: "The installation lacks the RESTOverrides licence." }
         404:
           description: |

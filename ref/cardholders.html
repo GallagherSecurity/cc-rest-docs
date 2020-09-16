@@ -1069,20 +1069,6 @@
                 <section class="swagger-request-params">
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">id</div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in path </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The ID of the cardholder.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
@@ -1095,6 +1081,20 @@
                         <a href="#definition-Cardholder-detail">detail results</a>. Use it to return fewer fields than normal. Separate values with commas.</p>
                       <p>Treat the string matches as case sensitive: use &#39;lastName&#39; rather than &#39;lastname&#39;.</p>
                       <p>In v8.00 you will receive the href, internal ID, and updates link even if you do not ask for them. In 8.10 you will not. If you are going to send the fields parameter and need those fields, include them.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the cardholder.</p>
                     </div>
                   </div>
                 </section>
@@ -1366,6 +1366,22 @@
                     </div>
                   </div>
                 </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the cardholder.</p>
+                    </div>
+                  </div>
+                </section>
               </div>
               <div class="doc-examples">
                 <section>
@@ -1604,7 +1620,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The identifier of the cardholder.</p>
+                      <p>The ID of the cardholder.</p>
                     </div>
                   </div>
                 </section>
@@ -3154,6 +3170,20 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;8am-5pm weekdays&quot;</span>
       }
     }
+  ],
+  <span class="hljs-attr">&quot;alarmZones&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;alarmZone&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>
+      }
+    },
+    {
+      <span class="hljs-attr">&quot;alarmZone&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/10135&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 3 lobby&quot;</span>
+      }
+    }
   ]
 }
 </code></pre> </body>
@@ -4443,7 +4473,7 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -8206,13 +8236,22 @@
                                     <span class="json-property-range" title="Value limits"></span>
                                   </dt>
                                   <dd>
-                                    <p>The name and href of the Salto zone or door to which this access group gives access.</p>
+                                    <p>The name and href of the Salto zone or Salto door to which this access group gives access.</p>
                                   </dd>
                                 </dl>
                               </section>
                             </div>
                           </section>
                         </dt>
+                        <dt data-property-name="alarmZones" class="has-description">
+                          <span class="json-property-name">alarmZones:</span>
+                          <span class="json-property-type">object[]</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>Names and hrefs of the alarm zones to which members of this access group have the 20-odd management privileges listed above.</p>
+                          <p>Added in 8.40.</p>
+                        </dd>
                       </dl>
                     </section>
                   </section>
@@ -8327,6 +8366,20 @@
       <span class="hljs-attr">&quot;schedule&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/557&quot;</span>,
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;8am-5pm weekdays&quot;</span>
+      }
+    }
+  ],
+  <span class="hljs-attr">&quot;alarmZones&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;alarmZone&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>
+      }
+    },
+    {
+      <span class="hljs-attr">&quot;alarmZone&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/10135&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 3 lobby&quot;</span>
       }
     }
   ]

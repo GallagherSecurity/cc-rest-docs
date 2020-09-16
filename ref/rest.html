@@ -64,6 +64,9 @@
               <li>
                 <a href="#operation--api-access_zones--id--cancel-post"> Cancel mode override </a>
               </li>
+              <li>
+                <a href="#operation--api-access_zones--id--updates-get"> Monitor an access zone </a>
+              </li>
             </ul>
           </section>
           <section>
@@ -96,6 +99,9 @@
               <li>
                 <a href="#operation--api-alarm_zones--id--cancel-post"> Cancel mode override </a>
               </li>
+              <li>
+                <a href="#operation--api-alarm_zones--id--updates-get"> Monitor an alarm zone </a>
+              </li>
             </ul>
           </section>
           <section>
@@ -109,6 +115,9 @@
               </li>
               <li>
                 <a href="#operation--api-doors--id--open-post"> Open a door </a>
+              </li>
+              <li>
+                <a href="#operation--api-doors--id--updates-get"> Monitor a door </a>
               </li>
             </ul>
           </section>
@@ -141,6 +150,9 @@
               </li>
               <li>
                 <a href="#operation--api-fence_zones--id--cancel-post"> Cancel an override </a>
+              </li>
+              <li>
+                <a href="#operation--api-fence_zones--id--updates-get"> Monitor a fence zone </a>
               </li>
             </ul>
           </section>
@@ -176,6 +188,9 @@
               <li>
                 <a href="#operation--api-outputs--id--cancel-post"> Cancel an override </a>
               </li>
+              <li>
+                <a href="#operation--api-outputs--id--updates-get"> Monitor an output </a>
+              </li>
             </ul>
           </section>
           <section>
@@ -198,6 +213,9 @@
               </li>
               <li>
                 <a href="#operation--api-inputs--id--deisolate-post"> De-isolate an input </a>
+              </li>
+              <li>
+                <a href="#operation--api-inputs--id--updates-get"> Monitor an input </a>
               </li>
             </ul>
           </section>
@@ -284,7 +302,7 @@
                   </li>
                   <li>
                     <p>(In v8.00 or later) avoid the details page by adding detail fields to the summary page with the
-                      <a href="#topic-Field-specifiers"><code>fields</code> parameter</a>. One huge summary page of 1,000 items is much quicker to retrieve than 1,000 detail pages.</p>
+                      <a href="#topic-Field-specifiers"><code>fields</code> parameter</a>. One summary page of 1,000 items, while huge, is much quicker to retrieve than 1,000 detail pages.</p>
                     <p>For example, to get the names, doors, and override commands of all your access zones:</p>
                     <p> <code>GET /api/access_zones?fields=name,doors,commands</code></p>
                   </li>
@@ -309,7 +327,7 @@
                     <span>https</span>
                   </h5>
                   <h5>Version:
-                    <span>8.40.3</span>
+                    <span>8.40.4</span>
                   </h5>
                 </section>
               </div>
@@ -453,8 +471,8 @@
                 <ul>
                   <li>an operator had the item visible in the Configuration, Command Centre, or mobile clients,</li>
                   <li>an application monitored the item via another API,</li>
-                  <li>a REST client used the item in an
-                    <a href="events.html#status-subscriptions">item status subscription</a>, or</li>
+                  <li>a REST client used the item in a
+                    <a href="events.html#status-subscriptions">status subscription</a>, or</li>
                   <li>a REST client followed the item&#39;s <code>updates</code> link from its details page.</li>
                 </ul>
                 <p>If it is not up to date and you request the status on an item&#39;s summary or details page, the server will report that the status is unknown.</p>
@@ -466,7 +484,7 @@
                 <h3 id="staying-current">Staying current</h3>
                 <p>When you use the <code>updates</code> link on the item&#39;s details page it will return immediately. When follow the <code>next</code> link in the page it returns, it will send back the status straight away if it changed since your previous call, or block until it does change. If nothing happens within a minute or so, it will return with no updates.</p>
                 <p>Whether you received an update or not, the body will contain a <code>next</code> link for you to follow for the next update.</p>
-                <p>State changes are not queued: the API only keeps the last, so it only takes one &#39;updates&#39; call to get yourself up to date.</p>
+                <p>State changes are not queued: the API only keeps the last, so it only takes one call to get yourself up to date with the server. Remember that the server itself may not have been up to date, and your making the call will have started it on its own little journey of discovery, which will cause more updates.</p>
                 <p>The &#39;Site&#39; tab of the sample application shows this in operation.</p>
                 <h3 id="for-a-user-interface">For a user interface</h3>
                 <p>The <code>statusText</code> field describes the state of the item in a multi-line string taken from the server&#39;s language pack. The natural state of a door, for example, is</p> <pre>
@@ -638,6 +656,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns a summary of the access zones matching your search criteria.</p>
                   <p>The result will contain no more than 100 access zones, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any access zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;. Perhaps there are no access zones in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
                   <p>When you have loaded them all there will be no <code>next</code> link.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.accessZones.accessZones</code> section of <code>/api</code>.</p>
                 </section>
@@ -753,15 +772,15 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege that allows viewing access zones such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.</p>
+                      <p>The site does not have the RESTStatus licence.</p>
                     </div>
                   </div>
                 </section>
@@ -777,8 +796,8 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;results&quot;</span>: [
     {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/10135&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>
     }
   ],
@@ -818,6 +837,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns a list of the access zones to which your operator is allowed to move cardholders, and a special zone you can use as a target to move a cardholder from all access zones.</p>
                   <p>Like all other paginated queries in this API, the result will contain no more than 100 access zones, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means there are no access zones in the divisions in which your operator has the privilege to move cardholders, &#39;Manage Cardholder Location&#39;, or your operator does not have it at all.</p>
                   <p>When you have loaded them all there will be no <code>next</code> link.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.cardholders.updateLocationAccessZones</code> section of <code>/api</code>.</p>
                   <p>Added in 8.20.</p>
@@ -934,15 +954,15 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTCardholders licence, or the operator does not have a privilege that allows moving cardholders between zones, such as &#39;Manage Cardholder Location&#39;.</p>
+                      <p>The site does not have the RESTCardholders licence.</p>
                     </div>
                   </div>
                 </section>
@@ -958,8 +978,8 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;results&quot;</span>: [
     {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/10135&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>
     }
   ],
@@ -1071,15 +1091,23 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege on the zone&#39;s division that allows viewing access zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.&quot;</p>
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent an access zone, or the operator does not have a privilege on the zone&#39;s division that allows viewing access zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.&quot;</p>
                     </div>
                   </div>
                 </section>
@@ -1093,8 +1121,8 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/10135&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>,
   <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Receives all visitors.&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
@@ -1116,7 +1144,7 @@
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
   <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;Short text&quot;</span>,
   <span class="hljs-attr">&quot;updates&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/10135/updates/0_0_0&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328/updates/0_0_0&quot;</span>
   },
   <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
     <span class="hljs-string">&quot;secure&quot;</span>
@@ -1282,15 +1310,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -1386,15 +1422,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -1490,15 +1534,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -1593,15 +1645,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -1665,15 +1725,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -1738,15 +1798,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -1810,15 +1870,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -1911,15 +1971,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -1985,20 +2053,154 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding access zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-access_zones--id--updates-get" class="operation panel" data-traverse-target="operation--api-access_zones--id--updates-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Access-Zones">Access Zones</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Monitor an access zone</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/access_zones/{id}/updates</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>See the
+                    <a href="#topic-Item-status">item status topic</a> for how to use the updates APIs.</p>
+                  <p>Note that this API call is good for watching one item only; if you want to monitor several, you are better off with a
+                    <a href="events.html#status-subscriptions">status subscription</a>.</p>
+                  <p>Follow the &#39;updates&#39; field in an access zone
+                    <a href="#definition-Access-Zone-summary">summary</a> or
+                    <a href="#definition-Access-Zone-detail">details</a> pages to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the access zone.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">status</span>,
+                          <span class="json-property-enum-item">statusText</span>,
+                          <span class="json-property-enum-item">statusFlags</span>,
+                          <span class="json-property-enum-item">zoneCount</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the update, instead of the default set. Note that removing fields also saves you from updates to those fields.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. The
+                        <a href="#tag-Access-Zones">introduction</a> describes the three status fields and the
+                        <a href="#definition-Access-Zone-detail">access zone detail</a> describes <code>zoneCount</code>.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent an access zone, or the operator does not have a privilege on the zone&#39;s division that allows viewing access zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.&quot;</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;Secure.&quot;</span>,
+    <span class="hljs-attr">&quot;statusText&quot;</span>: <span class="hljs-string">&quot;Secure.&quot;</span>,
+    <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
+      <span class="hljs-string">&quot;secure&quot;</span>
+    ],
+    <span class="hljs-attr">&quot;zoneCount&quot;</span>: <span class="hljs-number">100</span>
+  },
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328/updates/9_1&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
             </div>
           </div>
           <h1 id="tag-Alarm-Zones" class="swagger-summary-tag" data-traverse-target="tag-Alarm-Zones">Alarm Zones</h1>
@@ -2098,6 +2300,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns a summary of the alarm zones matching your search criteria.</p>
                   <p>The result will contain no more than 100 alarm zones, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any alarm zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;. Perhaps there are no alarm zones in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
                   <p>When you have loaded them all there will be no <code>next</code> link.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.alarmZones.alarmZones</code> section of <code>/api</code>.</p>
                 </section>
@@ -2211,15 +2414,15 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege that allows viewing alarms zones such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.&quot;</p>
+                      <p>The site does not have the RESTStatus licence.</p>
                     </div>
                   </div>
                 </section>
@@ -2235,9 +2438,9 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;results&quot;</span>: [
     {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/10135&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 ground floor&quot;</span>
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -2337,21 +2540,29 @@
                       <div class="prop-title">200 OK</div>
                       <div class="prop-ref">
                         <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Alarm Zone detail">Alarm Zone detail</a>
+                          <a class="json-schema-ref" href="#/definitions/Access Zones">Access Zones</a>
                         </span>
                       </div>
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege on the zone&#39;s division that allows viewing alarms zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.&quot;</p>
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent an alarm zone, or the operator does not have a privilege on the zone&#39;s division that allows viewing alarm zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.&quot;</p>
                     </div>
                   </div>
                 </section>
@@ -2365,57 +2576,15 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/10135&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 ground floor&quot;</span>,
-  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Lobby, cafeteria, inbound artefacts.&quot;</span>,
-  <span class="hljs-attr">&quot;division&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
-  },
-  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;R2 ground floor&quot;</span>,
-  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
-  <span class="hljs-attr">&quot;updates&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/10135/updates/0_0_0&quot;</span>
-  },
-  <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
-    <span class="hljs-string">&quot;armed&quot;</span>
-  ],
-  <span class="hljs-attr">&quot;commands&quot;</span>: {
-    <span class="hljs-attr">&quot;arm&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/arm&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Armed&quot;</span>
-    },
-    <span class="hljs-attr">&quot;armUntil&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/arm&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Armed&quot;</span>
-    },
-    <span class="hljs-attr">&quot;disarm&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/disarm&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Disarmed&quot;</span>
-    },
-    <span class="hljs-attr">&quot;disarmUntil&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/disarm&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Disarmed&quot;</span>
-    },
-    <span class="hljs-attr">&quot;user1&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/user1&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;User1&quot;</span>
-    },
-    <span class="hljs-attr">&quot;user1Until&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/user1&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;User1&quot;</span>
-    },
-    <span class="hljs-attr">&quot;user2&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/user2&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;User2&quot;</span>
-    },
-    <span class="hljs-attr">&quot;user2Until&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/user2&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;User2&quot;</span>
-    },
-    <span class="hljs-attr">&quot;cancel&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/cancel&quot;</span>
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>
     }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones?skip=100&quot;</span>
   }
 }
 </code></pre> </body>
@@ -2512,15 +2681,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -2615,15 +2792,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -2718,15 +2903,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -2821,15 +3014,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -2924,15 +3125,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -3027,15 +3236,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -3099,20 +3316,151 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding alarm zones (such as &#39;Override&#39;).</p>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-alarm_zones--id--updates-get" class="operation panel" data-traverse-target="operation--api-alarm_zones--id--updates-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Alarm-Zones">Alarm Zones</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Monitor an alarm zone</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/alarm_zones/{id}/updates</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>See the
+                    <a href="#topic-Item-status">item status topic</a> for how to use the updates APIs.</p>
+                  <p>Note that this API call is good for watching one item only; if you want to monitor several, you are better off with a
+                    <a href="events.html#status-subscriptions">status subscription</a>.</p>
+                  <p>Follow the &#39;updates&#39; field in an alarm zone
+                    <a href="#definition-Alarm-Zone-summary">summary</a> or
+                    <a href="#definition-Alarm-Zone-detail">details</a> pages to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the alarm zone.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">status</span>,
+                          <span class="json-property-enum-item">statusText</span>,
+                          <span class="json-property-enum-item">statusFlags</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the update, instead of the default set. Note that removing fields also saves you from updates to those fields.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. The
+                        <a href="#tag-Alarm-Zones">introduction</a> describes the three status fields.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent an alarm zone, or the operator does not have a privilege on the zone&#39;s division that allows viewing alarm zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.&quot;</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;Disarmed.&quot;</span>,
+    <span class="hljs-attr">&quot;statusText&quot;</span>: <span class="hljs-string">&quot;Disarmed.&quot;</span>,
+    <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
+      <span class="hljs-string">&quot;disarmed&quot;</span>
+    ]
+  },
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/updates/9_1&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
             </div>
           </div>
           <h1 id="tag-Doors" class="swagger-summary-tag" data-traverse-target="tag-Doors">Doors</h1>
@@ -3188,6 +3536,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns a summary of the doors matching your search criteria.</p>
                   <p>The result will contain no more than 100 doors, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any doors, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override - Open Door&#39;. Perhaps there are no doors in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
                   <p>When you have loaded them all there will be no <code>next</code> link.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.doors.doors</code> section of <code>/api</code>.</p>
                 </section>
@@ -3302,15 +3651,15 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege that allows viewing doors such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override - Open Door&#39;.&quot;</p>
+                      <p>The site does not have the RESTStatus licence.</p>
                     </div>
                   </div>
                 </section>
@@ -3435,15 +3784,23 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege on the zone&#39;s division that allows viewing doors, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override - Open Door&#39;.&quot;</p>
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent a door, or the operator does not have a privilege on the door&#39;s division that allows viewing them, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override - Open Door&#39;.&quot;</p>
                     </div>
                   </div>
                 </section>
@@ -3466,7 +3823,7 @@
   },
   <span class="hljs-attr">&quot;entryAccessZone&quot;</span>: {
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>,
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/10135&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328&quot;</span>
   },
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
   <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;Short text&quot;</span>,
@@ -3552,20 +3909,153 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding doors (such as &#39;Override - Open Door&#39;).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding doors (such as &#39;Override - Open Door&#39;).</p>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-doors--id--updates-get" class="operation panel" data-traverse-target="operation--api-doors--id--updates-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Doors">Doors</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Monitor a door</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/doors/{id}/updates</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>See the
+                    <a href="#topic-Item-status">item status topic</a> for how to use the updates APIs.</p>
+                  <p>Note that this API call is good for watching one item only; if you want to monitor several, you are better off with a
+                    <a href="events.html#status-subscriptions">status subscription</a>.</p>
+                  <p>Follow the &#39;updates&#39; field in a door
+                    <a href="#definition-Door-summary">summary</a> or
+                    <a href="#definition-Door-detail">details</a> pages to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the door.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">status</span>,
+                          <span class="json-property-enum-item">statusText</span>,
+                          <span class="json-property-enum-item">statusFlags</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the update, instead of the default set. Note that removing fields also saves you from updates to those fields.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. See the
+                        <a href="#tag-Doors">introduction</a> for a description of the three status fields.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent a door, or the operator does not have a privilege on the door&#39;s division that allows viewing them, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override - Open Door&#39;.&quot;</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;Closed, Locked, Secure access.&quot;</span>,
+    <span class="hljs-attr">&quot;statusText&quot;</span>: <span class="hljs-string">&quot;Closed, Locked, Secure access.&quot;</span>,
+    <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
+      <span class="hljs-string">&quot;closed&quot;</span>,
+      <span class="hljs-string">&quot;locked&quot;</span>,
+      <span class="hljs-string">&quot;secure&quot;</span>
+    ]
+  },
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/332/updates/9_1&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
             </div>
           </div>
           <h1 id="tag-Fence-Zones" class="swagger-summary-tag" data-traverse-target="tag-Fence-Zones">Fence Zones</h1>
@@ -3652,6 +4142,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns a summary of the fence zones matching your search criteria.</p>
                   <p>The result will contain no more than 100 fence zones, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any fence zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;. Perhaps there are no fence zones in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
                   <p>When you have loaded them all there will be no <code>next</code> link.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.fenceZones.fenceZones</code> section of <code>/api</code>.</p>
                 </section>
@@ -3766,15 +4257,15 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege that allows viewing fence zones such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
+                      <p>The site does not have the RESTStatus licence.</p>
                     </div>
                   </div>
                 </section>
@@ -3895,15 +4386,23 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege on the zone&#39;s division that allows viewing fence zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent a fence zone, or the operator does not have a privilege on the zone&#39;s division that allows viewing fence zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
                     </div>
                   </div>
                 </section>
@@ -4022,15 +4521,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
                     </div>
                   </div>
                 </section>
@@ -4094,15 +4593,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
                     </div>
                   </div>
                 </section>
@@ -4166,15 +4665,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
                     </div>
                   </div>
                 </section>
@@ -4238,15 +4737,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
                     </div>
                   </div>
                 </section>
@@ -4310,15 +4809,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
                     </div>
                   </div>
                 </section>
@@ -4382,15 +4881,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
                     </div>
                   </div>
                 </section>
@@ -4454,20 +4953,155 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding fence zones (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-fence_zones--id--updates-get" class="operation panel" data-traverse-target="operation--api-fence_zones--id--updates-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Fence-Zones">Fence Zones</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Monitor a fence zone</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/fence_zones/{id}/updates</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>See the
+                    <a href="#topic-Item-status">item status topic</a> for how to use the updates APIs.</p>
+                  <p>Note that this API call is good for watching one item only; if you want to monitor several, you are better off with a
+                    <a href="events.html#status-subscriptions">status subscription</a>.</p>
+                  <p>Follow the &#39;updates&#39; field in a door
+                    <a href="#definition-Fence-Zone-summary">summary</a> or
+                    <a href="#definition-Fence-Zone-detail">details</a> pages to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the fence zone.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">status</span>,
+                          <span class="json-property-enum-item">statusText</span>,
+                          <span class="json-property-enum-item">statusFlags</span>,
+                          <span class="json-property-enum-item">voltage</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the update, instead of the default set. Note that removing fields also saves you from updates to those fields.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. See the
+                        <a href="#tag-Fence-Zones">introduction</a> for a description of the three status fields and the
+                        <a href="#definition-Fence-Zone-detail">detail page</a> for <code>voltage</code>.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent a fence zone, or the operator does not have a privilege on the zone&#39;s division that allows viewing fence zones, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;On - HV.&quot;</span>,
+    <span class="hljs-attr">&quot;statusText&quot;</span>: <span class="hljs-string">&quot;On - HV.&quot;</span>,
+    <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
+      <span class="hljs-string">&quot;on&quot;</span>,
+      <span class="hljs-string">&quot;highVoltage&quot;</span>
+    ],
+    <span class="hljs-attr">&quot;voltage&quot;</span>: <span class="hljs-number">7300</span>
+  },
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/fence_zones/556/updates/9_1&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
             </div>
           </div>
           <h1 id="tag-Macros" class="swagger-summary-tag" data-traverse-target="tag-Macros">Macros</h1>
@@ -4518,6 +5152,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns a summary of the macros matching your search criteria.</p>
                   <p>The result will contain no more than 100 macros, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any macros, such as &#39;View Site&#39;, &#39;Run Macros&#39;, or &#39;Schedule and Run Macros&#39;. Perhaps there are no macros in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
                   <p>When you have loaded them all there will be no <code>next</code> link.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.macros.macros</code> section of <code>/api</code>.</p>
                 </section>
@@ -4628,15 +5263,15 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege that allows viewing macros such as &#39;View Site&#39;, &#39;Run Macros&#39;, or &#39;Schedule and Run Macros&#39;.</p>
+                      <p>The site does not have the RESTStatus licence.</p>
                     </div>
                   </div>
                 </section>
@@ -4654,7 +5289,7 @@
     {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/macros/8492&quot;</span>,
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;8492&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Arm ground floor&quot;</span>
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Arm lobby&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -4749,6 +5384,14 @@
                   <div class="prop-row prop-group">
                     <div class="prop-name">
                       <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
                       <div class="prop-ref">
                         <span class="">
                           <a class="json-schema-ref" href="#/definitions/Macro detail">Macro detail</a>
@@ -4757,15 +5400,15 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>The site does not have the RESTStatus licence.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">404 Not Found</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege on the macro&#39;s division that allows viewing it, such as &#39;View Site&#39;, &#39;Run Macros&#39;, or &#39;Schedule and Run Macros&#39;.</p>
+                      <p>The request&#39;s URL does not represent a macro, or the operator does not have a privilege on the macro&#39;s division that allows viewing it, such as &#39;View Site&#39;, &#39;Run Macros&#39;, or &#39;Schedule and Run Macros&#39;.</p>
                     </div>
                   </div>
                 </section>
@@ -4773,7 +5416,7 @@
               <div class="doc-examples">
                 <section>
                   <h5>Response Example
-                    <span>(200 OK)</span>
+                    <span>(403 Forbidden)</span>
                   </h5>
                   <!-- <div class="hljs"> -->
                   <html>
@@ -4781,8 +5424,8 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/macros/8492&quot;</span>,
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;8492&quot;</span>,
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Arm ground floor&quot;</span>,
-  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Arms and secures all ground floor zones.&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Arm lobby&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Arms and secures all lobby zones.&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
@@ -4856,15 +5499,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows running macros (&#39;Run Macro&#39; or &#39;Schedule and Run Macro&#39;, unsurprisingly).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows running macros (&#39;Run Macro&#39; or &#39;Schedule and Run Macro&#39;, unsurprisingly).</p>
                     </div>
                   </div>
                 </section>
@@ -4930,7 +5573,7 @@
               <h4 id="finding-an-outputs-status">Finding an output&#39;s status</h4>
               <ol>
                 <li>Find the href for the output using the process above, and GET it.</li>
-                <li>Take the <code>updates</code> href from that page. Append &#39;?&#39; or &#39;&amp;&#39; (whichever is appropriate) then <code>fields=defaults,voltage</code> if you are after the fence&#39;s voltage</li>
+                <li>Take the <code>updates</code> href from that page. Append &#39;?&#39; or &#39;&amp;&#39; (whichever is appropriate) then <code>fields=defaults,voltage</code> if you are after the fence&#39;s voltage.</li>
                 <li>GET it.</li>
                 <li>Use the flag rules above to interpret the status flags you receive.</li>
                 <li>Follow the <code>next</code> link to stay up to date.</li>
@@ -4962,6 +5605,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns a summary of the outputs matching your search criteria.</p>
                   <p>The result will contain no more than 100 outputs, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any outputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;. Perhaps there are no outputs in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
                   <p>When you have loaded them all there will be no <code>next</code> link.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.outputs.outputs</code> section of <code>/api</code>.</p>
                 </section>
@@ -5074,15 +5718,15 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege that allows viewing outputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.</p>
+                      <p>The site does not have the RESTStatus licence.</p>
                     </div>
                   </div>
                 </section>
@@ -5207,15 +5851,23 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege on the zone&#39;s division that allows viewing outputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.&quot;</p>
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent an output, or the operator does not have a privilege on the output&#39;s division that allows viewing outputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.&quot;</p>
                     </div>
                   </div>
                 </section>
@@ -5353,15 +6005,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding outputs (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding outputs (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
                     </div>
                   </div>
                 </section>
@@ -5455,15 +6115,23 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding outputs (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
+                      <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding outputs (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
                     </div>
                   </div>
                 </section>
@@ -5527,20 +6195,151 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have a privilege that allows overriding outputs (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding outputs (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-outputs--id--updates-get" class="operation panel" data-traverse-target="operation--api-outputs--id--updates-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Outputs">Outputs</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Monitor an output</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/outputs/{id}/updates</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>See the
+                    <a href="#topic-Item-status">item status topic</a> for how to use the updates APIs.</p>
+                  <p>Note that this API call is good for watching one item only; if you want to monitor several, you are better off with a
+                    <a href="events.html#status-subscriptions">status subscription</a>.</p>
+                  <p>Follow the &#39;updates&#39; field in an output
+                    <a href="#definition-Output-summary">summary</a> or
+                    <a href="#definition-Output-detail">details</a> pages to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the output.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">status</span>,
+                          <span class="json-property-enum-item">statusText</span>,
+                          <span class="json-property-enum-item">statusFlags</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the update, instead of the default set. Note that removing fields also saves you from updates to those fields.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. See the
+                        <a href="#tag-Outputs">introduction</a> for a description of the three status fields.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent an output, or the operator does not have a privilege on the output&#39;s division that allows viewing outputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39;.&quot;</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;This Output is Off.&quot;</span>,
+    <span class="hljs-attr">&quot;statusText&quot;</span>: <span class="hljs-string">&quot;This Output is Off.&quot;</span>,
+    <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
+      <span class="hljs-string">&quot;open&quot;</span>
+    ]
+  },
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs/2365/updates/9_1&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
             </div>
           </div>
           <h1 id="tag-Inputs" class="swagger-summary-tag" data-traverse-target="tag-Inputs">Inputs</h1>
@@ -5552,7 +6351,7 @@
               <p>Even though the Configuration client lets you set your own state names for open, closed, tampered open, and tampered short, status flags will always use &#39;closed&#39; or &#39;open&#39;, and possibly &#39;tamper&#39;.</p>
               <p>Two-state inputs cannot report a tamper, because it is impossible to detect. They can only be open or closed. Hence the name.</p>
               <p>Three-state inputs can report a tamper, but only one of tampered open or tampered closed, depending on their end-of-line resistance settings.</p>
-              <p>Four-state inputs can report tampered open or closed.</p>
+              <p>Four-state inputs can report tampered open (an open circuit) or tampered closed (a short).</p>
               <p>If the input is online, its <code>statusFlags</code> field may contain one or more of these flags:</p>
               <ul>
                 <li>
@@ -5632,6 +6431,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns a summary of the inputs matching your search criteria.</p>
                   <p>The result will contain no more than 100 inputs, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any inputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;. Perhaps there are no inputs in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
                   <p>When you have loaded them all there will be no <code>next</code> link.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.inputs.inputs</code> section of <code>/api</code>.</p>
                 </section>
@@ -5744,15 +6544,15 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege that allows viewing inputs such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
+                      <p>The site does not have the RESTStatus licence.</p>
                     </div>
                   </div>
                 </section>
@@ -5877,15 +6677,23 @@
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence, or the operator does not have a privilege on the zone&#39;s division that allows viewing inputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent an input, or the operator does not have a privilege on the input&#39;s division that allows viewing inputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
                     </div>
                   </div>
                 </section>
@@ -5992,15 +6800,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
                     </div>
                   </div>
                 </section>
@@ -6064,15 +6872,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
                     </div>
                   </div>
                 </section>
@@ -6136,15 +6944,15 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
                     </div>
                   </div>
                 </section>
@@ -6208,20 +7016,152 @@
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
-                      <div class="prop-title">4xx </div>
+                      <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence, or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
                     </div>
                   </div>
                 </section>
               </div>
               <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-inputs--id--updates-get" class="operation panel" data-traverse-target="operation--api-inputs--id--updates-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Inputs">Inputs</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Monitor an input</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/inputs/{id}/updates</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>See the
+                    <a href="#topic-Item-status">item status topic</a> for how to use the updates APIs.</p>
+                  <p>Note that this API call is good for watching one item only; if you want to monitor several, you are better off with a
+                    <a href="events.html#status-subscriptions">status subscription</a>.</p>
+                  <p>Follow the &#39;updates&#39; field in an input
+                    <a href="#definition-Input-summary">summary</a> or
+                    <a href="#definition-Input-detail">details</a> pages to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the input.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">status</span>,
+                          <span class="json-property-enum-item">statusText</span>,
+                          <span class="json-property-enum-item">statusFlags</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the update, instead of the default set. Note that removing fields also saves you from updates to those fields.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. See the
+                        <a href="#tag-Inputs">introduction</a> for a description of the three status fields.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent an input, or the operator does not have a privilege on the input&#39;s division that allows viewing inputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;This Input is Open-Circuit Tampered.&quot;</span>,
+    <span class="hljs-attr">&quot;statusText&quot;</span>: <span class="hljs-string">&quot;This Input is Open-Circuit Tampered.&quot;</span>,
+    <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
+      <span class="hljs-string">&quot;open&quot;</span>,
+      <span class="hljs-string">&quot;tamper&quot;</span>
+    ]
+  },
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/2365/updates/9_1&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
             </div>
           </div>
           <h1>Schema Definitions</h1>
@@ -6296,8 +7236,8 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;results&quot;</span>: [
     {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/10135&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>
     }
   ],
@@ -6403,8 +7343,8 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;results&quot;</span>: [
     {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/10135&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>
     }
   ],
@@ -6473,8 +7413,8 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/10135&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>
 }
 </code></pre> </body>
@@ -7095,8 +8035,8 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/10135&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>,
   <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Receives all visitors.&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
@@ -7118,7 +8058,7 @@
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
   <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;Short text&quot;</span>,
   <span class="hljs-attr">&quot;updates&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/10135/updates/0_0_0&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328/updates/0_0_0&quot;</span>
   },
   <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
     <span class="hljs-string">&quot;secure&quot;</span>
@@ -7307,9 +8247,9 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;results&quot;</span>: [
     {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/10135&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 ground floor&quot;</span>
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -7374,9 +8314,9 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/10135&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 ground floor&quot;</span>
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -7782,17 +8722,17 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/10135&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;10135&quot;</span>,
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 ground floor&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;328&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>,
   <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Lobby, cafeteria, inbound artefacts.&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
-  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;R2 ground floor&quot;</span>,
+  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;R2 lobby&quot;</span>,
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
   <span class="hljs-attr">&quot;updates&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/10135/updates/0_0_0&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/updates/0_0_0&quot;</span>
   },
   <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
     <span class="hljs-string">&quot;armed&quot;</span>
@@ -8209,7 +9149,7 @@
   },
   <span class="hljs-attr">&quot;entryAccessZone&quot;</span>: {
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell building 2 lobby&quot;</span>,
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/10135&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/328&quot;</span>
   },
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
   <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;Short text&quot;</span>,
@@ -8791,7 +9731,7 @@
     {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/macros/8492&quot;</span>,
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;8492&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Arm ground floor&quot;</span>
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Arm lobby&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -8856,7 +9796,7 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/macros/8492&quot;</span>,
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;8492&quot;</span>,
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Arm ground floor&quot;</span>
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Arm lobby&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -8964,8 +9904,8 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/macros/8492&quot;</span>,
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;8492&quot;</span>,
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Arm ground floor&quot;</span>,
-  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Arms and secures all ground floor zones.&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Arm lobby&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Arms and secures all lobby zones.&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
