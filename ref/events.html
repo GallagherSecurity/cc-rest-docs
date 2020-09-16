@@ -165,6 +165,9 @@
                     <p>All operator events now contain the operator&#39;s name at the time.</p>
                   </li>
                   <li>
+                    <p>All events now contain the name of the source item&#39;s division.</p>
+                  </li>
+                  <li>
                     <p>The
                       <a href="#operation--api-items-get">item search</a> can now filter multiple item types.</p>
                   </li>
@@ -215,7 +218,7 @@
                     <span>https</span>
                   </h5>
                   <h5>Version:
-                    <span>8.40.3</span>
+                    <span>8.40.4</span>
                   </h5>
                 </section>
               </div>
@@ -1905,7 +1908,8 @@
       },
       <span class="hljs-attr">&quot;division&quot;</span>: {
         <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>
       },
       <span class="hljs-attr">&quot;cardholder&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
@@ -2241,7 +2245,8 @@
       },
       <span class="hljs-attr">&quot;division&quot;</span>: {
         <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>
       },
       <span class="hljs-attr">&quot;cardholder&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
@@ -2461,7 +2466,8 @@
   },
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>
   },
   <span class="hljs-attr">&quot;cardholder&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
@@ -4650,7 +4656,8 @@
       },
       <span class="hljs-attr">&quot;division&quot;</span>: {
         <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>
       },
       <span class="hljs-attr">&quot;cardholder&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
@@ -4829,7 +4836,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The href of the operator behind this event, if there is one. This will appear when an operator has modified an item. If he or she modified a cardholder or an access group, an href to that item item will appear in another block. New in v8.00.</p>
+                      <p>The href and name of the operator behind this event. This will appear when an operator has modified an item. New in v8.00.</p>
+                      <p>The item he or she modified will appear in the <code>modifiedItem</code> block (added in 8.40).</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -4962,7 +4970,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>ID and href of the event&#39;s division (which is the division of the event&#39;s source).</p>
+                      <p>ID, name, and href of the event&#39;s division (which is the division of the event&#39;s source item).</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -4982,7 +4990,15 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>The link to the division entity. GET the href for full details.</p>
+                            <p>The link to the division item.</p>
+                          </dd>
+                          <dt data-property-name="name" class="has-description">
+                            <span class="json-property-name">name:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>The division&#39;s name.</p>
                           </dd>
                         </dl>
                       </section>
@@ -5310,7 +5326,8 @@
   },
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>
   },
   <span class="hljs-attr">&quot;cardholder&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
@@ -5501,7 +5518,8 @@
   },
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>
   },
   <span class="hljs-attr">&quot;cardholder&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
@@ -6092,7 +6110,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The description of the division.</p>
+                      <p>The division&#39;s name.</p>
                     </dd>
                     <dt data-property-name="parent" class="has-description">
                       <span class="json-property-name">parent:</span>

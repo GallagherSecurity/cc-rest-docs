@@ -8,7 +8,7 @@
 swagger: '2.0'
 
 info:
-  version: "8.40.3"
+  version: "8.40.4"
   title: "Command Centre REST API:  Alarms and Events"
   description: |
     This document describes how you can use the Command Centre REST API to download, monitor, and
@@ -47,6 +47,8 @@ info:
       event types.
 
     - All operator events now contain the operator's name at the time.
+
+    - All events now contain the name of the source item's division.
 
     - The [item search](#operation--api-items-get) can now filter multiple item types.
 
@@ -1707,9 +1709,10 @@ definitions:
             example: "https://localhost:8904/api/alarms/61320"
       operator:
         description: |
-          The href of the operator behind this event, if there is one.  This will appear when an
-          operator has modified an item.  If he or she modified a cardholder or an access group, an
-          href to that item item will appear in another block.  New in v8.00.
+          The href and name of the operator behind this event.  This will appear when an operator
+          has modified an item.  New in v8.00.
+
+          The item he or she modified will appear in the `modifiedItem` block (added in 8.40).
         type: object
         properties:
           href:
@@ -1778,7 +1781,8 @@ definitions:
       division:
         type: object
         description: |
-          ID and href of the event's division (which is the division of the event's source).
+          ID, name, and href of the event's division (which is the division of the event's source
+          item).
         properties:
           id:
             type: string
@@ -1789,8 +1793,12 @@ definitions:
           href:
             type: string
             format: url
-            description: The link to the division entity. GET the href for full details.
+            description: The link to the division item.
             example: "https://localhost:8904/api/divisions/2"
+          name:
+            type: string
+            description: The division's name.
+            example: "Root division"
 
       cardholder:
         type: object
@@ -2256,7 +2264,7 @@ definitions:
         example: "2707"
       name:
         type: string
-        description: The description of the division.
+        description: The division's name.
         example: "Root division"
       parent:
         description: "An object containing an href to the division entity representing the current division's parent. GET the href for full details."
