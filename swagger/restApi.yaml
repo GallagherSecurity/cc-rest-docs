@@ -533,6 +533,9 @@ definitions:
               A block of commands, each represented by a block containing an href that accepts a
               POST that will send an override to the access zone, changing its state.
 
+              It will be missing if your operator does not have a privilege that allows overriding
+              the access zone (examples of which are in the documentation for the POSTs).
+
             properties:
               free:
                 type: object
@@ -799,6 +802,10 @@ definitions:
 
               See the section 'Understanding Alarm Zones' in the Configuration client help
               for a description of alarm zone states.
+
+              It will be missing if your operator does not have a privilege that allows overriding
+              the alarm zone (examples of which are in the documentation for the POSTs).
+
             properties:
               arm:
                 type: object
@@ -1026,10 +1033,13 @@ definitions:
               An array of commands, each represented by a block containing an href that accepts a
               POST to send an override.  The only override you can send to a door is 'open'.
 
-              There will also be up to 17 links to commands that override the door's entry zone
-              (four each of the four access zone modes, plus 'cancel').  Remember that zone
-              overrides affect all doors entering the zone, so if you POST to the URL given in the
-              `free` block, for example, all the zone's doors will unlock.
+              If your operator is privileged to override the door's entry zone, there will be 17
+              more links:  four each of the four access zone modes, plus 'cancel'.  Remember that
+              zone overrides affect all doors entering the zone, so if you POST to the URL given in
+              the `free` block, for example, all the zone's doors will unlock.
+
+              This block will only contain the links that your operator is privileged to perform.
+              Examples of the privileges you need are in the documentation for the POSTs.
 
               The zone overrides are not repeated here.
 
@@ -1153,6 +1163,8 @@ definitions:
               A block of commands, each represented by a block containing an href that
               accepts a POST that will send an override to the fence zone, changing its
               state.
+
+              It will be missing if your operator is not privileged to override the fence zone.
 
               See the section 'Creating a Fence Zone' in the Configuration client help
               for a description of fence zone states.
@@ -1281,8 +1293,8 @@ definitions:
           commands:
             type: object
             description: >-
-              The only thing you can do to a macro via REST is run it, so this block only
-              contains one block.
+              The only thing you can do to a macro via REST is run it, so this block only contains
+              one command, and only if your operator is privileged to do that.
             properties:
               run:
                 type: object
@@ -1364,6 +1376,10 @@ definitions:
             description: |
               A block of commands, each represented by a block containing an href that accepts a
               POST that will send an override to the output, turning it on or off.
+
+              It will be missing if your operator does not have a privilege that allows overriding
+              the output (examples of which are in the documentation for the POSTs).
+
             properties:
               on:
                 type: object
@@ -1470,8 +1486,9 @@ definitions:
               A block of commands, each represented by a block containing an href that accepts a
               POST that will send an override to the input.
 
-              The block will be missing if your operator does not have the privilege to override an
-              input.
+              It will be missing if your operator does not have a privilege that allows overriding
+              the input (examples of which are in the documentation for the POSTs).
+
             properties:
               shunt:
                 type: object

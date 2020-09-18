@@ -7575,6 +7575,7 @@
                         </dt>
                         <dd>
                           <p>A block of commands, each represented by a block containing an href that accepts a POST that will send an override to the access zone, changing its state.</p>
+                          <p>It will be missing if your operator does not have a privilege that allows overriding the access zone (examples of which are in the documentation for the POSTs).</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-properties">
@@ -8425,6 +8426,7 @@
                         <dd>
                           <p>A block of commands, each represented by a block containing an href that accepts a POST that will send an override to the alarm zone, changing its state.</p>
                           <p>See the section &#39;Understanding Alarm Zones&#39; in the Configuration client help for a description of alarm zone states.</p>
+                          <p>It will be missing if your operator does not have a privilege that allows overriding the alarm zone (examples of which are in the documentation for the POSTs).</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-properties">
@@ -9062,7 +9064,8 @@
                         </dt>
                         <dd>
                           <p>An array of commands, each represented by a block containing an href that accepts a POST to send an override. The only override you can send to a door is &#39;open&#39;.</p>
-                          <p>There will also be up to 17 links to commands that override the door&#39;s entry zone (four each of the four access zone modes, plus &#39;cancel&#39;). Remember that zone overrides affect all doors entering the zone, so if you POST to the URL given in the <code>free</code> block, for example, all the zone&#39;s doors will unlock.</p>
+                          <p>If your operator is privileged to override the door&#39;s entry zone, there will be 17 more links: four each of the four access zone modes, plus &#39;cancel&#39;. Remember that zone overrides affect all doors entering the zone, so if you POST to the URL given in the <code>free</code> block, for example, all the zone&#39;s doors will unlock.</p>
+                          <p>This block will only contain the links that your operator is privileged to perform. Examples of the privileges you need are in the documentation for the POSTs.</p>
                           <p>The zone overrides are not repeated here.</p>
                         </dd>
                         <dt class="json-inner-schema">
@@ -9442,6 +9445,7 @@
                         </dt>
                         <dd>
                           <p>A block of commands, each represented by a block containing an href that accepts a POST that will send an override to the fence zone, changing its state.</p>
+                          <p>It will be missing if your operator is not privileged to override the fence zone.</p>
                           <p>See the section &#39;Creating a Fence Zone&#39; in the Configuration client help for a description of fence zone states.</p>
                         </dd>
                         <dt class="json-inner-schema">
@@ -9861,7 +9865,7 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>The only thing you can do to a macro via REST is run it, so this block only contains one block.</p>
+                          <p>The only thing you can do to a macro via REST is run it, so this block only contains one command, and only if your operator is privileged to do that.</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-properties">
@@ -10174,6 +10178,7 @@
                         </dt>
                         <dd>
                           <p>A block of commands, each represented by a block containing an href that accepts a POST that will send an override to the output, turning it on or off.</p>
+                          <p>It will be missing if your operator does not have a privilege that allows overriding the output (examples of which are in the documentation for the POSTs).</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-properties">
@@ -10566,7 +10571,7 @@
                         </dt>
                         <dd>
                           <p>A block of commands, each represented by a block containing an href that accepts a POST that will send an override to the input.</p>
-                          <p>The block will be missing if your operator does not have the privilege to override an input.</p>
+                          <p>It will be missing if your operator does not have a privilege that allows overriding the input (examples of which are in the documentation for the POSTs).</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-properties">
