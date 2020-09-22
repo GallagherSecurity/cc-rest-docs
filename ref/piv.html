@@ -108,7 +108,7 @@
                 <p>All of the API calls described here require the RESTCardholders licence. If your site is also licensed to use PIV cards, you can access them via REST.</p>
                 <h3 id="cardholder-api-changes-in-810">Cardholder API changes in 8.10</h3>
                 <ul>
-                  <li>Certificates and biometric data are now available without a customisation. You must ask for them using the <code>fields</code> parameter.</li>
+                  <li>Certificates and biometric data are now available without a customisation. They are too large to send to all REST clients so you must ask for them using the <code>fields</code> parameter.</li>
                 </ul>
               </div>
               <div class="doc-examples">
@@ -123,7 +123,7 @@
                     <span>https</span>
                   </h5>
                   <h5>Version:
-                    <span>8.40.1</span>
+                    <span>8.40.2</span>
                   </h5>
                 </section>
               </div>
@@ -770,7 +770,7 @@
                           <p>it adds <code>lastCheckTime</code>, which shows when the card was last validated. That is most useful when Command Centre is performing periodic card validation. If you are doing your own validation, this field will hold the moment you last updated the card.</p>
                         </li>
                       </ul>
-                      <p>If the site is running 7.90 and the RESTPIVCardExport customisation, or if you asked for extra fields using the <code>fields</code> query parameter, the pivData section will contain three certificates and the fingerprint templates in the correct format for import into another installation of Command Centre.</p>
+                      <p>If the site is running 7.90 and the RESTPIVCardExport customisation, or if it is running a later version and you asked for extra data using the <code>fields</code> query parameter, the pivData section will contain three certificates and the fingerprint templates in the correct format for import into another installation of Command Centre.</p>
                       <p>The certificates and biometrics are missing from the default card object in the interest of efficiency: those fields are very large, and most of our integrations do not require them. Some are running over cellular networks, where bandwidth is carries a cost. Omitting the large fields by default but sending them on request is a flexible compromise that allows integrators to build a suitable system without wastage.</p>
                     </dd>
                     <dt class="json-inner-schema">
@@ -785,11 +785,16 @@
                             </span>
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
-                          <dt data-property-name="pivStatus">
+                          <dt data-property-name="pivStatus" class="has-description">
                             <span class="json-property-name">pivStatus:</span>
                             <span class="json-property-type">object</span>
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
+                          <dd>
+                            <p>The <code>type</code> field in this block contains the PIV-specific status of the card, as opposed to the generic credential state which is in a block called <code>status</code> at the same level as <code>pivData</code>.</p>
+                            <p>The
+                              <a href="#definition-PIV-card-data-create">schema for PIV card data</a> lists the values it might come back with.</p>
+                          </dd>
                           <dt data-property-name="lastCheckTime">
                             <span class="json-property-name">lastCheckTime:</span>
                             <span class="json-property-type">string</span>
@@ -887,7 +892,8 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="json-schema-description">
-                  <p>When you collect card types from Command Centre in preparation for giving a PIV card to someone, the card type you seek will look like this.</p>
+                  <p>When you
+                    <a href="cardholders.html#operation--api-card_types-assign-get">collect card types</a> from Command Centre in preparation for giving a PIV card to someone, the card type you seek will look like this.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -898,7 +904,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This number may be different on your system.</p>
+                      <p>The number in this URL may be different on your system.</p>
                     </dd>
                     <dt data-property-name="name">
                       <span class="json-property-name">name:</span>
@@ -974,7 +980,9 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="json-schema-description">
-                  <p>This example, when placed inside the <code>cards</code> array of a POST or the <code>cards.add</code> array of a PATCH, would create a PIV card. Command Centre will assign it to the cardholder created by the POST or identified by the address of the PATCH. Consult the Paths section for the JSON you need to wrap around this example.</p>
+                  <p>This example, when placed inside the <code>cards</code> array of a
+                    <a href="cardholders.html#operation--api-cardholders-post">POST</a> or the <code>cards.add</code> array of a
+                    <a href="cardholders.html#operation--api-cardholders--id--patch">PATCH</a>, would create a PIV card credential and assign it to the cardholder created by the POST or identified by the address of the PATCH. Consult those methods for the JSON you need to wrap around this example.</p>
                   <p>A PIV-I example would have a different style of FASC-N, and a card number to match.</p>
                 </section>
                 <section class="json-schema-properties">
@@ -1098,7 +1106,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Optional. This will be set to &#39;active&#39; if you omit it and accept the default PIV status or set it to &#39;normal&#39; or &#39;offline&#39; (see below). Any other PIV status will cause the card to become inactive, regardless of what you put here.</p>
+                      <p>Optional. If you omit both this and the PIV status, or omit this and set the PIV status to &#39;normal&#39; or &#39;offline&#39;, the server will set this to &#39;active&#39;. Any other PIV status will cause the card to become inactive, regardless of what you put here.</p>
                       <p>So you really only need to set this when you are changing the PIV status to &#39;normal&#39; or &#39;offline&#39; but you want the card to remain disabled. In that case, set <code>status.value</code> to &#39;disabled (manually)&#39;.</p>
                     </dd>
                     <dt data-property-name="pivData" class="has-description">
@@ -1108,6 +1116,8 @@
                     </dt>
                     <dd>
                       <p>This can contain only one field when you are updating a PIV card, <code>pivStatus.type</code>.</p>
+                      <p>The
+                        <a href="#definition-PIV-card-data-create">PIV card data schema</a> lists the values you can send.</p>
                     </dd>
                   </dl>
                 </section>
@@ -1149,7 +1159,8 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>This example, when placed inside one of the cards in the <code>cards</code> array of a POST or the <code>cards.add</code> array of a PATCH, would create a PIV card. It contains all the PIV-specific fields on a credential.</p>
-                  <p>It is the same as the block you receive from the API for an existing PIV card, minus <code>lastCheckTime</code>.</p>
+                  <p>It is the same as the block you
+                    <a href="#definition-PIV-card-GET">receive from the API</a> for an existing PIV card, minus <code>lastCheckTime</code>.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>

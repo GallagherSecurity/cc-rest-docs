@@ -8,7 +8,7 @@
 swagger: '2.0'
 
 info:
-  version: "8.40.1"
+  version: "8.40.2"
   title: "Command Centre REST API:  PIV card supplement"
   description: |
     This document is a supplement to the [Cardholder API documentation](cardholders.html)
@@ -73,8 +73,8 @@ info:
 
     ### Cardholder API changes in 8.10
 
-    * Certificates and biometric data are now available without a customisation.  You must ask for
-      them using the `fields` parameter.
+    * Certificates and biometric data are now available without a customisation.  They are too large
+      to send to all REST clients so you must ask for them using the `fields` parameter.
 
 schemes:
   - https
@@ -352,8 +352,8 @@ definitions:
         example: {value: "Not Trusted", type: inactive}
       pivData:
         description: |
-          This is much like the [pivData](#definition-PIV-card-data-create) you send when creating a card,
-          described later, except that:
+          This is much like the [pivData](#definition-PIV-card-data-create) you send when creating a
+          card, described later, except that:
 
             - in certain cases (described below) it does not contain the certificates and
               biometrics, leaving just the [CHUID](#definition-CHUID) and PIV status.
@@ -362,10 +362,10 @@ definitions:
               useful when Command Centre is performing periodic card validation.  If you are doing
               your own validation, this field will hold the moment you last updated the card.
 
-          If the site is running 7.90 and the RESTPIVCardExport customisation, or if you asked for
-          extra fields using the `fields` query parameter, the pivData section will contain three
-          certificates and the fingerprint templates in the correct format for import into another
-          installation of Command Centre.
+          If the site is running 7.90 and the RESTPIVCardExport customisation, or if it is running a
+          later version and you asked for extra data using the `fields` query parameter, the pivData
+          section will contain three certificates and the fingerprint templates in the correct
+          format for import into another installation of Command Centre.
 
           The certificates and biometrics are missing from the default card object in the interest
           of efficiency:  those fields are very large, and most of our integrations do not require
@@ -376,7 +376,17 @@ definitions:
         properties:
           chuid:
             $ref: '#/definitions/CHUID'
-          pivStatus: {example: {type: Normal}}
+          pivStatus:
+            description: |
+              The `type` field in this block contains the PIV-specific status of the card, as
+              opposed to the generic credential state which is in a block called `status` at the
+              same level as `pivData`.
+
+              The [schema for PIV card data](#definition-PIV-card-data-create) lists the values it
+              might come back with.
+
+            example:
+              type: Normal
           lastCheckTime: {type: string, format: date-time, example: "2018-04-26T00:22:05Z"}
           contentSigningCert:
             <<: *CSC
@@ -389,13 +399,14 @@ definitions:
 
   PIV card type:
     description: |
-      When you collect card types from Command Centre in preparation for giving a PIV card to
-      someone, the card type you seek will look like this.
+      When you [collect card types](cardholders.html#operation--api-card_types-assign-get) from
+      Command Centre in preparation for giving a PIV card to someone, the card type you seek will
+      look like this.
     properties:
       href:
         type: string
         format: url
-        description: This number may be different on your system.
+        description: The number in this URL may be different on your system.
         example: "https://localhost:8904/api/card_types/243"
       name:
         type: string
@@ -415,10 +426,11 @@ definitions:
 
   PIV card create:
     description: |
-      This example, when placed inside the `cards` array of a POST or the `cards.add` array of a
-      PATCH, would create a PIV card.  Command Centre will assign it to the cardholder created by
-      the POST or identified by the address of the PATCH.  Consult the Paths section for the JSON
-      you need to wrap around this example.
+      This example, when placed inside the `cards` array of a
+      [POST](cardholders.html#operation--api-cardholders-post) or the `cards.add` array of a
+      [PATCH](cardholders.html#operation--api-cardholders--id--patch), would create a PIV card
+      credential and assign it to the cardholder created by the POST or identified by the address of
+      the PATCH.  Consult those methods for the JSON you need to wrap around this example.
 
       A PIV-I example would have a different style of FASC-N, and a card number to match.
     properties:
@@ -475,9 +487,9 @@ definitions:
           [cardholder detail](cardholders.html#definition-Cardholder-detail).
       status:
         description: |
-          Optional.  This will be set to 'active' if you omit it and accept the default PIV status
-           or set it to 'normal' or 'offline' (see below).  Any other PIV status will cause the card
-           to become inactive, regardless of what you put here.
+          Optional.  If you omit both this and the PIV status, or omit this and set the PIV status
+           to 'normal' or 'offline', the server will set this to 'active'.  Any other PIV status will
+           cause the card to become inactive, regardless of what you put here.
 
           So you really only need to set this when you are changing the PIV status to 'normal' or
           'offline' but you want the card to remain disabled.  In that case, set `status.value` to
@@ -487,6 +499,9 @@ definitions:
       pivData:
         description: |
           This can contain only one field when you are updating a PIV card, `pivStatus.type`.
+
+          The [PIV card data schema](#definition-PIV-card-data-create) lists the values you can
+          send.
         type: object
         example: {pivStatus: {type: "notChecked"}}
 
@@ -496,8 +511,8 @@ definitions:
       `cards.add` array of a PATCH, would create a PIV card.  It contains all the PIV-specific
       fields on a credential.
 
-      It is the same as the block you receive from the API for an existing PIV card, minus
-      `lastCheckTime`.
+      It is the same as the block you [receive from the API](#definition-PIV-card-GET) for an
+      existing PIV card, minus `lastCheckTime`.
 
     properties:
       chuid:
