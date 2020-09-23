@@ -2632,7 +2632,7 @@ definitions:
                 "name": "Twilight zone"
               },
               "schedule": {
-                "href": "https://localhost:8904/api/items/5",
+                "href": "https://localhost:8904/api/schedules/5",
                 "name": "Default Cardholder Access Granted"
               }
             }, {
@@ -2641,7 +2641,7 @@ definitions:
                 "name": "Server room"
               },
               "schedule": {
-                "href": "https://localhost:8904/api/items/557",
+                "href": "https://localhost:8904/api/schedules/557",
                 "name": "8am-5pm weekdays"
               } } ]
 
@@ -3604,12 +3604,12 @@ paths:
 
             If you receive 'No fields have been defined for update', check that your submission body
             is valid JSON.
-        409:
-          <<: *409CH
         403:
           description: |
             The site does not have a RESTCardholders licence, or you attempted to set a PDF for
             which you have no privilege.
+        409:
+          <<: *409CH
         4xx:
           description: |
             The operator does not have the privilege to modify that cardholder, or you attempted to
@@ -3732,9 +3732,10 @@ paths:
 
       summary: Change competency credit
       description: |
-        This call increases or decreases a cardholder's competency credit.  It is an indivisible operation.
+        This call increases or decreases a cardholder's competency credit.  It is an indivisible
+        operation.
 
-        It is reserved for the Prepay Car Parking feature.
+        It is reserved for the Pre-pay Car Parking feature.
 
       parameters:
         - name: "id"
@@ -4069,6 +4070,7 @@ paths:
         200:
           description: |
             Success.  See the note in the description about privileges if your result set is empty.
+          schema: { $ref: '#/definitions/Access groups' }
         403: { description: "The site does not have the RESTCardholders licence." }
         404: { description: "There is no group at that URL." }
 
@@ -4447,10 +4449,14 @@ paths:
       - {in: path, name: id, required: true, description: "The ID of the locker to open.", type: string}
       responses:
         204: { description: Success. }
-        403: { description: "The installation lacks the RESTOverrides licence." }
+        403:
+          description: |
+            The site does not have the RESTOverrides licence (in which case the body of the result
+            will say so), or your operator does not have 'Override - Open Locker' on the locker's
+            division.
         404:
           description: |
-            Your REST operator does not have 'Override - Open Locker' on the locker's division.
+            That is not the URL of a locker.
 
 ######################################################################
   /api/personal_data_fields:

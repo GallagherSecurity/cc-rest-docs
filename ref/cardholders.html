@@ -2003,7 +2003,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This call increases or decreases a cardholder&#39;s competency credit. It is an indivisible operation.</p>
-                  <p>It is reserved for the Prepay Car Parking feature.</p>
+                  <p>It is reserved for the Pre-pay Car Parking feature.</p>
                 </section>
               </div>
             </div>
@@ -2916,6 +2916,12 @@
                   <div class="prop-row prop-group">
                     <div class="prop-name">
                       <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Access groups">Access groups</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
                       <p>Success. See the note in the description about privileges if your result set is empty.</p>
@@ -2939,7 +2945,43 @@
                   </div>
                 </section>
               </div>
-              <div class="doc-examples"> </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;352&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;R&amp;D special projects group.&quot;</span>,
+      <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Deep underground.&quot;</span>,
+      <span class="hljs-attr">&quot;parent&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/100&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;All R&amp;D&quot;</span>
+      },
+      <span class="hljs-attr">&quot;division&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;cardholders&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352/cardholders&quot;</span>
+      }
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups?skip=61320&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
             </div>
           </div>
           <div id="operation--api-access_groups--id--get" class="operation panel" data-traverse-target="operation--api-access_groups--id--get">
@@ -3128,7 +3170,7 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Twilight zone&quot;</span>
       },
       <span class="hljs-attr">&quot;schedule&quot;</span>: {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/5&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules/5&quot;</span>,
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Cardholder Access Granted&quot;</span>
       }
     },
@@ -3138,7 +3180,7 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Server room&quot;</span>
       },
       <span class="hljs-attr">&quot;schedule&quot;</span>: {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/557&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules/557&quot;</span>,
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;8am-5pm weekdays&quot;</span>
       }
     }
@@ -4481,7 +4523,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The installation lacks the RESTOverrides licence.</p>
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or your operator does not have &#39;Override - Open Locker&#39; on the locker&#39;s division.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4489,7 +4531,7 @@
                       <div class="prop-title">404 Not Found</div>
                     </div>
                     <div class="prop-value">
-                      <p>Your REST operator does not have &#39;Override - Open Locker&#39; on the locker&#39;s division.</p>
+                      <p>That is not the URL of a locker.</p>
                     </div>
                   </div>
                 </section>
@@ -8326,7 +8368,7 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Twilight zone&quot;</span>
       },
       <span class="hljs-attr">&quot;schedule&quot;</span>: {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/5&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules/5&quot;</span>,
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Cardholder Access Granted&quot;</span>
       }
     },
@@ -8336,7 +8378,7 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Server room&quot;</span>
       },
       <span class="hljs-attr">&quot;schedule&quot;</span>: {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/557&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules/557&quot;</span>,
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;8am-5pm weekdays&quot;</span>
       }
     }
