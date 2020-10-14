@@ -371,7 +371,7 @@ x-common-blocks-this-is-made-up:
     in: query
     required: false
     type: string
-    enum: [href, id, name, shortName, description, division, commands, entryAccessZone, statusFlags, status, notes, updates]
+    enum: [href, id, name, shortName, description, division, commands, connectedController, entryAccessZone, statusFlags, status, notes, updates]
 
   fz_ignored: &FZFIELDS
     in: query
@@ -1056,6 +1056,9 @@ definitions:
             type: object
             description: |
               This block describes this door's hardware controller.
+
+              Retrieving it takes a little more time than the other fields so only ask for it if you
+              need it, if your doors are legion.
             properties:
               name: {type: string, example: "Third floor C6000"}
               href:
