@@ -923,7 +923,17 @@ definitions:
               href: "https://localhost:8904/api/cardholders/402/update_location"
           notes:
             type: string
-            description: "Free-form text.  In order to create a cardholder with notes, your REST operator will need one of the 'Cardholder Notes' privileges.  'Create Cardholders' and 'Create and Edit Cardholders' are not enough."
+            description: |
+              Free-form text.
+
+              The 'Edit Cardholder Notes' privilege lets you change cardholder notes however you
+              like, but 'Add Cardholder Notes' only lets you add more to the end.  To do that, read
+              the existing `notes` field, append your text, and send it back in a PATCH.  If you try
+              to change the existing text the server will respond with a 4xx.
+
+              You will need one of those two privileges to edit notes.  'Create Cardholders' and
+              'Edit Cardholders' let you set most cardholder fields, but not notes.
+
             example: ""
           notifications:
             type: object
