@@ -857,8 +857,12 @@ definitions:
               This field is write-only, so you will not see it in the results of a GET.  It appears
               here because you can send it in the body of a POST or PATCH.
 
-              It must be a string of at least four digits.  The minimum length is set by your site
-              configuration.  You will find that "0000" does not work.
+              Set it to the empty string `""` to clear the cardholder's user code.
+
+              If it is not empty it must be a string of at least four digits.  It may need to be
+              longer, because the minimum length is set by your site configuration.
+
+              You will find that "0000" does not work.
           personalDataDefinitions:
             type: array
             description: |
@@ -1336,32 +1340,67 @@ definitions:
       invitation:
         description: |
           Command Centre will only return this object for a mobile credential, and you should send
-          it only when creating one.  You cannot modify the invitation block of an existing credential.
+          it only when creating one.  In the interests of security you cannot modify the invitation
+          block of an existing credential.  Someone's thumb might be poised to accept it, after all.
+          If there was something wrong with it you should delete it and start afresh.
 
-          'status' will be one of 'notSent', 'sent', 'expired', or 'accepted'.
-          - 'notSent' means the credential is only a few seconds old or Command Centre is having trouble contacting the cloud.
-          - 'sent' means Command Centre is waiting for the user to accept the invitation, either in
-          Gallagher Mobile Connect, or another app using the Mobile Connect SDK.
-          - 'expired' means that Command Centre did not receive a response in time.
-          - 'accepted' means that the credential is ready for use.
-
-          If you specify 'mobile' when creating a new mobile credential, you must also supply
-          'email', so that Command Centre can send the invitation and confirmation SMS.  If you
-          give neither, Command Centre will not send an invitation to the cardholder.
-
-          'singleFactorOnly' defaults to false.  If you set it true, Command Centre will not require
-          a PIN or fingerprint from the cardholder when they enrol.  Be aware that without that
-          second authentication factor, zones in modes that require a PIN and readers that always
-          require a second factor will not grant access to the cardholder.
-
-          'singleFactorOnly' will only be in this block if set to true.
+          If you specify either `mobile` or `mail` you must also supply the other so that Command
+          Centre can send both an invitation and a confirmation SMS.  It is an error to only specify
+          one.  If you give neither, Command Centre will not send an invitation to the cardholder,
+          and it will be up to another application to complete the creation of this credential using
+          the Mobile Connect SDK.
 
         properties:
-          email: {type: string, example: "nick@example.com"}
-          mobile: {type: string, example: "02123456789"}
-          singleFactorOnly: {type: boolean, example: true}
-          status: {type: string, example: "sent"}
-          href: {type: string, format: url, example: "https://security.gallagher.cloud/api/invitations/abcd1234defg5678"}
+          email:
+            type: string
+            example: "nick@example.com"
+            description: |
+              The email address to which Command Centre will send or did send an invitation for this
+              credential.
+          mobile:
+            type: string
+            example: "02123456789"
+            description: |
+              The telephone number to which Command Centre will send or did send an SMS containing a
+              confirmation code for this invitation.
+          singleFactorOnly:
+            type: boolean
+            example: true
+            default: false
+            description: |
+              If you set this true Command Centre will not require a PIN or fingerprint from the
+              cardholder when they enrol.  Be aware that without that second authentication factor,
+              zones in modes that require a PIN and readers that always require a second factor will
+              not grant access to the cardholder.
+
+              `singleFactorOnly` will only be in the result of a GET if it is true.
+
+          status:
+            type: string
+            example: "sent"
+            enum: [notSent, sent, expired, accepted]
+            description: |
+              This is a read-only field.
+
+              - `sent` means Command Centre is waiting for the user to accept the invitation, either
+                in Gallagher Mobile Connect or another app that uses the Mobile Connect SDK.
+
+              - `accepted` means that the credential is ready for use.
+
+              - `notSent` means the credential is only a few seconds old or Command Centre is having
+                trouble contacting the cloud.
+
+              - `expired` means that Command Centre did not receive a response in time.
+
+          href:
+            type: string
+            format: url
+            example: "https://security.gallagher.cloud/api/invitations/abcd1234defg5678"
+            description: |
+              Another read-only field.  Mobile applications use it to accept this invitation.  See
+              the Mobile Connect SDK documentation for how to do that in your own applications.
+
+              Only present if 'status' is 'sent'.
       from:
         description: |
           The start of the time period during which this card is active.  If this time is in the future, the card is not active.
@@ -3396,10 +3435,10 @@ paths:
           'lastName, firstName'; surround the parameter with double quotes `"..."` for an
           exact search.
 
-          Without quotes, a percent sign `%` inside your search string will anchor the
-          search (so it will no longer be a substring search) and the `%` will match any
-          substring.  For example, `boothroyd,%` will only match cardholders whose last
-          name is Boothroyd.
+          Without quotes, a percent sign `%` inside your search string will anchor the search at
+          both ends (so it will no longer be a substring search) and the `%` will match any
+          substring.  For example, `boothroyd,%` will only match cardholders whose last name is
+          Boothroyd.
 
           The search is always case-insensitive.
 

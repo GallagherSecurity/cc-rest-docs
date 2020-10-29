@@ -728,7 +728,7 @@
                     </div>
                     <div class="prop-value">
                       <p>Only return cardholders with a name that matches this string. By default, it is a substring search against the first name or the last name or the concatenation &#39;lastName, firstName&#39;; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact search.</p>
-                      <p>Without quotes, a percent sign <code>%</code> inside your search string will anchor the search (so it will no longer be a substring search) and the <code>%</code> will match any substring. For example, <code>boothroyd,%</code> will only match cardholders whose last name is Boothroyd.</p>
+                      <p>Without quotes, a percent sign <code>%</code> inside your search string will anchor the search at both ends (so it will no longer be a substring search) and the <code>%</code> will match any substring. For example, <code>boothroyd,%</code> will only match cardholders whose last name is Boothroyd.</p>
                       <p>The search is always case-insensitive.</p>
                       <p>The <code>name</code> and <code>pdf_{id}</code> search parameters form a logical conjunction. They are ANDed together. Therefore if you search for <code>name=Mary&amp;pdf_1315=nanny</code> you will only get back cardholders with &#39;Mary&#39; in their name and &#39;nanny&#39; in the PDF with ID 1315.</p>
                     </div>
@@ -5168,7 +5168,9 @@
                         </dt>
                         <dd>
                           <p>This field is write-only, so you will not see it in the results of a GET. It appears here because you can send it in the body of a POST or PATCH.</p>
-                          <p>It must be a string of at least four digits. The minimum length is set by your site configuration. You will find that &quot;0000&quot; does not work.</p>
+                          <p>Set it to the empty string <code>&quot;&quot;</code> to clear the cardholder&#39;s user code.</p>
+                          <p>If it is not empty it must be a string of at least four digits. It may need to be longer, because the minimum length is set by your site configuration.</p>
+                          <p>You will find that &quot;0000&quot; does not work.</p>
                         </dd>
                         <dt data-property-name="personalDataDefinitions" class="has-description">
                           <span class="json-property-name">personalDataDefinitions:</span>
@@ -6173,47 +6175,76 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Command Centre will only return this object for a mobile credential, and you should send it only when creating one. You cannot modify the invitation block of an existing credential.</p>
-                      <p>&#39;status&#39; will be one of &#39;notSent&#39;, &#39;sent&#39;, &#39;expired&#39;, or &#39;accepted&#39;.</p>
-                      <ul>
-                        <li>&#39;notSent&#39; means the credential is only a few seconds old or Command Centre is having trouble contacting the cloud.</li>
-                        <li>&#39;sent&#39; means Command Centre is waiting for the user to accept the invitation, either in Gallagher Mobile Connect, or another app using the Mobile Connect SDK.</li>
-                        <li>&#39;expired&#39; means that Command Centre did not receive a response in time.</li>
-                        <li>&#39;accepted&#39; means that the credential is ready for use.</li>
-                      </ul>
-                      <p>If you specify &#39;mobile&#39; when creating a new mobile credential, you must also supply &#39;email&#39;, so that Command Centre can send the invitation and confirmation SMS. If you give neither, Command Centre will not send an invitation to the cardholder.</p>
-                      <p>&#39;singleFactorOnly&#39; defaults to false. If you set it true, Command Centre will not require a PIN or fingerprint from the cardholder when they enrol. Be aware that without that second authentication factor, zones in modes that require a PIN and readers that always require a second factor will not grant access to the cardholder.</p>
-                      <p>&#39;singleFactorOnly&#39; will only be in this block if set to true.</p>
+                      <p>Command Centre will only return this object for a mobile credential, and you should send it only when creating one. In the interests of security you cannot modify the invitation block of an existing credential. Someone&#39;s thumb might be poised to accept it, after all. If there was something wrong with it you should delete it and start afresh.</p>
+                      <p>If you specify either <code>mobile</code> or <code>mail</code> you must also supply the other so that Command Centre can send both an invitation and a confirmation SMS. It is an error to only specify one. If you give neither, Command Centre will not send an invitation to the cardholder, and it will be up to another application to complete the creation of this credential using the Mobile Connect SDK.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
                         <dl>
-                          <dt data-property-name="email">
+                          <dt data-property-name="email" class="has-description">
                             <span class="json-property-name">email:</span>
                             <span class="json-property-type">string</span>
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
-                          <dt data-property-name="mobile">
+                          <dd>
+                            <p>The email address to which Command Centre will send or did send an invitation for this credential.</p>
+                          </dd>
+                          <dt data-property-name="mobile" class="has-description">
                             <span class="json-property-name">mobile:</span>
                             <span class="json-property-type">string</span>
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
-                          <dt data-property-name="singleFactorOnly">
+                          <dd>
+                            <p>The telephone number to which Command Centre will send or did send an SMS containing a confirmation code for this invitation.</p>
+                          </dd>
+                          <dt data-property-name="singleFactorOnly" class="has-description">
                             <span class="json-property-name">singleFactorOnly:</span>
                             <span class="json-property-type">boolean</span>
                             <span class="json-property-range" title="Value limits"></span>
+                            <span class="json-property-default-value" title="Default value">false</span>
                           </dt>
-                          <dt data-property-name="status">
+                          <dd>
+                            <p>If you set this true Command Centre will not require a PIN or fingerprint from the cardholder when they enrol. Be aware that without that second authentication factor, zones in modes that require a PIN and readers that always require a second factor will not grant access to the cardholder.</p>
+                            <p><code>singleFactorOnly</code> will only be in the result of a GET if it is true.</p>
+                          </dd>
+                          <dt data-property-name="status" class="has-description">
                             <span class="json-property-name">status:</span>
                             <span class="json-property-type">string</span>
+                            <span class="json-property-enum" title="Possible values">
+                              <span class="json-property-enum-item">notSent</span>,
+                              <span class="json-property-enum-item">sent</span>,
+                              <span class="json-property-enum-item">expired</span>,
+                              <span class="json-property-enum-item">accepted</span>
+                            </span>
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
-                          <dt data-property-name="href">
+                          <dd>
+                            <p>This is a read-only field.</p>
+                            <ul>
+                              <li>
+                                <p><code>sent</code> means Command Centre is waiting for the user to accept the invitation, either in Gallagher Mobile Connect or another app that uses the Mobile Connect SDK.</p>
+                              </li>
+                              <li>
+                                <p><code>accepted</code> means that the credential is ready for use.</p>
+                              </li>
+                              <li>
+                                <p><code>notSent</code> means the credential is only a few seconds old or Command Centre is having trouble contacting the cloud.</p>
+                              </li>
+                              <li>
+                                <p><code>expired</code> means that Command Centre did not receive a response in time.</p>
+                              </li>
+                            </ul>
+                          </dd>
+                          <dt data-property-name="href" class="has-description">
                             <span class="json-property-name">href:</span>
                             <span class="json-property-type">string</span>
                             <span class="json-property-format">(url)</span>
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
+                          <dd>
+                            <p>Another read-only field. Mobile applications use it to accept this invitation. See the Mobile Connect SDK documentation for how to do that in your own applications.</p>
+                            <p>Only present if &#39;status&#39; is &#39;sent&#39;.</p>
+                          </dd>
                         </dl>
                       </section>
                     </dt>
