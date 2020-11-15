@@ -452,7 +452,7 @@ definitions:
           A link to an [access zone detail](#definition-Access-Zone-detail) object for this access
           zone.  This is Command Centre's identifier for this access zone:  use it whenever you need
           to specify an access zone in REST operations.
-        example: "https://localhost:8904/api/access_zones/328"
+        example: "https://localhost:8904/api/access_zones/3280"
       id:
         type: string
         description: |
@@ -460,7 +460,7 @@ definitions:
 
           This is the ID to use in the `source` parameter of [event
           filters](events.html#operation--api-events-get).
-        example: "328"
+        example: "3280"
       name:
         type: string
         example: "Roswell building 2 lobby"
@@ -523,7 +523,7 @@ definitions:
             <<: *SHORTNAME
           updates:
             <<: *UPDATES
-            example: { href: "https://localhost:8904/api/access_zones/328/updates/0_0_0" }
+            example: { href: "https://localhost:8904/api/access_zones/3280/updates/0_0_0" }
           statusFlags:
             <<: *STATUSFLAGS
             example: ["secure"]
@@ -764,7 +764,7 @@ definitions:
         example: "328"
       name:
         type: string
-        example: "Roswell building 2 lobby"
+        example: "Roswell building 2 lobby alarms"
 
   Alarm Zone detail:
     description: |
@@ -1018,7 +1018,7 @@ definitions:
                   page (which includes a link back here).
                 type: string
                 format: url
-                example: "https://localhost:8904/api/access_zones/328"
+                example: "https://localhost:8904/api/access_zones/3280"
           notes: {<<: *NOTES}
           shortName: {<<: *SHORTNAME}
           updates:
@@ -1033,10 +1033,10 @@ definitions:
               An array of commands, each represented by a block containing an href that accepts a
               POST to send an override.  The only override you can send to a door is 'open'.
 
-              If your operator is privileged to override the door's entry zone, there will be 17
-              more links:  four each of the four access zone modes, plus 'cancel'.  Remember that
-              zone overrides affect all doors entering the zone, so if you POST to the URL given in
-              the `free` block, for example, all the zone's doors will unlock.
+              If your operator is privileged to override the door's entry zone, and the zone only
+              has one door, there will be 17 more links:  four each of the four access zone modes,
+              plus 'cancel'.  Each zone mode has four variants:  with or without PINs, and with or
+              without an end time.
 
               This block will only contain the links that your operator is privileged to perform.
               Examples of the privileges you need are in the documentation for the POSTs.
@@ -2369,7 +2369,7 @@ paths:
                 statusFlags: [ secure ],
                 zoneCount: 100
               },
-              next: { href: https://localhost:8904/api/access_zones/328/updates/9_1 }
+              next: { href: https://localhost:8904/api/access_zones/3280/updates/9_1 }
             }
         403:
           description: The site does not have the RESTStatus licence.
