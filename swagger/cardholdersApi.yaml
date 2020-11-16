@@ -704,10 +704,10 @@ parameters:
     in: query
     type: string
     description: |
-      Only return items with a name that matches this string.  Without surrounding
-      quotes or a percent sign or underscore, it is a substring match; surround the parameter with double
-      quotes `"..."` for an exact match.  Without quotes, a percent sign `%` will match
-      any substring and an underscore will match any single character.
+      Only return items with a name that matches this string.  Without surrounding quotes or a
+      percent sign or underscore, it is a substring match; surround the parameter with double quotes
+      `"..."` for an exact match.  Without quotes, a percent sign `%` will match any substring and
+      an underscore will match any single character.
 
       The search is always case-insensitive.
 
@@ -715,7 +715,9 @@ parameters:
     name: "fields"
     in: query
     required: false
-    type: string
+    type: array
+    items: { type: string }
+    default: ['defaults']
     enum: [href, id, name, description, division, serverDisplayName, type, default, required,
                unique, sortPriority, accessGroups, regex, regexDescription]
 
@@ -728,6 +730,22 @@ parameters:
           given the parameter at all.  Add more after a comma.
 
           Treat the string matches as case sensitive.
+
+  division:
+    name: "division"
+    in: query
+    type: array
+    items:
+      type: string
+    description: |
+      Only return items in these divisions.
+
+      That includes all the items in those divisions' child divisions, because Command Centre treats
+      items as though they are also in their division's parent, and its parent, and so on up to the
+      root.
+
+      List the IDs of the divisions you are interested in separated by commas.  Item IDs are short
+      alphanumeric strings, not URLs.
 
 ####################################################################################################
 ####################################################################################################
@@ -3468,7 +3486,9 @@ paths:
       - name: "fields"
         in: query
         required: false
-        type: string
+        type: array
+        items: { type: string }
+        default: ['defaults']
 
         enum: []
 
@@ -3567,7 +3587,9 @@ paths:
       - name: "fields"
         in: query
         required: false
-        type: string
+        type: array
+        items: { type: string }
+        default: ['defaults']
 
         enum: 
 
@@ -3989,8 +4011,9 @@ paths:
       - name: "filter"
         in: query
         required: false
-        type: string
-
+        type: array
+        items: { type: string }
+        default: ['defaults']
         enum:  [href, id, firstName, lastName, shortName, description, authorised,
           lastSuccessfulAccessZone, division, notes, useExtendedAccessTime, personalDataFields,
           cards, accessGroups, competencies, notifications, relationships, lockers]
@@ -4022,8 +4045,9 @@ paths:
       - name: "fields"
         in: query
         required: false
-        type: string
-
+        type: array
+        items: { type: string }
+        default: ['defaults']
         enum:
           [href, operator, operator.href, operator.name, time, type, item, oldValues, newValues,
           cardholder, cardholder.* ]
@@ -4097,12 +4121,15 @@ paths:
         default: 100
         description: The maximum number of access groups to return per page.
       - $ref: "#/parameters/name"
+      - $ref: "#/parameters/division"
       - name: "fields"
         in: query
         required: false
-        type: string
+        type: array
+        items: { type: string }
+        default: ['defaults']
         enum: [href, id, name, description, parent, division, children, notes, personalDataDefinitions,
-          access, saltoAccess, alarmZones, ...]
+            access, saltoAccess, alarmZones, ...]
         description: |
           Return these fields in the search results.  The values you can list are the same as the
           field names in the [details page](#definition-Access-group-detail).  Using it you can
@@ -4139,27 +4166,29 @@ paths:
         You can find the URL for this call in the access group search results.        
 
       parameters:
-        - name: "id"
-          in: path
-          required: true
-          type: string
-          description: "The identifier of the access group."
-        - name: "fields"
-          in: query
-          required: false
-          type: string
-          enum: [href, id, name, description, parent, division, children, notes,
-            personalDataDefinitions, access, saltoAccess, alarmZones, ...]
-          description: |
-            Return these fields.  The values you can list are the same as the field names in the
-            [detail results](#definition-Access-group-detail).  Use it to return less data than
-            normal.  Separate values with commas.
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "The identifier of the access group."
+      - name: "fields"
+        in: query
+        required: false
+        type: array
+        items: { type: string }
+        default: ['defaults']
+        enum: [href, id, name, description, parent, division, children, notes,
+          personalDataDefinitions, access, saltoAccess, alarmZones, ...]
+        description: |
+          Return these fields.  The values you can list are the same as the field names in the
+          [detail results](#definition-Access-group-detail).  Use it to return less data than
+          normal.  Separate values with commas.
 
-            Treat the string matches as case sensitive.
+          Treat the string matches as case sensitive.
 
-            In v8.00 you will receive the href and internal ID even if you didn't ask for them.  In
-            8.10 you will not.  If you are going to send the fields parameter and need the href or
-            ID, include them.
+          In v8.00 you will receive the href and internal ID even if you didn't ask for them.  In
+          8.10 you will not.  If you are going to send the fields parameter and need the href or ID,
+          include them.
 
       responses: 
         200: 
@@ -4246,10 +4275,13 @@ paths:
       - $ref: "#/parameters/sort"
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
+      - $ref: "#/parameters/division"
       - name: "fields"
         in: query
         required: false
-        type: string
+        type: array
+        items: { type: string }
+        default: ['defaults']
         enum: [href, id, name, shortName, description, division, notes, expiryNotify, noticePeriod,
           defaultExpiry, defaultAccess]
         description: |
@@ -4286,23 +4318,25 @@ paths:
         messages that appear on a reader when a cardholder needs to take action.
 
       parameters:
-        - name: "id"
-          in: path
-          required: true
-          type: string
-          description: "The alphanumeric identifier of the competency you are after."
-        - name: "fields"
-          in: query
-          required: false
-          type: string
-          enum: [href, id, name, shortName, description, division, notes, expiryNotify, noticePeriod,
-            defaultExpiry, defaultAccess]
-          description: |
-            Return these fields.  The values you can list are the same as the field names in the
-            [details page](#definition-Competency-detail).  Use it to reduce the size of the result
-            document.  Separate values with commas.
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "The alphanumeric identifier of the competency you are after."
+      - name: "fields"
+        in: query
+        required: false
+        type: array
+        items: { type: string }
+        default: ['defaults']
+        enum: [href, id, name, shortName, description, division, notes, expiryNotify, noticePeriod,
+          defaultExpiry, defaultAccess]
+        description: |
+          Return these fields.  The values you can list are the same as the field names in the
+          [details page](#definition-Competency-detail).  Use it to reduce the size of the result
+          document.  Separate values with commas.
 
-            Treat the string matches as case sensitive.
+          Treat the string matches as case sensitive.
 
       responses:
         200:
@@ -4314,6 +4348,16 @@ paths:
             Your REST operator does not have the privilege to view this competency.
 
 ######################################################################
+  /api/card_types:
+    get:
+      tags: [ "Card types" ]
+      summary: Search card types
+      description: |
+        This returns the card types your operator is privileged to view.  They may be different card
+        types from those you are allowed to assign to cardholders, and since that is the only thing
+        that this API does with card types, you should probably be using [that
+        function](#operation--api-card_types-assign-get) instead.
+
   /api/card_types/assign:
     get:
       tags: [ "Card types" ]
@@ -4321,8 +4365,8 @@ paths:
       description: |
         This returns the card types you are privileged to assign to a cardholder.
 
-        Since a site usually has only a few card types, and each is small, the search, sorting, and
-        pagination parameters are probably of little use to you.  But they work.
+        Since a site usually has only a few card types, and each is small, the search, sorting,
+        field selection, and pagination parameters are probably of little use to you.  But they work.
 
         If your result set is empty it means your operator does not have the privilege to view any
         card types.  Perhaps there are none in the divisions in which your operator has 'View site',
@@ -4335,6 +4379,20 @@ paths:
       - $ref: "#/parameters/sort"
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
+      - $ref: "#/parameters/division"
+      - name: "fields"
+        in: query
+        type: array
+        items: { type: string }
+        enum: [ href, id, name, facilityCode, availableCardStates, credentialClass, minimumNumber,
+        maximumNumber ]
+
+        description: |
+          Return these fields in the search results, instead of the default set (which contains
+          every field).  Separate values with commas.
+
+          Treat the string matches as case sensitive:  use 'facilityCode' rather than
+          'facilitycode'.
 
       responses:
         200:
@@ -4342,6 +4400,16 @@ paths:
           schema: {$ref: '#/definitions/Card types'}
 
         403: { description: "The installation lacks a cardholders licence." }
+
+  /api/card_types/{id}:
+    get:
+      tags: [ "Card types" ]
+      summary: Get one card type
+      description: |
+        This returns some basic data for a card type.  It exists so that clients following card type
+        hrefs from other controllers do not receive a 404.  To find out about card types available
+        for assigning to cardholders, use [card_types/assign](#operation--api-card_types-assign-get)
+        instead.
 
 ######################################################################
   /api/locker_banks:
@@ -4374,14 +4442,18 @@ paths:
           The maximum number of locker banks to return per page.  Depending on the number of lockers
           you have in each bank, you may find that 100 banks is too many for one page.
       - $ref: "#/parameters/name"
+      - $ref: "#/parameters/division"
       - name: "fields"
         in: query
         required: false
-        type: string
-
+        type: array
+        items: { type: string }
+        default: ['defaults']
         enum: [href, id, name, shortName, description, division, lockers, notes, lockers.defaults,
-        lockers.id, lockers.href, lockers.name, lockers.shortName, lockers.description, lockers.division,
-        lockers.serverDisplayName, lockers.notes, lockers.commands, lockers.assignments]
+        lockers.id, lockers.href, lockers.name, lockers.shortName, lockers.description,
+        lockers.division, lockers.serverDisplayName, lockers.notes, lockers.commands,
+        lockers.assignments]
+
         description: |
           Return these fields in the search results.  The values you can list are the same as the
           field names in the [details page](#definition-Locker-bank-detail).  Using it you can
@@ -4428,7 +4500,9 @@ paths:
       - name: "fields"
         in: query
         required: false
-        type: string
+        type: array
+        items: { type: string }
+        default: ['defaults']
         enum: [href, id, name, shortName, description, division, lockers, notes]
         description: |
           Return these fields.  The values you can list are the same as the field names you would
@@ -4470,7 +4544,9 @@ paths:
       - name: "fields"
         in: query
         required: false
-        type: string
+        type: array
+        items: { type: string }
+        default: ['defaults']
         enum: [href, id, name, shortName, description, division, assignments, notes, commands]
         description: |
           Return these fields.  Use it to cut back on the size of the response for a locker
@@ -4535,6 +4611,7 @@ paths:
       - $ref: "#/parameters/sort"
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
+      - $ref: "#/parameters/division"
       - $ref: "#/parameters/pdf_fields"
 
       responses:

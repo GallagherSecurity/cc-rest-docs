@@ -105,7 +105,13 @@
             <a href="#tag-Card-types">Card types</a>
             <ul>
               <li>
+                <a href="#operation--api-card_types-get"> Search card types </a>
+              </li>
+              <li>
                 <a href="#operation--api-card_types-assign-get"> Search usable card types </a>
+              </li>
+              <li>
+                <a href="#operation--api-card_types--id--get"> Get one card type </a>
               </li>
             </ul>
           </section>
@@ -754,8 +760,9 @@
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -1075,8 +1082,9 @@
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -2564,7 +2572,7 @@
                       <div class="prop-title">filter</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-enum" title="Possible values">
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">id</span>,
@@ -2586,6 +2594,7 @@
                           <span class="json-property-enum-item">lockers</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -2602,7 +2611,7 @@
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-enum" title="Possible values">
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">operator</span>,
@@ -2617,6 +2626,7 @@
                           <span class="json-property-enum-item">cardholder.*</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -2879,10 +2889,25 @@
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-enum" title="Possible values">
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">id</span>,
@@ -2899,6 +2924,7 @@
                           <span class="json-property-enum-item">...</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -3037,7 +3063,7 @@
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-enum" title="Possible values">
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">id</span>,
@@ -3054,6 +3080,7 @@
                           <span class="json-property-enum-item">...</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -3466,10 +3493,25 @@
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-enum" title="Possible values">
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">id</span>,
@@ -3484,6 +3526,7 @@
                           <span class="json-property-enum-item">defaultAccess</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -3604,7 +3647,7 @@
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-enum" title="Possible values">
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">id</span>,
@@ -3619,6 +3662,7 @@
                           <span class="json-property-enum-item">defaultAccess</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -3711,6 +3755,39 @@
               <p>As it does for the other item types, the REST API gives you read access to card types through search and details pages. However the privilege model for card types is more flexible than for other items: the &#39;View site&#39; privilege determines whether you are allowed to view a card type, while the cardholder editing privileges (&#39;Create&#39;, &#39;Edit&#39;, &#39;Create and edit&#39;) determine whether you can assign it to a cardholder, so version 8.10 of the API added a page that returns the card types that your operator is allowed to assign to cardholders. Take its URL from <code>features.cardTypes.assign</code> in the results of <code>GET /api</code>.</p>
             </div>
           </div>
+          <div id="operation--api-card_types-get" class="operation panel" data-traverse-target="operation--api-card_types-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Card-types">Card types</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Search card types</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/card_types</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns the card types your operator is privileged to view. They may be different card types from those you are allowed to assign to cardholders, and since that is the only thing that this API does with card types, you should probably be using
+                    <a href="#operation--api-card_types-assign-get">that function</a> instead.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+          </div>
           <div id="operation--api-card_types-assign-get" class="operation panel" data-traverse-target="operation--api-card_types-assign-get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
@@ -3735,7 +3812,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns the card types you are privileged to assign to a cardholder.</p>
-                  <p>Since a site usually has only a few card types, and each is small, the search, sorting, and pagination parameters are probably of little use to you. But they work.</p>
+                  <p>Since a site usually has only a few card types, and each is small, the search, sorting, field selection, and pagination parameters are probably of little use to you. But they work.</p>
                   <p>If your result set is empty it means your operator does not have the privilege to view any card types. Perhaps there are none in the divisions in which your operator has &#39;View site&#39;, &#39;Configure site&#39;, or the other privileges that allow assign cards and credentials to cardholders.</p>
                   <p>You can find this URL in <code>features.cardTypes.assign</code>in <code>/api</code>. It was new in 8.10.</p>
                 </section>
@@ -3800,6 +3877,45 @@
                     <div class="prop-value">
                       <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">facilityCode</span>,
+                          <span class="json-property-enum-item">availableCardStates</span>,
+                          <span class="json-property-enum-item">credentialClass</span>,
+                          <span class="json-property-enum-item">minimumNumber</span>,
+                          <span class="json-property-enum-item">maximumNumber</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the search results, instead of the default set (which contains every field). Separate values with commas.</p>
+                      <p>Treat the string matches as case sensitive: use &#39;facilityCode&#39; rather than &#39;facilitycode&#39;.</p>
                     </div>
                   </div>
                 </section>
@@ -3869,6 +3985,39 @@
                   <!-- </div> -->
                 </section>
               </div>
+            </div>
+          </div>
+          <div id="operation--api-card_types--id--get" class="operation panel" data-traverse-target="operation--api-card_types--id--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Card-types">Card types</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get one card type</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/card_types/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns some basic data for a card type. It exists so that clients following card type hrefs from other controllers do not receive a 404. To find out about card types available for assigning to cardholders, use
+                    <a href="#operation--api-card_types-assign-get">card_types/assign</a> instead.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
             </div>
           </div>
           <h1 id="tag-Lockers" class="swagger-summary-tag" data-traverse-target="tag-Lockers">Lockers</h1>
@@ -4010,10 +4159,25 @@
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-enum" title="Possible values">
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">id</span>,
@@ -4036,6 +4200,7 @@
                           <span class="json-property-enum-item">lockers.assignments</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -4169,7 +4334,7 @@
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-enum" title="Possible values">
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">id</span>,
@@ -4181,6 +4346,7 @@
                           <span class="json-property-enum-item">notes</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -4349,7 +4515,7 @@
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-enum" title="Possible values">
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">id</span>,
@@ -4362,6 +4528,7 @@
                           <span class="json-property-enum-item">commands</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -4658,10 +4825,25 @@
                   </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-enum" title="Possible values">
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">id</span>,
@@ -4679,6 +4861,7 @@
                           <span class="json-property-enum-item">regexDescription</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -4801,7 +4984,7 @@
                       <div class="prop-title">fields</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-enum" title="Possible values">
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">id</span>,
@@ -4819,6 +5002,7 @@
                           <span class="json-property-enum-item">regexDescription</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
                       </div>
                     </div>
                     <div class="prop-value">
