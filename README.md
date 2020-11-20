@@ -11,7 +11,9 @@ We use [Spectacle](https://github.com/sourcey/spectacle) to generate that HTML f
 Swagger files:  we do not use them for code generation or API testing.  Therefore they do not follow
 OpenAPI guidelines where doing so would compromise the appearance of the documentation.
 
-To download them both in a zip file use the Code button above.  However, to benefit from our regular
-improvements to that documentation we suggest you browse it [online][github.io] whenever possible.
+To download the HTML and YAML in a zip file use the Code button on
+[Github.com][https://github.com/GallagherSecurity/cc-rest-docs].  However, to benefit from our
+regular improvements to that documentation we suggest you browse [the HTML][github.io] whenever
+possible.
 
 [github.io]: https://gallaghersecurity.github.io/cc-rest-docs/ref
