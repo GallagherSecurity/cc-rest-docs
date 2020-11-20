@@ -12,7 +12,7 @@ Swagger files:  we do not use them for code generation or API testing.  Therefor
 OpenAPI guidelines where doing so would compromise the appearance of the documentation.
 
 To download the HTML and YAML in a zip file use the Code button on
-[Github.com][https://github.com/GallagherSecurity/cc-rest-docs].  However, to benefit from our
+[Github.com](https://github.com/GallagherSecurity/cc-rest-docs).  However, to benefit from our
 regular improvements to that documentation we suggest you browse [the HTML][github.io] whenever
 possible.
 
