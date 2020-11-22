@@ -230,7 +230,7 @@
                       <a href="#tag-Cardholder-changes">change tracking</a> lets you synchronise users into an external system by informing it of changes as they occur.</p>
                   </li>
                   <li>
-                    <p>Cardholder group membership hrefs now contain a GUID where they used to contain a small integer. Integrations that cache membership hrefs a) should not and b) will need to refresh.</p>
+                    <p>Cardholder group membership hrefs now contain a long string where they used to contain a small integer. Integrations that cache membership hrefs a) should not and b) will need to refresh.</p>
                   </li>
                   <li>
                     <p>A cardholder&#39;s card object now contain a Boolean field called <code>trace</code> indicating whether its trace flag is set. A card with tracing on generates an event every time it is used.</p>
@@ -587,6 +587,15 @@
               </ol>
               <p>The
                 <a href="#tag-Access-groups">access groups</a> section describes what to do when you want to start with a group and remove several cardholders from it.</p>
+              <h4 id="removing-all-group-memberships-competencies-relationships-cards-or-lockers">Removing all group memberships, competencies, relationships, cards, or lockers</h4>
+              <p>This shows how you could remove a cardholder from all his or her access groups, but you could just as simply apply the process to other fields that come back as arrays, such as competencies, relationships, cards, and lockers.</p>
+              <ol>
+                <li>GET your cardholder&#39;s details page, or search with <code>accessGroups</code> in the field list. Either way, you will receive all their access group memberships.</li>
+                <li>Take the array at <code>accessGroups</code>, rename it to <code>remove</code>, and put it in object called <code>accessGroups</code> at the root level of a
+                  <a href="#definition-Cardholder-PATCH-example">JSON object</a>.</li>
+                <li>
+                  <a href="#operation--api-cardholders--id--patch">PATCH</a> the cardholder with that JSON object. That will remove the cardholder from all the groups that came back in the GET.</li>
+              </ol>
               <h4 id="assigning-a-new-card-to-a-cardholder">Assigning a new card to a cardholder</h4>
               <ol>
                 <li><code>GET /api</code>.</li>
@@ -6427,7 +6436,7 @@
                             <span class="json-property-read-only"></span>
                           </dt>
                           <dd>
-                            <p>Another read-only field. Mobile applications use it to accept this invitation. See the Mobile Connect SDK documentation for how to do that in your own applications.</p>
+                            <p>Mobile applications use this URL to accept this invitation. See the Mobile Connect SDK documentation for how to do that in your own applications.</p>
                             <p>Only present if &#39;status&#39; is &#39;sent&#39;.</p>
                           </dd>
                         </dl>

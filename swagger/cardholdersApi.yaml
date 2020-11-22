@@ -70,7 +70,7 @@ info:
     * Cardholder [change tracking](#tag-Cardholder-changes) lets you synchronise users into an
       external system by informing it of changes as they occur.
 
-    * Cardholder group membership hrefs now contain a GUID where they used to contain a small
+    * Cardholder group membership hrefs now contain a long string where they used to contain a small
       integer.  Integrations that cache membership hrefs a) should not and b) will need to refresh.
 
     * A cardholder's card object now contain a Boolean field called `trace` indicating whether its
@@ -338,6 +338,19 @@ tags:
 
     The [access groups](#tag-Access-groups) section describes what to do when you want to
     start with a group and remove several cardholders from it.
+
+    #### Removing all group memberships, competencies, relationships, cards, or lockers
+
+    This shows how you could remove a cardholder from all his or her access groups, but you could
+    just as simply apply the process to other fields that come back as arrays, such as competencies,
+    relationships, cards, and lockers.
+
+    1. GET your cardholder's details page, or search with `accessGroups` in the field list.  Either
+    way, you will receive all their access group memberships.
+    2. Take the array at `accessGroups`, rename it to `remove`, and put it in object called
+    `accessGroups` at the root level of a [JSON object](#definition-Cardholder-PATCH-example).
+    3. [PATCH](#operation--api-cardholders--id--patch) the cardholder with that JSON object.  That
+    will remove the cardholder from all the groups that came back in the GET.
 
     #### Assigning a new card to a cardholder
 
@@ -1416,8 +1429,8 @@ definitions:
             example: "https://security.gallagher.cloud/api/invitations/abcd1234defg5678"
             readOnly: true
             description: |
-              Another read-only field.  Mobile applications use it to accept this invitation.  See
-              the Mobile Connect SDK documentation for how to do that in your own applications.
+              Mobile applications use this URL to accept this invitation.  See the Mobile Connect
+              SDK documentation for how to do that in your own applications.
 
               Only present if 'status' is 'sent'.
       from:

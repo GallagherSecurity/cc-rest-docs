@@ -606,7 +606,7 @@ definitions:
                 properties:
                   href:
                     example: "https://localhost:8904/api/access_zones/333/code_only"
-                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code only - no PIN' access mode until the next schedule change."
+                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code or card - no PIN' access mode until the next schedule change."
                     type: string
                     format: url
               codeOnlyUntil:
@@ -614,7 +614,7 @@ definitions:
                 properties:
                   href:
                     example: "https://localhost:8904/api/access_zones/333/code_only"
-                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code only - no PIN' access mode for a fixed time."
+                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code or card - no PIN' access mode for a fixed time."
                     type: string
                     format: url
               codeOnlyPin:
@@ -622,7 +622,7 @@ definitions:
                 properties:
                   href:
                     example: "https://localhost:8904/api/access_zones/333/code_only_pin"
-                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code only - PIN' access mode until the next schedule change."
+                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code or card - PIN' access mode until the next schedule change."
                     type: string
                     format: url
               codeOnlyPinUntil:
@@ -630,7 +630,7 @@ definitions:
                 properties:
                   href:
                     example: "https://localhost:8904/api/access_zones/333/code_only_pin"
-                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code only - PIN' access mode for a fixed time."
+                    description: "[POST](#operation--api-access_zones--id--code_only-post) to this to override the zone into 'code or card - PIN' access mode for a fixed time."
                     type: string
                     format: url
               dualAuth:
@@ -2206,14 +2206,14 @@ paths:
   /api/access_zones/{id}/code_only:
     post:
       tags: ["Access Zones"]
-      summary: Set an access zone to code only
+      summary: Set an access zone to code or card
       description: |
-        Sends an override to an access zone to change its mode to 'code only - card and no PIN',
+        Sends an override to an access zone to change its mode to 'Code or Card - No PIN',
         meaning you can use your user code or the zone's 'code-only code' to open its doors,
         depending on the reader's configuration.  You will not need a PIN on a terminal.
 
-        The same URL with `_pin` on the end will override the access zone into 'code only - card and
-        PIN', meaning you _will_ need a PIN when you use a card.
+        The same URL with `_pin` on the end will override the access zone into 'code or card - PIN',
+        meaning you _will_ need a PIN when you use a card.
 
         If you do not give it an end time in the body, the override will remain in place until the
         next scheduled change.
