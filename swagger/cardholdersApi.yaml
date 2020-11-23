@@ -47,7 +47,7 @@ info:
 
     ### API changes in 8.50
 
-    8.50 increases the number of items in its search results and sorts them differently, if the
+    8.50 may increase the number of items in its search results and sort them differently, if the
     query did not use query parameters to override the defaults.
 
     ### Cardholder API changes in 8.40
@@ -218,15 +218,15 @@ x-spectacle-topics:
 
       Each controller has different optional fields - see their sections under Operations.
 
-x-common-blocks-this-is-made-up:
-  server_ignored: &SERVER
+x-common-blocks:
+  server: &SERVER
     type: string
     example: "ruatoria.satellite.int"
     description: |
-      If you are running a multiserver installation and this item is homed on a remote server, this
+      If you are running a multi-server installation and this item is homed on a remote server, this
       field will contain the name of that server.  This field is missing from items that are held on
-      the machine that served the API request.
-  409_ignored: &409CH
+      the machine that served the API request.  Added in 8.40.
+  409ch: &409CH
     description: |
       The cardholder is locked for editing by another operator.  The body of the response will
       tell you which operator is holding the lock.
@@ -851,6 +851,8 @@ definitions:
             example:
               href: "https://localhost:8904/api/access_zones/333"
               name: "Twilight zone"
+          serverDisplayName:
+            <<: *SERVER
           division:
             type: object
             description:  The division containing this cardholder.  You must send this when creating a cardholder.
@@ -2403,6 +2405,8 @@ definitions:
           fields parameter to 8.10 you will only get what you asked for.
         example:
           href: "https://localhost:8904/api/access_groups/352/cardholders"
+      serverDisplayName:
+        <<: *SERVER
 
   Access group detail:
     description: |
@@ -2931,6 +2935,7 @@ definitions:
       division:
         type: object
         description: The division containing this locker bank.
+
       notes:
         type: string
       lockers:
@@ -3158,6 +3163,7 @@ definitions:
       id: {type: string, example: "2354"}
       name: {type: string, example: "Hazardous goods handling"}
       description: {type: string, example: "Required for access to chem sheds."}
+      serverDisplayName: {type: string, example: "ruatoria.satellite.net"}
       notes: {type: string, example: ""}
 
   Competency detail:
@@ -3170,6 +3176,7 @@ definitions:
       id: {type: string, example: "2354"}
       name: {type: string, example: "Hazardous goods handling"}
       description: {type: string, example: "Required for access to chem sheds."}
+      serverDisplayName: {type: string, example: "ruatoria.satellite.net"}
       division:
         type: object
         description: The division containing this competency.
@@ -3308,6 +3315,8 @@ definitions:
           For card types with integer card numbers, this is the maximum.
         type: string
         example: "16777215"
+      serverDisplayName:
+        <<: *SERVER
 
 ######################################################################
   PDF definitions:
@@ -4465,7 +4474,7 @@ paths:
         default: ['defaults']
         enum: [href, id, name, shortName, description, division, lockers, notes, lockers.defaults,
         lockers.id, lockers.href, lockers.name, lockers.shortName, lockers.description,
-        lockers.division, lockers.serverDisplayName, lockers.notes, lockers.commands,
+        lockers.division, lockers.notes, lockers.commands,
         lockers.assignments]
 
         description: |

@@ -205,7 +205,7 @@
                 <h3 id="licensing">Licensing</h3>
                 <p>All of the API calls described here require the RESTCardholders licence.</p>
                 <h3 id="api-changes-in-850">API changes in 8.50</h3>
-                <p>8.50 increases the number of items in its search results and sorts them differently, if the query did not use query parameters to override the defaults.</p>
+                <p>8.50 may increase the number of items in its search results and sort them differently, if the query did not use query parameters to override the defaults.</p>
                 <h3 id="cardholder-api-changes-in-840">Cardholder API changes in 8.40</h3>
                 <p>The body of this document clearly indicates the 8.40 features so that readers with older versions of Command Centre know not to use them.</p>
                 <ul>
@@ -1169,6 +1169,7 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/333&quot;</span>,
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Twilight zone&quot;</span>
   },
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
@@ -3008,7 +3009,8 @@
       },
       <span class="hljs-attr">&quot;cardholders&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352/cardholders&quot;</span>
-      }
+      },
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -3162,6 +3164,7 @@
   <span class="hljs-attr">&quot;cardholders&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352/cardholders&quot;</span>
   },
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;children&quot;</span>: [
     {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/5122&quot;</span>,
@@ -3592,6 +3595,7 @@
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2354&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Hazardous goods handling&quot;</span>,
       <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Required for access to chem sheds.&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.net&quot;</span>,
       <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
     }
   ],
@@ -3732,6 +3736,7 @@
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2354&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Hazardous goods handling&quot;</span>,
   <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Required for access to chem sheds.&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.net&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
@@ -3982,7 +3987,8 @@
       ],
       <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
       <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-      <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>
+      <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -4203,7 +4209,6 @@
                           <span class="json-property-enum-item">lockers.shortName</span>,
                           <span class="json-property-enum-item">lockers.description</span>,
                           <span class="json-property-enum-item">lockers.division</span>,
-                          <span class="json-property-enum-item">lockers.serverDisplayName</span>,
                           <span class="json-property-enum-item">lockers.notes</span>,
                           <span class="json-property-enum-item">lockers.commands</span>,
                           <span class="json-property-enum-item">lockers.assignments</span>
@@ -5333,6 +5338,14 @@
                         <dd>
                           <p>The last zone the cardholder entered.</p>
                         </dd>
+                        <dt data-property-name="serverDisplayName" class="has-description">
+                          <span class="json-property-name">serverDisplayName:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
+                        </dd>
                         <dt data-property-name="division" class="has-description">
                           <span class="json-property-name">division:</span>
                           <span class="json-property-type">object</span>
@@ -5572,6 +5585,7 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/333&quot;</span>,
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Twilight zone&quot;</span>
   },
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
@@ -8064,7 +8078,8 @@
       },
       <span class="hljs-attr">&quot;cardholders&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352/cardholders&quot;</span>
-      }
+      },
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -8148,6 +8163,14 @@
                         <a href="#operation--api-access_groups--id--cardholders-get">direct memberships</a>.</p>
                       <p>In v8.00 you will receive this field along with the ID and href in an access group&#39;s details page whether or not you specified it in the fields parameter, but if you send the fields parameter to 8.10 you will only get what you asked for.</p>
                     </dd>
+                    <dt data-property-name="serverDisplayName" class="has-description">
+                      <span class="json-property-name">serverDisplayName:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
+                    </dd>
                   </dl>
                 </section>
               </div>
@@ -8172,7 +8195,8 @@
   },
   <span class="hljs-attr">&quot;cardholders&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352/cardholders&quot;</span>
-  }
+  },
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -8551,6 +8575,7 @@
   <span class="hljs-attr">&quot;cardholders&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352/cardholders&quot;</span>
   },
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;children&quot;</span>: [
     {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/5122&quot;</span>,
@@ -9423,6 +9448,7 @@
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2354&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Hazardous goods handling&quot;</span>,
       <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Required for access to chem sheds.&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.net&quot;</span>,
       <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
     }
   ],
@@ -9479,6 +9505,11 @@
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
+                    <dt data-property-name="serverDisplayName">
+                      <span class="json-property-name">serverDisplayName:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
                     <dt data-property-name="notes">
                       <span class="json-property-name">notes:</span>
                       <span class="json-property-type">string</span>
@@ -9498,6 +9529,7 @@
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2354&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Hazardous goods handling&quot;</span>,
   <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Required for access to chem sheds.&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.net&quot;</span>,
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
 }
 </code></pre> </body>
@@ -9542,6 +9574,11 @@
                     </dt>
                     <dt data-property-name="description">
                       <span class="json-property-name">description:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="serverDisplayName">
+                      <span class="json-property-name">serverDisplayName:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
@@ -9672,6 +9709,7 @@
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2354&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Hazardous goods handling&quot;</span>,
   <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Required for access to chem sheds.&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.net&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
@@ -9780,7 +9818,8 @@
       ],
       <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
       <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-      <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>
+      <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -9889,6 +9928,14 @@
                     <dd>
                       <p>For card types with integer card numbers, this is the maximum.</p>
                     </dd>
+                    <dt data-property-name="serverDisplayName" class="has-description">
+                      <span class="json-property-name">serverDisplayName:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
+                    </dd>
                   </dl>
                 </section>
               </div>
@@ -9912,7 +9959,8 @@
   ],
   <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
   <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-  <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>
+  <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -10049,7 +10097,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>If you are running a multiserver installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request.</p>
+                      <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
                     </dd>
                     <dt data-property-name="description">
                       <span class="json-property-name">description:</span>
