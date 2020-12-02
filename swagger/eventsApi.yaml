@@ -337,6 +337,8 @@ x-spectacle-topics:
       for operations such as filtering and searching, but everying in the path should come from the
       results of `/api` or pages linked from it.
 
+      `/api` only shows licensed API calls.
+
       Be prepared to append query parameters to URLs that already have their own:  do not assume
       that you can simply add a question mark and your parameters.
 
@@ -1079,14 +1081,17 @@ paths:
       summary: List divisions
       description: |
         The functions inside `/api/divisions/` retrieve the divisions in which the operator can
-        perform other functions.  They return the same data structure.
+        perform other functions.  They all return the same data structure.
 
-        `/api/divisions/view_events` retrieves the list of divisions in which the REST operator has
-        privileges to view events, and `/api/division/view_alarms` does the same for alarms.  These
-        do not check whether you have the RESTEvents licence.
+        For example, `/api/divisions/view_events` retrieves the list of divisions in which the REST
+        operator has privileges to view events, and `/api/division/view_alarms` does the same for
+        alarms.
 
-        Do not code these URLs into your application.  Take them from `events.divisions.href` or
-        `alarms.division.href` in the results of `GET /api`.
+        Do not code these URLs into your application.  Take them from the results of `GET /api`.
+        For the events and alarms examples, the links will be at `events.divisions.href` and
+        `alarms.division.href`.
+
+        `/api` only shows API features for which you have the necessary licence.
       parameters:
       - name: "fields"
         <<: *FIELDSDESC_DET
@@ -1240,6 +1245,8 @@ paths:
 
         Your operator must have view privileges on every item in the subscription.
 
+        Because this call returns the status of items, this call requires the RESTStatus licence.
+
       parameters:
         - name: "name not rendered for body params"
           in: body
@@ -1273,7 +1280,7 @@ paths:
 
         400: { description: The server could not parse the request body.  Check your JSON. }
         401: { description: The operator does not have privilege to view the monitored items. }
-        403: { description: The site does not have a REST licence. }
+        403: { description: The site does not have the RESTStatus licence. }
 
     get:
       tags: [Items]

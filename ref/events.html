@@ -269,6 +269,7 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <p>This is a self-referencing REST API that follows the principles of HATEOAS. Other than the initial <code>GET</code> to <code>/api</code> when it first connects, your source code should not contain any URLs, as they are subject to change. You should append the query parameters this document describes for operations such as filtering and searching, but everying in the path should come from the results of <code>/api</code> or pages linked from it.</p>
+                <p><code>/api</code> only shows licensed API calls.</p>
                 <p>Be prepared to append query parameters to URLs that already have their own: do not assume that you can simply add a question mark and your parameters.</p>
               </div>
             </div>
@@ -2646,9 +2647,10 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>The functions inside <code>/api/divisions/</code> retrieve the divisions in which the operator can perform other functions. They return the same data structure.</p>
-                  <p><code>/api/divisions/view_events</code> retrieves the list of divisions in which the REST operator has privileges to view events, and <code>/api/division/view_alarms</code> does the same for alarms. These do not check whether you have the RESTEvents licence.</p>
-                  <p>Do not code these URLs into your application. Take them from <code>events.divisions.href</code> or <code>alarms.division.href</code> in the results of <code>GET /api</code>.</p>
+                  <p>The functions inside <code>/api/divisions/</code> retrieve the divisions in which the operator can perform other functions. They all return the same data structure.</p>
+                  <p>For example, <code>/api/divisions/view_events</code> retrieves the list of divisions in which the REST operator has privileges to view events, and <code>/api/division/view_alarms</code> does the same for alarms.</p>
+                  <p>Do not code these URLs into your application. Take them from the results of <code>GET /api</code>. For the events and alarms examples, the links will be at <code>events.divisions.href</code> and <code>alarms.division.href</code>.</p>
+                  <p><code>/api</code> only shows API features for which you have the necessary licence.</p>
                 </section>
               </div>
             </div>
@@ -3348,6 +3350,7 @@
                   <p>Creates a subscription to status changes. You POST a list of item IDs and the server returns the current state of those items plus a link. When you GET that link some time later the server will return the items that changed state between the two calls.</p>
                   <p>If you do not GET the link within thirty seconds of the POST returning the server will drop your subscription and free up the resources it had allocated to servicing it.</p>
                   <p>Your operator must have view privileges on every item in the subscription.</p>
+                  <p>Because this call returns the status of items, this call requires the RESTStatus licence.</p>
                 </section>
               </div>
             </div>
@@ -3426,7 +3429,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The site does not have a REST licence.</p>
+                      <p>The site does not have the RESTStatus licence.</p>
                     </div>
                   </div>
                 </section>
