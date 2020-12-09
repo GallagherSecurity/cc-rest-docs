@@ -5115,8 +5115,7 @@
             <div class="doc-copy">
               <p>The roles API gives you basic information about Command Centre&#39;s role items so that you can use them to form relationships between cardholders.</p>
               <p>A role defines a relationship between two cardholders. One cardholder can perform a role for many others but can have it performed for them by only one other. For example, a person has a supervisor and is a supervisor for many others. When you use REST to look up or update a cardholder, you will work on the &#39;has a&#39; relationships, not the &#39;is a&#39; relationships. In other words you can change the cardholder&#39;s supervisor but not who the cardholder supervises.</p>
-              <h3 id="use-cases">Use cases</h3>
-              <h4 id="searching-for-a-role-by-name-and-assigning-a-relationship">Searching for a role by name and assigning a relationship</h4>
+              <h3 id="use-case--searching-for-a-role-by-name-and-assigning-a-relationship">Use case: searching for a role by name and assigning a relationship</h3>
               <ol>
                 <li><code>GET /api</code></li>
                 <li>Follow the link at <code>features.roles.roles.href</code> after adding search terms such as <code>name=&quot;supervisor&quot;</code>.</li>
@@ -6485,6 +6484,7 @@
                     </dt>
                     <dd>
                       <p>The serial number of a physical access card, as a hex string without a leading &#39;0x&#39;. This may not be not present on older cards.</p>
+                      <p>This field was read-only until 7.90. It is read-write in 8.00 and later.</p>
                     </dd>
                     <dt data-property-name="issueLevel" class="has-description">
                       <span class="json-property-name">issueLevel:</span>
@@ -10535,7 +10535,7 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="json-schema-description">
-                  <p><code>/api/roles</code> returns an array of these. It gives you enough about a role to identify it and use it in a cardholer PATCH: its href, name, description, and (if you ask for them using the <code>fields</code> parameter) notes.</p>
+                  <p><code>/api/roles</code> returns an array of these. Each element gives you enough about a role to identify it and use it in a cardholer PATCH: its href, name, description, and (if you ask for them using the <code>fields</code> parameter) notes.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -10551,7 +10551,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This his the string to use when creating a relationship between cardholders using this role.</p>
+                      <p>This is the string to use when creating a relationship between cardholders using this role.</p>
                     </dd>
                     <dt data-property-name="serverDisplayName" class="has-description">
                       <span class="json-property-name">serverDisplayName:</span>

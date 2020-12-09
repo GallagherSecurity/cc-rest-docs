@@ -105,6 +105,14 @@
             </ul>
           </section>
           <section>
+            <a href="#tag-Day-categories">Day categories</a>
+            <ul>
+              <li>
+                <a href="#operation--api-day_categories-get"> Search day categories </a>
+              </li>
+            </ul>
+          </section>
+          <section>
             <a href="#tag-Doors">Doors</a>
             <ul>
               <li>
@@ -157,6 +165,32 @@
             </ul>
           </section>
           <section>
+            <a href="#tag-Inputs">Inputs</a>
+            <ul>
+              <li>
+                <a href="#operation--api-inputs-get"> Search inputs </a>
+              </li>
+              <li>
+                <a href="#operation--api-inputs--id--get"> Get details of an input </a>
+              </li>
+              <li>
+                <a href="#operation--api-inputs--id--shunt-post"> Shunt an input </a>
+              </li>
+              <li>
+                <a href="#operation--api-inputs--id--unshunt-post"> Unshunt an input </a>
+              </li>
+              <li>
+                <a href="#operation--api-inputs--id--isolate-post"> Isolate an input </a>
+              </li>
+              <li>
+                <a href="#operation--api-inputs--id--deisolate-post"> De-isolate an input </a>
+              </li>
+              <li>
+                <a href="#operation--api-inputs--id--updates-get"> Monitor an input </a>
+              </li>
+            </ul>
+          </section>
+          <section>
             <a href="#tag-Macros">Macros</a>
             <ul>
               <li>
@@ -193,56 +227,32 @@
               </li>
             </ul>
           </section>
-          <section>
-            <a href="#tag-Inputs">Inputs</a>
-            <ul>
-              <li>
-                <a href="#operation--api-inputs-get"> Search inputs </a>
-              </li>
-              <li>
-                <a href="#operation--api-inputs--id--get"> Get details of an input </a>
-              </li>
-              <li>
-                <a href="#operation--api-inputs--id--shunt-post"> Shunt an input </a>
-              </li>
-              <li>
-                <a href="#operation--api-inputs--id--unshunt-post"> Unshunt an input </a>
-              </li>
-              <li>
-                <a href="#operation--api-inputs--id--isolate-post"> Isolate an input </a>
-              </li>
-              <li>
-                <a href="#operation--api-inputs--id--deisolate-post"> De-isolate an input </a>
-              </li>
-              <li>
-                <a href="#operation--api-inputs--id--updates-get"> Monitor an input </a>
-              </li>
-            </ul>
-          </section>
           <h5>Schema Definitions</h5>
           <a href="#definition-Access-Zones"> Access Zones </a>
           <a href="#definition-Access-Zones-as-move-targets"> Access Zones as move targets </a>
           <a href="#definition-Access-Zone-summary"> Access Zone summary </a>
           <a href="#definition-Access-Zone-detail"> Access Zone detail </a>
-          <a href="#definition-Access-zone-count"> Access zone count </a>
+          <a href="#definition-Access-Zone-count"> Access Zone count </a>
           <a href="#definition-Alarm-Zones"> Alarm Zones </a>
           <a href="#definition-Alarm-Zone-summary"> Alarm Zone summary </a>
           <a href="#definition-Alarm-Zone-detail"> Alarm Zone detail </a>
+          <a href="#definition-Day-categories"> Day categories </a>
+          <a href="#definition-Day-category"> Day category </a>
           <a href="#definition-Doors"> Doors </a>
           <a href="#definition-Door-summary"> Door summary </a>
           <a href="#definition-Door-detail"> Door detail </a>
           <a href="#definition-Fence-Zones"> Fence Zones </a>
           <a href="#definition-Fence-Zone-summary"> Fence Zone summary </a>
           <a href="#definition-Fence-Zone-detail"> Fence Zone detail </a>
+          <a href="#definition-Inputs"> Inputs </a>
+          <a href="#definition-Input-summary"> Input summary </a>
+          <a href="#definition-Input-detail"> Input detail </a>
           <a href="#definition-Macros"> Macros </a>
           <a href="#definition-Macro-summary"> Macro summary </a>
           <a href="#definition-Macro-detail"> Macro detail </a>
           <a href="#definition-Outputs"> Outputs </a>
           <a href="#definition-Output-summary"> Output summary </a>
           <a href="#definition-Output-detail"> Output detail </a>
-          <a href="#definition-Inputs"> Inputs </a>
-          <a href="#definition-Input-summary"> Input summary </a>
-          <a href="#definition-Input-detail"> Input detail </a>
           <a href="#definition-Override-end-time"> Override end time </a>
         </nav>
       </div>
@@ -271,8 +281,13 @@
                 <p>Each section contains a list of use cases intended as quick solutions for simple tasks or a how-to to get you started toward your particular goal. However they also serve as a good introduction to the API if you step through them using a web browser, starting at <code>/api</code> on port 8904 of your Command Centre server. To do that, you will need to set up Command Centre, and install a browser plugin on your web client that lets you set an Authorization HTTP header, and a JSON formatter to prettify the results documents. Search the Configuration client&#39;s online help for &#39;test REST API&#39; for guidance.</p>
                 <h3 id="licensing">Licensing</h3>
                 <p>All of the GET calls described here require the RESTStatus licence. All the POSTs require RESTOverrides. The two licences do not overlap: to watch an item and override it, you will need both.</p>
+                <h3 id="changes-in-860">Changes in 8.60</h3>
+                <p>8.60 increases the number of items in its search results and sorts them differently, if the query did not use query parameters to override the defaults.</p>
                 <h3 id="changes-in-850">Changes in 8.50</h3>
-                <p>8.50 increases the number of items in its search results and sorts them differently, if the query did not use query parameters to override the defaults.</p>
+                <ul>
+                  <li>The day categories controller, which returns day categories.</li>
+                  <li>The schedules controller, providing CRUD of schedule items.</li>
+                </ul>
                 <h3 id="changes-in-830">Changes in 8.30</h3>
                 <p>All changes to this document contain the text &quot;8.30&quot;.</p>
                 <ul>
@@ -325,9 +340,6 @@
                   </h5>
                   <h5>Schemes:
                     <span>https</span>
-                  </h5>
-                  <h5>Version:
-                    <span>8.40.4</span>
                   </h5>
                 </section>
               </div>
@@ -763,7 +775,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using it you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
                       <p>Treat the string matches as case-sensitive.</p>
                       <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
@@ -959,7 +971,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using it you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
                       <p>Treat the string matches as case-sensitive.</p>
                       <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
@@ -1949,7 +1961,7 @@
                     <div class="prop-name">
                       <div class="swagger-request-model">
                         <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Access zone count">Access zone count</a>
+                          <a class="json-schema-ref" href="#/definitions/Access Zone count">Access Zone count</a>
                         </span>
                       </div>
                     </div>
@@ -2433,7 +2445,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using it you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
                       <p>Treat the string matches as case-sensitive.</p>
                       <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
@@ -3506,6 +3518,192 @@
               </div>
             </div>
           </div>
+          <h1 id="tag-Day-categories" class="swagger-summary-tag" data-traverse-target="tag-Day-categories">Day categories</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>A day category links a calendar to a schedule. The calendar determines the days of the year that fall into a day category, and the schedule determines what happens at certain times on those days.</p>
+              <p>This method gives you the day category hrefs you need when creating and modifying schedules.</p>
+              <h3 id="use-case--listing-day-categories">Use case: listing day categories</h3>
+              <ol>
+                <li><code>GET /api</code>.</li>
+                <li>Follow the link at <code>features.dayCategories.dayCategories.href</code>, appending a search term such as <code>name=substring</code> or <code>name=&quot;full name&quot;</code> to filter the selection, and <code>fields</code> to tell the server what to return about each day category.</li>
+                <li>Search the results for the day category you are after. Normally you would follow the <code>next</code> link until there isn&#39;t one, but day categories are not that numerous so they will most likely to fit on one page. Especially if you set <code>top=1000</code> (which is advised).</li>
+              </ol>
+            </div>
+          </div>
+          <div id="operation--api-day_categories-get" class="operation panel" data-traverse-target="operation--api-day_categories-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Day-categories">Day categories</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Search day categories</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/day_categories</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns the day categories that match your search criteria.</p>
+                  <p>The result will contain no more than 100, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch. Generally a site does not have too many day categories, so if you set <code>top=1000</code> you are bound to collect them all.</p>
+                  <p>If your result set is empty it means your operator does not have any of the privileges that allow viewing day categories, such as &#39;View Site&#39;, &#39;Configure Site&#39;, or &#39;Edit Schedules&#39;. Because day categories do not have divisions, having one of those privileges in
+                    <em>any</em> division is enough.</p>
+                  <p>When you have seen them all there will be no <code>next</code> link.</p>
+                  <p>This does not take a <code>division</code> query parameter because day categories are not in divisions.</p>
+                  <p>Take this URL from the &#39;href&#39; field in the <code>features.dayCategories.dayCategories</code> section of <code>/api</code>.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">sort</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">-id</span>,
+                          <span class="json-property-enum-item">-name</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
+                      <p>There are two reasons to prefer sorting by ID:</p>
+                      <ol>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
+                        <li>Following a <code>next</code> link is dramatically quicker when sorting by ID.</li>
+                      </ol>
+                      <p>They are such significant motivators that we strongly recommend sorting by ID in the query when there is a chance your results will overflow one page.</p>
+                      <p>The default is changing in a future version of Command Centre.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">top</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">integer</span>
+                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The maximum number of items to return per page.</p>
+                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">name</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>The search is always case-insensitive.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">notes</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the search results. The values you can list are the field names in the schema definitions in this document. Separate values with commas.</p>
+                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
+                      <p>Treat the string matches as case-sensitive.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Day categories">Day categories</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders, RESTStatus, or RESTOverrides licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Day Category&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/3&quot;</span>,
+      <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Factory default&quot;</span>,
+      <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;The default calendar puts every day in this.&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories?skip=100&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
           <h1 id="tag-Doors" class="swagger-summary-tag" data-traverse-target="tag-Doors">Doors</h1>
           <div class="tag-description doc-row">
             <div class="doc-copy">
@@ -3685,7 +3883,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using it you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
                       <p>Treat the string matches as case-sensitive.</p>
                       <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
@@ -4306,7 +4504,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using it you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
                       <p>Treat the string matches as case-sensitive.</p>
                       <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
@@ -5177,6 +5375,842 @@
               </div>
             </div>
           </div>
+          <h1 id="tag-Inputs" class="swagger-summary-tag" data-traverse-target="tag-Inputs">Inputs</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>These methods, introduced in v8.10, give you read and override access to Input items.</p>
+              <p>The first use case below introduces the main entry point. It is a paginated search interface that gives you basic data for any number of inputs. The href field for each input gives the location of another page which gives more details, including the URLs you need to shunt or isolate it.</p>
+              <h3 id="status-flags">Status flags</h3>
+              <p>Even though the Configuration client lets you set your own state names for open, closed, tampered open, and tampered short, status flags will always use &#39;closed&#39; or &#39;open&#39;, and possibly &#39;tamper&#39;.</p>
+              <p>Two-state inputs cannot report a tamper, because it is impossible to detect. They can only be open or closed. Hence the name.</p>
+              <p>Three-state inputs can report a tamper, but only one of tampered open or tampered closed, depending on their end-of-line resistance settings.</p>
+              <p>Four-state inputs can report tampered open (an open circuit) or tampered closed (a short).</p>
+              <p>If the input is online, its <code>statusFlags</code> field may contain one or more of these flags:</p>
+              <ul>
+                <li>
+                  <p><code>closed</code> means the input circuit is closed.</p>
+                </li>
+                <li>
+                  <p><code>open</code> means the input circuit is open.</p>
+                </li>
+                <li>
+                  <p><code>tamper</code> means the input circuit is shorted or open.</p>
+                </li>
+                <li>
+                  <p><code>notPolled</code> means the input is shunted, which means intentionally ignored, and is essentially offline.</p>
+                </li>
+                <li>
+                  <p><code>isolated</code> means the input state will not prevent arming an alarm zone.</p>
+                </li>
+              </ul>
+              <h4 id="input-flag-rules">Input flag rules</h4>
+              <ul>
+                <li>
+                  <p>If and only if the input is online and not shunted (&#39;notPolled&#39; status flag), exactly one of &#39;closed&#39; or &#39;open&#39; will appear.</p>
+                </li>
+                <li>
+                  <p>&#39;closed&#39; or &#39;open&#39; may still appear if the input is tampered.</p>
+                </li>
+              </ul>
+              <p>So, to establish if the input is in a completely normal state, look for &#39;closed&#39; or &#39;open&#39;, and make sure &#39;tamper&#39; is
+                <em>not</em> there. However bear in mind that inputs are often shunted for ordinary reasons.</p>
+              <h3 id="use-cases">Use cases</h3>
+              <h4 id="listing-inputs">Listing Inputs</h4>
+              <ol>
+                <li><code>GET /api</code>.</li>
+                <li>Follow the link at <code>features.inputs.inputs.href</code>, appending a search term such as <code>name=substring</code> to select the inputs, <code>top</code> if you expect lots of them, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
+                <li>Process the results, following the <code>next</code> link if there is one.</li>
+              </ol>
+              <h4 id="overriding-an-input">Overriding an Input</h4>
+              <ol>
+                <li>Find the href for the input using the process above.</li>
+                <li>GET it.</li>
+                <li>Find the API URL to for the override you need in the <code>commands</code> structure of the
+                  <a href="#definition-Input-detail">results</a>.</li>
+                <li>POST to that URL with an empty body.</li>
+              </ol>
+              <h4 id="finding-an-inputs-status">Finding an input&#39;s status</h4>
+              <ol>
+                <li>Find the href for the input using the process above, and GET it.</li>
+                <li>Take the <code>updates</code> href from that page.</li>
+                <li>GET it.</li>
+                <li>Use the flag rules above to interpret the status flags you receive.</li>
+                <li>Follow the <code>next</code> link to stay up to date.</li>
+              </ol>
+            </div>
+          </div>
+          <div id="operation--api-inputs-get" class="operation panel" data-traverse-target="operation--api-inputs-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Inputs">Inputs</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Search inputs</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/inputs</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns a summary of the inputs matching your search criteria.</p>
+                  <p>The result will contain no more than 100 inputs, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any inputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;. Perhaps there are no inputs in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
+                  <p>When you have loaded them all there will be no <code>next</code> link.</p>
+                  <p>Take this URL from the &#39;href&#39; field in the <code>features.inputs.inputs</code> section of <code>/api</code>.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">sort</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">-id</span>,
+                          <span class="json-property-enum-item">-name</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
+                      <p>There are two reasons to prefer sorting by ID:</p>
+                      <ol>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
+                        <li>Following a <code>next</code> link is dramatically quicker when sorting by ID.</li>
+                      </ol>
+                      <p>They are such significant motivators that we strongly recommend sorting by ID in the query when there is a chance your results will overflow one page.</p>
+                      <p>The default is changing in a future version of Command Centre.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">top</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">integer</span>
+                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The maximum number of items to return per page.</p>
+                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">name</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>The search is always case-insensitive.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">shortName</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">statusFlags</span>,
+                          <span class="json-property-enum-item">status</span>,
+                          <span class="json-property-enum-item">notes</span>,
+                          <span class="json-property-enum-item">updates</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the details page instead of the default set. The values you can list are the same as the field names you would see in the results. Use it to cut back on the size of the response. Separate values with commas.</p>
+                      <p>Treat the string matches as case-sensitive.</p>
+                      <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Inputs">Inputs</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;9701&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Studio door open sensor&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs?skip=100&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-inputs--id--get" class="operation panel" data-traverse-target="operation--api-inputs--id--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Inputs">Inputs</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get details of an input</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/inputs/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns the detail of one input.</p>
+                  <p>Follow the &#39;href&#39; field in an
+                    <a href="#definition-Input-summary">input summary</a> to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the input.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">shortName</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">statusFlags</span>,
+                          <span class="json-property-enum-item">status</span>,
+                          <span class="json-property-enum-item">notes</span>,
+                          <span class="json-property-enum-item">updates</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
+                      <p>Treat the string matches as case-sensitive.</p>
+                      <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Input detail">Input detail</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent an input, or the operator does not have a privilege on the input&#39;s division that allows viewing inputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;9701&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Studio door open sensor&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Reed switch.&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;Short text&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/updates/0_0_0&quot;</span>
+  },
+  <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
+    <span class="hljs-string">&quot;open&quot;</span>
+  ],
+  <span class="hljs-attr">&quot;commands&quot;</span>: {
+    <span class="hljs-attr">&quot;shunt&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/shunt&quot;</span>
+    },
+    <span class="hljs-attr">&quot;unshunt&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/unshunt&quot;</span>
+    },
+    <span class="hljs-attr">&quot;isolate&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/isolate&quot;</span>
+    },
+    <span class="hljs-attr">&quot;deisolate&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/deisolate&quot;</span>
+    }
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-inputs--id--shunt-post" class="operation panel" data-traverse-target="operation--api-inputs--id--shunt-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Inputs">Inputs</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Shunt an input</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/inputs/{id}/shunt</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Sends an override to shunt an input, preventing all communication.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the input.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-inputs--id--unshunt-post" class="operation panel" data-traverse-target="operation--api-inputs--id--unshunt-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Inputs">Inputs</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Unshunt an input</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/inputs/{id}/unshunt</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Sends an override to unshunt an input, re-enabling communication.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the input.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-inputs--id--isolate-post" class="operation panel" data-traverse-target="operation--api-inputs--id--isolate-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Inputs">Inputs</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Isolate an input</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/inputs/{id}/isolate</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Sends an override to isolate an input. An isolated input will not prevent an alarm zone from arming.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the input.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-inputs--id--deisolate-post" class="operation panel" data-traverse-target="operation--api-inputs--id--deisolate-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Inputs">Inputs</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">De-isolate an input</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/inputs/{id}/deisolate</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Sends an override to end the isolation of an input.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the input.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-inputs--id--updates-get" class="operation panel" data-traverse-target="operation--api-inputs--id--updates-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Inputs">Inputs</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Monitor an input</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/inputs/{id}/updates</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>See the
+                    <a href="#topic-Item-status">item status topic</a> for how to use the updates APIs.</p>
+                  <p>Note that this API call is good for watching one item only; if you want to monitor several, you are better off with a
+                    <a href="events.html#status-subscriptions">status subscription</a>.</p>
+                  <p>Follow the &#39;updates&#39; field in an input
+                    <a href="#definition-Input-summary">summary</a> or
+                    <a href="#definition-Input-detail">details</a> pages to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the input.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">status</span>,
+                          <span class="json-property-enum-item">statusText</span>,
+                          <span class="json-property-enum-item">statusFlags</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the update, instead of the default set. Note that removing fields also saves you from updates to those fields.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. See the
+                        <a href="#tag-Inputs">introduction</a> for a description of the three status fields.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent an input, or the operator does not have a privilege on the input&#39;s division that allows viewing inputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;This Input is Open-Circuit Tampered.&quot;</span>,
+    <span class="hljs-attr">&quot;statusText&quot;</span>: <span class="hljs-string">&quot;This Input is Open-Circuit Tampered.&quot;</span>,
+    <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
+      <span class="hljs-string">&quot;open&quot;</span>,
+      <span class="hljs-string">&quot;tamper&quot;</span>
+    ]
+  },
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/2365/updates/9_1&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
           <h1 id="tag-Macros" class="swagger-summary-tag" data-traverse-target="tag-Macros">Macros</h1>
           <div class="tag-description doc-row">
             <div class="doc-copy">
@@ -5326,7 +6360,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using it you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
                       <p>Treat the string matches as case-sensitive.</p>
                       <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
@@ -5928,7 +6962,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using it you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
                       <p>Treat the string matches as case-sensitive.</p>
                       <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
@@ -6434,842 +7468,6 @@
   },
   <span class="hljs-attr">&quot;next&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs/2365/updates/9_1&quot;</span>
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <h1 id="tag-Inputs" class="swagger-summary-tag" data-traverse-target="tag-Inputs">Inputs</h1>
-          <div class="tag-description doc-row">
-            <div class="doc-copy">
-              <p>These methods, introduced in v8.10, give you read and override access to Input items.</p>
-              <p>The first use case below introduces the main entry point. It is a paginated search interface that gives you basic data for any number of inputs. The href field for each input gives the location of another page which gives more details, including the URLs you need to shunt or isolate it.</p>
-              <h3 id="status-flags">Status flags</h3>
-              <p>Even though the Configuration client lets you set your own state names for open, closed, tampered open, and tampered short, status flags will always use &#39;closed&#39; or &#39;open&#39;, and possibly &#39;tamper&#39;.</p>
-              <p>Two-state inputs cannot report a tamper, because it is impossible to detect. They can only be open or closed. Hence the name.</p>
-              <p>Three-state inputs can report a tamper, but only one of tampered open or tampered closed, depending on their end-of-line resistance settings.</p>
-              <p>Four-state inputs can report tampered open (an open circuit) or tampered closed (a short).</p>
-              <p>If the input is online, its <code>statusFlags</code> field may contain one or more of these flags:</p>
-              <ul>
-                <li>
-                  <p><code>closed</code> means the input circuit is closed.</p>
-                </li>
-                <li>
-                  <p><code>open</code> means the input circuit is open.</p>
-                </li>
-                <li>
-                  <p><code>tamper</code> means the input circuit is shorted or open.</p>
-                </li>
-                <li>
-                  <p><code>notPolled</code> means the input is shunted, which means intentionally ignored, and is essentially offline.</p>
-                </li>
-                <li>
-                  <p><code>isolated</code> means the input state will not prevent arming an alarm zone.</p>
-                </li>
-              </ul>
-              <h4 id="input-flag-rules">Input flag rules</h4>
-              <ul>
-                <li>
-                  <p>If and only if the input is online and not shunted (&#39;notPolled&#39; status flag), exactly one of &#39;closed&#39; or &#39;open&#39; will appear.</p>
-                </li>
-                <li>
-                  <p>&#39;closed&#39; or &#39;open&#39; may still appear if the input is tampered.</p>
-                </li>
-              </ul>
-              <p>So, to establish if the input is in a completely normal state, look for &#39;closed&#39; or &#39;open&#39;, and make sure &#39;tamper&#39; is
-                <em>not</em> there. However bear in mind that inputs are often shunted for ordinary reasons.</p>
-              <h3 id="use-cases">Use cases</h3>
-              <h4 id="listing-inputs">Listing Inputs</h4>
-              <ol>
-                <li><code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.inputs.inputs.href</code>, appending a search term such as <code>name=substring</code> to select the inputs, <code>top</code> if you expect lots of them, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
-                <li>Process the results, following the <code>next</code> link if there is one.</li>
-              </ol>
-              <h4 id="overriding-an-input">Overriding an Input</h4>
-              <ol>
-                <li>Find the href for the input using the process above.</li>
-                <li>GET it.</li>
-                <li>Find the API URL to for the override you need in the <code>commands</code> structure of the
-                  <a href="#definition-Input-detail">results</a>.</li>
-                <li>POST to that URL with an empty body.</li>
-              </ol>
-              <h4 id="finding-an-inputs-status">Finding an input&#39;s status</h4>
-              <ol>
-                <li>Find the href for the input using the process above, and GET it.</li>
-                <li>Take the <code>updates</code> href from that page.</li>
-                <li>GET it.</li>
-                <li>Use the flag rules above to interpret the status flags you receive.</li>
-                <li>Follow the <code>next</code> link to stay up to date.</li>
-              </ol>
-            </div>
-          </div>
-          <div id="operation--api-inputs-get" class="operation panel" data-traverse-target="operation--api-inputs-get">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Inputs">Inputs</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">Search inputs</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">GET</span>
-                  <span class="operation-path">/api/inputs</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>This returns a summary of the inputs matching your search criteria.</p>
-                  <p>The result will contain no more than 100 inputs, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
-                  <p>If your result set is empty it means your operator does not have the privilege to view any inputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;. Perhaps there are no inputs in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
-                  <p>When you have loaded them all there will be no <code>next</code> link.</p>
-                  <p>Take this URL from the &#39;href&#39; field in the <code>features.inputs.inputs</code> section of <code>/api</code>.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">sort</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-enum" title="Possible values">
-                          <span class="json-property-enum-item">id</span>,
-                          <span class="json-property-enum-item">name</span>,
-                          <span class="json-property-enum-item">-id</span>,
-                          <span class="json-property-enum-item">-name</span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Before paginating your results the server can sort them by name or database ID.</p>
-                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
-                      <p>There are two reasons to prefer sorting by ID:</p>
-                      <ol>
-                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
-                        <li>Following a <code>next</code> link is dramatically quicker when sorting by ID.</li>
-                      </ol>
-                      <p>They are such significant motivators that we strongly recommend sorting by ID in the query when there is a chance your results will overflow one page.</p>
-                      <p>The default is changing in a future version of Command Centre.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">top</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">integer</span>
-                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The maximum number of items to return per page.</p>
-                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">name</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
-                      <p>The search is always case-insensitive.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">division</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string[]</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Only return items in these divisions.</p>
-                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
-                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">fields</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-enum" title="Possible values">
-                          <span class="json-property-enum-item">href</span>,
-                          <span class="json-property-enum-item">id</span>,
-                          <span class="json-property-enum-item">name</span>,
-                          <span class="json-property-enum-item">shortName</span>,
-                          <span class="json-property-enum-item">description</span>,
-                          <span class="json-property-enum-item">division</span>,
-                          <span class="json-property-enum-item">commands</span>,
-                          <span class="json-property-enum-item">statusFlags</span>,
-                          <span class="json-property-enum-item">status</span>,
-                          <span class="json-property-enum-item">notes</span>,
-                          <span class="json-property-enum-item">updates</span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Return these fields in the details page instead of the default set. The values you can list are the same as the field names you would see in the results. Use it to cut back on the size of the response. Separate values with commas.</p>
-                      <p>Treat the string matches as case-sensitive.</p>
-                      <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">200 OK</div>
-                      <div class="prop-ref">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Inputs">Inputs</a>
-                        </span>
-                      </div>
-                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
-                    </div>
-                    <div class="prop-value">
-                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Response Example
-                    <span>(200 OK)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;results&quot;</span>: [
-    {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;9701&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Studio door open sensor&quot;</span>
-    }
-  ],
-  <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs?skip=100&quot;</span>
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="operation--api-inputs--id--get" class="operation panel" data-traverse-target="operation--api-inputs--id--get">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Inputs">Inputs</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">Get details of an input</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">GET</span>
-                  <span class="operation-path">/api/inputs/{id}</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>This returns the detail of one input.</p>
-                  <p>Follow the &#39;href&#39; field in an
-                    <a href="#definition-Input-summary">input summary</a> to get here.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">id</div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in path </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The ID of the input.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">fields</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-enum" title="Possible values">
-                          <span class="json-property-enum-item">href</span>,
-                          <span class="json-property-enum-item">id</span>,
-                          <span class="json-property-enum-item">name</span>,
-                          <span class="json-property-enum-item">shortName</span>,
-                          <span class="json-property-enum-item">description</span>,
-                          <span class="json-property-enum-item">division</span>,
-                          <span class="json-property-enum-item">commands</span>,
-                          <span class="json-property-enum-item">statusFlags</span>,
-                          <span class="json-property-enum-item">status</span>,
-                          <span class="json-property-enum-item">notes</span>,
-                          <span class="json-property-enum-item">updates</span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using it you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
-                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
-                      <p>Treat the string matches as case-sensitive.</p>
-                      <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">200 OK</div>
-                      <div class="prop-ref">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Input detail">Input detail</a>
-                        </span>
-                      </div>
-                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
-                    </div>
-                    <div class="prop-value">
-                      <p>Success.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">404 Not Found</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The request&#39;s URL does not represent an input, or the operator does not have a privilege on the input&#39;s division that allows viewing inputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Response Example
-                    <span>(200 OK)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;9701&quot;</span>,
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Studio door open sensor&quot;</span>,
-  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Reed switch.&quot;</span>,
-  <span class="hljs-attr">&quot;division&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
-  },
-  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;Short text&quot;</span>,
-  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
-  <span class="hljs-attr">&quot;updates&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/updates/0_0_0&quot;</span>
-  },
-  <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
-    <span class="hljs-string">&quot;open&quot;</span>
-  ],
-  <span class="hljs-attr">&quot;commands&quot;</span>: {
-    <span class="hljs-attr">&quot;shunt&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/shunt&quot;</span>
-    },
-    <span class="hljs-attr">&quot;unshunt&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/unshunt&quot;</span>
-    },
-    <span class="hljs-attr">&quot;isolate&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/isolate&quot;</span>
-    },
-    <span class="hljs-attr">&quot;deisolate&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/deisolate&quot;</span>
-    }
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="operation--api-inputs--id--shunt-post" class="operation panel" data-traverse-target="operation--api-inputs--id--shunt-post">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Inputs">Inputs</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">Shunt an input</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">POST</span>
-                  <span class="operation-path">/api/inputs/{id}/shunt</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>Sends an override to shunt an input, preventing all communication.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">id</div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in path </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The ID of the input.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">204 No Content</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Success.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"> </div>
-            </div>
-          </div>
-          <div id="operation--api-inputs--id--unshunt-post" class="operation panel" data-traverse-target="operation--api-inputs--id--unshunt-post">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Inputs">Inputs</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">Unshunt an input</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">POST</span>
-                  <span class="operation-path">/api/inputs/{id}/unshunt</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>Sends an override to unshunt an input, re-enabling communication.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">id</div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in path </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The ID of the input.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">204 No Content</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Success.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"> </div>
-            </div>
-          </div>
-          <div id="operation--api-inputs--id--isolate-post" class="operation panel" data-traverse-target="operation--api-inputs--id--isolate-post">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Inputs">Inputs</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">Isolate an input</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">POST</span>
-                  <span class="operation-path">/api/inputs/{id}/isolate</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>Sends an override to isolate an input. An isolated input will not prevent an alarm zone from arming.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">id</div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in path </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The ID of the input.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">204 No Content</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Success.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"> </div>
-            </div>
-          </div>
-          <div id="operation--api-inputs--id--deisolate-post" class="operation panel" data-traverse-target="operation--api-inputs--id--deisolate-post">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Inputs">Inputs</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">De-isolate an input</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">POST</span>
-                  <span class="operation-path">/api/inputs/{id}/deisolate</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>Sends an override to end the isolation of an input.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">id</div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in path </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The ID of the input.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">204 No Content</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Success.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have the &#39;Maintenance Override&#39; privilege.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"> </div>
-            </div>
-          </div>
-          <div id="operation--api-inputs--id--updates-get" class="operation panel" data-traverse-target="operation--api-inputs--id--updates-get">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Inputs">Inputs</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">Monitor an input</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">GET</span>
-                  <span class="operation-path">/api/inputs/{id}/updates</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>See the
-                    <a href="#topic-Item-status">item status topic</a> for how to use the updates APIs.</p>
-                  <p>Note that this API call is good for watching one item only; if you want to monitor several, you are better off with a
-                    <a href="events.html#status-subscriptions">status subscription</a>.</p>
-                  <p>Follow the &#39;updates&#39; field in an input
-                    <a href="#definition-Input-summary">summary</a> or
-                    <a href="#definition-Input-detail">details</a> pages to get here.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">id</div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in path </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The ID of the input.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">fields</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-enum" title="Possible values">
-                          <span class="json-property-enum-item">status</span>,
-                          <span class="json-property-enum-item">statusText</span>,
-                          <span class="json-property-enum-item">statusFlags</span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Return these fields in the update, instead of the default set. Note that removing fields also saves you from updates to those fields.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">200 OK</div>
-                      <div class="prop-ref"></div>
-                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
-                    </div>
-                    <div class="prop-value">
-                      <p>Success. See the
-                        <a href="#tag-Inputs">introduction</a> for a description of the three status fields.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The site does not have the RESTStatus licence.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">404 Not Found</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The request&#39;s URL does not represent an input, or the operator does not have a privilege on the input&#39;s division that allows viewing inputs, such as &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Maintenance Override&#39;.&quot;</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Response Example
-                    <span>(200 OK)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;updates&quot;</span>: {
-    <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;This Input is Open-Circuit Tampered.&quot;</span>,
-    <span class="hljs-attr">&quot;statusText&quot;</span>: <span class="hljs-string">&quot;This Input is Open-Circuit Tampered.&quot;</span>,
-    <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
-      <span class="hljs-string">&quot;open&quot;</span>,
-      <span class="hljs-string">&quot;tamper&quot;</span>
-    ]
-  },
-  <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/2365/updates/9_1&quot;</span>
   }
 }
 </code></pre> </body>
@@ -8252,9 +8450,9 @@
               </div>
             </div>
           </div>
-          <div id="definition-Access-zone-count" class="definition panel" data-traverse-target="definition-Access-zone-count">
+          <div id="definition-Access-Zone-count" class="definition panel" data-traverse-target="definition-Access-Zone-count">
             <h2 class="panel-title">
-              <a name="/definitions/Access zone count"></a>Access zone count: object
+              <a name="/definitions/Access Zone count"></a>Access Zone count: object
               <!-- <span class="json-property-type"><span class="json-property-type">object</span>
               <span class="json-property-range" title="Value limits"></span>
               
@@ -8891,6 +9089,162 @@
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/cancel&quot;</span>
     }
   }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Day-categories" class="definition panel" data-traverse-target="definition-Day-categories">
+            <h2 class="panel-title">
+              <a name="/definitions/Day categories"></a>Day categories:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>An array of day categories, and a <code>next</code> link for more.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="results" class="has-description">
+                      <span class="json-property-name">results:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/Day category">Day category</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>An array of day categories.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/Day category">Day category</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="next" class="has-description">
+                      <span class="json-property-name">next:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The link to the next page. Absent if you have retrieved them all.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Day Category&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/3&quot;</span>,
+      <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Factory default&quot;</span>,
+      <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;The default calendar puts every day in this.&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories?skip=100&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Day-category" class="definition panel" data-traverse-target="definition-Day-category">
+            <h2 class="panel-title">
+              <a name="/definitions/Day category"></a>Day category:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p><code>/api/day_categories</code> returns an array of these. Each gives you enough about a day category to identify it and use it in a schedule: its href, name, and (if you ask for them using the <code>fields</code> parameter) notes and description.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="name">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the string to use when placing a day category on a schedule.</p>
+                    </dd>
+                    <dt data-property-name="description" class="has-description">
+                      <span class="json-property-name">description:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Not in the default field set. If you want it, you need to ask for it using <code>fields</code>.</p>
+                    </dd>
+                    <dt data-property-name="notes" class="has-description">
+                      <span class="json-property-name">notes:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Also not in the default field set. If you want it, you need to ask for it.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Day Category&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/3&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Factory default&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;The default calendar puts every day in this.&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -9778,6 +10132,399 @@
               </div>
             </div>
           </div>
+          <div id="definition-Inputs" class="definition panel" data-traverse-target="definition-Inputs">
+            <h2 class="panel-title">
+              <a name="/definitions/Inputs"></a>Inputs:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>An array of input summaries, and a <code>next</code> link for more.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="results" class="has-description">
+                      <span class="json-property-name">results:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/Input summary">Input summary</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>An array of input summaries.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/Input summary">Input summary</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="next" class="has-description">
+                      <span class="json-property-name">next:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The link to the next page. Absent if you have retrieved them all.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;9701&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Studio door open sensor&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs?skip=100&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Input-summary" class="definition panel" data-traverse-target="definition-Input-summary">
+            <h2 class="panel-title">
+              <a name="/definitions/Input summary"></a>Input summary:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p><code>/api/inputs</code> returns an array of these. It is a subset of what you get from a input&#39;s detail page at <code>/api/inputs/{id}</code> (linked as the href in this object).</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A link to an
+                        <a href="#definition-Input-detail">input detail</a> object for this input.</p>
+                    </dd>
+                    <dt data-property-name="id" class="has-description">
+                      <span class="json-property-name">id:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                        <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                    </dd>
+                    <dt data-property-name="name">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;9701&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Studio door open sensor&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Input-detail" class="definition panel" data-traverse-target="definition-Input-detail">
+            <h2 class="panel-title">
+              <a name="/definitions/Input detail"></a>Input detail:
+              <!-- <span class="json-property-type"><span class="json-property-type"></span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>
+                    <a href="#operation--api-inputs--id--get">/api/inputs/{id}</a> returns one of these.</p>
+                </section>
+                <section class="json-schema-allOf">
+                  <section class="json-schema-allOf-inherited">
+                    <ul>
+                      <span class="">
+                        <a class="json-schema-ref" href="#/definitions/Input summary">Input summary</a>
+                      </span>
+                    </ul>
+                  </section>
+                  <section class="json-schema-allOf-additional">
+                    <section class="json-schema-properties">
+                      <dl>
+                        <dt data-property-name="description">
+                          <span class="json-property-name">description:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dt data-property-name="division" class="has-description">
+                          <span class="json-property-name">division:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>The division containing this input.</p>
+                        </dd>
+                        <dt data-property-name="shortName" class="has-description">
+                          <span class="json-property-name">shortName:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                          <span class="json-property-range" title="String length limits"> (up to 16 chars) </span>
+                        </dt>
+                        <dd>
+                          <p>Short names are not displayed by default. You must ask for them using the &#39;fields&#39; parameter:</p>
+                          <p><code>?fields=shortname,...</code>.</p>
+                        </dd>
+                        <dt data-property-name="notes" class="has-description">
+                          <span class="json-property-name">notes:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>Because of their potential size, notes are only available by request. Use the &#39;fields&#39; parameter:</p>
+                          <p><code>?fields=defaults,notes,...</code></p>
+                        </dd>
+                        <dt data-property-name="updates" class="has-description">
+                          <span class="json-property-name">updates:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>Follow the URL in the href inside this block to receive the item&#39;s current status, then follow the <code>next</code> link in the results to long poll for changes to that status.</p>
+                          <p>Update pages take the same <code>fields</code> parameter as summary and details pages. You should use that to request all the fields you need in the update.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="href">
+                                <span class="json-property-name">href:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-format">(url)</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                            </dl>
+                          </section>
+                        </dt>
+                        <dt data-property-name="statusFlags" class="has-description">
+                          <span class="json-property-name">statusFlags:</span>
+                          <span class="json-property-type">string[]</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something is monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the item&#39;s <code>updates</code> link or (if you are running 8.30 or better)
+                            <a href="events.html#status-subscriptions">status subscriptions</a>. See the
+                            <a href="#topic-Item-status">item status</a> section for a full description of how to stay up to date with item status, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-array-items">
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                            <div class="json-inner-schema"> </div>
+                          </section>
+                        </dt>
+                        <dt data-property-name="commands" class="has-description">
+                          <span class="json-property-name">commands:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>A block of commands, each represented by a block containing an href that accepts a POST that will send an override to the input.</p>
+                          <p>It will be missing if your operator does not have a privilege that allows overriding the input (examples of which are in the documentation for the POSTs).</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="shunt">
+                                <span class="json-property-name">shunt:</span>
+                                <span class="json-property-type">object</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt class="json-inner-schema">
+                                <section class="json-schema-properties">
+                                  <dl>
+                                    <dt data-property-name="href" class="has-description">
+                                      <span class="json-property-name">href:</span>
+                                      <span class="json-property-type">string</span>
+                                      <span class="json-property-format">(url)</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                    </dt>
+                                    <dd>
+                                      <p>
+                                        <a href="#operation--api-inputs--id--off-shunt">POST</a> to this to shunt the input.</p>
+                                    </dd>
+                                  </dl>
+                                </section>
+                              </dt>
+                              <dt data-property-name="unshunt">
+                                <span class="json-property-name">unshunt:</span>
+                                <span class="json-property-type">object</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt class="json-inner-schema">
+                                <section class="json-schema-properties">
+                                  <dl>
+                                    <dt data-property-name="href" class="has-description">
+                                      <span class="json-property-name">href:</span>
+                                      <span class="json-property-type">string</span>
+                                      <span class="json-property-format">(url)</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                    </dt>
+                                    <dd>
+                                      <p>
+                                        <a href="#operation--api-inputs--id--off-unshunt">POST</a> to this to stop shunting the input.</p>
+                                    </dd>
+                                  </dl>
+                                </section>
+                              </dt>
+                              <dt data-property-name="isolate">
+                                <span class="json-property-name">isolate:</span>
+                                <span class="json-property-type">object</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt class="json-inner-schema">
+                                <section class="json-schema-properties">
+                                  <dl>
+                                    <dt data-property-name="href" class="has-description">
+                                      <span class="json-property-name">href:</span>
+                                      <span class="json-property-type">string</span>
+                                      <span class="json-property-format">(url)</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                    </dt>
+                                    <dd>
+                                      <p>
+                                        <a href="#operation--api-inputs--id--off-isolate">POST</a> to this to isolate the input. Isolated inputs do not prevent alarm zones from arming.</p>
+                                      <p>The link will be missing if the input is shunted.</p>
+                                    </dd>
+                                  </dl>
+                                </section>
+                              </dt>
+                              <dt data-property-name="deisolate">
+                                <span class="json-property-name">deisolate:</span>
+                                <span class="json-property-type">object</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt class="json-inner-schema">
+                                <section class="json-schema-properties">
+                                  <dl>
+                                    <dt data-property-name="href" class="has-description">
+                                      <span class="json-property-name">href:</span>
+                                      <span class="json-property-type">string</span>
+                                      <span class="json-property-format">(url)</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                    </dt>
+                                    <dd>
+                                      <p>
+                                        <a href="#operation--api-inputs--id--off-deisolate">POST</a> to this to stop isolating the input. The link will be missing if the input is shunted.</p>
+                                    </dd>
+                                  </dl>
+                                </section>
+                              </dt>
+                            </dl>
+                          </section>
+                        </dt>
+                      </dl>
+                    </section>
+                  </section>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;9701&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Studio door open sensor&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Reed switch.&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;Short text&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/updates/0_0_0&quot;</span>
+  },
+  <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
+    <span class="hljs-string">&quot;open&quot;</span>
+  ],
+  <span class="hljs-attr">&quot;commands&quot;</span>: {
+    <span class="hljs-attr">&quot;shunt&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/shunt&quot;</span>
+    },
+    <span class="hljs-attr">&quot;unshunt&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/unshunt&quot;</span>
+    },
+    <span class="hljs-attr">&quot;isolate&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/isolate&quot;</span>
+    },
+    <span class="hljs-attr">&quot;deisolate&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/deisolate&quot;</span>
+    }
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
           <div id="definition-Macros" class="definition panel" data-traverse-target="definition-Macros">
             <h2 class="panel-title">
               <a name="/definitions/Macros"></a>Macros:
@@ -10426,399 +11173,6 @@
     },
     <span class="hljs-attr">&quot;offUntil&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs/2365/off&quot;</span>
-    }
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="definition-Inputs" class="definition panel" data-traverse-target="definition-Inputs">
-            <h2 class="panel-title">
-              <a name="/definitions/Inputs"></a>Inputs:
-              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
-              <span class="json-property-range" title="Value limits"></span>
-              
-              
-              </span> -->
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="json-schema-description">
-                  <p>An array of input summaries, and a <code>next</code> link for more.</p>
-                </section>
-                <section class="json-schema-properties">
-                  <dl>
-                    <dt data-property-name="results" class="has-description">
-                      <span class="json-property-name">results:</span>
-                      <span class="json-property-type">
-                        <span class="json-schema-ref-array">
-                          <a class="json-schema-ref" href="#/definitions/Input summary">Input summary</a>
-                        </span>
-                      </span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>An array of input summaries.</p>
-                    </dd>
-                    <dt class="json-inner-schema">
-                      <section class="json-schema-array-items">
-                        <span class="json-property-type">
-                          <span class="">
-                            <a class="json-schema-ref" href="#/definitions/Input summary">Input summary</a>
-                          </span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                        <div class="json-inner-schema"> </div>
-                      </section>
-                    </dt>
-                    <dt data-property-name="next" class="has-description">
-                      <span class="json-property-name">next:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>The link to the next page. Absent if you have retrieved them all.</p>
-                    </dd>
-                    <dt class="json-inner-schema">
-                      <section class="json-schema-properties">
-                        <dl>
-                          <dt data-property-name="href">
-                            <span class="json-property-name">href:</span>
-                            <span class="json-property-type">string</span>
-                            <span class="json-property-format">(url)</span>
-                            <span class="json-property-range" title="Value limits"></span>
-                          </dt>
-                        </dl>
-                      </section>
-                    </dt>
-                  </dl>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;results&quot;</span>: [
-    {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;9701&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Studio door open sensor&quot;</span>
-    }
-  ],
-  <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs?skip=100&quot;</span>
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="definition-Input-summary" class="definition panel" data-traverse-target="definition-Input-summary">
-            <h2 class="panel-title">
-              <a name="/definitions/Input summary"></a>Input summary:
-              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
-              <span class="json-property-range" title="Value limits"></span>
-              
-              
-              </span> -->
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="json-schema-description">
-                  <p><code>/api/inputs</code> returns an array of these. It is a subset of what you get from a input&#39;s detail page at <code>/api/inputs/{id}</code> (linked as the href in this object).</p>
-                </section>
-                <section class="json-schema-properties">
-                  <dl>
-                    <dt data-property-name="href" class="has-description">
-                      <span class="json-property-name">href:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-format">(url)</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>A link to an
-                        <a href="#definition-Input-detail">input detail</a> object for this input.</p>
-                    </dd>
-                    <dt data-property-name="id" class="has-description">
-                      <span class="json-property-name">id:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
-                        <a href="events.html#operation--api-events-get">event filters</a>.</p>
-                    </dd>
-                    <dt data-property-name="name">
-                      <span class="json-property-name">name:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                  </dl>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;9701&quot;</span>,
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Studio door open sensor&quot;</span>
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="definition-Input-detail" class="definition panel" data-traverse-target="definition-Input-detail">
-            <h2 class="panel-title">
-              <a name="/definitions/Input detail"></a>Input detail:
-              <!-- <span class="json-property-type"><span class="json-property-type"></span>
-              <span class="json-property-range" title="Value limits"></span>
-              
-              
-              </span> -->
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="json-schema-description">
-                  <p>
-                    <a href="#operation--api-inputs--id--get">/api/inputs/{id}</a> returns one of these.</p>
-                </section>
-                <section class="json-schema-allOf">
-                  <section class="json-schema-allOf-inherited">
-                    <ul>
-                      <span class="">
-                        <a class="json-schema-ref" href="#/definitions/Input summary">Input summary</a>
-                      </span>
-                    </ul>
-                  </section>
-                  <section class="json-schema-allOf-additional">
-                    <section class="json-schema-properties">
-                      <dl>
-                        <dt data-property-name="description">
-                          <span class="json-property-name">description:</span>
-                          <span class="json-property-type">string</span>
-                          <span class="json-property-range" title="Value limits"></span>
-                        </dt>
-                        <dt data-property-name="division" class="has-description">
-                          <span class="json-property-name">division:</span>
-                          <span class="json-property-type">object</span>
-                          <span class="json-property-range" title="Value limits"></span>
-                        </dt>
-                        <dd>
-                          <p>The division containing this input.</p>
-                        </dd>
-                        <dt data-property-name="shortName" class="has-description">
-                          <span class="json-property-name">shortName:</span>
-                          <span class="json-property-type">string</span>
-                          <span class="json-property-range" title="Value limits"></span>
-                          <span class="json-property-range" title="String length limits"> (up to 16 chars) </span>
-                        </dt>
-                        <dd>
-                          <p>Short names are not displayed by default. You must ask for them using the &#39;fields&#39; parameter:</p>
-                          <p><code>?fields=shortname,...</code>.</p>
-                        </dd>
-                        <dt data-property-name="notes" class="has-description">
-                          <span class="json-property-name">notes:</span>
-                          <span class="json-property-type">string</span>
-                          <span class="json-property-range" title="Value limits"></span>
-                        </dt>
-                        <dd>
-                          <p>Because of their potential size, notes are only available by request. Use the &#39;fields&#39; parameter:</p>
-                          <p><code>?fields=defaults,notes,...</code></p>
-                        </dd>
-                        <dt data-property-name="updates" class="has-description">
-                          <span class="json-property-name">updates:</span>
-                          <span class="json-property-type">object</span>
-                          <span class="json-property-range" title="Value limits"></span>
-                        </dt>
-                        <dd>
-                          <p>Follow the URL in the href inside this block to receive the item&#39;s current status, then follow the <code>next</code> link in the results to long poll for changes to that status.</p>
-                          <p>Update pages take the same <code>fields</code> parameter as summary and details pages. You should use that to request all the fields you need in the update.</p>
-                        </dd>
-                        <dt class="json-inner-schema">
-                          <section class="json-schema-properties">
-                            <dl>
-                              <dt data-property-name="href">
-                                <span class="json-property-name">href:</span>
-                                <span class="json-property-type">string</span>
-                                <span class="json-property-format">(url)</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                            </dl>
-                          </section>
-                        </dt>
-                        <dt data-property-name="statusFlags" class="has-description">
-                          <span class="json-property-name">statusFlags:</span>
-                          <span class="json-property-type">string[]</span>
-                          <span class="json-property-range" title="Value limits"></span>
-                        </dt>
-                        <dd>
-                          <p>The search and details pages do not return status flags by default, because an item&#39;s status is unknown until something is monitoring it. If you want status flags on the search and details pages you must ask for them using the <code>fields</code> parameter, but our advice is to monitor them using the item&#39;s <code>updates</code> link or (if you are running 8.30 or better)
-                            <a href="events.html#status-subscriptions">status subscriptions</a>. See the
-                            <a href="#topic-Item-status">item status</a> section for a full description of how to stay up to date with item status, and this item&#39;s introduction in the Operations section for what flags this item might return and what they mean.</p>
-                        </dd>
-                        <dt class="json-inner-schema">
-                          <section class="json-schema-array-items">
-                            <span class="json-property-type">string</span>
-                            <span class="json-property-range" title="Value limits"></span>
-                            <div class="json-inner-schema"> </div>
-                          </section>
-                        </dt>
-                        <dt data-property-name="commands" class="has-description">
-                          <span class="json-property-name">commands:</span>
-                          <span class="json-property-type">object</span>
-                          <span class="json-property-range" title="Value limits"></span>
-                        </dt>
-                        <dd>
-                          <p>A block of commands, each represented by a block containing an href that accepts a POST that will send an override to the input.</p>
-                          <p>It will be missing if your operator does not have a privilege that allows overriding the input (examples of which are in the documentation for the POSTs).</p>
-                        </dd>
-                        <dt class="json-inner-schema">
-                          <section class="json-schema-properties">
-                            <dl>
-                              <dt data-property-name="shunt">
-                                <span class="json-property-name">shunt:</span>
-                                <span class="json-property-type">object</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dt class="json-inner-schema">
-                                <section class="json-schema-properties">
-                                  <dl>
-                                    <dt data-property-name="href" class="has-description">
-                                      <span class="json-property-name">href:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-format">(url)</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>
-                                        <a href="#operation--api-inputs--id--off-shunt">POST</a> to this to shunt the input.</p>
-                                    </dd>
-                                  </dl>
-                                </section>
-                              </dt>
-                              <dt data-property-name="unshunt">
-                                <span class="json-property-name">unshunt:</span>
-                                <span class="json-property-type">object</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dt class="json-inner-schema">
-                                <section class="json-schema-properties">
-                                  <dl>
-                                    <dt data-property-name="href" class="has-description">
-                                      <span class="json-property-name">href:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-format">(url)</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>
-                                        <a href="#operation--api-inputs--id--off-unshunt">POST</a> to this to stop shunting the input.</p>
-                                    </dd>
-                                  </dl>
-                                </section>
-                              </dt>
-                              <dt data-property-name="isolate">
-                                <span class="json-property-name">isolate:</span>
-                                <span class="json-property-type">object</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dt class="json-inner-schema">
-                                <section class="json-schema-properties">
-                                  <dl>
-                                    <dt data-property-name="href" class="has-description">
-                                      <span class="json-property-name">href:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-format">(url)</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>
-                                        <a href="#operation--api-inputs--id--off-isolate">POST</a> to this to isolate the input. Isolated inputs do not prevent alarm zones from arming.</p>
-                                      <p>The link will be missing if the input is shunted.</p>
-                                    </dd>
-                                  </dl>
-                                </section>
-                              </dt>
-                              <dt data-property-name="deisolate">
-                                <span class="json-property-name">deisolate:</span>
-                                <span class="json-property-type">object</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dt class="json-inner-schema">
-                                <section class="json-schema-properties">
-                                  <dl>
-                                    <dt data-property-name="href" class="has-description">
-                                      <span class="json-property-name">href:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-format">(url)</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>
-                                        <a href="#operation--api-inputs--id--off-deisolate">POST</a> to this to stop isolating the input. The link will be missing if the input is shunted.</p>
-                                    </dd>
-                                  </dl>
-                                </section>
-                              </dt>
-                            </dl>
-                          </section>
-                        </dt>
-                      </dl>
-                    </section>
-                  </section>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;9701&quot;</span>,
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Studio door open sensor&quot;</span>,
-  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Reed switch.&quot;</span>,
-  <span class="hljs-attr">&quot;division&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
-  },
-  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;Short text&quot;</span>,
-  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
-  <span class="hljs-attr">&quot;updates&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/updates/0_0_0&quot;</span>
-  },
-  <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
-    <span class="hljs-string">&quot;open&quot;</span>
-  ],
-  <span class="hljs-attr">&quot;commands&quot;</span>: {
-    <span class="hljs-attr">&quot;shunt&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/shunt&quot;</span>
-    },
-    <span class="hljs-attr">&quot;unshunt&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/unshunt&quot;</span>
-    },
-    <span class="hljs-attr">&quot;isolate&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/isolate&quot;</span>
-    },
-    <span class="hljs-attr">&quot;deisolate&quot;</span>: {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/deisolate&quot;</span>
     }
   }
 }

@@ -674,9 +674,7 @@ tags:
     cardholder, you will work on the 'has a' relationships, not the 'is a' relationships.  In other
     words you can change the cardholder's supervisor but not who the cardholder supervises.
 
-    ### Use cases
-
-    #### Searching for a role by name and assigning a relationship
+    ### Use case:  searching for a role by name and assigning a relationship
 
     1. `GET /api`
     1. Follow the link at `features.roles.roles.href` after adding search terms such as
@@ -1307,6 +1305,8 @@ definitions:
         description: |
           The serial number of a physical access card, as a hex string without a leading '0x'.  This
           may not be not present on older cards.
+
+          This field was read-only until 7.90.  It is read-write in 8.00 and later.
 
         type: string
         example: "045A5769713E80"
@@ -3461,9 +3461,9 @@ definitions:
 
   Role:
     description: |
-      `/api/roles` returns an array of these.  It gives you enough about a role to identify it and
-      use it in a cardholer PATCH:  its href, name, description, and (if you ask for them using the
-      `fields` parameter) notes.
+      `/api/roles` returns an array of these.  Each element gives you enough about a role to
+      identify it and use it in a cardholer PATCH:  its href, name, description, and (if you ask for
+      them using the `fields` parameter) notes.
     properties:
       name:
         type: string
@@ -3472,7 +3472,7 @@ definitions:
         type: string
         format: url
         description: |
-          This his the string to use when creating a relationship between cardholders using this
+          This is the string to use when creating a relationship between cardholders using this
           role.
         example: "https://localhost:8904/api/roles/1399"
       serverDisplayName:

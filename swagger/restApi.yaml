@@ -12,7 +12,6 @@ produces: [application/json]
 consumes: [application/json]
 
 info:
-  version: "8.40.4"
   title: "Command Centre REST API:  Non-cardholder items"
   description: |
     This document describes how you can use the Command Centre REST API to view and manage
@@ -42,10 +41,15 @@ info:
     RESTOverrides.  The two licences do not overlap:  to watch an item and override it, you will
     need both.
 
+    ### Changes in 8.60
+
+    8.60 increases the number of items in its search results and sorts them differently, if the
+    query did not use query parameters to override the defaults.
+
     ### Changes in 8.50
 
-    8.50 increases the number of items in its search results and sorts them differently, if the
-    query did not use query parameters to override the defaults.
+    * The day categories controller, which returns day categories.
+    * The schedules controller, providing CRUD of schedule items.
 
     ### Changes in 8.30
 
@@ -307,7 +311,7 @@ x-common-blocks-this-is-made-up:
   fds_ignored: &FIELDSDESC_SUM
     description: |
       Return these fields in the search results.  The values you can list are the same as the field
-      names in the details page.  Using it you can return everything on the summary page that you
+      names in the details page.  Using this you can return everything on the summary page that you
       would find on the details page.  Separate values with commas.
 
       Use the special value `defaults` to return the fields you would have received had you not given
@@ -330,6 +334,16 @@ x-common-blocks-this-is-made-up:
       In v8.00 you will receive the href and internal ID even if you did not ask for them.  In 8.10
       and later you will only get what you asked for.  If you are going to send the fields parameter
       and need the href or ID, be explicit.
+
+  fdso_ignored: &FIELDSDESC_SUMONLY
+    description: |
+      Return these fields in the search results.  The values you can list are the field names in the
+      schema definitions in this document.  Separate values with commas.
+
+      Use the special value `defaults` to return the fields you would have received had you not given
+      the parameter at all.  Obviously only do that if you have more to add.
+
+      Treat the string matches as case-sensitive.
 
   statusflags_ignore: &STATUSFLAGS
     description: |
@@ -391,6 +405,9 @@ x-common-blocks-this-is-made-up:
     type: string
     enum: [href, id, name, shortName, description, division, commands, statusFlags, status, notes, updates]
 
+###################################################################################################
+###################################################################################################
+###################################################################################################
 definitions:
   Access Zones:
     tags:
@@ -711,12 +728,14 @@ definitions:
 
       - $ref: "#/definitions/Access Zone summary"
 
-  Access zone count:
+  Access Zone count:
     type: object
     properties:
       zoneCount:
         type: integer
-        description: Put this in the body of access zone override POSTs to set the count of cardholders in the access zone.
+        description: |
+          Put this in the body of access zone override POSTs to set the count of cardholders in the
+          access zone.
         example: 100
 
 #######################################################################
@@ -950,9 +969,51 @@ definitions:
 
 #######################################################################
 #######################################################################
+  Day categories:
+    description: An array of day categories, and a `next` link for more.
+    properties:
+      results:
+        type: array
+        description: An array of day categories.
+        items: { $ref: '#/definitions/Day category' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/day_categories?skip=100"
+
+  Day category:
+    description: |
+      `/api/day_categories` returns an array of these.  Each gives you enough about a day category
+      to identify it and use it in a schedule:  its href, name, and (if you ask for them using the
+      `fields` parameter) notes and description.
+    properties:
+      name:
+        type: string
+        example: "Default Day Category"
+      href:
+        type: string
+        format: url
+        description: |
+          This is the string to use when placing a day category on a schedule.
+        example: "https://localhost:8904/api/day_categories/3"
+      description:
+        type: string
+        description: |
+          Not in the default field set.  If you want it, you need to ask for it using `fields`.
+        example: "Factory default"
+      notes:
+        type: string
+        description: |
+          Also not in the default field set.  If you want it, you need to ask for it.
+        example: "The default calendar puts every day in this."
+
+#######################################################################
+#######################################################################
   Doors:
-    tags:
-      - "Doors"
     description: An array of door summaries, and a `next` link for more.
     properties:
       results:
@@ -1236,6 +1297,119 @@ definitions:
 
 #######################################################################
 #######################################################################
+  Inputs:
+    tags:
+      - "Inputs"
+    description: An array of input summaries, and a `next` link for more.
+    properties:
+      results:
+        type: array
+        description: An array of input summaries.
+        items: { $ref: '#/definitions/Input summary' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/inputs?skip=100"
+
+  Input summary:
+    description: |
+      `/api/inputs` returns an array of these.  It is a subset of what you get from a
+      input's detail page at `/api/inputs/{id}` (linked as the href in this object).
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to an [input detail](#definition-Input-detail) object for this input.
+        example: "https://localhost:8904/api/inputs/9701"
+      id:
+        type: string
+        description: |
+          An alphanumeric identifier, unique to the server. This is the ID to use in the
+          `source` parameter of [event filters](events.html#operation--api-events-get).
+        example: "9701"
+      name:
+        type: string
+        example: "Studio door open sensor"
+
+  Input detail:
+    description: |
+      [/api/inputs/{id}](#operation--api-inputs--id--get) returns one of these.
+
+    allOf:
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "Reed switch."
+          division:
+            type: object
+            description:  The division containing this input.
+            example:
+              href: "https://localhost:8904/api/divisions/2"
+          shortName: {<<: *SHORTNAME}
+          notes: {<<: *NOTES}
+          updates:
+            <<: *UPDATES
+            example: { href: "https://localhost:8904/api/inputs/9701/updates/0_0_0" }
+          statusFlags:
+            <<: *STATUSFLAGS
+            example: ["open"]
+          commands:
+            type: object
+            description: |
+              A block of commands, each represented by a block containing an href that accepts a
+              POST that will send an override to the input.
+
+              It will be missing if your operator does not have a privilege that allows overriding
+              the input (examples of which are in the documentation for the POSTs).
+
+            properties:
+              shunt:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/inputs/9701/shunt"
+                    description: "[POST](#operation--api-inputs--id--off-shunt) to this to shunt the input."
+                    type: string
+                    format: url
+              unshunt:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/inputs/9701/unshunt"
+                    description: "[POST](#operation--api-inputs--id--off-unshunt) to this to stop shunting the input."
+                    type: string
+                    format: url
+              isolate:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/inputs/9701/isolate"
+                    description: |
+                      [POST](#operation--api-inputs--id--off-isolate) to this to isolate the input.
+                      Isolated inputs do not prevent alarm zones from arming.
+
+                      The link will be missing if the input is shunted.
+                    type: string
+                    format: url
+              deisolate:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/inputs/9701/deisolate"
+                    description: "[POST](#operation--api-inputs--id--off-deisolate) to this to stop isolating the input.  The link will be missing if the input is shunted."
+                    type: string
+                    format: url
+
+      - $ref: "#/definitions/Input summary"
+
+#######################################################################
+#######################################################################
   Macros:
     tags:
       - "Macros"
@@ -1419,119 +1593,6 @@ definitions:
 
       - $ref: "#/definitions/Output summary"
 
-#######################################################################
-#######################################################################
-  Inputs:
-    tags:
-      - "Inputs"
-    description: An array of input summaries, and a `next` link for more.
-    properties:
-      results:
-        type: array
-        description: An array of input summaries.
-        items: { $ref: '#/definitions/Input summary' }
-
-      next:
-        type: object
-        description: The link to the next page.  Absent if you have retrieved them all.
-        properties:
-          href: { type: string, format: url }
-        example:
-          href: "https://localhost:8904/api/inputs?skip=100"
-
-  Input summary:
-    description: |
-      `/api/inputs` returns an array of these.  It is a subset of what you get from a
-      input's detail page at `/api/inputs/{id}` (linked as the href in this object).
-    properties:
-      href:
-        type: string
-        format: url
-        description: |
-          A link to an [input detail](#definition-Input-detail) object for this input.
-        example: "https://localhost:8904/api/inputs/9701"
-      id:
-        type: string
-        description: |
-          An alphanumeric identifier, unique to the server. This is the ID to use in the
-          `source` parameter of [event filters](events.html#operation--api-events-get).
-        example: "9701"
-      name:
-        type: string
-        example: "Studio door open sensor"
-
-  Input detail:
-    description: |
-      [/api/inputs/{id}](#operation--api-inputs--id--get) returns one of these.
-
-    allOf:
-      - type: object
-        properties:
-          description:
-            type: string
-            example: "Reed switch."
-          division:
-            type: object
-            description:  The division containing this input.
-            example:
-              href: "https://localhost:8904/api/divisions/2"
-          shortName: {<<: *SHORTNAME}
-          notes: {<<: *NOTES}
-          updates:
-            <<: *UPDATES
-            example: { href: "https://localhost:8904/api/inputs/9701/updates/0_0_0" }
-          statusFlags:
-            <<: *STATUSFLAGS
-            example: ["open"]
-          commands:
-            type: object
-            description: |
-              A block of commands, each represented by a block containing an href that accepts a
-              POST that will send an override to the input.
-
-              It will be missing if your operator does not have a privilege that allows overriding
-              the input (examples of which are in the documentation for the POSTs).
-
-            properties:
-              shunt:
-                type: object
-                properties:
-                  href:
-                    example: "https://localhost:8904/api/inputs/9701/shunt"
-                    description: "[POST](#operation--api-inputs--id--off-shunt) to this to shunt the input."
-                    type: string
-                    format: url
-              unshunt:
-                type: object
-                properties:
-                  href:
-                    example: "https://localhost:8904/api/inputs/9701/unshunt"
-                    description: "[POST](#operation--api-inputs--id--off-unshunt) to this to stop shunting the input."
-                    type: string
-                    format: url
-              isolate:
-                type: object
-                properties:
-                  href:
-                    example: "https://localhost:8904/api/inputs/9701/isolate"
-                    description: |
-                      [POST](#operation--api-inputs--id--off-isolate) to this to isolate the input.
-                      Isolated inputs do not prevent alarm zones from arming.
-
-                      The link will be missing if the input is shunted.
-                    type: string
-                    format: url
-              deisolate:
-                type: object
-                properties:
-                  href:
-                    example: "https://localhost:8904/api/inputs/9701/deisolate"
-                    description: "[POST](#operation--api-inputs--id--off-deisolate) to this to stop isolating the input.  The link will be missing if the input is shunted."
-                    type: string
-                    format: url
-
-      - $ref: "#/definitions/Input summary"
-
   Override end time:
     type: object
     properties:
@@ -1545,7 +1606,9 @@ definitions:
           end time if you mis-spell 'endTime' or if you send a blank string.
         example: "2018-07-31T00:00:00Z"
 
-######################################################################
+###################################################################################################
+###################################################################################################
+###################################################################################################
 tags:
 - name: "Access Zones"
 
@@ -1730,6 +1793,23 @@ tags:
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
 
+- name: "Day categories"
+  description: |-
+    A day category links a calendar to a schedule.  The calendar determines the days of the year
+    that fall into a day category, and the schedule determines what happens at certain times on
+    those days.
+
+    This method gives you the day category hrefs you need when creating and modifying schedules.
+
+    ### Use case:  listing day categories
+    1. `GET /api`.
+    2. Follow the link at `features.dayCategories.dayCategories.href`, appending a search term such
+       as `name=substring` or `name="full name"` to filter the selection, and `fields` to tell the
+       server what to return about each day category.
+    3. Search the results for the day category you are after.  Normally you would follow the `next`
+       link until there isn't one, but day categories are not that numerous so they will most likely
+       to fit on one page.  Especially if you set `top=1000` (which is advised).
+
 - name: "Doors"
   description: |-
     These methods give you read access to basic data about Doors in the Command Centre
@@ -1871,6 +1951,73 @@ tags:
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
 
+- name: "Inputs"
+  description: |-
+    These methods, introduced in v8.10, give you read and override access to Input items.
+
+    The first use case below introduces the main entry point.  It is a paginated search interface
+    that gives you basic data for any number of inputs.  The href field for each input gives the
+    location of another page which gives more details, including the URLs you need to shunt or
+    isolate it.
+
+    ### Status flags
+
+    Even though the Configuration client lets you set your own state names for open, closed,
+    tampered open, and tampered short, status flags will always use 'closed' or 'open', and possibly
+    'tamper'.
+
+    Two-state inputs cannot report a tamper, because it is impossible to detect.  They can only be
+    open or closed.  Hence the name.
+
+    Three-state inputs can report a tamper, but only one of tampered open or tampered closed,
+    depending on their end-of-line resistance settings.
+
+    Four-state inputs can report tampered open (an open circuit) or tampered closed (a short).
+
+    If the input is online, its `statusFlags` field may contain one or more of these flags:
+
+    - `closed` means the input circuit is closed.
+    - `open` means the input circuit is open.
+
+    - `tamper` means the input circuit is shorted or open.
+    - `notPolled` means the input is shunted, which means intentionally ignored, and is essentially
+      offline.
+    - `isolated` means the input state will not prevent arming an alarm zone.
+
+    #### Input flag rules
+
+    - If and only if the input is online and not shunted ('notPolled' status flag), exactly one of
+      'closed' or 'open' will appear.
+
+    - 'closed' or 'open' may still appear if the input is tampered.
+
+    So, to establish if the input is in a completely normal state, look for 'closed' or 'open', and
+    make sure 'tamper' is _not_ there.  However bear in mind that inputs are often shunted for
+    ordinary reasons.
+
+    ### Use cases
+
+    #### Listing Inputs
+    1. `GET /api`.
+    2. Follow the link at `features.inputs.inputs.href`, appending a search term such as
+       `name=substring` to select the inputs, `top` if you expect lots of them, and `fields` to tell
+       the server what to return about each.  The next section covers those query parameters.
+    3. Process the results, following the `next` link if there is one.
+
+    #### Overriding an Input
+    1. Find the href for the input using the process above.
+    2. GET it.
+    3. Find the API URL to for the override you need in the `commands` structure of the
+       [results](#definition-Input-detail).
+    4. POST to that URL with an empty body.
+
+    #### Finding an input's status
+    1. Find the href for the input using the process above, and GET it.
+    3. Take the `updates` href from that page.
+    4. GET it.
+    4. Use the flag rules above to interpret the status flags you receive.
+    5. Follow the `next` link to stay up to date.
+
 - name: "Macros"
   description: |
     These methods give you read access to basic data about the Macros in the Command
@@ -1976,73 +2123,9 @@ tags:
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
 
-- name: "Inputs"
-  description: |-
-    These methods, introduced in v8.10, give you read and override access to Input items.
-
-    The first use case below introduces the main entry point.  It is a paginated search interface
-    that gives you basic data for any number of inputs.  The href field for each input gives the
-    location of another page which gives more details, including the URLs you need to shunt or
-    isolate it.
-
-    ### Status flags
-
-    Even though the Configuration client lets you set your own state names for open, closed,
-    tampered open, and tampered short, status flags will always use 'closed' or 'open', and possibly
-    'tamper'.
-
-    Two-state inputs cannot report a tamper, because it is impossible to detect.  They can only be
-    open or closed.  Hence the name.
-
-    Three-state inputs can report a tamper, but only one of tampered open or tampered closed,
-    depending on their end-of-line resistance settings.
-
-    Four-state inputs can report tampered open (an open circuit) or tampered closed (a short).
-
-    If the input is online, its `statusFlags` field may contain one or more of these flags:
-
-    - `closed` means the input circuit is closed.
-    - `open` means the input circuit is open.
-
-    - `tamper` means the input circuit is shorted or open.
-    - `notPolled` means the input is shunted, which means intentionally ignored, and is essentially
-      offline.
-    - `isolated` means the input state will not prevent arming an alarm zone.
-
-    #### Input flag rules
-
-    - If and only if the input is online and not shunted ('notPolled' status flag), exactly one of
-      'closed' or 'open' will appear.
-
-    - 'closed' or 'open' may still appear if the input is tampered.
-
-    So, to establish if the input is in a completely normal state, look for 'closed' or 'open', and
-    make sure 'tamper' is _not_ there.  However bear in mind that inputs are often shunted for
-    ordinary reasons.
-
-    ### Use cases
-
-    #### Listing Inputs
-    1. `GET /api`.
-    2. Follow the link at `features.inputs.inputs.href`, appending a search term such as
-       `name=substring` to select the inputs, `top` if you expect lots of them, and `fields` to tell
-       the server what to return about each.  The next section covers those query parameters.
-    3. Process the results, following the `next` link if there is one.
-
-    #### Overriding an Input
-    1. Find the href for the input using the process above.
-    2. GET it.
-    3. Find the API URL to for the override you need in the `commands` structure of the
-       [results](#definition-Input-detail).
-    4. POST to that URL with an empty body.
-
-    #### Finding an input's status
-    1. Find the href for the input using the process above, and GET it.
-    3. Take the `updates` href from that page.
-    4. GET it.
-    4. Use the flag rules above to interpret the status flags you receive.
-    5. Follow the `next` link to stay up to date.
-
+###################################################################################################
+###################################################################################################
+###################################################################################################
 paths:
 ######################################################################
 
@@ -2307,7 +2390,7 @@ paths:
         name: body
         required: true
         description: "The new cardholder count for the zone."
-        schema: {$ref: "#/definitions/Access zone count" }
+        schema: {$ref: "#/definitions/Access Zone count" }
 
       responses:
         204: { description: Success. }
@@ -2646,6 +2729,52 @@ paths:
         404: {$ref: "#responses/404alarmzone"}
 
 ######################################################################
+  /api/day_categories:
+    get:
+      tags:
+        - "Day categories"
+      summary: Search day categories
+      description: |
+        This returns the day categories that match your search criteria.
+
+        The result will contain no more than 100, or as many as you asked for more in your request;
+        you should follow the `next` link, if it is present, to collect the next batch.  Generally a
+        site does not have too many day categories, so if you set `top=1000` you are bound to
+        collect them all.
+
+        If your result set is empty it means your operator does not have any of the privileges that
+        allow viewing day categories, such as 'View Site', 'Configure Site', or 'Edit Schedules'.
+        Because day categories do not have divisions, having one of those privileges in _any_
+        division is enough.
+
+        When you have seen them all there will be no `next` link.
+
+        This does not take a `division` query parameter because day categories are not in divisions.
+
+        Take this URL from the 'href' field in the `features.dayCategories.dayCategories` section of
+        `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - name: "fields"
+        <<: *FIELDSDESC_SUMONLY
+        in: query
+        required: false
+        type: string
+        enum: [href, name, description, notes]
+
+      responses:
+        200:
+          description: |
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Day categories'}
+        403:
+          description: |
+            The site does not have the RESTCardholders, RESTStatus, or RESTOverrides licence.
+
+######################################################################
   /api/doors:
     get:
       tags:
@@ -2970,6 +3099,169 @@ paths:
         404: {$ref: "#responses/404fencezone"}
 
 ######################################################################
+  /api/inputs:
+    get:
+      tags:
+        - "Inputs"
+      summary: Search inputs
+      description: |
+        This returns a summary of the inputs matching your search criteria.
+
+        The result will contain no more than 100 inputs, or as many as you asked for more in
+        your request; you should follow the `next` link, if it is present, to collect the next
+        batch.
+
+        If your result set is empty it means your operator does not have the privilege to view any
+        inputs, such as 'View Site', 'Edit Site', or 'Maintenance Override'.  Perhaps there are no
+        inputs in the divisions in which your operator has privileges, or your operator has no
+        privileges at all.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the 'href' field in the `features.inputs.inputs` section of
+        `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - $ref: "cardholdersApi.yaml#/parameters/division"
+      - name: "fields"
+        <<: *FIELDSDESC_DET
+        <<: *OUTPUTFIELDS
+
+      responses:
+        200:
+          description: |
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Inputs'}
+        403:
+          description: The site does not have the RESTStatus licence.
+
+  /api/inputs/{id}:
+    get:
+      tags:
+        - "Inputs"
+      summary: Get details of an input
+      description: |
+        This returns the detail of one input.
+
+        Follow the 'href' field in an [input summary](#definition-Input-summary) to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the input.
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *OUTPUTFIELDS
+
+      responses:
+        200:
+          description: Success.
+          schema: {$ref: '#/definitions/Input detail'}
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404input"}
+
+  /api/inputs/{id}/shunt:
+    post:
+      tags: ["Inputs"]
+      summary: Shunt an input
+      description: |
+        Sends an override to shunt an input, preventing all communication.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
+      responses:
+        204: { description: Success. }
+        403: { $ref: "#/responses/403inputoverride" }
+
+  /api/inputs/{id}/unshunt:
+    post:
+      tags: ["Inputs"]
+      summary: Unshunt an input
+      description: |
+        Sends an override to unshunt an input, re-enabling communication.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
+      responses:
+        204: { description: Success. }
+        403: { $ref: "#/responses/403inputoverride" }
+
+  /api/inputs/{id}/isolate:
+    post:
+      tags: ["Inputs"]
+      summary: Isolate an input
+      description: |
+        Sends an override to isolate an input.  An isolated input will not prevent an alarm zone
+        from arming.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
+      responses:
+        204: { description: Success. }
+        403: { $ref: "#/responses/403inputoverride" }
+
+  /api/inputs/{id}/deisolate:
+    post:
+      tags: ["Inputs"]
+      summary: De-isolate an input
+      description: |
+        Sends an override to end the isolation of an input.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
+      responses:
+        204: { description: Success. }
+        403: { $ref: "#/responses/403inputoverride" }
+
+  /api/inputs/{id}/updates:
+    get:
+      tags:
+        - "Inputs"
+      summary: Monitor an input
+      description: |
+        See the [item status topic](#topic-Item-status) for how to use the updates APIs.
+
+        Note that this API call is good for watching one item only; if you want to monitor several,
+        you are better off with a [status subscription](events.html#status-subscriptions).
+
+        Follow the 'updates' field in an input [summary](#definition-Input-summary) or
+        [details](#definition-Input-detail) pages to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the input.
+      - name: "fields"
+        <<: *UPDFIELDS
+        <<: *UPDFIELDSENUM
+
+      responses:
+        200:
+          description: |
+            Success.  See the [introduction](#tag-Inputs) for a description of the three status
+            fields.
+          schema:
+            example: {
+              updates: {
+                status: "This Input is Open-Circuit Tampered.",
+                statusText: "This Input is Open-Circuit Tampered.",
+                statusFlags: [ open, tamper ]
+              },
+              next: { href: https://localhost:8904/api/inputs/2365/updates/9_1 }
+            }
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404input"}
+
+######################################################################
   /api/macros:
     get:
       tags:
@@ -3214,169 +3506,6 @@ paths:
         404: {$ref: "#responses/404output"}
 
 ######################################################################
-  /api/inputs:
-    get:
-      tags:
-        - "Inputs"
-      summary: Search inputs
-      description: |
-        This returns a summary of the inputs matching your search criteria.
-
-        The result will contain no more than 100 inputs, or as many as you asked for more in
-        your request; you should follow the `next` link, if it is present, to collect the next
-        batch.
-
-        If your result set is empty it means your operator does not have the privilege to view any
-        inputs, such as 'View Site', 'Edit Site', or 'Maintenance Override'.  Perhaps there are no
-        inputs in the divisions in which your operator has privileges, or your operator has no
-        privileges at all.
-
-        When you have loaded them all there will be no `next` link.
-
-        Take this URL from the 'href' field in the `features.inputs.inputs` section of
-        `/api`.
-
-      parameters:
-      - $ref: "cardholdersApi.yaml#/parameters/sort"
-      - $ref: "cardholdersApi.yaml#/parameters/top"
-      - $ref: "cardholdersApi.yaml#/parameters/name"
-      - $ref: "cardholdersApi.yaml#/parameters/division"
-      - name: "fields"
-        <<: *FIELDSDESC_DET
-        <<: *OUTPUTFIELDS
-
-      responses:
-        200:
-          description: |
-            Success.  See the note in the description about privileges if your result set is empty.
-          schema: {$ref: '#/definitions/Inputs'}
-        403:
-          description: The site does not have the RESTStatus licence.
-
-  /api/inputs/{id}:
-    get:
-      tags:
-        - "Inputs"
-      summary: Get details of an input
-      description: |
-        This returns the detail of one input.
-
-        Follow the 'href' field in an [input summary](#definition-Input-summary) to get here.
-
-      parameters:
-      - name: "id"
-        in: path
-        required: true
-        type: string
-        description: The ID of the input.
-      - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *OUTPUTFIELDS
-
-      responses:
-        200:
-          description: Success.
-          schema: {$ref: '#/definitions/Input detail'}
-        403:
-          description: The site does not have the RESTStatus licence.
-        404: {$ref: "#responses/404input"}
-
-  /api/inputs/{id}/shunt:
-    post:
-      tags: ["Inputs"]
-      summary: Shunt an input
-      description: |
-        Sends an override to shunt an input, preventing all communication.
-
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
-      responses:
-        204: { description: Success. }
-        403: { $ref: "#/responses/403inputoverride" }
-
-  /api/inputs/{id}/unshunt:
-    post:
-      tags: ["Inputs"]
-      summary: Unshunt an input
-      description: |
-        Sends an override to unshunt an input, re-enabling communication.
-
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
-      responses:
-        204: { description: Success. }
-        403: { $ref: "#/responses/403inputoverride" }
-
-  /api/inputs/{id}/isolate:
-    post:
-      tags: ["Inputs"]
-      summary: Isolate an input
-      description: |
-        Sends an override to isolate an input.  An isolated input will not prevent an alarm zone
-        from arming.
-
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
-      responses:
-        204: { description: Success. }
-        403: { $ref: "#/responses/403inputoverride" }
-
-  /api/inputs/{id}/deisolate:
-    post:
-      tags: ["Inputs"]
-      summary: De-isolate an input
-      description: |
-        Sends an override to end the isolation of an input.
-
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the input.", type: string}
-      responses:
-        204: { description: Success. }
-        403: { $ref: "#/responses/403inputoverride" }
-
-  /api/inputs/{id}/updates:
-    get:
-      tags:
-        - "Inputs"
-      summary: Monitor an input
-      description: |
-        See the [item status topic](#topic-Item-status) for how to use the updates APIs.
-
-        Note that this API call is good for watching one item only; if you want to monitor several,
-        you are better off with a [status subscription](events.html#status-subscriptions).
-
-        Follow the 'updates' field in an input [summary](#definition-Input-summary) or
-        [details](#definition-Input-detail) pages to get here.
-
-      parameters:
-      - name: "id"
-        in: path
-        required: true
-        type: string
-        description: The ID of the input.
-      - name: "fields"
-        <<: *UPDFIELDS
-        <<: *UPDFIELDSENUM
-
-      responses:
-        200:
-          description: |
-            Success.  See the [introduction](#tag-Inputs) for a description of the three status
-            fields.
-          schema:
-            example: {
-              updates: {
-                status: "This Input is Open-Circuit Tampered.",
-                statusText: "This Input is Open-Circuit Tampered.",
-                statusFlags: [ open, tamper ]
-              },
-              next: { href: https://localhost:8904/api/inputs/2365/updates/9_1 }
-            }
-        403:
-          description: The site does not have the RESTStatus licence.
-        404: {$ref: "#responses/404input"}
-
-######################################################################
 responses:
   400badbody:
     description: |
@@ -3453,6 +3582,3 @@ responses:
       the input's division that allows viewing inputs, such as 'View Site', 'Edit Site', or
       'Maintenance Override'."
 
-######################################################################
-######################################################################
-######################################################################
