@@ -143,6 +143,14 @@
               </li>
             </ul>
           </section>
+          <section>
+            <a href="#tag-Roles">Roles</a>
+            <ul>
+              <li>
+                <a href="#operation--api-roles-get"> Search roles </a>
+              </li>
+            </ul>
+          </section>
           <h5>Schema Definitions</h5>
           <a href="#definition-Cardholders"> Cardholders </a>
           <a href="#definition-Cardholder-summary"> Cardholder summary </a>
@@ -177,6 +185,8 @@
           <a href="#definition-Card-type"> Card type </a>
           <a href="#definition-PDF-definitions"> PDF definitions </a>
           <a href="#definition-PDF-definition"> PDF definition </a>
+          <a href="#definition-Roles"> Roles </a>
+          <a href="#definition-Role"> Role </a>
         </nav>
       </div>
       <div id="docs" class="row collapse expanded drawer" data-drawer>
@@ -361,9 +371,6 @@
                   <h5>Schemes:
                     <span>https</span>
                   </h5>
-                  <h5>Version:
-                    <span>8.40.3</span>
-                  </h5>
                 </section>
               </div>
             </div>
@@ -525,7 +532,7 @@
                   <p>Note the ID of the item. It will be a short alphanumeric.</p>
                 </li>
               </ol>
-              <p>Case does not matter when searching by name but remember the quotes: Command Centre will perform a substring match if you omit them, and (for the example above) return you the PDFs &#39;previous_employee_ID&#39; and &#39;employee_ID_allocated_flag&#39;.</p>
+              <p>Case does not matter when searching by name but remember the quotes: Command Centre will perform a substring match if you omit them, and (for the example above) return you the PDFs &#39;previous_employee_ID&#39; and &#39;employee_ID_allocated_flag&#39;, assuming you had PDFs with those names.</p>
               <p>Now you can use that PDF ID in a cardholder search.</p>
               <ol>
                 <li>Recall the JSON object you received from <code>GET /api</code>.</li>
@@ -579,11 +586,11 @@
                   <p>Find your cardholder using one of the processes above.</p>
                 </li>
                 <li>
-                  <p>Follow the link to their details page. That will show all their access group memberships.</p>
+                  <p>Follow the link to their details page or add <code>fields=accessGroups</code> to the search. That will show all their access group memberships.</p>
                 </li>
                 <li>
                   <p>
-                    <a href="#operation--api-cardholders--id--patch">PATCH</a> the cardholder with the hrefs of the memberships you want to delete in an array <code>accessGroups.remove</code>.</p>
+                    <a href="#operation--api-cardholders--id--patch">PATCH</a> the cardholder with the hrefs of the memberships you want to delete in an array called <code>remove</code> inside a block called <code>accessGroups</code>.</p>
                 </li>
               </ol>
               <p>The
@@ -1101,7 +1108,7 @@
                       <p>Return these fields. The values you can list are the same as the field names in the
                         <a href="#definition-Cardholder-detail">detail results</a>. Use it to return fewer fields than normal. Separate values with commas.</p>
                       <p>Treat the string matches as case sensitive: use &#39;lastName&#39; rather than &#39;lastname&#39;.</p>
-                      <p>In v8.00 you will receive the href, internal ID, and updates link even if you do not ask for them. In 8.10 you will not. If you are going to send the fields parameter and need those fields, include them.</p>
+                      <p>Added to the cardholders controller in 8.00. In that version you will receive the href, internal ID, and updates link even if you do not ask for them. In 8.10 you will not. If you are going to send the fields parameter and need those fields, include them.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -3481,13 +3488,12 @@
                       <div class="prop-subtitle">
                         <span class="json-property-type">integer</span>
                         <span class="json-property-range" title="Value limits">x ≥ 1</span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Version 8.50 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -3871,13 +3877,12 @@
                       <div class="prop-subtitle">
                         <span class="json-property-type">integer</span>
                         <span class="json-property-range" title="Value limits">x ≥ 1</span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Version 8.50 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4815,13 +4820,12 @@
                       <div class="prop-subtitle">
                         <span class="json-property-type">integer</span>
                         <span class="json-property-range" title="Value limits">x ≥ 1</span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Version 8.50 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -5098,6 +5102,194 @@
   ],
   <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;.*@.*&quot;</span>,
   <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;@ least&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <h1 id="tag-Roles" class="swagger-summary-tag" data-traverse-target="tag-Roles">Roles</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>The roles API gives you basic information about Command Centre&#39;s role items so that you can use them to form relationships between cardholders.</p>
+              <p>A role defines a relationship between two cardholders. One cardholder can perform a role for many others but can have it performed for them by only one other. For example, a person has a supervisor and is a supervisor for many others. When you use REST to look up or update a cardholder, you will work on the &#39;has a&#39; relationships, not the &#39;is a&#39; relationships. In other words you can change the cardholder&#39;s supervisor but not who the cardholder supervises.</p>
+              <h3 id="use-cases">Use cases</h3>
+              <h4 id="searching-for-a-role-by-name-and-assigning-a-relationship">Searching for a role by name and assigning a relationship</h4>
+              <ol>
+                <li><code>GET /api</code></li>
+                <li>Follow the link at <code>features.roles.roles.href</code> after adding search terms such as <code>name=&quot;supervisor&quot;</code>.</li>
+                <li>Find the href of the role with which you want to link your two cardholders.</li>
+                <li>Find the href of the cardholder who will perform this role (the supervisor).</li>
+                <li>Find the href of the cardholder for whom he or she will perform this role (the supervised).</li>
+                <li>
+                  <a href="#operation--api-cardholders--id--patch">PATCH</a> the second cardholder (the supervised) with the href of the first cardholder (the supervisor) and the href of the role. Here is an
+                  <a href="#definition-Cardholder-PATCH-example">example PATCH</a>.</li>
+              </ol>
+            </div>
+          </div>
+          <div id="operation--api-roles-get" class="operation panel" data-traverse-target="operation--api-roles-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Roles">Roles</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Search roles</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/roles</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns the roles you are privileged to view.</p>
+                  <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Roles are small, so a limit of 1000 is sensible.</p>
+                  <p>When you have loaded all the roles there will no <code>next</code> link.</p>
+                  <p>Take this URL from the href in the <code>features.roles.roles</code> section of <code>/api</code>.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">sort</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">-id</span>,
+                          <span class="json-property-enum-item">-name</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
+                      <p>There are two reasons to prefer sorting by ID:</p>
+                      <ol>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
+                        <li>Following a <code>next</code> link is dramatically quicker when sorting by ID.</li>
+                      </ol>
+                      <p>They are such significant motivators that we strongly recommend sorting by ID in the query when there is a chance your results will overflow one page.</p>
+                      <p>The default is changing in a future version of Command Centre.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">top</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">integer</span>
+                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The maximum number of items to return per page.</p>
+                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">name</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>The search is always case-insensitive.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Roles">Roles</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Supervisor&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1383&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles/1383&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Contract manager&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1399&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles/1399&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles?pos=100&amp;sort=id&quot;</span>
+  }
 }
 </code></pre> </body>
                   </html>
@@ -10230,6 +10422,185 @@
   ],
   <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;.*@.*&quot;</span>,
   <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;@ least&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Roles" class="definition panel" data-traverse-target="definition-Roles">
+            <h2 class="panel-title">
+              <a name="/definitions/Roles"></a>Roles:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>An array of roles, and a <code>next</code> link for more.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="results" class="has-description">
+                      <span class="json-property-name">results:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/Role">Role</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>An array of roles.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/Role">Role</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="next" class="has-description">
+                      <span class="json-property-name">next:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The link to the next page of results. Absent if you have retrieved them all.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Supervisor&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1383&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles/1383&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Contract manager&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1399&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles/1399&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles?pos=100&amp;sort=id&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Role" class="definition panel" data-traverse-target="definition-Role">
+            <h2 class="panel-title">
+              <a name="/definitions/Role"></a>Role:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p><code>/api/roles</code> returns an array of these. It gives you enough about a role to identify it and use it in a cardholer PATCH: its href, name, description, and (if you ask for them using the <code>fields</code> parameter) notes.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="name">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This his the string to use when creating a relationship between cardholders using this role.</p>
+                    </dd>
+                    <dt data-property-name="serverDisplayName" class="has-description">
+                      <span class="json-property-name">serverDisplayName:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
+                    </dd>
+                    <dt data-property-name="description">
+                      <span class="json-property-name">description:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="division" class="has-description">
+                      <span class="json-property-name">division:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The division containing this role.</p>
+                    </dd>
+                    <dt data-property-name="id" class="has-description">
+                      <span class="json-property-name">id:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>An alphanumeric identifier, unique to the server. No API calls use role IDs.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Supervisor&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles/1399&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;aka floor manager&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1383&quot;</span>
 }
 </code></pre> </body>
                   </html>

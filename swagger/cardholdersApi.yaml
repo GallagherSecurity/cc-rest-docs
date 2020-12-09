@@ -15,7 +15,6 @@ consumes:
   - application/json
 
 info:
-  version: "8.40.3"
   title: "Command Centre REST API:  Cardholders"
 
   description: |
@@ -278,7 +277,7 @@ tags:
 
     Case does not matter when searching by name but remember the quotes:  Command Centre will
     perform a substring match if you omit them, and (for the example above) return you the PDFs
-    'previous_employee_ID' and 'employee_ID_allocated_flag'.
+    'previous_employee_ID' and 'employee_ID_allocated_flag', assuming you had PDFs with those names.
 
     Now you can use that PDF ID in a cardholder search.
 
@@ -331,10 +330,12 @@ tags:
     #### Removing a cardholder from groups
 
     1. Find your cardholder using one of the processes above.
-    2. Follow the link to their details page.  That will show all their access group memberships.
+    2. Follow the link to their details page or add `fields=accessGroups` to the search.  That will
+       show all their access group memberships.
 
-    3. [PATCH](#operation--api-cardholders--id--patch) the cardholder with the hrefs of
-    the memberships you want to delete in an array `accessGroups.remove`.
+    3. [PATCH](#operation--api-cardholders--id--patch) the cardholder with the hrefs of the
+       memberships you want to delete in an array called `remove` inside a block called
+       `accessGroups`.
 
     The [access groups](#tag-Access-groups) section describes what to do when you want to
     start with a group and remove several cardholders from it.
@@ -661,6 +662,32 @@ tags:
     You do that by [PATCHing a cardholder](#definition-Cardholder-PATCH-example) with a field named
     after the PDF following an '@'.
 
+- name: Roles
+  description: |
+
+    The roles API gives you basic information about Command Centre's role items so that you can use
+    them to form relationships between cardholders.
+
+    A role defines a relationship between two cardholders.  One cardholder can perform a role for
+    many others but can have it performed for them by only one other.  For example, a person has a
+    supervisor and is a supervisor for many others.  When you use REST to look up or update a
+    cardholder, you will work on the 'has a' relationships, not the 'is a' relationships.  In other
+    words you can change the cardholder's supervisor but not who the cardholder supervises.
+
+    ### Use cases
+
+    #### Searching for a role by name and assigning a relationship
+
+    1. `GET /api`
+    1. Follow the link at `features.roles.roles.href` after adding search terms such as
+       `name="supervisor"`.
+    1. Find the href of the role with which you want to link your two cardholders.
+    1. Find the href of the cardholder who will perform this role (the supervisor).
+    1. Find the href of the cardholder for whom he or she will perform this role (the supervised).
+    1. [PATCH](#operation--api-cardholders--id--patch) the second cardholder (the supervised) with
+       the href of the first cardholder (the supervisor) and the href of the role.  Here is an
+       [example PATCH](#definition-Cardholder-PATCH-example).
+
 securityDefinitions:
   "API key":
     $ref: "eventsApi.yaml#/securityDefinitions/API key"
@@ -701,7 +728,6 @@ parameters:
     required: false
     type: integer
     minimum: 1
-    default: DEPRECATED
     description: |
       The maximum number of items to return per page.
 
@@ -709,7 +735,7 @@ parameters:
       applications that will only display the first page, but for integrations that intend to
       proceed through the entire database it causes a lot of chatter.
 
-      Version 8.50 will return 1000 items per request.  This is about where a graph of performance
+      Version 8.60 will return 1000 items per request.  This is about where a graph of performance
       versus page size begins to level out.
 
   name:
@@ -766,8 +792,6 @@ parameters:
 definitions:
 
   Cardholders:
-    tags:
-      - Cardholders
     description: An array of cardholder summaries, and a `next` link for more.
     properties:
       results:
@@ -2853,8 +2877,6 @@ definitions:
       until: "2017-12-31T11:59:59Z"
 
   Locker banks:
-    tags:
-      - Lockers
     description: |
       An array of locker bank summaries, and a `next` link for more.
 
@@ -3128,8 +3150,6 @@ definitions:
                 example: "https://localhost:8904/api/lockers/3456/open"
 
   Competencies:
-    tags:
-      - Competencies
     description: An array of competency summaries, and a `next` link for more.
     properties:
       results:
@@ -3243,8 +3263,6 @@ definitions:
           operator group's 'Competency' tab in the Configuration Client.
 
   Card types:
-    tags:
-      - Card types
     description: |
       An array of card types, and a `next` link for more.  Sites generally have only a handful of
       card types, so when retrieving them you should set your 'top' parameter high enough that you
@@ -3320,8 +3338,6 @@ definitions:
 
 ######################################################################
   PDF definitions:
-    tags:
-      - PDF definitions
     description: |
       An array of PDF definition summaries, and a `next` link for more.
 
@@ -3415,6 +3431,64 @@ definitions:
         description: Regular expressions often need explaining.
         type: string
         example: "@ least"
+
+######################################################################
+  Roles:
+    description: |
+      An array of roles, and a `next` link for more.
+
+    properties:
+      results:
+        type: array
+        description: An array of roles.
+        items: { $ref: '#/definitions/Role' }
+        example:
+          - name: "Supervisor"
+            id: "1383"
+            href: "https://localhost:8904/api/roles/1383"
+          - name: "Contract manager"
+            id: "1399"
+            href: "https://localhost:8904/api/roles/1399"
+            serverDisplayName: "ruatoria.satellite.int"
+      next:
+        type: object
+        description: The link to the next page of results.  Absent if you have retrieved them all.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/roles?pos=100&sort=id"
+
+  Role:
+    description: |
+      `/api/roles` returns an array of these.  It gives you enough about a role to identify it and
+      use it in a cardholer PATCH:  its href, name, description, and (if you ask for them using the
+      `fields` parameter) notes.
+    properties:
+      name:
+        type: string
+        example: "Supervisor"
+      href:
+        type: string
+        format: url
+        description: |
+          This his the string to use when creating a relationship between cardholders using this
+          role.
+        example: "https://localhost:8904/api/roles/1399"
+      serverDisplayName:
+        <<: *SERVER
+      description:
+        type: string
+        example: "aka floor manager"
+      division:
+        type: object
+        description: The division containing this role.
+        example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
+      id:
+        type: string
+        description: |
+          An alphanumeric identifier, unique to the server.  No API calls use role IDs.
+        example: "1383"
 
 ######################################################################
 ######################################################################
@@ -3623,9 +3697,9 @@ paths:
 
           Treat the string matches as case sensitive:  use 'lastName' rather than 'lastname'.
 
-          In v8.00 you will receive the href, internal ID, and updates link even if you do not ask
-          for them.  In 8.10 you will not.  If you are going to send the fields parameter and need
-          those fields, include them.
+          Added to the cardholders controller in 8.00.  In that version you will receive the href,
+          internal ID, and updates link even if you do not ask for them.  In 8.10 you will not.  If
+          you are going to send the fields parameter and need those fields, include them.
 
       responses: 
         200: 
@@ -4672,4 +4746,33 @@ paths:
             The operator does not have a privilege that allows viewing that PDF's definition ('View'
             or 'Edit Personal Data Definition'), or the PDF's own access control is hiding it from
             the operator.
+
+######################################################################
+  /api/roles:
+    get:
+      tags: [ "Roles" ]
+      summary: Search roles
+      description: |
+        This returns the roles you are privileged to view.
+
+        The result will contain no more than 100 objects; you should follow the `next` link, if it
+        is present, to collect more, or use the `top` parameter to get more per page.  Roles are
+        small, so a limit of 1000 is sensible.
+
+        When you have loaded all the roles there will no `next` link.
+
+        Take this URL from the href in the `features.roles.roles` section of `/api`.
+
+      parameters:
+      - $ref: "#/parameters/sort"
+      - $ref: "#/parameters/top"
+      - $ref: "#/parameters/name"
+      - $ref: "#/parameters/division"
+
+      responses:
+        200:
+          description: "Success."
+          schema: {$ref: '#/definitions/Roles'}
+        403:
+          description: The site does not have the RESTCardholders licence.
 
