@@ -48,8 +48,10 @@ info:
 
     ### Changes in 8.50
 
-    * The day categories controller, which returns day categories.
-    * The schedules controller, providing CRUD of schedule items.
+    * A [schedules API](#tag-Schedules) providing CRUD of the six schedule item types.
+
+    * A [day categories API](#tag-Day-Categories) that returns the day categories you need for those
+      schedules.
 
     ### Changes in 8.30
 
@@ -63,16 +65,15 @@ info:
     All changes to this document contain the text "8.20".
 
     * An [update_cardholder_location](#operation--api-access_zones-update_cardholder_location-get)
-      call on the Access Zones controller that returns you the list of Access Zones into which your
+      call on the Access Zones API that returns you the list of Access Zones into which your
       operator is allowed to move cardholders.
 
     ### Changes in 8.10
 
     All changes to this document contain the text "8.10".
 
-    * An [inputs controller](#tag-Inputs) that gives you the state of
-      'input' hardware items and lets you override them.  It is very similar to the outputs
-      controller.
+    * An [inputs API](#tag-Inputs) that gives you the state of 'input' hardware items and lets you
+      override them.  It is very similar to the outputs API.
 
     ### Efficiency tips
 
@@ -1793,13 +1794,16 @@ tags:
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
 
-- name: "Day categories"
+- name: "Day Categories"
   description: |-
     A day category links a calendar to a schedule.  The calendar determines the days of the year
     that fall into a day category, and the schedule determines what happens at certain times on
     those days.
 
-    This method gives you the day category hrefs you need when creating and modifying schedules.
+    The method in this group gives you the day category hrefs you need when creating and modifying
+    schedules.
+
+    Day categories are new to the 8.50 API.
 
     ### Use case:  listing day categories
     1. `GET /api`.
@@ -2732,7 +2736,7 @@ paths:
   /api/day_categories:
     get:
       tags:
-        - "Day categories"
+        - "Day Categories"
       summary: Search day categories
       description: |
         This returns the day categories that match your search criteria.
