@@ -44,10 +44,12 @@ info:
 
     All of the API calls described here require the RESTCardholders licence.
 
-    ### API changes in 8.50
+    ### API changes in 8.60
 
-    8.50 may increase the number of items in its search results and sort them differently, if the
-    query did not use query parameters to override the defaults.
+    8.60 will sort its search results differently and may increase the number it returns per page,
+    if the query did not use query parameters to override the defaults.
+
+    ### API changes in 8.50
 
     ### Cardholder API changes in 8.40
 
@@ -815,7 +817,7 @@ definitions:
         type: string
         format: url
         description: "A link to a [cardholder detail](#definition-Cardholder-detail) object for this cardholder.  This is Command Centre's identifier for this cardholder:  use it whenever you need to specify a cardholder in REST operations."
-        example: "https://localhost:8904/api/cardholders/10135"
+        example: "https://localhost:8904/api/cardholders/325"
       id:
         type: string
         readOnly: true
@@ -823,7 +825,7 @@ definitions:
           An alphanumeric identifier, unique to the server.  No API calls use cardholder IDs.
 
           Deprecated.  Use the href instead.
-        example: "10135"
+        example: "325"
       firstName:
         type: string
         example: "Algernon"
@@ -1619,9 +1621,9 @@ definitions:
 
   Cardholder competency:
     description: |
-      A _competency_ is an object in Command Centre with some basic fields like a name and
-      a notice period.  Their purpose is to allow a site to refuse access to cardholders
-      who do not meet special requirements.
+      A _competency_ is an object in Command Centre with some basic fields like a name and a notice
+      period.  Its purpose is to allow a site to refuse access to cardholders who do not meet a
+      special requirement.
 
       The REST API allows you to link a cardholder and a competency.  The status of that link
       determines whether they "hold" the competency for the purposes of access control decisions at
@@ -1629,7 +1631,12 @@ definitions:
       API, we do not mean the competency object itself, but rather the link a cardholder has to the
       competency.
 
-      The link is a block in the cardholder detail.
+      The link is a block in the cardholder detail.  You can also put it in the results of a
+      cardholder search by putting `competencies` in the `fields` parameter.
+
+      This section describes what you receive from a GET.  The [Cardholder competency
+      update](#definition-Cardholder-competency-update) describes what you should send in a POST or
+      PATCH to set or update a cardholder's link to a competency.
 
     properties:
       href:
@@ -1649,7 +1656,9 @@ definitions:
           This contains the competency's name and its href.  They are read only because they
           belong to the competency itself, not the cardholder's link to it.
         type: object
-        example: {href:  "https://localhost:8904/api/competencies/2354", name: "Hazardous goods handling"}
+        example: {
+          href:  "https://localhost:8904/api/competencies/2354",
+          name: "Hazardous goods handling"}
       status:
         readOnly: true
         description: |
@@ -1690,7 +1699,7 @@ definitions:
           Here it is in table form.  The first two rows are the positive cases, when Command Centre
           would grant access to a competency-enforced zone.
 
-          | `enabled` flag | `enablement` date | `expiry` date | `status.type`
+          | Enabled flag | Enablement date | Expiry date | `status.type`
           | ------------ | -------------- | --------| ----- |
           | true | - | Far future | active |
           | true | - | Near future | expiryDue |
@@ -1765,6 +1774,15 @@ definitions:
         format: url
         description: "Required.  This identifies the cardholder competency you are updating."
         example: "https://localhost:8904/api/cardholders/325/competencies/2dc3p0"
+      enabled:
+        type: boolean
+        writeOnly: true
+        description: |
+          This is a write-only field.  You will not receive it from the GET.  It changes the
+          competency between enabled (status type 'expired', 'expiryDue', or 'active') and disabled
+          (status type 'inactive' or 'pending').  Set it to false in a PATCH if you to disable the
+          competency now, particularly if you are setting a future enablement date.
+        example: true
       expiry:
         type: string
         format: date-time
@@ -1792,17 +1810,9 @@ definitions:
       credit:
         type: integer
         description: |
-          The amount of credit left on this competency for use by Pre-pay Car Parking.  It can be negative.
+          The amount of credit left on this competency for use by Pre-pay Car Parking.  It can be
+          negative.
         example: 37
-      enabled:
-        type: boolean
-        writeOnly: true
-        description: |
-          This is a write-only field.  You will not receive it from the GET.  It changes the
-          competency between enabled (status type 'expired', 'expiryDue', or 'active') and disabled
-          (status type 'inactive' or 'pending').  Set it to false in a PATCH if you to disable the
-          competency now, particularly if you are setting a future enablement date.
-        example: true
 
   Cardholder relationship:
     description:  |
@@ -2833,7 +2843,7 @@ definitions:
                 "name": "Roswell building 2 lobby alarms"
               } }, {
               "alarmZone": {
-                "href": "https://localhost:8904/api/alarm_zones/10135",
+                "href": "https://localhost:8904/api/alarm_zones/10138",
                 "name": "Roswell building 3 lobby alarms"
               } } ]
 
@@ -3569,10 +3579,10 @@ paths:
           Only return cardholders with a value for the Personal Data Field with this ID
           that matches the parameter.
 
-          By default, it is a substring match; surround it with double quotes `"..."` for an
-          exact match.  Without quotes, adding a percent sign `%` or underscore `_` will anchor the string
-          at both ends.  A `_` will match any single character, and a `%` will match any substring.  A lone
-          `%` will return any cardholder with this PDF set to a non-null value.
+          By default, it is a substring match; surround it with double quotes `"..."` for an exact
+          match.  Without quotes, adding a percent sign `%` or underscore `_` will anchor the string
+          at both ends.  A `_` will match any single character, and a `%` will match any substring.
+          A lone `%` will return any cardholder with this PDF set to a non-null value.
 
           The search is always case-insensitive.
 

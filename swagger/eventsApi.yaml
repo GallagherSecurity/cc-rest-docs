@@ -8,7 +8,6 @@
 swagger: '2.0'
 
 info:
-  version: "8.40.4"
   title: "Command Centre REST API:  Alarms and Events"
   description: |
     This document describes how you can use the Command Centre REST API to download, monitor, and
@@ -2045,6 +2044,10 @@ definitions:
         minimum: 1
         maximum: 9
         example: 2
+        description: |
+          It is not possible to submit an event with priority zero in the body, but if you submit an
+          event with no priority it will use the one on the event type's action plan, which can be
+          zero.
       time:
         type: string
         format: date-time

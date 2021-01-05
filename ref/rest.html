@@ -227,6 +227,26 @@
               </li>
             </ul>
           </section>
+          <section>
+            <a href="#tag-Schedules">Schedules</a>
+            <ul>
+              <li>
+                <a href="#operation--api-schedules-get"> Search schedules </a>
+              </li>
+              <li>
+                <a href="#operation--api-schedules-post"> Create a schedule </a>
+              </li>
+              <li>
+                <a href="#operation--api-schedules--id--get"> Get details of a schedule </a>
+              </li>
+              <li>
+                <a href="#operation--api-schedules--id--patch"> Modify a schedule </a>
+              </li>
+              <li>
+                <a href="#operation--api-schedules--id--delete"> Delete a schedule </a>
+              </li>
+            </ul>
+          </section>
           <h5>Schema Definitions</h5>
           <a href="#definition-Access-Zones"> Access Zones </a>
           <a href="#definition-Access-Zones-as-move-targets"> Access Zones as move targets </a>
@@ -253,6 +273,10 @@
           <a href="#definition-Outputs"> Outputs </a>
           <a href="#definition-Output-summary"> Output summary </a>
           <a href="#definition-Output-detail"> Output detail </a>
+          <a href="#definition-Schedules"> Schedules </a>
+          <a href="#definition-Schedule-summary"> Schedule summary </a>
+          <a href="#definition-Schedule-detail"> Schedule detail </a>
+          <a href="#definition-Schedule-POST-and-PATCH"> Schedule POST and PATCH </a>
           <a href="#definition-Override-end-time"> Override end time </a>
         </nav>
       </div>
@@ -571,7 +595,7 @@
               <p>Note:</p>
               <ol>
                 <li>End-times on overrides are not accurate to the second. Internally, Command Centre converts the end time to a duration, so you may find that submitting end times in the very near future does not have the exact effect you expect.</li>
-                <li>Submitting an override without an end time makes it take effect until the next mode change or &#39;cancel untimed overrides&#39; entry in the access zone&#39;s schedule.</li>
+                <li>An override without an end time lasts until the next mode change or &#39;cancel untimed overrides&#39; entry in the access zone&#39;s schedule.</li>
                 <li>The end time you set for an override cannot be in the past or more than 24 hours into the future.</li>
               </ol>
               <h3 id="status-flags">Status flags</h3>
@@ -3568,6 +3592,7 @@
                   <p>When you have seen them all there will be no <code>next</code> link.</p>
                   <p>This does not take a <code>division</code> query parameter because day categories are not in divisions.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.dayCategories.dayCategories</code> section of <code>/api</code>.</p>
+                  <p>Added in 8.50.</p>
                 </section>
               </div>
             </div>
@@ -4107,7 +4132,7 @@
   <span class="hljs-attr">&quot;connectedController&quot;</span>: {
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
-    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;508&quot;</span>
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
   }
 }
 </code></pre> </body>
@@ -5575,9 +5600,9 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the details page instead of the default set. The values you can list are the same as the field names you would see in the results. Use it to cut back on the size of the response. Separate values with commas.</p>
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
                       <p>Treat the string matches as case-sensitive.</p>
-                      <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
                     </div>
                   </div>
                 </section>
@@ -5707,10 +5732,8 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
-                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
+                      <p>Return these fields in the details page instead of the default set. The values you can list are the same as the field names you would see in the results. Use it to cut back on the size of the response. Separate values with commas.</p>
                       <p>Treat the string matches as case-sensitive.</p>
-                      <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
                     </div>
                   </div>
                 </section>
@@ -6837,7 +6860,8 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the details page instead of the default set. The values you can list are the same as the field names you would see in the results. Use it to cut back on the size of the response. Separate values with commas.</p>
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
                       <p>Treat the string matches as case-sensitive.</p>
                       <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
                     </div>
@@ -6969,8 +6993,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
-                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
+                      <p>Return these fields in the details page instead of the default set. The values you can list are the same as the field names you would see in the results. Use it to cut back on the size of the response. Separate values with commas.</p>
                       <p>Treat the string matches as case-sensitive.</p>
                       <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
                     </div>
@@ -7484,6 +7507,806 @@
               </div>
             </div>
           </div>
+          <h1 id="tag-Schedules" class="swagger-summary-tag" data-traverse-target="tag-Schedules">Schedules</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>These methods give you read/write access to the six types of schedules.</p>
+              <p>The main entry point is a paginated search that gives you any number of schedules. The most useful field is a list of state changes and the days and times that they should occur.</p>
+              <p>There is also a method that allows creating new schedules.</p>
+              <p>Schedules are new to 8.50.</p>
+              <p>
+                <strong>Licensing</strong>
+              </p>
+              <p>The schedules APIs are licensed a little differently from most others. RESTCardholders gives you Cardholder Access Schedules, and RESTStatus and RESTOverrides give you all schedule types.</p>
+            </div>
+          </div>
+          <div id="operation--api-schedules-get" class="operation panel" data-traverse-target="operation--api-schedules-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Schedules">Schedules</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Search schedules</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/schedules</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns a summary of the schedules matching your search criteria.</p>
+                  <p>The result will contain no more than 100, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view schedules, such as &#39;View Schedules&#39;, &#39;Edit Schedules&#39;, or &#39;Schedule Access Zone&#39;. Perhaps there are no schedules in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
+                  <p>Note that the privilege &#39;Schedule Access Zone&#39; only lets you see Access Zone schedules, not the other five types.</p>
+                  <p>When you have loaded them all there will be no <code>next</code> link.</p>
+                  <p>Take this URL from the &#39;href&#39; field in the <code>features.schedules.schedules</code> section of <code>/api</code>.</p>
+                  <p>Added in 8.50.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">sort</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">-id</span>,
+                          <span class="json-property-enum-item">-name</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
+                      <p>There are two reasons to prefer sorting by ID:</p>
+                      <ol>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
+                        <li>Following a <code>next</code> link is dramatically quicker when sorting by ID.</li>
+                      </ol>
+                      <p>They are such significant motivators that we strongly recommend sorting by ID in the query when there is a chance your results will overflow one page.</p>
+                      <p>The default is changing in a future version of Command Centre.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">top</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">integer</span>
+                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The maximum number of items to return per page.</p>
+                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">name</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>The search is always case-insensitive.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">notes</span>,
+                          <span class="json-property-enum-item">type</span>,
+                          <span class="json-property-enum-item">dayCategories</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
+                      <p>Treat the string matches as case-sensitive.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Schedules">Schedules</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. See the note in the description about privileges if your result set is empty.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus, RESTOverrides, or RESTCardholders licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules/6&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Access Zone Secure&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules?skip=100&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-schedules-post" class="operation panel" data-traverse-target="operation--api-schedules-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Schedules">Schedules</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create a schedule</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/schedules</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This is how you create a new schedule.</p>
+                  <p>Your POST needs a body containing JSON in the same from received from a GET, containing a division and type, and (if you want it to be useful) <code>dayCategories</code>.</p>
+                  <p>Take this URL from the &#39;href&#39; field in the <code>features.schedules.schedules</code> section of <code>/api</code>.</p>
+                  <p>Added in 8.50.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Schedule POST and PATCH">Schedule POST and PATCH</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>The only fields you must supply in a POST are <code>division</code> and <code>type</code>. The server can make up a name for you, and is happy to leave the timetable empty.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Access Zone Secure&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Secure 24/7&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A default schedule&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: {
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;accessZoneSchedule&quot;</span>
+  },
+  <span class="hljs-attr">&quot;dayCategories&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;dayCategory&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/3&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Day Category&quot;</span>
+      },
+      <span class="hljs-attr">&quot;times&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;00:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        },
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;07:30&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>
+          ]
+        },
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;18:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        }
+      ]
+    },
+    {
+      <span class="hljs-attr">&quot;dayCategory&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/300&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Weekends and holidays&quot;</span>
+      },
+      <span class="hljs-attr">&quot;times&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;00:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        }
+      ]
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The parameters are invalid. Check the body of the response: it may be helpful.</p>
+                      <p>If you see &#39;No schedule found&#39;, the server could not parse the JSON in the body of your POST. Remember that the <code>state</code> field is an array.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege that allows creating schedules, or the site does not have any of the RESTCardholders, RESTOverrides, or RESTStatus licences.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Headers
+                    <span>(201 Created)</span>
+                  </h5>
+                  <section class="swagger-response-headers">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="swagger-response-header-name"></th>
+                          <th class="swagger-response-header-description"></th>
+                          <th class="swagger-response-header-data-type"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="swagger-response-header-location">
+                          <td> location
+                            <td>
+                              <p>The href of the new schedule.</p>
+                            </td>
+                            <td>
+                              <span class="json-property-type">string</span>
+                              <span class="json-property-format">(url)</span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </section>
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-schedules--id--get" class="operation panel" data-traverse-target="operation--api-schedules--id--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Schedules">Schedules</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get details of a schedule</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/schedules/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns the detail of one schedule.</p>
+                  <p>Follow the &#39;href&#39; field in an
+                    <a href="#definition-Schedule-summary">schedule summary</a> to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the schedule.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">notes</span>,
+                          <span class="json-property-enum-item">type</span>,
+                          <span class="json-property-enum-item">dayCategories</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the details page instead of the default set. The values you can list are the same as the field names you would see in the results. Use it to cut back on the size of the response. Separate values with commas.</p>
+                      <p>Treat the string matches as case-sensitive.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Schedule detail">Schedule detail</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent a schedule, or the operator does not have a privilege on the schedule&#39;s division that allows viewing schedules, such as &#39;View Schedules&#39;, &#39;Edit Schedules&#39;, or &#39;Schedule Access Zone&#39;.&quot;</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules/6&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Access Zone Secure&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Secure 24/7&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: {
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;accessZoneSchedule&quot;</span>
+  },
+  <span class="hljs-attr">&quot;dayCategories&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;dayCategory&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/3&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Day Category&quot;</span>
+      },
+      <span class="hljs-attr">&quot;times&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;00:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        },
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;07:30&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>
+          ]
+        },
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;18:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        }
+      ]
+    },
+    {
+      <span class="hljs-attr">&quot;dayCategory&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/300&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Weekends and holidays&quot;</span>
+      },
+      <span class="hljs-attr">&quot;times&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;00:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        }
+      ]
+    }
+  ],
+  <span class="hljs-attr">&quot;scheduledItems&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/637&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access Zone 1&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/638&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access Zone 2&quot;</span>
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-schedules--id--patch" class="operation panel" data-traverse-target="operation--api-schedules--id--patch">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Schedules">Schedules</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Modify a schedule</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">PATCH</span>
+                  <span class="operation-path">/api/schedules/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Modifies a schedule according to the body of the PATCH.</p>
+                  <p>Added in 8.50.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Schedule POST and PATCH">Schedule POST and PATCH</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>You do not need to supply any fields in the body of this PATCH, but if you want it to achieve something you should add at least one. Probably <code>dayCategories</code>.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Access Zone Secure&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Secure 24/7&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A default schedule&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: {
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;accessZoneSchedule&quot;</span>
+  },
+  <span class="hljs-attr">&quot;dayCategories&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;dayCategory&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/3&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Day Category&quot;</span>
+      },
+      <span class="hljs-attr">&quot;times&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;00:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        },
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;07:30&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>
+          ]
+        },
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;18:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        }
+      ]
+    },
+    {
+      <span class="hljs-attr">&quot;dayCategory&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/300&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Weekends and holidays&quot;</span>
+      },
+      <span class="hljs-attr">&quot;times&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;00:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        }
+      ]
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The parameters are invalid. Check the body of the response: it may be helpful.</p>
+                      <p>If you see &#39;No schedule found&#39;, the server could not parse the JSON in the body of your request. Remember that the <code>state</code> field is an array.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege that allows modifying that schedule, or the site does not have any of the RESTCardholders, RESTOverrides, and RESTStatus licences.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent a schedule, or the operator does not have a privilege on the schedule&#39;s division that allows viewing schedules, such as &#39;View Schedules&#39;, &#39;Edit Schedules&#39;, or &#39;Schedule Access Zone&#39;.&quot;</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-schedules--id--delete" class="operation panel" data-traverse-target="operation--api-schedules--id--delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Schedules">Schedules</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Delete a schedule</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/schedules/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Deletes the schedule identified by the request&#39;s URL.</p>
+                  <p>Added in 8.50.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>You cannot delete a schedule that is in use. The body of the 400 response will tell you if that is the case. One way to find out which items are holding you up is to GET the same URL and look in the <code>scheduledItems</code> block.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege that allows deleting that schedule (&#39;Edit Schedules&#39;), or the site does not have any of the RESTCardholders, RESTOverrides, or RESTStatus licences.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent a schedule, or the operator does not have a privilege on the schedule&#39;s division that allows viewing schedules, such as &#39;View Schedules&#39;, &#39;Edit Schedules&#39;, or &#39;Schedule Access Zone&#39;.&quot;</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
           <h1>Schema Definitions</h1>
           <div id="definition-Access-Zones" class="definition panel" data-traverse-target="definition-Access-Zones">
             <h2 class="panel-title">
@@ -7716,7 +8539,7 @@
                     <dd>
                       <p>An alphanumeric identifier, unique to the server.</p>
                       <p>This is the ID to use in the <code>source</code> parameter of
-                        <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                        <a href="events.html#operation--api-events-get">event filters</a> if you want to limit your events to particular access zones.</p>
                     </dd>
                     <dt data-property-name="name">
                       <span class="json-property-name">name:</span>
@@ -9603,7 +10426,8 @@
                                 <span class="json-property-range" title="Value limits"></span>
                               </dt>
                               <dd>
-                                <p>A short alphanumeric identifier, unique to the server.</p>
+                                <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                                  <a href="events.html#operation--api-events-get">event filters</a>.</p>
                               </dd>
                             </dl>
                           </section>
@@ -9649,7 +10473,7 @@
   <span class="hljs-attr">&quot;connectedController&quot;</span>: {
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
-    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;508&quot;</span>
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
   }
 }
 </code></pre> </body>
@@ -10259,7 +11083,7 @@
                     </dt>
                     <dd>
                       <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
-                        <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                        <a href="events.html#operation--api-events-get">event filters</a> if you are only interested in events from particular inputs.</p>
                     </dd>
                     <dt data-property-name="name">
                       <span class="json-property-name">name:</span>
@@ -10651,7 +11475,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>An alphanumeric identifier, unique to the server.</p>
+                      <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                        <a href="events.html#operation--api-events-get">event filters</a> if you are only interested in events from particular macros (which would be unusual, since macros do not generate many events).</p>
                     </dd>
                     <dt data-property-name="name">
                       <span class="json-property-name">name:</span>
@@ -10917,7 +11742,7 @@
                     </dt>
                     <dd>
                       <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
-                        <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                        <a href="events.html#operation--api-events-get">event filters</a> if you are only interested in events from particular outputs.</p>
                     </dd>
                     <dt data-property-name="name">
                       <span class="json-property-name">name:</span>
@@ -11182,6 +12007,511 @@
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs/2365/off&quot;</span>
     }
   }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Schedules" class="definition panel" data-traverse-target="definition-Schedules">
+            <h2 class="panel-title">
+              <a name="/definitions/Schedules"></a>Schedules:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>An array of schedule summaries, and a <code>next</code> link for more.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="results" class="has-description">
+                      <span class="json-property-name">results:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/Schedule summary">Schedule summary</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>An array of schedule summaries.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/Schedule summary">Schedule summary</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="next" class="has-description">
+                      <span class="json-property-name">next:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The link to the next page. Absent if you have retrieved them all.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules/6&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Access Zone Secure&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules?skip=100&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Schedule-summary" class="definition panel" data-traverse-target="definition-Schedule-summary">
+            <h2 class="panel-title">
+              <a name="/definitions/Schedule summary"></a>Schedule summary:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>A
+                    <a href="#operation--api-schedule--get">schedule search</a> returns an array of these. It is a subset of what you get from a detail page at <code>/api/schedules/{id}</code> (linked as the href in this object).</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A link to a
+                        <a href="#definition-Schedule-detail">schedule detail</a>.</p>
+                    </dd>
+                    <dt data-property-name="name">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules/6&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Access Zone Secure&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Schedule-detail" class="definition panel" data-traverse-target="definition-Schedule-detail">
+            <h2 class="panel-title">
+              <a name="/definitions/Schedule detail"></a>Schedule detail:
+              <!-- <span class="json-property-type"><span class="json-property-type"></span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>
+                    <a href="#operation--api-schedules--id--get">/api/schedules/{id}</a> returns one of these, and you put one of these in the body of a POST or PATCH to create or edit a schedule.</p>
+                </section>
+                <section class="json-schema-allOf">
+                  <section class="json-schema-allOf-inherited">
+                    <ul>
+                      <span class="">
+                        <a class="json-schema-ref" href="#/definitions/Schedule summary">Schedule summary</a>
+                      </span>
+                    </ul>
+                  </section>
+                  <section class="json-schema-allOf-additional">
+                    <section class="json-schema-properties">
+                      <dl>
+                        <dt data-property-name="description">
+                          <span class="json-property-name">description:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dt data-property-name="division" class="has-description">
+                          <span class="json-property-name">division:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>The division containing this schedule. It is possible to change a schedule&#39;s division after creating it.</p>
+                        </dd>
+                        <dt data-property-name="notes" class="has-description">
+                          <span class="json-property-name">notes:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>Because of their potential size, notes are only available by request. Use the &#39;fields&#39; parameter:</p>
+                          <p><code>?fields=defaults,notes,...</code></p>
+                        </dd>
+                        <dt data-property-name="type" class="has-description">
+                          <span class="json-property-name">type:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>This block contains a string field <code>type</code> which will (in the server&#39;s response to a GET) or must (in the body of your POST) be one of the six schedule types. It is not a valid field in a PATCH, because you cannot change the type of an existing schedule.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="type">
+                                <span class="json-property-name">type:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-enum" title="Possible values">
+                                  <span class="json-property-enum-item">accessZoneSchedule</span>,
+                                  <span class="json-property-enum-item">accessSchedule</span>,
+                                  <span class="json-property-enum-item">alarmZoneSchedule</span>,
+                                  <span class="json-property-enum-item">outputSchedule</span>,
+                                  <span class="json-property-enum-item">notificationSchedule</span>,
+                                  <span class="json-property-enum-item">hVLFSchedule</span>
+                                </span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                            </dl>
+                          </section>
+                        </dt>
+                        <dt data-property-name="dayCategories" class="has-description">
+                          <span class="json-property-name">dayCategories:</span>
+                          <span class="json-property-type">array</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>This is the part of the schedule that controls when changes occur on its scheduled items.</p>
+                          <p>It is an array of objects, each containing a day category and an array of times. The day category picks days of the year, and the <code>times</code> array sets what will happen and at what times on those days.</p>
+                          <p>In the body of your POST:</p>
+                          <ul>
+                            <li>
+                              <p>The <code>time</code> field of each object inside <code>times</code> must be a string of the form <code>HH:MM</code> between 00:00 and 23:59. If you find another format that works (four zeroes, for example), it may not work in future versions.</p>
+                            </li>
+                            <li>
+                              <p>Each day category must have an entry at 00:00. This means an item does not need to search back in time to find what state it should be in when it first comes online.</p>
+                            </li>
+                            <li>
+                              <p>Each day category cannot have more than one entry at the same time.</p>
+                            </li>
+                          </ul>
+                          <p>If you receive a 400 response to your POST or PATCH and one of those rules is the cause, the body of the response should contain a reminder.</p>
+                          <p>The <code>state</code> field is an array describing what should happen at that time. It is comparable to the <code>statusFlags</code> arrays on access zones, alarm zones, outputs, and fence zones. For most schedule types it will contain only one word, but the extra flag <code>usePin</code> may accompany access zone state changes.</p>
+                          <p>When building your JSON, treat these string comparisons as case-sensitive.</p>
+                          <p>All schedule types can have a state change called &#39;cancelUntimedOverrides&#39;. That sets an item back to its scheduled state if it was under the effect of an override with no end time.</p>
+                          <p>Other than that, each schedule type has its own set of state changes:</p>
+                          <ul>
+                            <li>
+                              <p>An Access Schedule, also known as a Cardholder Access Schedule, controls the ability of the members of an access group to pass into an access zone. The valid states are <code>grant</code> and <code>deny</code>. Note that &#39;deny&#39; is a misnomer: a cardholder will gain access through a door if they are a member of a different access group that still has access.</p>
+                            </li>
+                            <li>
+                              <p>An Access Zone Schedule controls the mode of an access zone. The valid states are the same as the
+                                <a href="#definition-Access-Zone-detail">zone&#39;s status flags</a>: <code>secure</code>, <code>dualAuth</code>, <code>codeOrCard</code>, or <code>free</code>. The extra flag <code>usePin</code> means the same here as it does in the status flags: people will need their PINs at readers and alarms terminals.</p>
+                            </li>
+                            <li>
+                              <p>An Alarm Zone Schedule switches an alarm zone between its four modes: <code>set</code>, <code>unset</code>, <code>user</code>, and <code>user2</code>. Use the words <code>user1</code> and <code>user2</code> here even if you have renamed them in the server properties.</p>
+                            </li>
+                            <li>
+                              <p>An Output Schedule can be <code>on</code> or <code>off</code>, plain and simple.</p>
+                            </li>
+                            <li>
+                              <p>A Notification Schedule controls when notifications go out. They can make sure that notifications go to the people who are on shift, and they can prevent bothering people at night. Like the access and output schedules it is binary, but the valid states are called <code>notificationEnabled</code> and <code>notificationDisabled</code>.</p>
+                            </li>
+                            <li>
+                              <p>A HV/LF Schedule controls the voltage on an electric fence. &#39;lowFeel&#39; mode allows detection without the deterrant of <code>highVoltate</code>.</p>
+                            </li>
+                          </ul>
+                          <p>This example sets an access zone to secure mode between 7.30am and 6:00pm on work days, and secure plus PIN mode at all other times.</p>
+                        </dd>
+                        <dt data-property-name="scheduledItems" class="has-description">
+                          <span class="json-property-name">scheduledItems:</span>
+                          <span class="json-property-type">array</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>An array containing the names and hrefs of all the items that this schedule controls and that the operator has the privilege to view.</p>
+                          <p>This is generated data. A schedule resides in the configuration of the items that use it, rather than the other way around, so this block is a handy aggregation of the inverse of those relationships. As such it is read-only.</p>
+                        </dd>
+                      </dl>
+                    </section>
+                  </section>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules/6&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Access Zone Secure&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Secure 24/7&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: {
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;accessZoneSchedule&quot;</span>
+  },
+  <span class="hljs-attr">&quot;dayCategories&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;dayCategory&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/3&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Day Category&quot;</span>
+      },
+      <span class="hljs-attr">&quot;times&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;00:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        },
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;07:30&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>
+          ]
+        },
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;18:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        }
+      ]
+    },
+    {
+      <span class="hljs-attr">&quot;dayCategory&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/300&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Weekends and holidays&quot;</span>
+      },
+      <span class="hljs-attr">&quot;times&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;00:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        }
+      ]
+    }
+  ],
+  <span class="hljs-attr">&quot;scheduledItems&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/637&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access Zone 1&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/638&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access Zone 2&quot;</span>
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Schedule-POST-and-PATCH" class="definition panel" data-traverse-target="definition-Schedule-POST-and-PATCH">
+            <h2 class="panel-title">
+              <a name="/definitions/Schedule POST and PATCH"></a>Schedule POST and PATCH:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>
+                    <a href="#operation--api-schedules-post">/api/schedules</a> expects one of these in the body of a POST or a PATCH.</p>
+                  <p>The PATCH will ignore the <code>type</code> field, because a schedule cannot change its type.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="name">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="description">
+                      <span class="json-property-name">description:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="division" class="has-description">
+                      <span class="json-property-name">division:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The division into which you want to place this schedule.</p>
+                    </dd>
+                    <dt data-property-name="notes">
+                      <span class="json-property-name">notes:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="type" class="has-description">
+                      <span class="json-property-name">type:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This block contains a string field <code>type</code> which must be one of the six schedule types. It is not a valid field in a PATCH, because you cannot change the type of an existing schedule.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="type">
+                            <span class="json-property-name">type:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-enum" title="Possible values">
+                              <span class="json-property-enum-item">accessZoneSchedule</span>,
+                              <span class="json-property-enum-item">accessSchedule</span>,
+                              <span class="json-property-enum-item">alarmZoneSchedule</span>,
+                              <span class="json-property-enum-item">outputSchedule</span>,
+                              <span class="json-property-enum-item">notificationSchedule</span>,
+                              <span class="json-property-enum-item">hVLFSchedule</span>
+                            </span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                    <dt data-property-name="dayCategories" class="has-description">
+                      <span class="json-property-name">dayCategories:</span>
+                      <span class="json-property-type">array</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>See the description in the
+                        <a href="definition-Schedule-detail">details page</a>.</p>
+                      <p>This example sets an access zone to secure mode between 7.30am and 6:00pm on work days, and secure plus PIN mode at all other times.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Access Zone Secure&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Secure 24/7&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A default schedule&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: {
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;accessZoneSchedule&quot;</span>
+  },
+  <span class="hljs-attr">&quot;dayCategories&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;dayCategory&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/3&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Default Day Category&quot;</span>
+      },
+      <span class="hljs-attr">&quot;times&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;00:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        },
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;07:30&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>
+          ]
+        },
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;18:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        }
+      ]
+    },
+    {
+      <span class="hljs-attr">&quot;dayCategory&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories/300&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Weekends and holidays&quot;</span>
+      },
+      <span class="hljs-attr">&quot;times&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;00:00&quot;</span>,
+          <span class="hljs-attr">&quot;state&quot;</span>: [
+            <span class="hljs-string">&quot;secure&quot;</span>,
+            <span class="hljs-string">&quot;usePin&quot;</span>
+          ]
+        }
+      ]
+    }
+  ]
 }
 </code></pre> </body>
                   </html>

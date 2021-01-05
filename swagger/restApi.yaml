@@ -13,6 +13,7 @@ consumes: [application/json]
 
 info:
   title: "Command Centre REST API:  Non-cardholder items"
+
   description: |
     This document describes how you can use the Command Centre REST API to view and manage
     access zones, alarm zones, fence zones, doors, macros, inputs, and outputs.
@@ -277,6 +278,12 @@ security:
   - "API key": []
 
 x-common-blocks-this-is-made-up:
+  id_ignored: &ID
+    type: string
+    description: |
+      An alphanumeric identifier, unique to the server. This is the ID to use in the `source`
+      parameter of [event filters](events.html#operation--api-events-get).
+
   updates_ignored: &UPDATES
     type: object
     properties:
@@ -324,6 +331,17 @@ x-common-blocks-this-is-made-up:
       and later you will only get what you asked for.  If you are going to send the fields parameter
       and need the href or ID, be explicit.
 
+  fds_ignored2: &FIELDSDESC_SUM_810
+    description: |
+      Return these fields in the search results.  The values you can list are the same as the field
+      names in the details page.  Using this you can return everything on the summary page that you
+      would find on the details page.  Separate values with commas.
+
+      Use the special value `defaults` to return the fields you would have received had you not given
+      the parameter at all.  Obviously only do that if you have more to add.
+
+      Treat the string matches as case-sensitive.
+
   fdd_ignored: &FIELDSDESC_DET
     description: |
       Return these fields in the details page instead of the default set.  The values you can list
@@ -335,6 +353,14 @@ x-common-blocks-this-is-made-up:
       In v8.00 you will receive the href and internal ID even if you did not ask for them.  In 8.10
       and later you will only get what you asked for.  If you are going to send the fields parameter
       and need the href or ID, be explicit.
+
+  fdd_ignored2: &FIELDSDESC_DET_810
+    description: |
+      Return these fields in the details page instead of the default set.  The values you can list
+      are the same as the field names you would see in the results.  Use it to cut back on the size
+      of the response.  Separate values with commas.
+
+      Treat the string matches as case-sensitive.
 
   fdso_ignored: &FIELDSDESC_SUMONLY
     description: |
@@ -405,6 +431,12 @@ x-common-blocks-this-is-made-up:
     required: false
     type: string
     enum: [href, id, name, shortName, description, division, commands, statusFlags, status, notes, updates]
+
+  schedule_ignored: &SCHEDULEFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, name, description, division, notes, type, dayCategories]
 
 ###################################################################################################
 ###################################################################################################
@@ -477,7 +509,8 @@ definitions:
           An alphanumeric identifier, unique to the server.
 
           This is the ID to use in the `source` parameter of [event
-          filters](events.html#operation--api-events-get).
+          filters](events.html#operation--api-events-get) if you want to limit your events to
+          particular access zones.
         example: "3280"
       name:
         type: string
@@ -1132,11 +1165,13 @@ definitions:
                   identifier, not a usable URL, because in 8.30 there is no interface for hardware
                   controllers.  GETting the URL will return a 404.
               id:
-                type: string
-                example: "508"
-                description: "A short alphanumeric identifier, unique to the server."
+                <<: *ID
+                example: "634"
 
       - $ref: "#/definitions/Door summary"
+
+#######################################################################
+#######################################################################
 
 #######################################################################
 #######################################################################
@@ -1330,8 +1365,9 @@ definitions:
       id:
         type: string
         description: |
-          An alphanumeric identifier, unique to the server. This is the ID to use in the
-          `source` parameter of [event filters](events.html#operation--api-events-get).
+          An alphanumeric identifier, unique to the server.  This is the ID to use in the `source`
+          parameter of [event filters](events.html#operation--api-events-get) if you are only
+          interested in events from particular inputs.
         example: "9701"
       name:
         type: string
@@ -1443,7 +1479,10 @@ definitions:
       id:
         type: string
         description: |
-          An alphanumeric identifier, unique to the server.
+          An alphanumeric identifier, unique to the server.  This is the ID to use in the `source`
+          parameter of [event filters](events.html#operation--api-events-get) if you are only
+          interested in events from particular macros (which would be unusual, since macros do not
+          generate many events).
         example: "8492"
       name:
         type: string
@@ -1519,8 +1558,9 @@ definitions:
       id:
         type: string
         description: |
-          An alphanumeric identifier, unique to the server. This is the ID to use in the
-          `source` parameter of [event filters](events.html#operation--api-events-get).
+          An alphanumeric identifier, unique to the server. This is the ID to use in the `source`
+          parameter of [event filters](events.html#operation--api-events-get) if you are only
+          interested in events from particular outputs.
         example: "2365"
       name:
         type: string
@@ -1594,6 +1634,232 @@ definitions:
 
       - $ref: "#/definitions/Output summary"
 
+#######################################################################
+#######################################################################
+  Schedules:
+    description: An array of schedule summaries, and a `next` link for more.
+    properties:
+      results:
+        type: array
+        description: An array of schedule summaries.
+        items: { $ref: '#/definitions/Schedule summary' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/schedules?skip=100"
+
+  Schedule summary:
+    description: |
+      A [schedule search](#operation--api-schedule--get) returns an array of these.  It is a
+      subset of what you get from a detail page at `/api/schedules/{id}` (linked as the href in this
+      object).
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to a [schedule detail](#definition-Schedule-detail).
+        example: "https://localhost:8904/api/schedules/6"
+      name:
+        type: string
+        example: "Default Access Zone Secure"
+
+  Schedule detail:
+    description: |
+      [/api/schedules/{id}](#operation--api-schedules--id--get) returns one of these, and you put
+       one of these in the body of a POST or PATCH to create or edit a schedule.
+
+    allOf:
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "Secure 24/7"
+          division:
+            type: object
+            description: |
+              The division containing this schedule.  It is possible to change a schedule's
+              division after creating it.
+            example:
+              href: "https://localhost:8904/api/divisions/2"
+          notes: {<<: *NOTES}
+          type:
+            description: |
+              This block contains a string field `type` which will (in the server's response to a
+              GET) or must (in the body of your POST) be one of the six schedule types.  It is not a
+              valid field in a PATCH, because you cannot change the type of an existing schedule.
+            type: object
+            properties:
+              type:
+                type: string
+                enum: [ accessZoneSchedule, accessSchedule, alarmZoneSchedule,
+                outputSchedule, notificationSchedule, hVLFSchedule ]
+                example: "accessZoneSchedule"
+          dayCategories:
+            type: array
+            description: |
+              This is the part of the schedule that controls when changes occur on its scheduled
+              items.
+
+              It is an array of objects, each containing a day category and an array of times.  The
+              day category picks days of the year, and the `times` array sets what will happen and
+              at what times on those days.
+
+              In the body of your POST:
+
+                * The `time` field of each object inside `times` must be a string of the form
+                  `HH:MM` between 00:00 and 23:59.  If you find another format that works (four
+                  zeroes, for example), it may not work in future versions.
+
+                * Each day category must have an entry at 00:00.  This means an item does not need
+                  to search back in time to find what state it should be in when it first comes
+                  online.
+
+                * Each day category cannot have more than one entry at the same time.
+
+              If you receive a 400 response to your POST or PATCH and one of those rules is the
+              cause, the body of the response should contain a reminder.
+
+              The `state` field is an array describing what should happen at that time.  It is
+              comparable to the `statusFlags` arrays on access zones, alarm zones, outputs, and
+              fence zones.  For most schedule types it will contain only one word, but the extra
+              flag `usePin` may accompany access zone state changes.
+
+              When building your JSON, treat these string comparisons as case-sensitive.
+
+              All schedule types can have a state change called 'cancelUntimedOverrides'.  That sets
+              an item back to its scheduled state if it was under the effect of an override with no
+              end time.
+
+              Other than that, each schedule type has its own set of state changes:
+
+                * An Access Schedule, also known as a Cardholder Access Schedule, controls the
+                  ability of the members of an access group to pass into an access zone.  The valid
+                  states are `grant` and `deny`.  Note that 'deny' is a misnomer:  a cardholder will
+                  gain access through a door if they are a member of a different access group that
+                  still has access.
+
+                * An Access Zone Schedule controls the mode of an access zone.  The valid states are
+                  the same as the [zone's status flags](#definition-Access-Zone-detail):  `secure`,
+                  `dualAuth`, `codeOrCard`, or `free`.  The extra flag `usePin` means the same here
+                  as it does in the status flags:  people will need their PINs at readers and alarms
+                  terminals.
+
+                * An Alarm Zone Schedule switches an alarm zone between its four modes: `set`,
+                  `unset`, `user`, and `user2`.  Use the words `user1` and `user2` here even if you
+                  have renamed them in the server properties.
+
+                * An Output Schedule can be `on` or `off`, plain and simple.
+
+                * A Notification Schedule controls when notifications go out.  They can make sure
+                  that notifications go to the people who are on shift, and they can prevent
+                  bothering people at night.  Like the access and output schedules it is binary, but
+                  the valid states are called `notificationEnabled` and `notificationDisabled`.
+
+                * A HV/LF Schedule controls the voltage on an electric fence.  'lowFeel' mode allows
+                  detection without the deterrant of `highVoltate`.
+
+              This example sets an access zone to secure mode between 7.30am and 6:00pm on work
+              days, and secure plus PIN mode at all other times.
+
+            example: [
+              { "dayCategory": {
+                  "href": "https://localhost:8904/api/day_categories/3",
+                  "name": "Default Day Category" },
+                "times": [
+                  { "time": "00:00", "state": [ "secure", "usePin" ] },
+                  { "time": "07:30", "state": [ "secure" ] },
+                  { "time": "18:00", "state": [ "secure", "usePin" ] }
+                ]
+              },
+              { "dayCategory": {
+                  "href": "https://localhost:8904/api/day_categories/300",
+                  "name": "Weekends and holidays" },
+                "times": [
+                  { "time": "00:00", "state": [ "secure", "usePin" ] }
+                ]
+              }
+            ]
+          scheduledItems:
+            type: array
+            description: |
+              An array containing the names and hrefs of all the items that this schedule controls
+              and that the operator has the privilege to view.
+
+              This is generated data.  A schedule resides in the configuration of the items that use
+              it, rather than the other way around, so this block is a handy aggregation of the
+              inverse of those relationships.  As such it is read-only.
+
+            example: [{"href": "https://localhost:8904/api/items/637", "name": "Access Zone 1"},
+                      {"href": "https://localhost:8904/api/items/638", "name": "Access Zone 2"}]
+      - $ref: "#/definitions/Schedule summary"
+
+  Schedule POST and PATCH:
+    description: |
+      [/api/schedules](#operation--api-schedules-post) expects one of these in the body of a POST or
+      a PATCH.
+
+      The PATCH will ignore the `type` field, because a schedule cannot change its type.
+
+    properties:
+      name:
+        type: string
+        example: "Default Access Zone Secure"
+      description:
+        type: string
+        example: "Secure 24/7"
+      division:
+        type: object
+        description: |
+          The division into which you want to place this schedule.
+        example:
+          href: "https://localhost:8904/api/divisions/2"
+      notes:
+        type: string
+        example: "A default schedule"
+      type:
+        description: |
+          This block contains a string field `type` which must be one of the six schedule types.
+          It is not a valid field in a PATCH, because you cannot change the type of an existing
+          schedule.
+        type: object
+        properties:
+          type:
+            type: string
+            enum: [ accessZoneSchedule, accessSchedule, alarmZoneSchedule,
+            outputSchedule, notificationSchedule, hVLFSchedule ]
+            example: "accessZoneSchedule"
+      dayCategories:
+        type: array
+        description: |
+          See the description in the [details page](definition-Schedule-detail).
+
+          This example sets an access zone to secure mode between 7.30am and 6:00pm on work days,
+          and secure plus PIN mode at all other times.
+
+        example: [
+          { "dayCategory": {
+              "href": "https://localhost:8904/api/day_categories/3",
+              "name": "Default Day Category" },
+            "times": [
+              { "time": "00:00", "state": [ "secure", "usePin" ] },
+              { "time": "07:30", "state": [ "secure" ] },
+              { "time": "18:00", "state": [ "secure", "usePin" ] }
+            ]
+          },
+          { "dayCategory": {
+              "href": "https://localhost:8904/api/day_categories/300",
+              "name": "Weekends and holidays" },
+            "times": [
+              { "time": "00:00", "state": [ "secure", "usePin" ] }
+            ]
+          }
+        ]
+
   Override end time:
     type: object
     properties:
@@ -1629,7 +1895,7 @@ tags:
     1. End-times on overrides are not accurate to the second.  Internally, Command Centre
        converts the end time to a duration, so you may find that submitting end times in
        the very near future does not have the exact effect you expect.
-    2. Submitting an override without an end time makes it take effect until the next
+    2. An override without an end time lasts until the next
        mode change or 'cancel untimed overrides' entry in the access zone's schedule.
     3. The end time you set for an override cannot be in the past or more than 24 hours into
        the future.
@@ -2126,6 +2392,22 @@ tags:
     4. GET it.
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
+
+- name: "Schedules"
+  description: |-
+    These methods give you read/write access to the six types of schedules.
+
+    The main entry point is a paginated search that gives you any number of schedules.  The most
+    useful field is a list of state changes and the days and times that they should occur.
+
+    There is also a method that allows creating new schedules.
+
+    Schedules are new to 8.50.
+
+    **Licensing**
+
+    The schedules APIs are licensed a little differently from most others.  RESTCardholders gives
+    you Cardholder Access Schedules, and RESTStatus and RESTOverrides give you all schedule types.
 
 ###################################################################################################
 ###################################################################################################
@@ -2758,6 +3040,8 @@ paths:
         Take this URL from the 'href' field in the `features.dayCategories.dayCategories` section of
         `/api`.
 
+        Added in 8.50.
+
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
       - $ref: "cardholdersApi.yaml#/parameters/top"
@@ -2900,6 +3184,8 @@ paths:
         403:
           description: The site does not have the RESTStatus licence.
         404: {$ref: "#responses/404door"}
+
+######################################################################
 
 ######################################################################
   /api/fence_zones:
@@ -3131,8 +3417,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/name"
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - name: "fields"
-        <<: *FIELDSDESC_DET
-        <<: *OUTPUTFIELDS
+        <<: *FIELDSDESC_SUM_810
+        <<: *OUTPUTFIELDS      
 
       responses:
         200:
@@ -3159,8 +3445,8 @@ paths:
         type: string
         description: The ID of the input.
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *OUTPUTFIELDS
+        <<: *FIELDSDESC_DET_810
+        <<: *OUTPUTFIELDS      
 
       responses:
         200:
@@ -3373,7 +3659,7 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/name"
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - name: "fields"
-        <<: *FIELDSDESC_DET
+        <<: *FIELDSDESC_SUM
         <<: *OUTPUTFIELDS
 
       responses:
@@ -3401,7 +3687,7 @@ paths:
         type: string
         description: The ID of the output.
       - name: "fields"
-        <<: *FIELDSDESC_SUM
+        <<: *FIELDSDESC_DET
         <<: *OUTPUTFIELDS
 
       responses:
@@ -3510,6 +3796,174 @@ paths:
         404: {$ref: "#responses/404output"}
 
 ######################################################################
+  /api/schedules:
+    get:
+      tags:
+        - "Schedules"
+      summary: Search schedules
+      description: |
+        This returns a summary of the schedules matching your search criteria.
+
+        The result will contain no more than 100, or as many as you asked for more in your request;
+        you should follow the `next` link, if it is present, to collect the next batch.
+
+        If your result set is empty it means your operator does not have the privilege to view
+        schedules, such as 'View Schedules', 'Edit Schedules', or 'Schedule Access Zone'.  Perhaps
+        there are no schedules in the divisions in which your operator has privileges, or your
+        operator has no privileges at all.
+
+        Note that the privilege 'Schedule Access Zone' only lets you see Access Zone schedules, not
+        the other five types.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the 'href' field in the `features.schedules.schedules` section of
+        `/api`.
+
+        Added in 8.50.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - $ref: "cardholdersApi.yaml#/parameters/division"
+      - name: "fields"
+        <<: *FIELDSDESC_SUM_810
+        <<: *SCHEDULEFIELDS
+
+      responses:
+        200:
+          description: |
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Schedules'}
+        403:
+          description: |
+            The site does not have the RESTStatus, RESTOverrides, or RESTCardholders licence.
+    post:
+      tags: ["Schedules"]
+      summary: Create a schedule
+      description: |
+        This is how you create a new schedule.
+
+        Your POST needs a body containing JSON in the same from received from a GET, containing a
+        division and type, and (if you want it to be useful) `dayCategories`.
+
+        Take this URL from the 'href' field in the `features.schedules.schedules` section of
+        `/api`.
+
+        Added in 8.50.
+      parameters:
+        - name: "not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Schedule POST and PATCH'}
+          description: |
+            The only fields you must supply in a POST are `division` and `type`.  The server can
+            make up a name for you, and is happy to leave the timetable empty.
+      responses: 
+        201: 
+          description: "Success."
+          headers:
+            location:
+              type: string
+              format: url
+              description: The href of the new schedule.
+        400:
+          description: |
+            The parameters are invalid.  Check the body of the response: it may be helpful.
+
+            If you see 'No schedule found', the server could not parse the JSON in the body of your
+            POST.  Remember that the `state` field is an array.
+
+        403:
+          description: |
+            The operator does not have a privilege that allows creating schedules, or the site does
+            not have any of the RESTCardholders, RESTOverrides, or RESTStatus licences.
+
+  /api/schedules/{id}:
+    get:
+      tags:
+        - "Schedules"
+      summary: Get details of a schedule
+      description: |
+        This returns the detail of one schedule.
+
+        Follow the 'href' field in an [schedule summary](#definition-Schedule-summary) to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the schedule.
+      - name: "fields"
+        <<: *FIELDSDESC_DET_810
+        <<: *SCHEDULEFIELDS
+
+      responses:
+        200:
+          description: Success.
+          schema: {$ref: '#/definitions/Schedule detail'}
+        403:
+          description: The site does not have the RESTStatus licence.
+        404: {$ref: "#responses/404schedule"}
+
+    patch:
+      tags: ["Schedules"]
+      summary: Modify a schedule
+      description: |
+        Modifies a schedule according to the body of the PATCH.
+
+        Added in 8.50.
+
+      parameters:
+        - name: "not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Schedule POST and PATCH'}
+          description: |
+            You do not need to supply any fields in the body of this PATCH, but if you want it to
+            achieve something you should add at least one.  Probably `dayCategories`.
+      responses: 
+        204: 
+          description: "Success."
+        400:
+          description: |
+            The parameters are invalid.  Check the body of the response: it may be helpful.
+
+            If you see 'No schedule found', the server could not parse the JSON in the body of your
+            request.  Remember that the `state` field is an array.
+
+        403:
+          description: |
+            The operator does not have a privilege that allows modifying that schedule, or the site
+            does not have any of the RESTCardholders, RESTOverrides, and RESTStatus licences.
+        404: {$ref: "#responses/404schedule"}
+
+    delete:
+      tags: ["Schedules"]
+      summary: Delete a schedule
+      description: |
+        Deletes the schedule identified by the request's URL.
+
+        Added in 8.50.
+
+      responses: 
+        204: 
+          description: "Success."
+        400:
+          description: |
+            You cannot delete a schedule that is in use.  The body of the 400 response will tell you
+            if that is the case.  One way to find out which items are holding you up is to GET the
+            same URL and look in the `scheduledItems` block.
+        403:
+          description: |
+            The operator does not have a privilege that allows deleting that schedule ('Edit
+            Schedules'), or the site does not have any of the RESTCardholders, RESTOverrides, or
+            RESTStatus licences.
+        404: {$ref: "#responses/404schedule"}
+
+######################################################################
 responses:
   400badbody:
     description: |
@@ -3570,6 +4024,11 @@ responses:
       The request's URL does not represent a fence zone, or the operator does not have a privilege
       on the zone's division that allows viewing fence zones, such as 'View Site', 'Edit Site', or
       'Maintenance Override'."
+  404input:
+    description: |
+      The request's URL does not represent an input, or the operator does not have a privilege on
+      the input's division that allows viewing inputs, such as 'View Site', 'Edit Site', or
+      'Maintenance Override'."
   404macro:
     description: |
       The request's URL does not represent a macro, or the operator does not have a privilege on the
@@ -3580,9 +4039,9 @@ responses:
       The request's URL does not represent an output, or the operator does not have a privilege on
       the output's division that allows viewing outputs, such as 'View Site', 'Edit Site', or
       'Override'."
-  404input:
+  404schedule:
     description: |
-      The request's URL does not represent an input, or the operator does not have a privilege on
-      the input's division that allows viewing inputs, such as 'View Site', 'Edit Site', or
-      'Maintenance Override'."
+      The request's URL does not represent a schedule, or the operator does not have a privilege on
+      the schedule's division that allows viewing schedules, such as 'View Schedules', 'Edit
+      Schedules', or 'Schedule Access Zone'."
 
