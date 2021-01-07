@@ -51,6 +51,10 @@ info:
 
     ### API changes in 8.50
 
+    * You can manage operators, setting their operator group memberships and logon
+      credentials.
+    * You can view [operator groups](#tag-Operator-groups).
+
     ### Cardholder API changes in 8.40
 
     The body of this document clearly indicates the 8.40 features so that readers with older
@@ -232,10 +236,12 @@ x-common-blocks:
       The cardholder is locked for editing by another operator.  The body of the response will
       tell you which operator is holding the lock.
 
-######################################################################    
+######################################################################
 tags:
 - name: Cardholders
   description: |
+    A cardholder is a user account.
+
     These methods give you read and write access to the cardholder data in the Command
     Centre database.  You can download cardholders, create them, search them by name or
     Personal Data Field (PDF) value, and work on them as you would in the interactive
@@ -346,7 +352,7 @@ tags:
 
     This shows how you could remove a cardholder from all his or her access groups, but you could
     just as simply apply the process to other fields that come back as arrays, such as competencies,
-    relationships, cards, and lockers.
+    relationships, operator groups, cards, and lockers.
 
     1. GET your cardholder's details page, or search with `accessGroups` in the field list.  Either
     way, you will receive all their access group memberships.
@@ -496,8 +502,9 @@ tags:
 
   description: |
 
-    These methods give you read access to the access groups in Command Centre.  You can
-    search for groups, see their lineage, and list their cardholder members.
+    These methods give you read access to the access groups in Command Centre.  You can search for
+    groups, see their lineage, list their cardholder members, and (in 8.40 or later) see how they
+    affect those members.
 
     Your REST operator will need the 'View' or 'Edit Access Groups' operator privileges for the
     GETs.
@@ -522,9 +529,10 @@ tags:
     which includes its child groups in an array called `children`.  In a depth-first traversal you
     would recurse down through the hrefs in that array before proceeding.
 
-    5. Get the link at `cardholders` (which is the same on the search results and the
-    details page) and manage each membership as you require.  Send a DELETE to a
-    membership's href to remove it, or an HTTP PATCH to the cardholder href to update it.
+    5. Get the link at `cardholders` (which is the same on the search results and the details page),
+    look in that cardholder's `accessGroups` array, and manage each membership as you require.  Send
+    a DELETE to a membership's href to remove it, or an HTTP PATCH to the cardholder href to update
+    it.
 
     #### Building the group hierarchy.
 
@@ -547,7 +555,7 @@ tags:
     operator has in that division.
 
     Notification settings on the competency cause advance warnings to go to the cardholder and his
-    or her related cardholders before the competency expires.
+    or her related cardholders (line managers, for example) before the competency expires.
 
     The REST API gives you read access to competencies through the same two functions as other
     objects:  search and details, described below.
@@ -556,10 +564,13 @@ tags:
 
 - name: Card types
   description: |
+    The card type API exists so that you can find the card type you need when assigning a card to a
+    cardholder.
+
     A card connects a cardholder to a card type.  A new card takes some defaults from its card type
     (such as its activity period, given by 'from' and 'until'), some limits (on the card number and
-    PIN, for example) and other behaviours (how long a card can be inactive before Command Centre
-    disables it).
+    PIN, for example), and other behaviours (such as how long a card can be inactive before Command
+    Centre disables it).
 
     The 'Site Installation' chapter of the Configuration Client online help has a section that
     describes card types.
@@ -571,6 +582,11 @@ tags:
     you can assign it to a cardholder, so version 8.10 of the API added a page that returns the card
     types that your operator is allowed to assign to cardholders.  Take its URL from
     `features.cardTypes.assign` in the results of `GET /api`.
+
+    This API uses the term 'card' but more broadly we prefer 'credential', because not all card
+    types involve a physical card.
+
+    The API's coverage of PIV cards is in [its own document](piv.html).
 
 - name: Lockers
   description: |
@@ -629,28 +645,99 @@ tags:
        operator is able to override that locker it will contain a field called 'href', giving the
        URL you need to [POST](#operation--api-lockers--id--open-post) to open the locker.
 
-- name: PDF definitions
+- name: Operator groups
+
   description: |
 
-    The PDF API lets you see the definitions and configuration of all the personal data fields in
-    the system.
+    An operator group is like an access group in that:
+      - one may contain any number of cardholders, and
+      - a cardholder can be a member of any number of operator groups.
+
+    However:
+      - there is no lineage:  an operator group has no parent,
+      - memberships have no begin or end dates,
+
+      - a cardholder can have only one membership per group (and, because of the previous point,
+        needs only one),
+
+      - operator group updates do not go to controllers, so editing them is a much cheaper
+        operation.
+
+    The biggest difference is in their purpose, of course.  They grant cardholders the use of
+    software instead of doors.
+
+    These API methods give you read access to the system's operator groups.  You can search them,
+    list their cardholder members, and see the divisions into which they grant their privileges.
+    The API will not tell you the privileges that they grant.
+
+    Your REST operator will need either the 'View' or 'Edit Operators' operator privilege for those
+    GETs.
+
+    Operator groups first appeared in the API in version 8.50.
 
     ### Use cases
 
-    #### Finding all a cardholder's PDFs
+    These are practically identical to the operations you'd perform on an access group, simplified
+    because of the lack of lineage.
 
-    Recall that a PDF is attached to an access group and appears on all members of that access group
-    and its children.  To find a cardholder's PDFs, including those for which the cardholder has no
-    value, you must find all the cardholder's groups, then find all the PDFs on those groups.
+    #### Finding members of an operator group, and managing memberships.
+
+    1. `GET /api`.
+    2. Follow the link at `features.operatorGroups.operatorGroups.href` (adding search terms, and
+       setting `top` high to save pagination).
+    3. Find your operator group.
+
+    4. The link at `cardholders` returns the cardholders who have membership of your group.
+
+    5. Get the link at `cardholders` (which is the same on the search results and the details page),
+    look in that cardholder's `operatorGroups` array, and manage each membership as you require.
+    Send a DELETE to a membership's href to remove it, or an HTTP PATCH to the cardholder href to
+    update it.
+
+- name: PDF definitions
+  description: |
+
+    A Personal Data Field is an item that adds a custom value to a cardholder.  Each PDF has a type
+    (text, image, numeric, ...) and optional constraints on the values that it can hold.  For
+    example, text, email, and telephone number types can have a regular expression attached with
+    which new values must match.  A date can have a maximum and a minimum.  Text PDFs can have a
+    list of valid values, like an enumeration.
+
+    There is more configuration:  image PDFs have a type and size, to which Command Centre will
+    transcode incoming images.  Mobile numbers and email addresses have a flag indicating whether
+    they are suitable to receive SMS and email notifications.  All PDFs have their own access level
+    (hidden, read-only, or full access) that applies to operators in operator groups that do not
+    expressly override it.
+
+    Importantly, PDFs are attached to access groups.  A cardholder can have a value for a PDF only
+    if he or she is a member of one of the PDF's access groups.
+
+    This API lets you see the definitions and configuration of all the personal data fields in the
+    system.
+
+    ### Use cases
+
+    #### Finding all a cardholder's PDF definitions
+
+    You can see all a cardholder's PDF *values* by looking in the `personalDataDefinitions` block of
+    a [cardholder](#definition-Cardholder-detail).  But that will only show you the PDFs that the
+    cardholder currently has values for -- it will not show you the blanks.  If you are writing an
+    application that needs to find all the PDFs that a cardholder could carry, you will need this
+    process.
+
+    Recall that a PDF is attached to an access group and appears on all direct and indirect members
+    of that access group.  To find a cardholder's PDFs, including those for which the cardholder has
+    no value, you must find all the cardholder's groups, then find all the PDFs on those groups.
 
     1. GET the cardholder's access groups from the cardholder's detail page, or the search page
        with `fields=accessGroups` added to the query.
-    2. Iterate through the hrefs of those access groups, GETting each.  That will return their detail pages.
-    3. For each access group detail page, record the hrefs from the `personalDataDefinitions` block
-       and add the `parent.href` link to the list of groups to check (unless you have already seen
-       it, of course).
+    2. Iterate through the hrefs of those access groups, GETting each.  That will return their
+       detail pages.
+    3. For each access group detail page, record the names and hrefs from the
+       `personalDataDefinitions` block and add the `parent.href` link to the list of groups to check
+       (unless you have already seen it, of course).
 
-    Now you have a list of hrefs to PDF definition detail pages.
+    Now you have the names and hrefs of all the PDFs that cardholder can hold.
 
     #### Finding a PDF's regular expression
 
@@ -671,10 +758,12 @@ tags:
     them to form relationships between cardholders.
 
     A role defines a relationship between two cardholders.  One cardholder can perform a role for
-    many others but can have it performed for them by only one other.  For example, a person has a
-    supervisor and is a supervisor for many others.  When you use REST to look up or update a
-    cardholder, you will work on the 'has a' relationships, not the 'is a' relationships.  In other
-    words you can change the cardholder's supervisor but not who the cardholder supervises.
+    many others but can have it performed for them by only one other.  For example, a person can be
+    a supervisor for many people but has only one of his or her own.
+
+    When you use REST to look up or update a cardholder, you will work on the 'has a' relationships,
+    not the 'is a' relationships.  In other words you can change the cardholder's supervisor but not
+    who the cardholder supervises.
 
     ### Use case:  searching for a role by name and assigning a relationship
 
@@ -816,7 +905,10 @@ definitions:
       href:
         type: string
         format: url
-        description: "A link to a [cardholder detail](#definition-Cardholder-detail) object for this cardholder.  This is Command Centre's identifier for this cardholder:  use it whenever you need to specify a cardholder in REST operations."
+        description: |
+          A link to a [cardholder detail](#definition-Cardholder-detail) object for this cardholder.
+          This is Command Centre's identifier for this cardholder:  use it whenever you need to
+          specify a cardholder in REST operations."
         example: "https://localhost:8904/api/cardholders/325"
       id:
         type: string
@@ -920,6 +1012,48 @@ definitions:
               longer, because the minimum length is set by your site configuration.
 
               You will find that "0000" does not work.
+          operatorLoginEnabled:
+            type: boolean
+            example: true
+            description: |
+              True if this operator can log in to the interactive Command Centre clients.  Note that
+              a cardholder also needs a privilege to use the Configuration Client.
+          operatorUsername:
+            type: string
+            example: qmaster
+            description: |
+              The name that the operator uses when logging in to the interactive clients.
+          operatorPassword:
+            type: string
+            example: write-only
+            description: |
+              The password this user must supply when logging in to the interactive clients, if they
+              are not using Windows integrated authentication.
+
+              Command Centre imposes password length and complexity restrictions.  If your password
+              does not meet those requirements, the entire update will fail.  The body of the 400
+              will tell you why.
+
+              Like the user code, this is write-only so you will not see it in the results of a GET.
+          operatorPasswordExpired:
+            type: boolean
+            example: false
+            description: |
+              If true, the interactive clients will request a new password the next time this person
+              logs in.
+          windowsLoginEnabled:
+            type: boolean
+            example: true
+            description: |
+              If true, and they have a Windows username, this user can log in using Windows
+              integrated authentication.
+          windowsUsername:
+            type: string
+            example: misix.local\qmaster
+            description: |
+              This user's Windows username.  For an example of the format that will work in your
+              organisation, look in the 'Windows logon' field of the 'Operator configuration' tab of
+              a cardholder's properties in the Configuration Client.
           personalDataDefinitions:
             type: array
             description: |
@@ -960,9 +1094,14 @@ definitions:
           accessGroups:
             type: array
             description:  |
-              All the cardholder's access group memberships.  This does not list memberships the cardholder inherits
-              through other groups.
+              All the cardholder's access group memberships.  This does not list memberships the
+              cardholder inherits through other groups.
             items: {$ref: '#/definitions/Cardholder access group'}
+          operatorGroups:
+            type: array
+            description:  |
+              All the cardholder's operator group memberships.  Added in 8.50.
+            items: {$ref: '#/definitions/Cardholder operator group'}
           competencies:
             type: array
             description: |
@@ -1113,6 +1252,15 @@ definitions:
           - accessgroup:
               href: "https://localhost:8904/api/access_groups/352"
             from: "2019-01-01"
+      operatorGroups:
+        type: array
+        items: {$ref: '#/definitions/Cardholder operator group'}
+        description:  |
+          Here you can add the operator groups necessary to give your new cardholder the
+          software access he or she needs.  Added in 8.50.
+        example:
+          - operatorgroup:
+              href: "https://localhost:8904/api/operator_groups/523"
       competencies:
         type: array
         items: {$ref: '#/definitions/Cardholder competency'}
@@ -1281,7 +1429,7 @@ definitions:
 
         type: string
         format: url
-        example: "https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d"
+        example: "https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9"
       number:
         description: |
           For a physical access card, this is its card number.  It must be unique across all cards
@@ -1576,7 +1724,7 @@ definitions:
 
           DELETE is the only verb you can use on this URL.  GET will always return a 404.
 
-        example: "https://localhost:8904/api/cardholders/325/access_groups/D714D8A894724F"
+        example: "https://localhost:8904/api/cardholders/325/access_groups/D714D8A89F"
       accessGroup:
         description:  "An object containing a link to this group's detail page and its name.  It is read-only because you cannot change a group membership's group."
         readOnly: true
@@ -1618,6 +1766,33 @@ definitions:
         type: string
         format: date-time
         example: "2017-12-31T11:59:59Z"
+
+  Cardholder operator group:
+    description: |
+      An _operator group_ is an object in Command Centre.  The connection between an operator group
+      and a cardholder is a _membership_.  A cardholder can be a member of many groups, and groups
+      usually have more than one member.
+
+      Presence in an operator group affects software access.  Your REST operator, for example, must
+      be in an operator group that grants privileges, otherwise it will receive nothing but 404s.
+
+      Added in 8.50.
+
+    properties:
+      href:
+        type: string (url)
+        description: |
+          DELETE this URL to remove this group membership.
+
+          DELETE is the only verb you can use on this URL.  GET will always return a 404.
+
+        example: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
+      accessGroup:
+        description:  |
+          An object containing a link to this group's detail page and its name.  It is read-only
+          because you cannot change a group membership's group.
+        readOnly: true
+        example: { name: "Locker admins", href: "https://localhost:8904/api/operator_groups/532" }
 
   Cardholder competency:
     description: |
@@ -1858,7 +2033,7 @@ definitions:
 
           DELETE is the only verb you can use on this URL.  GET will always return a 404.
 
-        example: "https://localhost:8904/api/cardholders/325/relationships/1799lah1170"
+        example: "https://localhost:8904/api/cardholders/325/relationships/179lah1170"
       role:
         type: object
         description: |
@@ -1908,6 +2083,7 @@ definitions:
         - changes the issue level and clears the until date on another credential,
         - deletes a third credential,
         - adds two access group memberships, one unending and one with an until date,
+        - adds one operator group membership,
         - clears the until date on another access group membership,
         - removes a third access group membership,
         - adds a competency, inactive, with a future enablement date,
@@ -1921,8 +2097,8 @@ definitions:
       This is also the method you use for changing a cardholder's name, description, notes, user
       code, etc.
 
-      In addition to those fields, this PATCH format accepts four arrays:  'cards',
-      'accessGroups', 'competencies', and 'relationships'.
+      In addition to those fields, this PATCH format accepts five arrays:  'cards',
+      'accessGroups', 'competencies', 'relationships', and (in 8.50) 'operatorGroups'.
 
     properties:
       authorised:
@@ -2127,6 +2303,33 @@ definitions:
               until: "2020-02-29"
           remove:
             - href: "https://localhost:8904/api/cardholders/325/lockers/abcd4321"
+
+      operatorGroups:
+        type: object
+        description: |
+          This can contain two arrays named 'add' and 'remove'.  Every element you send in those
+          arrays should be in the [operator group schema](#definition-Cardholder-operator-group).
+
+          Each element of the 'add' array will need an 'operatorGroup' member containing an href
+          identifying the operator group to which you wish to add the cardholder.
+
+          The only field that makes sense in an element of the 'remove' array is the href.  Make
+          sure it is the href of the membership, not of the operator group.
+
+          There is nothing about an operator group membership that you can change so there is no
+          point to an 'update' array.  Operator group memberships are, or are not - there is no
+          update.
+
+          Supported in 8.50 and later.
+
+        example:
+          add:
+            - operatorGroup:
+                href: "https://localhost:8904/api/access_groups/532"
+            - operatorGroup:
+                href: "https://localhost:8904/api/access_groups/535"
+          remove:
+            - href: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
 
   Cardholder edit:
     description: |
@@ -2886,6 +3089,8 @@ definitions:
       from: "2017-01-01T00:00:00Z"
       until: "2017-12-31T11:59:59Z"
 
+######################################################################
+
   Locker banks:
     description: |
       An array of locker bank summaries, and a `next` link for more.
@@ -3345,6 +3550,120 @@ definitions:
         example: "16777215"
       serverDisplayName:
         <<: *SERVER
+
+######################################################################
+
+  Operator groups:
+    description: |
+      An array of operator group summaries, described in the next section, and a `next` link for
+      more.
+    properties:
+      results:
+        type: array
+        description: An array of operator group summaries.
+        items:
+          { $ref: '#/definitions/Operator group summary' }
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href:
+            type: string
+            format: url
+        example:
+           href: "https://localhost:8904/api/operator_groups?skip=61320"
+
+  Operator group summary:
+    description: |
+      The operator group search at `/api/operator_groups` returns an array of these, and
+      `/api/operator_groups/{id}` (linked as the href in this object) returns one with more fields.
+
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to an [operator group detail](#definition-Operator-group-detail) object for this
+          operator group.
+        example: "https://localhost:8904/api/operator_groups/523"
+      name:
+        type: string
+        example: "Locker admins."
+      serverDisplayName:
+        <<: *SERVER
+
+  Operator group detail:
+    description: |
+      [/api/operator_groups/{id}](#operation--api-operator_groups--id--get) returns one of these.
+      In addition to the basic items details such as division and description, it lists the
+      divisions in which it grants privileges to its members.
+
+    allOf:
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "For managing locker assignments."
+          division:
+            type: object
+            description: |
+              The division that contains this operator group.  This has no bearing on the divisions
+              in which this operator group grants privileges; that is `divisions`.
+            example:
+              id: "2"
+              href: "https://localhost:8904/api/divisions/2"
+          cardholders:
+            type: object
+            description: |
+              Following this link lists the group's [cardholder
+              members](#operation--api-operator_groups--id--cardholders-get).
+            example:
+              href: "https://localhost:8904/api/operator_groups/523/cardholders"
+          divisions:
+            type: array
+            description: |
+              An array containing the divisions in which this operator group grants its privileges.
+            example: [
+              division: {
+                "name": "Staff",
+                "href": "https://localhost:8904/api/divisions/647"
+              },
+              division: {
+                "name": "Contractors",
+                "href": "https://localhost:8904/api/divisions/649"
+              }
+            ]
+
+      - $ref: "#/definitions/Operator group summary"
+
+  Operator group membership:
+    description: |
+      Returned in an array by
+      [/api/operator_groups/{id}/cardholders](#operation--api-operator_groups--id--cardholders-get),
+      containing cardholders who are members of a particular operator group.
+
+      Each item contains an href that you can use to delete the operator group membership, plus the
+      cardholder's name and (if your operator has the privilege to view that cardholder) an href to
+      the cardholder record.
+
+      [PATCH](#operation--api-cardholders--id--patch) the href in the cardholder block if you want
+      to change anything about that cardholder.  The operator groups they are in, for example.
+
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          DELETE this URL to remove the cardholder from this operator group.
+
+          DELETE is the only verb you can use on this URL.  GET will always return a 404.
+
+      cardholder: {type: object, description: 'The name and href of the member cardholder.'}
+    example:
+      href: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
+      cardholder:
+        name: "Boothroyd, Algernon"
+        href: "https://localhost:8904/api/cardholders/325"
 
 ######################################################################
   PDF definitions:
@@ -4236,7 +4555,7 @@ paths:
         items: { type: string }
         default: ['defaults']
         enum: [href, id, name, description, parent, division, children, notes, personalDataDefinitions,
-            access, saltoAccess, alarmZones, ...]
+            cardholders, access, saltoAccess, alarmZones, ...]
         description: |
           Return these fields in the search results.  The values you can list are the same as the
           field names in the [details page](#definition-Access-group-detail).  Using it you can
@@ -4258,7 +4577,6 @@ paths:
             Success.  See the note in the description about privileges if your result set is empty.
           schema: { $ref: '#/definitions/Access groups' }
         403: { description: "The site does not have the RESTCardholders licence." }
-        404: { description: "There is no group at that URL." }
 
   /api/access_groups/{id}:
     get:
@@ -4270,7 +4588,11 @@ paths:
         In addition to the group's vitals and a link to the membership document in the access group
         search results, this call lists the group's child groups.
 
-        You can find the URL for this call in the access group search results.        
+        Note that you can obtain the same results by adding a `fields` query parameter to a
+        [search](#operation--api-access_groups-get).
+
+        You can find the URL for this call in the access group search results and in a cardholder's
+        `accessGroups` array.
 
       parameters:
       - name: "id"
@@ -4301,8 +4623,10 @@ paths:
         200: 
           description: "Success."
           schema: { $ref: '#/definitions/Access group detail' }
-        403: { description: "The operator does not have a privilege that allows viewing that access groups." }
-        404: { description: "That is not the URL of an access group." }
+        404:
+          description: |
+            That is not the URL of an access group, or the operator does not have a privilege that
+            allows viewing it, such as 'Modify Access Control' or 'View Access Groups'.
 
   /api/access_groups/{id}/cardholders:
     get:
@@ -4319,6 +4643,9 @@ paths:
 
         There may be more than one entry per cardholder, because any one cardholder can have many
         memberships to a group, each with different from and until date-times.
+
+        If your operator does not have the privilege to view a cardholder item you will receive its
+        name but not its href (since following it would 404).
 
         You can find the URL in the `cardholders` block of an access group's search results or
         detail pages.
@@ -4344,14 +4671,12 @@ paths:
               - href: "https://localhost:8904/api/cardholders/329/access_groups/18DE901A1DEA48"
                 cardholder:
                   name: "Miles Messervy"
-                  href: "https://localhost:8904/api/cardholders/5398"
                 from: "2016-11-18T00:00:00Z"
 
-        4xx:
+        404:
           description: |
-            The ID is invalid, or it is valid but you do not have privileges for the access group,
-            or you do not have a privilege that allows viewing cardholders.  Check the body of the
-            result for a description of the problem.
+            The ID is invalid, or it is valid but you do not have privileges for the access group.
+            Check the body of the result for a description of the problem.
 
 ######################################################################
 
@@ -4692,6 +5017,165 @@ paths:
         404:
           description: |
             That is not the URL of a locker.
+
+######################################################################
+
+  /api/operator_groups:
+    get:
+      tags:
+        - Operator groups
+      summary: Search operator groups
+
+      description: |
+
+        This returns operator groups matching your search criteria.
+
+        The result will contain no more than 100 groups, unless you ask for more in your request; you
+        should follow the `next` link, if it is present, to collect the next batch.
+
+        When you have loaded all the operator groups there will be no `next` link.
+
+        If your result set is empty it means either your search terms were too tight or your
+        operator does not have the privilege to view any operator groups.  Perhaps there are none in
+        the divisions in which your operator has 'View operators' or 'Edit operators', or your
+        operator does not have those privileges at all.
+
+        This request does not return the group's cardholders.  That would make the results unwieldy.
+        Instead, it provides a separate link.
+
+        Adding, deleting, or modifying operator groups between calls to this API will not affect the
+        pagination of its results if you sort by ID.
+
+        You can find the URL for this call in the `features.operatorGroups.operatorGroups.href`
+        field of `/api`.
+
+        Added in 8.50.
+
+      parameters:
+      - $ref: "#/parameters/sort"
+      - name: "top"
+        in: query
+        required: false
+        type: integer
+        minimum: 1
+        default: 100
+        description: The maximum number of operator groups to return per page.
+      - $ref: "#/parameters/name"
+      - $ref: "#/parameters/division"
+      - name: "fields"
+        in: query
+        required: false
+        type: array
+        items: { type: string }
+        default: ['defaults']
+        enum: [href, id, name, description, division, notes, cardholders, divisions]
+        description: |
+          Return these fields in the search results.  The values you can list are the same as the
+          field names in the [details page](#definition-Operator-group-detail).  Using it you can
+          return everything on the search page that you would find on the details page.  Separate
+          values with commas.
+
+          Use the special value `defaults` to return the fields you would have received had you not
+          given the parameter at all.  Add more after a comma.
+
+          Treat the string matches as case sensitive.
+
+      responses: 
+        200:
+          description: |
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: { $ref: '#/definitions/Operator groups' }
+        403: { description: "The site does not have the RESTCardholders licence." }
+
+  /api/operator_groups/{id}:
+    get:
+      tags:
+        - Operator groups
+      summary: Get details of an operator group
+
+      description: |
+        In addition to the group's vitals and a link to the membership document, this call returns
+        the divisions in which the operator groups grants its privileges.
+
+        Note that you can obtain the same results by adding
+        `fields=defaults,description,division,divisions,cardholders` to a
+        [search](#operation--api-operator_groups-get).
+
+        You can find the URL for this call in the operator group search results and in a
+        cardholder's `operatorGroups` array.
+
+        Added in 8.50.
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "The identifier of the operator group."
+      - name: "fields"
+        in: query
+        required: false
+        type: array
+        items: { type: string }
+        default: ['defaults']
+        enum: [defaults, href, id, name, description, division, notes, cardholders, divisions]
+        description: |
+          Return these fields.  The values you can list are the same as the field names in the
+          [detail results](#definition-Operator-group-detail).  Use it to return the notes, which
+          don't appear by default.  Separate values with commas.
+
+          Treat the string matches as case sensitive.
+
+      responses: 
+        200: 
+          description: "Success."
+          schema: { $ref: '#/definitions/Operator group detail' }
+        403: { description: "The operator does not have a privilege that allows viewing that operator groups." }
+        404: { description: "That is not the URL of an operator group." }
+
+  /api/operator_groups/{id}/cardholders:
+    get:
+      tags:
+        - Operator groups
+      summary: Get membership of an operator group
+
+      description: |-
+
+        This lists all cardholders who are members of the group identified by the request URL.  It
+        does not paginate the results, so there is no `next` link.
+
+        Operator groups cannot contain other operator groups, so every cardholder benefiting from
+        this operator group comes out of this call.
+
+        If your operator does not have the privilege to view a cardholder item you will receive its
+        name but not its href (since following the href would 404).
+
+        You can find this call's URL in the `cardholders` block of an operator group.
+
+        Added in 8.50.
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "The identifier of the operator group."
+      responses: 
+        200: 
+          description: "Success."
+          schema: { type: array, items: {$ref: '#/definitions/Operator group membership' }}
+          example:
+            cardholders:
+              - href: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
+                cardholder:
+                  name: "Boothroyd, Algernon"
+                  href: "https://localhost:8904/api/cardholders/325"
+              - href: "https://localhost:8904/api/cardholders/329/operator_groups/AFADEMED"
+                cardholder:
+                  name: "Miles Messervy"
+
+        4xx:
+          description: |
+            The ID is invalid, or it is valid but you do not have privileges for the operator group.
+            Check the body of the result for a description of the problem.
 
 ######################################################################
   /api/personal_data_fields:
