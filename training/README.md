@@ -51,7 +51,7 @@ Sample table
 
 Sample image
 
-![text](../assets/server_props_turnon.png "title")
+![text](../../assets/server_props_turnon.png "title")
 
 Trailer.
 
