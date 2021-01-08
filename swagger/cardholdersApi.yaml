@@ -42,23 +42,26 @@ info:
 
     ### Licensing
 
-    All of the API calls described here require the RESTCardholders licence.
+    All of the API calls described here are available with the RESTCardholders licence.  Lockers and
+    locker banks are also available with the RESTStatus licence.
 
-    ### API changes in 8.60
+    ### Versions
+
+    The body of this document clearly indicates when recent features arrived in the API so that
+    readers with older versions of Command Centre know not to expect them.
+
+    #### Cardholder API changes in 8.60
 
     8.60 will sort its search results differently and may increase the number it returns per page,
     if the query did not use query parameters to override the defaults.
 
-    ### API changes in 8.50
+    #### API changes in 8.50
 
-    * You can manage operators, setting their operator group memberships and logon
-      credentials.
+    * You can manage operators by setting their operator group memberships and logon credentials.
     * You can view [operator groups](#tag-Operator-groups).
+    * Lockers and locker banks report the hardware controller where they reside.
 
-    ### Cardholder API changes in 8.40
-
-    The body of this document clearly indicates the 8.40 features so that readers with older
-    versions of Command Centre know not to use them.
+    #### API changes in 8.40
 
     * Access groups have 22 new fields showing the privileges and access they grant their members.
       These new fields are in the default set for the [detail view](#definition-Access-group-detail).
@@ -70,7 +73,7 @@ info:
     * Cards contain the date and time of their last print or encode, and their issue level at the
       time.
 
-    ### Cardholder API changes in 8.30
+    #### API changes in 8.30
 
     * Cardholder [change tracking](#tag-Cardholder-changes) lets you synchronise users into an
       external system by informing it of changes as they occur.
@@ -81,7 +84,7 @@ info:
     * A cardholder's card object now contain a Boolean field called `trace` indicating whether its
       trace flag is set.  A card with tracing on generates an event every time it is used.
 
-    ### Cardholder API changes in 8.20
+    #### API changes in 8.20
 
     * A new field `update_location` on a cardholder gives a link to a
       [POST](#operation--api-cardholders--id--update_location-post) that changes his or her current
@@ -99,7 +102,7 @@ info:
       role holder's two name fields.  The `name` field, present since 7.90, is simply these two
       fields joined with a space, and is therefore ambiguous when a cardholder only has one name.
 
-    ### Cardholder API changes in 8.10.1112
+    #### API changes in 8.10.1112
 
     * You can send an [override](#operation--api-lockers--id--open-post) to a locker to open it.
 
@@ -108,7 +111,7 @@ info:
       [details](#operation--api-locker_banks--id--get) GETs.  The [use
       cases](#opening-a-locker) section shows how.
 
-    ### Cardholder API changes in 8.10
+    #### API changes in 8.10
 
     All changes contain the text "8.10".
 
@@ -144,7 +147,12 @@ info:
         `GET /api/cardholders?sort=id&top=10000 &fields=firstname,lastname,personalDataFields,accessGroups`
 
       It adds to the payload size, though, so only do this if you are certain that the search will
-      not return you many cardholders you are not interested in.
+      not return too many cardholders you are not interested in.
+
+    * If you must get an object's details page, and you are on v8.00 or later, using the [`fields`
+      parameter](#topic-Field-specifiers) will still save work.  Be explicit with what you want:  do
+      not use `fields=defaults` unless you need every field that 'defaults' gives you and you
+      accept that we may add fields to the defaults in future.
 
     * When creating cardholders, assign their cards, groups, and other attributes in the POST.  This is
       significantly quicker than sending a handful of PATCHes chasing after your POST, and if you
@@ -157,10 +165,6 @@ info:
 
     * When modifying a cardholder, do all your operations in one PATCH.  This is much quicker than
       doing it in several smaller PATCHes.
-
-    * (In v8.00 or later) save work generating the details page by using the [`fields`
-      parameter](#topic-Field-specifiers).  Be explicit:  do not use `fields=defaults`, unless you
-      need every field that 'defaults' gives you.
 
     ### Dates and times
 
@@ -235,6 +239,38 @@ x-common-blocks:
     description: |
       The cardholder is locked for editing by another operator.  The body of the response will
       tell you which operator is holding the lock.
+  ccontroller_name_irrelevant: &CONNECTEDCONTROLLER
+    type: object
+    description: |
+      This block describes this item's hardware controller.
+
+      Retrieving it takes a little more time than the other fields so only ask for it if you
+      need it.
+
+      Added in 8.50.
+    properties:
+      name: {type: string, example: "Third floor C6000"}
+      href:
+        type: string
+        format: url
+        example: "https://localhost:8904/api/items/508"
+        description: |
+          This is the REST API's identifier for the hardware controller.  It is only an
+          identifier, not a usable URL, because there is no interface for hardware
+          controllers.  GETting the URL will return a 404.
+      id:
+        type: string
+        description: |
+          An alphanumeric identifier, unique to the server.  This is the ID to use in the `source`
+          parameter of [event filters](events.html#operation--api-events-get).
+        example: "634"
+  ccontroller_name_still_irrelevant: &CONNECTEDCONTROLLER_BRIEF
+    type: object
+    description: |
+      This block describes this item's hardware controller.  Retrieving it takes a little more time
+      than the other fields so only ask for it if you need it.
+
+      Added in 8.50.
 
 ######################################################################
 tags:
@@ -462,7 +498,7 @@ tags:
 
         1b. Follow the link at `features.cardholders.changes`.
 
-        1c. Take note of the href you get back inside the `next` block.
+        1c. Take note of the href that was in the `next` block.
 
     1. Download all cardholders out of Command Centre using [this
        advice](#downloading-all-cardholders).  Here is a reminder:
@@ -470,18 +506,18 @@ tags:
         2a. Using the results of `GET /api` again, follow the link at
           `features.cardholders.cardholders`, adding query parameters `top=1000` and `sort=id`.
 
-        2b. Process the cardholders that gave you (probably 1000) and follow the `next.href` link in
-          a loop until you have extracted all your cardholders.
+        2b. Process those cardholders (probably 1000) and follow the `next.href` link in
+          a loop until you have extracted all of them.
 
     1. This is the start of your update loop.  The first time through, to catch the changes that
-       came in during the big download in step two, use the href that you got in step one.  Simply
-       GET it.
+       came in during the big download you were doing in step two, use the href that you got in step
+       one.  Simply GET it.
 
     1. If the `results` array you get back is empty you are up to date and you have nothing to do.
-      Sleep for a time before your next poll, to avoid a tight loop and ease the load on your
-      database.  When it comes time to poll again, do not be tempted to resubmit the same request:
-      the URL to use sometimes changes even when there are no results, so always get it from
-      `next.href`.
+       Sleep for a time before your next poll, to avoid a tight loop and ease the load on your
+       database.  When it comes time to poll again, do not be tempted to resubmit the same request:
+       the URL to use sometimes changes even when there are no results, so always get it from
+       `next.href`.
 
     1. If the `results` array is not empty it will contain the first changes after your previous
     call.  The sections below will help you process them.
@@ -491,8 +527,8 @@ tags:
     ### Notes
 
     - The API will not notify changes to any fields that you cannot see in the cardholders API, such
-      as user codes, card PINs, car park assignments, biometric credentials, and operator group
-      memberships.
+      as user codes, card PINs, car park assignments, biometric credentials, and (in versions before
+      8.50) operator settings.
 
     - The API will return the pre-change values of some fields, but not those that require a lot of
       storage such as image PDFs and PIV certificates.  Command Centre does not hang on to them
@@ -1166,6 +1202,29 @@ definitions:
             description: |
               All the cardholder's locker assignments.
             items: {$ref: '#/definitions/Cardholder locker'}
+
+          lastPrintedOrEncodedTime:
+            type: string
+            format: date-time
+            readOnly: true
+            description: |
+              The date and time this card was last printed or encoded.  It will not come out by
+              default - you need to ask for it with `fields=cards.lastPrintedOrEncodedTime`.
+
+              Added in 8.40.
+            example: "2020-08-10T09:20:50Z"
+          lastPrintedOrEncodedIssueLevel:
+            type: integer
+            minimum: 1
+            maximum: 15
+            example: 1
+            readOnly: true
+            description: |
+              The issue level of this card when it was last printed or encoded, provided it was
+              non-zero.  It will not come out by default - you need to ask for it with
+              `fields=cards.lastPrintedOrEncodedIssueLevel`.
+
+              Added in 8.40.
 
       - $ref: "#/definitions/Cardholder summary"
 
@@ -3175,13 +3234,15 @@ definitions:
 
       notes:
         type: string
+      connectedController:
+        <<: *CONNECTEDCONTROLLER
       lockers:
         type: array
         items:
           type: object
           properties:
             name: { type: string }
-            shortName: { type: string, description: "A T20 will display this instead of the long name, if it has one." }
+            shortName: { type: string, description: "A T20 will display this instead of the long name, if it has both." }
             description: { type: string }
             href:
               type: string
@@ -3189,6 +3250,8 @@ definitions:
               description: |
                 This is the href of the locker.  Use it when creating new assignments in a
                 cardholder PATCH or POST.  Trying to GET it will always yield a 404.
+            connectedController:
+              <<: *CONNECTEDCONTROLLER_BRIEF
             assignments:
               type: array
               description: |
@@ -3296,6 +3359,8 @@ definitions:
       notes:
         type: string
         description: The notes field is not in the default result set.  You must ask for it using `fields`.
+      connectedController:
+        <<: *CONNECTEDCONTROLLER
       assignments:
         type: array
         description: |
@@ -4913,7 +4978,10 @@ paths:
         200: 
           description: "Success."
           schema: {$ref: '#/definitions/Locker banks'}
-        403: { description: "The installation lacks a lockers licence." }
+        403:
+          description: |
+            The installation lacks a lockers licence, or it is missing both RESTCardholders and
+            RESTStatus.
 
   /api/locker_banks/{id}:
     get:
@@ -4935,7 +5003,8 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-        enum: [href, id, name, shortName, description, division, lockers, notes]
+        enum: [href, id, name, shortName, description, division, notes, connectedController,
+               lockers, lockers.defaults, lockers.connectedController, ...]
         description: |
           Return these fields.  The values you can list are the same as the field names you would
           get in the [details page](#definition-Locker-bank-detail).  Use it to cut back on the size of
@@ -4951,7 +5020,10 @@ paths:
         200: 
           description: "Success."
           schema: {$ref: '#/definitions/Locker bank detail'}
-        403: { description: "The installation lacks a lockers licence." }
+        403:
+          description: |
+            The installation lacks a lockers licence, or it is missing both RESTCardholders and
+            RESTStatus.
         404:
           description: |
             Your REST operator does not have the privilege to view that locker bank.
@@ -4979,7 +5051,8 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-        enum: [href, id, name, shortName, description, division, assignments, notes, commands]
+        enum: [href, id, name, shortName, description, division, assignments, notes, commands,
+               connectedController]
         description: |
           Return these fields.  Use it to cut back on the size of the response for a locker
           with many assignments.  Separate values with commas.
@@ -4989,7 +5062,10 @@ paths:
         200: 
           description: "Success."
           schema: {$ref: '#/definitions/Locker detail'}
-        403: { description: "The installation lacks a lockers licence." }
+        403:
+          description: |
+            The installation lacks a lockers licence, or it is missing both RESTCardholders and
+            RESTStatus.
         404:
           description: |
             Your REST operator does not have the privilege to view that locker bank ('Locker

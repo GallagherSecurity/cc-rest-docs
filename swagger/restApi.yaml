@@ -42,26 +42,35 @@ info:
     RESTOverrides.  The two licences do not overlap:  to watch an item and override it, you will
     need both.
 
-    ### Changes in 8.60
+    ### Versions
+
+    The body of this document clearly indicates when recent features arrived in the API so that
+    readers with older versions of Command Centre know not to expect them.
+
+    #### Changes in 8.60
 
     8.60 increases the number of items in its search results and sorts them differently, if the
     query did not use query parameters to override the defaults.
 
-    ### Changes in 8.50
+    #### Changes in 8.50
 
     * A [schedules API](#tag-Schedules) providing CRUD of the six schedule item types.
 
     * A [day categories API](#tag-Day-Categories) that returns the day categories you need for those
       schedules.
 
-    ### Changes in 8.30
+    * A [pulse](#operation--api-outputs--id--pulse-post) override on outputs.
+
+    * A 'connectedController' field on the item types that did not already have it.
+
+    #### Changes in 8.30
 
     All changes to this document contain the text "8.30".
 
     * A 'connectedController' field in the [door detail](#definition-Door-detail) that returns the
       ID and name of the door's hardware controller (a C6000 controller, not an API controller).
 
-    ### Changes in 8.20
+    #### Changes in 8.20
 
     All changes to this document contain the text "8.20".
 
@@ -69,7 +78,7 @@ info:
       call on the Access Zones API that returns you the list of Access Zones into which your
       operator is allowed to move cardholders.
 
-    ### Changes in 8.10
+    #### Changes in 8.10
 
     All changes to this document contain the text "8.10".
 
@@ -396,17 +405,40 @@ x-common-blocks-this-is-made-up:
   update_fields_ignore: &UPDFIELDSENUM
     enum: [ status, statusText, statusFlags ]
 
+  ccontroller_name_irrelevant: &CONNECTEDCONTROLLER
+    type: object
+    description: |
+      This block describes this item's hardware controller.
+
+      Retrieving it takes a little more time than the other fields so only ask for it if you
+      need it.
+
+      Added in 8.50.
+    properties:
+      name: {type: string, example: "Third floor C6000"}
+      href:
+        type: string
+        format: url
+        example: "https://localhost:8904/api/items/508"
+        description: |
+          This is the REST API's identifier for the hardware controller.  It is only an
+          identifier, not a usable URL, because there is no interface for hardware
+          controllers.  GETting the URL will return a 404.
+      id:
+        <<: *ID
+        example: "634"
+
   acz_ignored: &ACZFIELDS
     in: query
     required: false
     type: string
-    enum: [href, id, name, shortName, description, division, commands, doors, zoneCount, statusFlags, status, notes, updates]
+    enum: [href, id, name, shortName, description, division, commands, connectedController, doors, zoneCount, statusFlags, status, notes, updates]
 
   alz_ignored: &ALZFIELDS
     in: query
     required: false
     type: string
-    enum: [href, id, name, shortName, description, division, commands, statusFlags, status, notes, updates]
+    enum: [href, id, name, shortName, description, division, commands, connectedController, statusFlags, status, notes, updates]
 
   door_ignored: &DOORFIELDS
     in: query
@@ -418,7 +450,7 @@ x-common-blocks-this-is-made-up:
     in: query
     required: false
     type: string
-    enum: [href, id, name, shortName, description, division, commands, voltage, statusFlags, status, notes, updates]
+    enum: [href, id, name, shortName, description, division, commands, connectedController, voltage, statusFlags, status, notes, updates]
 
   macro_ignored: &MACROFIELDS
     in: query
@@ -430,7 +462,7 @@ x-common-blocks-this-is-made-up:
     in: query
     required: false
     type: string
-    enum: [href, id, name, shortName, description, division, commands, statusFlags, status, notes, updates]
+    enum: [href, id, name, shortName, description, division, commands, connectedController, statusFlags, status, notes, updates]
 
   schedule_ignored: &SCHEDULEFIELDS
     in: query
@@ -578,6 +610,8 @@ definitions:
           statusFlags:
             <<: *STATUSFLAGS
             example: ["secure"]
+          connectedController:
+            <<: *CONNECTEDCONTROLLER
           commands:
             type: object
             description: |
@@ -846,6 +880,8 @@ definitions:
           statusFlags:
             <<: *STATUSFLAGS
             example: ["armed"]
+          connectedController:
+            <<: *CONNECTEDCONTROLLER
           commands:
             type: object
             description: |
@@ -1257,6 +1293,8 @@ definitions:
           statusFlags:
             <<: *STATUSFLAGS
             example: ["on", "highVoltage", "voltageKnown"]
+          connectedController:
+            <<: *CONNECTEDCONTROLLER
           commands:
             type: object
             description: |
@@ -1396,6 +1434,8 @@ definitions:
           statusFlags:
             <<: *STATUSFLAGS
             example: ["open"]
+          connectedController:
+            <<: *CONNECTEDCONTROLLER
           commands:
             type: object
             description: |
@@ -1589,6 +1629,8 @@ definitions:
           statusFlags:
             <<: *STATUSFLAGS
             example: ["open", "overridden"]
+          connectedController:
+            <<: *CONNECTEDCONTROLLER
           commands:
             type: object
             description: |
@@ -1629,6 +1671,20 @@ definitions:
                   href:
                     example: "https://localhost:8904/api/outputs/2365/off"
                     description: "[POST](#operation--api-outputs--id--off-post) to this to open this output for a fixed time."
+                    type: string
+                    format: url
+              pulse:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/outputs/2365/pulse"
+                    description: |
+                      [POST](#operation--api-outputs--id--pulse-post) to this to close this output
+                      for its pulse time.
+
+                      This link will only be here if the output is set to pulse when activated.
+
+                      Added in 8.50.
                     type: string
                     format: url
 
@@ -3717,6 +3773,29 @@ paths:
       responses:
         204: { description: Success. }
         400: { $ref: "#/responses/400badbody" }
+        403: { $ref: "#/responses/403outputoverride" }
+
+  /api/outputs/{id}/pulse:
+    post:
+      tags: ["Outputs"]
+      summary: Pulse an output
+      description: |
+        Sends an override to pulse an output.
+
+        Pulsing an output differs from turning it on in two ways:
+
+          - You cannot specify a duration for it to stay activated, because that comes from the
+            output's configuration.
+
+          - A pulsed output will stay on for its pulse time even if another event seeks to
+            deactivate it (an 'off' override will still deactivate the output).
+
+        Added in 8.50.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the output.", type: string}
+      responses:
+        204: { description: Success. }
         403: { $ref: "#/responses/403outputoverride" }
 
   /api/outputs/{id}/off:
