@@ -39,11 +39,19 @@ Website: www.gallagher.com
 
 Sample table
 
-          | Enabled flag | Enablement date | Expiry date | `status.type`
-          | ------------ | -------------- | --------| ----- |
-          | true | - | Far future | active |
-          | true | - | Near future | expiryDue |
-          | true | - | Past | expired |
-          | false | Future | - | pending |
-          | false | Past | - | inactive |
-          | false | null | - | inactive |
+| Enabled flag | Enablement date | Expiry date | `status.type`
+| ------------ | -------------- | --------| ----- |
+| true | - | Far future | active |
+| true | - | Near future | expiryDue |
+| true | - | Past | expired |
+| false | Future | - | pending |
+| false | Past | - | inactive |
+| false | null | - | inactive |
+
+
+Sample image
+
+![text](../assets/server_props_turnon.png "title")
+
+Trailer.
+
