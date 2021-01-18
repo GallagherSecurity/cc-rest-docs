@@ -217,6 +217,9 @@
                 <a href="#operation--api-outputs--id--on-post"> Turn on an output </a>
               </li>
               <li>
+                <a href="#operation--api-outputs--id--pulse-post"> Pulse an output </a>
+              </li>
+              <li>
                 <a href="#operation--api-outputs--id--off-post"> Turn off an output </a>
               </li>
               <li>
@@ -305,9 +308,11 @@
                 <p>Each section contains a list of use cases intended as quick solutions for simple tasks or a how-to to get you started toward your particular goal. However they also serve as a good introduction to the API if you step through them using a web browser, starting at <code>/api</code> on port 8904 of your Command Centre server. To do that, you will need to set up Command Centre, and install a browser plugin on your web client that lets you set an Authorization HTTP header, and a JSON formatter to prettify the results documents. Search the Configuration client&#39;s online help for &#39;test REST API&#39; for guidance.</p>
                 <h3 id="licensing">Licensing</h3>
                 <p>All of the GET calls described here require the RESTStatus licence. All the POSTs require RESTOverrides. The two licences do not overlap: to watch an item and override it, you will need both.</p>
-                <h3 id="changes-in-860">Changes in 8.60</h3>
+                <h3 id="versions">Versions</h3>
+                <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
+                <h4 id="changes-in-860">Changes in 8.60</h4>
                 <p>8.60 increases the number of items in its search results and sorts them differently, if the query did not use query parameters to override the defaults.</p>
-                <h3 id="changes-in-850">Changes in 8.50</h3>
+                <h4 id="changes-in-850">Changes in 8.50</h4>
                 <ul>
                   <li>
                     <p>A
@@ -317,20 +322,27 @@
                     <p>A
                       <a href="#tag-Day-Categories">day categories API</a> that returns the day categories you need for those schedules.</p>
                   </li>
+                  <li>
+                    <p>A
+                      <a href="#operation--api-outputs--id--pulse-post">pulse</a> override on outputs.</p>
+                  </li>
+                  <li>
+                    <p>A &#39;connectedController&#39; field on the item types that did not already have it.</p>
+                  </li>
                 </ul>
-                <h3 id="changes-in-830">Changes in 8.30</h3>
+                <h4 id="changes-in-830">Changes in 8.30</h4>
                 <p>All changes to this document contain the text &quot;8.30&quot;.</p>
                 <ul>
                   <li>A &#39;connectedController&#39; field in the
                     <a href="#definition-Door-detail">door detail</a> that returns the ID and name of the door&#39;s hardware controller (a C6000 controller, not an API controller).</li>
                 </ul>
-                <h3 id="changes-in-820">Changes in 8.20</h3>
+                <h4 id="changes-in-820">Changes in 8.20</h4>
                 <p>All changes to this document contain the text &quot;8.20&quot;.</p>
                 <ul>
                   <li>An
                     <a href="#operation--api-access_zones-update_cardholder_location-get">update_cardholder_location</a> call on the Access Zones API that returns you the list of Access Zones into which your operator is allowed to move cardholders.</li>
                 </ul>
-                <h3 id="changes-in-810">Changes in 8.10</h3>
+                <h4 id="changes-in-810">Changes in 8.10</h4>
                 <p>All changes to this document contain the text &quot;8.10&quot;.</p>
                 <ul>
                   <li>An
@@ -794,6 +806,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">doors</span>,
                           <span class="json-property-enum-item">zoneCount</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
@@ -990,6 +1003,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">doors</span>,
                           <span class="json-property-enum-item">zoneCount</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
@@ -1128,6 +1142,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">doors</span>,
                           <span class="json-property-enum-item">zoneCount</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
@@ -1220,6 +1235,11 @@
   <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
     <span class="hljs-string">&quot;secure&quot;</span>
   ],
+  <span class="hljs-attr">&quot;connectedController&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
+  },
   <span class="hljs-attr">&quot;commands&quot;</span>: {
     <span class="hljs-attr">&quot;free&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/333/free&quot;</span>
@@ -2466,6 +2486,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
                           <span class="json-property-enum-item">status</span>,
                           <span class="json-property-enum-item">notes</span>,
@@ -2599,6 +2620,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
                           <span class="json-property-enum-item">status</span>,
                           <span class="json-property-enum-item">notes</span>,
@@ -4526,6 +4548,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">voltage</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
                           <span class="json-property-enum-item">status</span>,
@@ -4737,6 +4760,11 @@
     <span class="hljs-string">&quot;highVoltage&quot;</span>,
     <span class="hljs-string">&quot;voltageKnown&quot;</span>
   ],
+  <span class="hljs-attr">&quot;connectedController&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
+  },
   <span class="hljs-attr">&quot;commands&quot;</span>: {
     <span class="hljs-attr">&quot;on&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/fence_zones/8487/on&quot;</span>
@@ -5591,6 +5619,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
                           <span class="json-property-enum-item">status</span>,
                           <span class="json-property-enum-item">notes</span>,
@@ -5723,6 +5752,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
                           <span class="json-property-enum-item">status</span>,
                           <span class="json-property-enum-item">notes</span>,
@@ -5799,6 +5829,11 @@
   <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
     <span class="hljs-string">&quot;open&quot;</span>
   ],
+  <span class="hljs-attr">&quot;connectedController&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
+  },
   <span class="hljs-attr">&quot;commands&quot;</span>: {
     <span class="hljs-attr">&quot;shunt&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/shunt&quot;</span>
@@ -6851,6 +6886,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
                           <span class="json-property-enum-item">status</span>,
                           <span class="json-property-enum-item">notes</span>,
@@ -6984,6 +7020,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
                           <span class="json-property-enum-item">status</span>,
                           <span class="json-property-enum-item">notes</span>,
@@ -7062,6 +7099,11 @@
     <span class="hljs-string">&quot;open&quot;</span>,
     <span class="hljs-string">&quot;overridden&quot;</span>
   ],
+  <span class="hljs-attr">&quot;connectedController&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
+  },
   <span class="hljs-attr">&quot;commands&quot;</span>: {
     <span class="hljs-attr">&quot;on&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs/2365/on&quot;</span>
@@ -7074,6 +7116,9 @@
     },
     <span class="hljs-attr">&quot;offUntil&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs/2365/off&quot;</span>
+    },
+    <span class="hljs-attr">&quot;pulse&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs/2365/pulse&quot;</span>
     }
   }
 }
@@ -7179,6 +7224,88 @@
                     </div>
                     <div class="prop-value">
                       <p>The server could not parse the POST parameters. There could be a syntax error in your JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding outputs (such as &#39;Override&#39;, or &#39;Maintenance Override&#39; for shunts).</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-outputs--id--pulse-post" class="operation panel" data-traverse-target="operation--api-outputs--id--pulse-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Outputs">Outputs</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Pulse an output</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/outputs/{id}/pulse</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Sends an override to pulse an output.</p>
+                  <p>Pulsing an output differs from turning it on in two ways:</p>
+                  <ul>
+                    <li>
+                      <p>You cannot specify a duration for it to stay activated, because that comes from the output&#39;s configuration.</p>
+                    </li>
+                    <li>
+                      <p>A pulsed output will stay on for its pulse time even if another event seeks to deactivate it (an &#39;off&#39; override will still deactivate the output).</p>
+                    </li>
+                  </ul>
+                  <p>Added in 8.50.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the output.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -8711,6 +8838,45 @@
                             <div class="json-inner-schema"> </div>
                           </section>
                         </dt>
+                        <dt data-property-name="connectedController" class="has-description">
+                          <span class="json-property-name">connectedController:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>This block describes this item&#39;s hardware controller.</p>
+                          <p>Retrieving it takes a little more time than the other fields so only ask for it if you need it.</p>
+                          <p>Added in 8.50.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="name">
+                                <span class="json-property-name">name:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt data-property-name="href" class="has-description">
+                                <span class="json-property-name">href:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-format">(url)</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>This is the REST API&#39;s identifier for the hardware controller. It is only an identifier, not a usable URL, because there is no interface for hardware controllers. GETting the URL will return a 404.</p>
+                              </dd>
+                              <dt data-property-name="id" class="has-description">
+                                <span class="json-property-name">id:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                                  <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                              </dd>
+                            </dl>
+                          </section>
+                        </dt>
                         <dt data-property-name="commands" class="has-description">
                           <span class="json-property-name">commands:</span>
                           <span class="json-property-type">object</span>
@@ -9207,6 +9373,11 @@
   <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
     <span class="hljs-string">&quot;secure&quot;</span>
   ],
+  <span class="hljs-attr">&quot;connectedController&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
+  },
   <span class="hljs-attr">&quot;commands&quot;</span>: {
     <span class="hljs-attr">&quot;free&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/333/free&quot;</span>
@@ -9561,6 +9732,45 @@
                             <div class="json-inner-schema"> </div>
                           </section>
                         </dt>
+                        <dt data-property-name="connectedController" class="has-description">
+                          <span class="json-property-name">connectedController:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>This block describes this item&#39;s hardware controller.</p>
+                          <p>Retrieving it takes a little more time than the other fields so only ask for it if you need it.</p>
+                          <p>Added in 8.50.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="name">
+                                <span class="json-property-name">name:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt data-property-name="href" class="has-description">
+                                <span class="json-property-name">href:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-format">(url)</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>This is the REST API&#39;s identifier for the hardware controller. It is only an identifier, not a usable URL, because there is no interface for hardware controllers. GETting the URL will return a 404.</p>
+                              </dd>
+                              <dt data-property-name="id" class="has-description">
+                                <span class="json-property-name">id:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                                  <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                              </dd>
+                            </dl>
+                          </section>
+                        </dt>
                         <dt data-property-name="commands" class="has-description">
                           <span class="json-property-name">commands:</span>
                           <span class="json-property-type">object</span>
@@ -9882,6 +10092,11 @@
   <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
     <span class="hljs-string">&quot;armed&quot;</span>
   ],
+  <span class="hljs-attr">&quot;connectedController&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
+  },
   <span class="hljs-attr">&quot;commands&quot;</span>: {
     <span class="hljs-attr">&quot;arm&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones/328/arm&quot;</span>,
@@ -10739,6 +10954,45 @@
                             <div class="json-inner-schema"> </div>
                           </section>
                         </dt>
+                        <dt data-property-name="connectedController" class="has-description">
+                          <span class="json-property-name">connectedController:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>This block describes this item&#39;s hardware controller.</p>
+                          <p>Retrieving it takes a little more time than the other fields so only ask for it if you need it.</p>
+                          <p>Added in 8.50.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="name">
+                                <span class="json-property-name">name:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt data-property-name="href" class="has-description">
+                                <span class="json-property-name">href:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-format">(url)</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>This is the REST API&#39;s identifier for the hardware controller. It is only an identifier, not a usable URL, because there is no interface for hardware controllers. GETting the URL will return a 404.</p>
+                              </dd>
+                              <dt data-property-name="id" class="has-description">
+                                <span class="json-property-name">id:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                                  <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                              </dd>
+                            </dl>
+                          </section>
+                        </dt>
                         <dt data-property-name="commands" class="has-description">
                           <span class="json-property-name">commands:</span>
                           <span class="json-property-type">object</span>
@@ -10932,6 +11186,11 @@
     <span class="hljs-string">&quot;highVoltage&quot;</span>,
     <span class="hljs-string">&quot;voltageKnown&quot;</span>
   ],
+  <span class="hljs-attr">&quot;connectedController&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
+  },
   <span class="hljs-attr">&quot;commands&quot;</span>: {
     <span class="hljs-attr">&quot;on&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/fence_zones/8487/on&quot;</span>
@@ -11207,6 +11466,45 @@
                             <div class="json-inner-schema"> </div>
                           </section>
                         </dt>
+                        <dt data-property-name="connectedController" class="has-description">
+                          <span class="json-property-name">connectedController:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>This block describes this item&#39;s hardware controller.</p>
+                          <p>Retrieving it takes a little more time than the other fields so only ask for it if you need it.</p>
+                          <p>Added in 8.50.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="name">
+                                <span class="json-property-name">name:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt data-property-name="href" class="has-description">
+                                <span class="json-property-name">href:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-format">(url)</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>This is the REST API&#39;s identifier for the hardware controller. It is only an identifier, not a usable URL, because there is no interface for hardware controllers. GETting the URL will return a 404.</p>
+                              </dd>
+                              <dt data-property-name="id" class="has-description">
+                                <span class="json-property-name">id:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                                  <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                              </dd>
+                            </dl>
+                          </section>
+                        </dt>
                         <dt data-property-name="commands" class="has-description">
                           <span class="json-property-name">commands:</span>
                           <span class="json-property-type">object</span>
@@ -11334,6 +11632,11 @@
   <span class="hljs-attr">&quot;statusFlags&quot;</span>: [
     <span class="hljs-string">&quot;open&quot;</span>
   ],
+  <span class="hljs-attr">&quot;connectedController&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
+  },
   <span class="hljs-attr">&quot;commands&quot;</span>: {
     <span class="hljs-attr">&quot;shunt&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs/9701/shunt&quot;</span>
@@ -11866,6 +12169,45 @@
                             <div class="json-inner-schema"> </div>
                           </section>
                         </dt>
+                        <dt data-property-name="connectedController" class="has-description">
+                          <span class="json-property-name">connectedController:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>This block describes this item&#39;s hardware controller.</p>
+                          <p>Retrieving it takes a little more time than the other fields so only ask for it if you need it.</p>
+                          <p>Added in 8.50.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="name">
+                                <span class="json-property-name">name:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt data-property-name="href" class="has-description">
+                                <span class="json-property-name">href:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-format">(url)</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>This is the REST API&#39;s identifier for the hardware controller. It is only an identifier, not a usable URL, because there is no interface for hardware controllers. GETting the URL will return a 404.</p>
+                              </dd>
+                              <dt data-property-name="id" class="has-description">
+                                <span class="json-property-name">id:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                                  <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                              </dd>
+                            </dl>
+                          </section>
+                        </dt>
                         <dt data-property-name="commands" class="has-description">
                           <span class="json-property-name">commands:</span>
                           <span class="json-property-type">object</span>
@@ -11962,6 +12304,29 @@
                                   </dl>
                                 </section>
                               </dt>
+                              <dt data-property-name="pulse">
+                                <span class="json-property-name">pulse:</span>
+                                <span class="json-property-type">object</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt class="json-inner-schema">
+                                <section class="json-schema-properties">
+                                  <dl>
+                                    <dt data-property-name="href" class="has-description">
+                                      <span class="json-property-name">href:</span>
+                                      <span class="json-property-type">string</span>
+                                      <span class="json-property-format">(url)</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                    </dt>
+                                    <dd>
+                                      <p>
+                                        <a href="#operation--api-outputs--id--pulse-post">POST</a> to this to close this output for its pulse time.</p>
+                                      <p>This link will only be here if the output is set to pulse when activated.</p>
+                                      <p>Added in 8.50.</p>
+                                    </dd>
+                                  </dl>
+                                </section>
+                              </dt>
                             </dl>
                           </section>
                         </dt>
@@ -11993,6 +12358,11 @@
     <span class="hljs-string">&quot;open&quot;</span>,
     <span class="hljs-string">&quot;overridden&quot;</span>
   ],
+  <span class="hljs-attr">&quot;connectedController&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
+  },
   <span class="hljs-attr">&quot;commands&quot;</span>: {
     <span class="hljs-attr">&quot;on&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs/2365/on&quot;</span>
@@ -12005,6 +12375,9 @@
     },
     <span class="hljs-attr">&quot;offUntil&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs/2365/off&quot;</span>
+    },
+    <span class="hljs-attr">&quot;pulse&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs/2365/pulse&quot;</span>
     }
   }
 }

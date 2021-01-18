@@ -232,17 +232,19 @@
                   <a href="events.html#authentication">Authentication section</a> of the accompanying Alarms and Events API documentation to learn how to format your queries, and Command Centre&#39;s Configuration Client online help to learn how to ready the server to receive them (search for &#39;REST API&#39;).</p>
                 <p>Each section contains a list of use cases intended as quick solutions for simple tasks or a how-to to get you started toward your particular goal. However they also serve as a good introduction to the API if you step through them using a web browser, starting at <code>/api</code> on your Command Centre server. To do that, you will need a browser plugin that lets you set an Authorization HTTP header, and a JSON formatter to prettify the results documents. Search the Configuration client&#39;s online help for &#39;test REST API&#39; for guidance. You will also need to prepare Command Centre, as above.</p>
                 <h3 id="licensing">Licensing</h3>
-                <p>All of the API calls described here require the RESTCardholders licence.</p>
-                <h3 id="api-changes-in-860">API changes in 8.60</h3>
+                <p>All of the API calls described here are available with the RESTCardholders licence. Lockers and locker banks are also available with the RESTStatus licence.</p>
+                <h3 id="versions">Versions</h3>
+                <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
+                <h4 id="cardholder-api-changes-in-860">Cardholder API changes in 8.60</h4>
                 <p>8.60 will sort its search results differently and may increase the number it returns per page, if the query did not use query parameters to override the defaults.</p>
-                <h3 id="api-changes-in-850">API changes in 8.50</h3>
+                <h4 id="api-changes-in-850">API changes in 8.50</h4>
                 <ul>
-                  <li>You can manage operators, setting their operator group memberships and logon credentials.</li>
+                  <li>You can manage operators by setting their operator group memberships and logon credentials.</li>
                   <li>You can view
                     <a href="#tag-Operator-groups">operator groups</a>.</li>
+                  <li>Lockers and locker banks report the hardware controller where they reside.</li>
                 </ul>
-                <h3 id="cardholder-api-changes-in-840">Cardholder API changes in 8.40</h3>
-                <p>The body of this document clearly indicates the 8.40 features so that readers with older versions of Command Centre know not to use them.</p>
+                <h4 id="api-changes-in-840">API changes in 8.40</h4>
                 <ul>
                   <li>
                     <p>Access groups have 22 new fields showing the privileges and access they grant their members. These new fields are in the default set for the
@@ -258,7 +260,7 @@
                     <p>Cards contain the date and time of their last print or encode, and their issue level at the time.</p>
                   </li>
                 </ul>
-                <h3 id="cardholder-api-changes-in-830">Cardholder API changes in 8.30</h3>
+                <h4 id="api-changes-in-830">API changes in 8.30</h4>
                 <ul>
                   <li>
                     <p>Cardholder
@@ -271,7 +273,7 @@
                     <p>A cardholder&#39;s card object now contain a Boolean field called <code>trace</code> indicating whether its trace flag is set. A card with tracing on generates an event every time it is used.</p>
                   </li>
                 </ul>
-                <h3 id="cardholder-api-changes-in-820">Cardholder API changes in 8.20</h3>
+                <h4 id="api-changes-in-820">API changes in 8.20</h4>
                 <ul>
                   <li>
                     <p>A new field <code>update_location</code> on a cardholder gives a link to a
@@ -291,7 +293,7 @@
                       <a href="#definition-Cardholder-relationship">relationships block</a> now contains the role holder&#39;s two name fields. The <code>name</code> field, present since 7.90, is simply these two fields joined with a space, and is therefore ambiguous when a cardholder only has one name.</p>
                   </li>
                 </ul>
-                <h3 id="cardholder-api-changes-in-8101112">Cardholder API changes in 8.10.1112</h3>
+                <h4 id="api-changes-in-8101112">API changes in 8.10.1112</h4>
                 <ul>
                   <li>
                     <p>You can send an
@@ -304,7 +306,7 @@
                       <a href="#opening-a-locker">use cases</a> section shows how.</p>
                   </li>
                 </ul>
-                <h3 id="cardholder-api-changes-in-810">Cardholder API changes in 8.10</h3>
+                <h4 id="api-changes-in-810">API changes in 8.10</h4>
                 <p>All changes contain the text &quot;8.10&quot;.</p>
                 <ul>
                   <li>A
@@ -363,7 +365,11 @@
                       <a href="#topic-Field-specifiers"><code>fields</code> parameter</a> to add fields to the results of a search, saving you GETting the details page.</p>
                     <p>For example, to see the names, PDFs, and access groups of all your cardholders:</p>
                     <p> <code>GET /api/cardholders?sort=id&amp;top=10000 &amp;fields=firstname,lastname,personalDataFields,accessGroups</code></p>
-                    <p>It adds to the payload size, though, so only do this if you are certain that the search will not return you many cardholders you are not interested in.</p>
+                    <p>It adds to the payload size, though, so only do this if you are certain that the search will not return too many cardholders you are not interested in.</p>
+                  </li>
+                  <li>
+                    <p>If you must get an object&#39;s details page, and you are on v8.00 or later, using the
+                      <a href="#topic-Field-specifiers"><code>fields</code> parameter</a> will still save work. Be explicit with what you want: do not use <code>fields=defaults</code> unless you need every field that &#39;defaults&#39; gives you and you accept that we may add fields to the defaults in future.</p>
                   </li>
                   <li>
                     <p>When creating cardholders, assign their cards, groups, and other attributes in the POST. This is significantly quicker than sending a handful of PATCHes chasing after your POST, and if you are interrupted, you will not end up with a partially-configured cardholder.</p>
@@ -373,10 +379,6 @@
                   </li>
                   <li>
                     <p>When modifying a cardholder, do all your operations in one PATCH. This is much quicker than doing it in several smaller PATCHes.</p>
-                  </li>
-                  <li>
-                    <p>(In v8.00 or later) save work generating the details page by using the
-                      <a href="#topic-Field-specifiers"><code>fields</code> parameter</a>. Be explicit: do not use <code>fields=defaults</code>, unless you need every field that &#39;defaults&#39; gives you.</p>
                   </li>
                 </ul>
                 <h3 id="dates-and-times">Dates and times</h3>
@@ -1362,7 +1364,9 @@
       <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;2017-01-01T00:00:00Z&quot;</span>,
       <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2018-12-31T00:00:00Z&quot;</span>
     }
-  ]
+  ],
+  <span class="hljs-attr">&quot;lastPrintedOrEncodedTime&quot;</span>: <span class="hljs-string">&quot;2020-08-10T09:20:50Z&quot;</span>,
+  <span class="hljs-attr">&quot;lastPrintedOrEncodedIssueLevel&quot;</span>: <span class="hljs-number">1</span>
 }
 </code></pre> </body>
                   </html>
@@ -2542,16 +2546,16 @@
                   <p>First, get a bookmark at the end of Command Centre&#39;s list of changes as follows:</p>
                   <p> 1a. <code>GET /api</code></p>
                   <p> 1b. Follow the link at <code>features.cardholders.changes</code>.</p>
-                  <p> 1c. Take note of the href you get back inside the <code>next</code> block.</p>
+                  <p> 1c. Take note of the href that was in the <code>next</code> block.</p>
                 </li>
                 <li>
                   <p>Download all cardholders out of Command Centre using
                     <a href="#downloading-all-cardholders">this advice</a>. Here is a reminder:</p>
                   <p> 2a. Using the results of <code>GET /api</code> again, follow the link at <code>features.cardholders.cardholders</code>, adding query parameters <code>top=1000</code> and <code>sort=id</code>.</p>
-                  <p> 2b. Process the cardholders that gave you (probably 1000) and follow the <code>next.href</code> link in a loop until you have extracted all your cardholders.</p>
+                  <p> 2b. Process those cardholders (probably 1000) and follow the <code>next.href</code> link in a loop until you have extracted all of them.</p>
                 </li>
                 <li>
-                  <p>This is the start of your update loop. The first time through, to catch the changes that came in during the big download in step two, use the href that you got in step one. Simply GET it.</p>
+                  <p>This is the start of your update loop. The first time through, to catch the changes that came in during the big download you were doing in step two, use the href that you got in step one. Simply GET it.</p>
                 </li>
                 <li>
                   <p>If the <code>results</code> array you get back is empty you are up to date and you have nothing to do. Sleep for a time before your next poll, to avoid a tight loop and ease the load on your database. When it comes time to poll again, do not be tempted to resubmit the same request: the URL to use sometimes changes even when there are no results, so always get it from <code>next.href</code>.</p>
@@ -2566,7 +2570,7 @@
               <h3 id="notes">Notes</h3>
               <ul>
                 <li>
-                  <p>The API will not notify changes to any fields that you cannot see in the cardholders API, such as user codes, card PINs, car park assignments, biometric credentials, and operator group memberships.</p>
+                  <p>The API will not notify changes to any fields that you cannot see in the cardholders API, such as user codes, card PINs, car park assignments, biometric credentials, and (in versions before 8.50) operator settings.</p>
                 </li>
                 <li>
                   <p>The API will return the pre-change values of some fields, but not those that require a lot of storage such as image PDFs and PIV certificates. Command Centre does not hang on to them after they change.</p>
@@ -4317,7 +4321,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The installation lacks a lockers licence.</p>
+                      <p>The installation lacks a lockers licence, or it is missing both RESTCardholders and RESTStatus.</p>
                     </div>
                   </div>
                 </section>
@@ -4420,8 +4424,12 @@
                           <span class="json-property-enum-item">shortName</span>,
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">notes</span>,
+                          <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">lockers</span>,
-                          <span class="json-property-enum-item">notes</span>
+                          <span class="json-property-enum-item">lockers.defaults</span>,
+                          <span class="json-property-enum-item">lockers.connectedController</span>,
+                          <span class="json-property-enum-item">...</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                         <span class="json-property-default-value" title="Default value">defaults</span>
@@ -4460,7 +4468,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The installation lacks a lockers licence.</p>
+                      <p>The installation lacks a lockers licence, or it is missing both RESTCardholders and RESTStatus.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4603,7 +4611,8 @@
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">assignments</span>,
                           <span class="json-property-enum-item">notes</span>,
-                          <span class="json-property-enum-item">commands</span>
+                          <span class="json-property-enum-item">commands</span>,
+                          <span class="json-property-enum-item">connectedController</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                         <span class="json-property-default-value" title="Default value">defaults</span>
@@ -4640,7 +4649,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The installation lacks a lockers licence.</p>
+                      <p>The installation lacks a lockers licence, or it is missing both RESTCardholders and RESTStatus.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4671,6 +4680,11 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;connectedController&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
+  },
   <span class="hljs-attr">&quot;assignments&quot;</span>: [
     {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/lockers/abe3456e&quot;</span>,
@@ -6411,6 +6425,27 @@
                             <div class="json-inner-schema"> </div>
                           </section>
                         </dt>
+                        <dt data-property-name="lastPrintedOrEncodedTime" class="has-description">
+                          <span class="json-property-name">lastPrintedOrEncodedTime:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-format">(date-time)</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                          <span class="json-property-read-only"></span>
+                        </dt>
+                        <dd>
+                          <p>The date and time this card was last printed or encoded. It will not come out by default - you need to ask for it with <code>fields=cards.lastPrintedOrEncodedTime</code>.</p>
+                          <p>Added in 8.40.</p>
+                        </dd>
+                        <dt data-property-name="lastPrintedOrEncodedIssueLevel" class="has-description">
+                          <span class="json-property-name">lastPrintedOrEncodedIssueLevel:</span>
+                          <span class="json-property-type">integer</span>
+                          <span class="json-property-range" title="Value limits">1 ≤ x ≤ 15</span>
+                          <span class="json-property-read-only"></span>
+                        </dt>
+                        <dd>
+                          <p>The issue level of this card when it was last printed or encoded, provided it was non-zero. It will not come out by default - you need to ask for it with <code>fields=cards.lastPrintedOrEncodedIssueLevel</code>.</p>
+                          <p>Added in 8.40.</p>
+                        </dd>
                       </dl>
                     </section>
                   </section>
@@ -6587,7 +6622,9 @@
       <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;2017-01-01T00:00:00Z&quot;</span>,
       <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2018-12-31T00:00:00Z&quot;</span>
     }
-  ]
+  ],
+  <span class="hljs-attr">&quot;lastPrintedOrEncodedTime&quot;</span>: <span class="hljs-string">&quot;2020-08-10T09:20:50Z&quot;</span>,
+  <span class="hljs-attr">&quot;lastPrintedOrEncodedIssueLevel&quot;</span>: <span class="hljs-number">1</span>
 }
 </code></pre> </body>
                   </html>
@@ -9990,6 +10027,45 @@
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
+                    <dt data-property-name="connectedController" class="has-description">
+                      <span class="json-property-name">connectedController:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This block describes this item&#39;s hardware controller.</p>
+                      <p>Retrieving it takes a little more time than the other fields so only ask for it if you need it.</p>
+                      <p>Added in 8.50.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="name">
+                            <span class="json-property-name">name:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dt data-property-name="href" class="has-description">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>This is the REST API&#39;s identifier for the hardware controller. It is only an identifier, not a usable URL, because there is no interface for hardware controllers. GETting the URL will return a 404.</p>
+                          </dd>
+                          <dt data-property-name="id" class="has-description">
+                            <span class="json-property-name">id:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                              <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                          </dd>
+                        </dl>
+                      </section>
+                    </dt>
                     <dt data-property-name="lockers" class="has-description">
                       <span class="json-property-name">lockers:</span>
                       <span class="json-property-type">object[]</span>
@@ -10016,7 +10092,7 @@
                                 <span class="json-property-range" title="Value limits"></span>
                               </dt>
                               <dd>
-                                <p>A T20 will display this instead of the long name, if it has one.</p>
+                                <p>A T20 will display this instead of the long name, if it has both.</p>
                               </dd>
                               <dt data-property-name="description">
                                 <span class="json-property-name">description:</span>
@@ -10031,6 +10107,15 @@
                               </dt>
                               <dd>
                                 <p>This is the href of the locker. Use it when creating new assignments in a cardholder PATCH or POST. Trying to GET it will always yield a 404.</p>
+                              </dd>
+                              <dt data-property-name="connectedController" class="has-description">
+                                <span class="json-property-name">connectedController:</span>
+                                <span class="json-property-type">object</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>This block describes this item&#39;s hardware controller. Retrieving it takes a little more time than the other fields so only ask for it if you need it.</p>
+                                <p>Added in 8.50.</p>
                               </dd>
                               <dt data-property-name="assignments" class="has-description">
                                 <span class="json-property-name">assignments:</span>
@@ -10222,6 +10307,45 @@
                     <dd>
                       <p>The notes field is not in the default result set. You must ask for it using <code>fields</code>.</p>
                     </dd>
+                    <dt data-property-name="connectedController" class="has-description">
+                      <span class="json-property-name">connectedController:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This block describes this item&#39;s hardware controller.</p>
+                      <p>Retrieving it takes a little more time than the other fields so only ask for it if you need it.</p>
+                      <p>Added in 8.50.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="name">
+                            <span class="json-property-name">name:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dt data-property-name="href" class="has-description">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>This is the REST API&#39;s identifier for the hardware controller. It is only an identifier, not a usable URL, because there is no interface for hardware controllers. GETting the URL will return a 404.</p>
+                          </dd>
+                          <dt data-property-name="id" class="has-description">
+                            <span class="json-property-name">id:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                              <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                          </dd>
+                        </dl>
+                      </section>
+                    </dt>
                     <dt data-property-name="assignments" class="has-description">
                       <span class="json-property-name">assignments:</span>
                       <span class="json-property-type">object[]</span>
@@ -10332,6 +10456,11 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;connectedController&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Third floor C6000&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
+  },
   <span class="hljs-attr">&quot;assignments&quot;</span>: [
     {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/lockers/abe3456e&quot;</span>,
