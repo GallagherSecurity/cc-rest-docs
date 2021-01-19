@@ -740,9 +740,16 @@ paths:
         Client.  You will find the release note for that utility in the Documentation folder on the
         installation media.
 
-        1000 event types sounds like a lot, but be aware that you cannot delete event types, or
-        modify anything about them except their names after you create them.  Their event type group
-        and item types are permanent once you save them from the utility.  Please plan carefully.
+        1000 event types sounds like a lot, but be aware that you cannot delete event types, and the
+        only thing you can modify on an existing event type is its name.  Their event type group and
+        item types are permanent once you save them from the utility.  Please plan carefully.
+
+        #### Usable source items
+
+        Every event needs a source item.  You can let the server pick one for you (it will use the
+        REST Client item identified by your API key) or you can use any item that has an 'Event
+        Response' tab in its Configuration Client window.  Existing integrations use items like
+        doors, external system items, and DVR cameras.
 
         #### Action plans
 
@@ -760,20 +767,22 @@ paths:
 
           1. The server looks at the configuration of the source item.  The relevant entries appear
              in the Event Response tab of the item's property page in the Configuration Client.  If
-             there is an entry for the event type's _group_ that is not "use default", Command
-             Centre will fire that action plan and skip the next steps.
+             there is an entry for the event type that is not "use default", Command Centre will
+             fire that action plan and skip the next steps.  In versions older than 8.30 the control
+             is per event group, not per event.
           2. The server looks at the configuration of the source item's alarm zone.  That is in the
              Event Defaults tab of the alarm zone's property page in the Configuration Client.
-             Again the control is per event group, not per event type.  If the event group's action
-             plan is not 'use default' the server fires it and goes no further.
+             Again the control is per event group not per event type in older versions.
+             If the event's action plan is not 'use default' the server fires it and goes no
+             further.
           3. The server looks at the configuration in the Event Defaults tab of the server
-             properties.  Again, control is per event group.  There is always an action plan there,
-             even if it does nothing more than set the priority of the event.
+             properties.  There is always an action plan there, even if it does nothing more than
+             set the priority of the event.
 
         Once it has found the action plan to run, the server will assign the event its priority (if
-        you did not specify a priority yourself) and run the macro.  These are on the Command Centre
-        tab of the action plan's property page in the Configuration Client.  The server will not use
-        the configuration from the other tabs.
+        you did not specify a priority yourself) and run the macro if there is one on the 'Command
+        Centre' tab of the action plan's property page in the Configuration Client.  The server will
+        not use the configuration from the other tabs.
 
         It is not possible to submit an event with priority zero, but it is possible to submit an
         event with no priority, and have the action plan assign it priority zero.  This will run the
@@ -2089,9 +2098,9 @@ definitions:
               Configuration utility.
       source:
         description: |
-          This should be the href of the item you wish to use as the source of your event.  If
-          you do not supply it, Command Centre will use the REST Client item identified by the
-          the API key in the Authorization header.
+          This should be the href of the item you wish to use as the source of your event.  If you
+          do not supply it, Command Centre will use the REST Client item identified by the API key
+          in the Authorization header.
         type: object
         properties:
           href:
@@ -2115,7 +2124,7 @@ definitions:
             example: https://localhost:8904/api/cardholders/325
             description: |
               This can be the href of any cardholder to which your operator has view access.  Get
-              the href from the the [cardholders controller](cardholders.html#tag-Cardholders).
+              the href from the [cardholders controller](cardholders.html#tag-Cardholders).
       operator:
         description: |
           If you wish to attach an operator to your event, link it here.  Like the cardholder,

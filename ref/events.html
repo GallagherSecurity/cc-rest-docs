@@ -1460,7 +1460,9 @@
                   <p>You must supply an
                     <a href="#operation--api-events-groups-get">event type</a>. 8.10 ships with 30 external event types you can use, each in its own event type group.</p>
                   <p>You can create 970 of your own event types using the External Event Type Configuration Utility, a separate Windows application that lets you create external event types and make them appear on items&#39; Event Response and Alarm Instructions tabs in the Configuration Client. You will find the release note for that utility in the Documentation folder on the installation media.</p>
-                  <p>1000 event types sounds like a lot, but be aware that you cannot delete event types, or modify anything about them except their names after you create them. Their event type group and item types are permanent once you save them from the utility. Please plan carefully.</p>
+                  <p>1000 event types sounds like a lot, but be aware that you cannot delete event types, and the only thing you can modify on an existing event type is its name. Their event type group and item types are permanent once you save them from the utility. Please plan carefully.</p>
+                  <h4 id="usable-source-items">Usable source items</h4>
+                  <p>Every event needs a source item. You can let the server pick one for you (it will use the REST Client item identified by your API key) or you can use any item that has an &#39;Event Response&#39; tab in its Configuration Client window. Existing integrations use items like doors, external system items, and DVR cameras.</p>
                   <h4 id="action-plans">Action plans</h4>
                   <p>An event can fire an action plan, which will</p>
                   <ul>
@@ -1470,12 +1472,11 @@
                   <p>Macros are extremely powerful, and a thorough treatment requires more room than we have, so it is sufficient to say that you should not aim for a dramatic first test. A good first result is to turn on a virtual output made for the purpose. Just make sure that it will not trigger another macro because it is possible to create loops, causing havoc.</p>
                   <p>You do not pick an action plan to run when you POST your event. Command Centre does that in three steps:</p>
                   <ol>
-                    <li>The server looks at the configuration of the source item. The relevant entries appear in the Event Response tab of the item&#39;s property page in the Configuration Client. If there is an entry for the event type&#39;s
-                      <em>group</em> that is not &quot;use default&quot;, Command Centre will fire that action plan and skip the next steps.</li>
-                    <li>The server looks at the configuration of the source item&#39;s alarm zone. That is in the Event Defaults tab of the alarm zone&#39;s property page in the Configuration Client. Again the control is per event group, not per event type. If the event group&#39;s action plan is not &#39;use default&#39; the server fires it and goes no further.</li>
-                    <li>The server looks at the configuration in the Event Defaults tab of the server properties. Again, control is per event group. There is always an action plan there, even if it does nothing more than set the priority of the event.</li>
+                    <li>The server looks at the configuration of the source item. The relevant entries appear in the Event Response tab of the item&#39;s property page in the Configuration Client. If there is an entry for the event type that is not &quot;use default&quot;, Command Centre will fire that action plan and skip the next steps. In versions older than 8.30 the control is per event group, not per event.</li>
+                    <li>The server looks at the configuration of the source item&#39;s alarm zone. That is in the Event Defaults tab of the alarm zone&#39;s property page in the Configuration Client. Again the control is per event group not per event type in older versions. If the event&#39;s action plan is not &#39;use default&#39; the server fires it and goes no further.</li>
+                    <li>The server looks at the configuration in the Event Defaults tab of the server properties. There is always an action plan there, even if it does nothing more than set the priority of the event.</li>
                   </ol>
-                  <p>Once it has found the action plan to run, the server will assign the event its priority (if you did not specify a priority yourself) and run the macro. These are on the Command Centre tab of the action plan&#39;s property page in the Configuration Client. The server will not use the configuration from the other tabs.</p>
+                  <p>Once it has found the action plan to run, the server will assign the event its priority (if you did not specify a priority yourself) and run the macro if there is one on the &#39;Command Centre&#39; tab of the action plan&#39;s property page in the Configuration Client. The server will not use the configuration from the other tabs.</p>
                   <p>It is not possible to submit an event with priority zero, but it is possible to submit an event with no priority, and have the action plan assign it priority zero. This will run the macro on the action plan then drop the event before it reaches the database.</p>
                   <h4 id="alarm-instructions">Alarm instructions</h4>
                   <p>Alarm instructions are marked-up text fields that Command Centre presents to security personnel when events occur. Picking an alarm instruction to use follows the same decision path as picking an action plan: Command Centre looks at the configuration of the source item first, and finding nothing there will turn to the source item&#39;s alarm zone, and finally to the server properties. If all three are unset the operator will not receive any special instructions.</p>
@@ -5644,7 +5645,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This should be the href of the item you wish to use as the source of your event. If you do not supply it, Command Centre will use the REST Client item identified by the the API key in the Authorization header.</p>
+                      <p>This should be the href of the item you wish to use as the source of your event. If you do not supply it, Command Centre will use the REST Client item identified by the API key in the Authorization header.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -5680,7 +5681,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>This can be the href of any cardholder to which your operator has view access. Get the href from the the
+                            <p>This can be the href of any cardholder to which your operator has view access. Get the href from the
                               <a href="cardholders.html#tag-Cardholders">cardholders controller</a>.</p>
                           </dd>
                         </dl>
