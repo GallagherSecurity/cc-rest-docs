@@ -27,7 +27,7 @@ you may not sell it without permission.  Gallagher Group is the owner of all tra
 in this information.  All trademarks which are not the property of Gallagher Group, are
 acknowledged.
 
-Copyright (c) Gallagher Group Ltd 2021.  All rights reserved.
+Copyright © Gallagher Group Ltd 2021.  All rights reserved.
 
 Gallagher Group Limited  
 PO Box 3026  
@@ -48,7 +48,9 @@ Sample table
 | false | Past | - | inactive |
 | false | null | - | inactive |
 
+Sample image
 
-Sample image removed.
+![text](../../assets/server_props_turnon.png "title")
 
-assets branch restored.
+Trailer.
+
