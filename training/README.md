@@ -51,3 +51,4 @@ Sample table
 
 Sample image removed.
 
+assets branch restored.
