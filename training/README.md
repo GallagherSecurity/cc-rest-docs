@@ -37,4 +37,17 @@ New Zealand
 E-Mail: sales.nz@security.gallagher.com  
 Website: www.gallagher.com  
 
-Sample table removed.
+Sample table
+
+| Enabled flag | Enablement date | Expiry date | `status.type`
+| ------------ | -------------- | --------| ----- |
+| true | - | Far future | active |
+| true | - | Near future | expiryDue |
+| true | - | Past | expired |
+| false | Future | - | pending |
+| false | Past | - | inactive |
+| false | null | - | inactive |
+
+
+Sample image removed.
+
