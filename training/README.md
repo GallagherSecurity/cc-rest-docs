@@ -2,8 +2,10 @@
 
 TODOs:
 
-Change all ‘ and its partner to '
-
+Change all ‘ and ’ to '.
+Change all Word's directional double-quotes to ".
+Newer screenshots.
+All references.
 
 -->
 
@@ -53,12 +55,18 @@ Website: www.gallagher.com
 1. [Useful background](#useful-background):  an introduction to Command Centre for people who are
    new to physical access control systems or REST.  
 
-   [Cardholders](#cardholders), [Operators and operator groups](#operators-and-operator-groups),
-   [Access groups](#access-groups), [Personal data fields (PDFS)](#personal-data-fields-pdfs),
-   [Divisions](#divisions), [Roles](#roles), [Competencies](#competencies), [Card
-   types](#card-types), [Items](#all-the-above-are-items), [Events and alarms](#events-and-alarms),
-   [Operator privileges](#operator-privileges), [HTTP requests](#http-requests) (GET, POST, PATCH,
-   DELETE, headers, and bodies), [JSON](#json).
+   [Cardholders](#cardholders),
+   [Operators and operator groups](#operators-and-operator-groups),
+   [Access groups](#access-groups),
+   [Personal data fields (PDFS)](#personal-data-fields-pdfs),
+   [Divisions](#divisions),
+   [Roles](#roles), [Competencies](#competencies),
+   [Card types](#card-types),
+   [Items](#all-the-above-are-items),
+   [Events and alarms](#events-and-alarms),
+   [Operator privileges](#operator-privileges),
+   [HTTP requests](#http-requests) (GET, POST, PATCH, DELETE, headers, and bodies),
+   [JSON](#json).
 2. [Set up Command Centre](#set-up-command-centre)
       1. [Turn on the web server](#turn-on-the-web-server)
       3. [Create a REST operator](#create-a-rest-operator)
@@ -72,6 +80,8 @@ Website: www.gallagher.com
 2. [First GETs:  events](#first-gets--events):  list all events, list all alarms
 2. [Back into the theory](#back-into-the-theory)
 2. [First POST and search](#first-post-and-search):  create a cardholder and search for it.
+2. [Cardholder flat fields](#cardholder-flat-fields)
+2. [Cards](#cards)
 
 # Introduction
 
@@ -97,7 +107,7 @@ readable.</pre>
 
 TODO ^^^
 
-> Special notes use Markdown's type of quoting, like this.
+> **Special notes** use Markdown's type of quoting, like this.
 
 ## Exclusions
 
@@ -206,7 +216,7 @@ operator groups.  An operator group bestows privileges on its members, including
 in to the Command Centre thick clients or run REST queries.
 
 Operator groups have no effect on access control, so they do not appear in this document again
-except in [TODO_LINK which puts a cardholder in an operator group while setting up a REST client.
+except in TODO_LINK which puts a cardholder in an operator group while setting up a REST client.
 Operator groups came to the API in 8.50.
 
 ## Access groups
@@ -267,8 +277,8 @@ The Command Centre client shows a cardholder’s division in the ‘Cardholder D
 cardholder viewer.  The Configuration Client shows the division of any item in the ‘General’ tab of
 its property page.  The REST API shows it in the `division` field.
 
-> The operator’s division and his or her operator groups’ divisions in the ‘General’ tabs are
-> irrelevant.  The operator group grants privileges on the divisions in the ‘Divisions’ tab.
+> **The operator’s division and his or her operator groups’ divisions in the ‘General’ tabs are
+> irrelevant**. The operator group grants privileges on the divisions in the ‘Divisions’ tab.
 
 ## Roles
 A role defines a relationship between two cardholders.  One cardholder can perform a role for many
@@ -474,8 +484,8 @@ certificate:  it does not care where you are coming from.  But APIs should opera
 than web sites so our recommendation is to turn it on.  Section TODO_LINK18 talks about client
 certificates.
 
-> It is important to know the difference between the two certificate checks, and to know that they
-> are completely independent.  If the client does not trust the server, Command Centre will not
+> **It is important to know the difference between the two certificate checks, and to know that they
+> are completely independent**.  If the client does not trust the server, Command Centre will not
 > receive a connection and will not raise any alarms.  The problem is on the client and there is
 > nothing you can do to Command Centre to help.  But if the server certificate is acceptable to the
 > client, the server has a chance to check the client certificate.  If the server does not like the
@@ -529,13 +539,14 @@ first indication of trouble binding a socket.
 
 The Configuration Client’s online help covers this in the topic called 'Web Services'.
 
-> Make sure 'Do not require pinned client certificates' is off in production.  In 8.50 it is called
-> 'Enable REST Clients with no client certificate'.  Turn it off.
+> **Make sure 'Do not require pinned client certificates' is off in production**.  In 8.50 the label
+> changed to 'Enable REST Clients with no client certificate'.  It ships turned off:  make sure it
+> stays off on production servers.
 
 Requiring pre-shared certificates from clients is the best protection the server has against
-attackers on its network.  Once you have written the basics of your application and it is connecting
-to the server, come back here, untick that box, read section TODO_LINK18, and get your application
-working again.
+attackers on its network.  If you tick the box to turn off that check when you first start your
+development, come back once your application is connecting successfully and untick it again.  Read
+section TODO_LINK18 to help get your application connecting again.
 
 ### Installing a custom server certificate
 You do not need to install a custom server certificate for experimental development.  If you
@@ -551,7 +562,7 @@ the rights to use it.  The online help lays that out step by step.
 
 ## Create a REST operator
 
-We will get to the reasons why in TODO_LINK10.2.
+We will get to the reasons why in [why we need an operator](#why-we-need-an-operator).
 
 ### Create an operator group and give it the necessary privileges
 
@@ -562,7 +573,7 @@ Edit Cardholders’ and ‘Edit Alarms’.  ‘Modify Access Control’ and ‘V
 
 ![todo](../../assets/op_group_privs.png "todo")
 
-> Not ‘Advanced User’.  Never ‘Advanced User’.
+> **Not ‘Advanced User’.  Never ‘Advanced User’**.
 
 See TODO_LINKp57 for a table of privileges an operator needs for common tasks.
 
@@ -684,8 +695,8 @@ characters).
 
 In 7.90, both must be in upper case.
 
-> Set a filter so that the header only goes to your Command Centre server.  Otherwise Facebook will
-have your API key.
+> **Set a filter so that the header only goes to your Command Centre server.  Otherwise Facebook
+> will have your API key**.
 
 Use a URL pattern in the filter that all your queries will match but other web browsing will not.
 ModHeader now uses regular expressions, so if you have dots in your hostname you must put
@@ -845,7 +856,7 @@ everything.  Mobile credentials and PIV and PIV-I cards have blobs of data that 
 unless you ask for them, because they are so large).  The developer documentation helps interpret
 it.
 
-> This is the difference between a summary page and a detail page.
+> **This is the difference between a summary page and a detail page.**
 
 The API documentation makes heavy use of the terms _summary_ and _detail_.  You see the summary of
 an item at root URLs such as `/api/cardholders` and `/api/access_groups`, returned in an array of
@@ -1027,3 +1038,195 @@ Otherwise it just uses the one.
 Also note that Chrome will turn the space into `%20`.
 
 You should see your new cardholder in the results of both those queries.
+
+
+
+
+# Cardholder flat fields
+
+“Flat fields” isn’t a term the REST API uses but it means the simple data like names, description,
+and PDF values that sit at the top level of a cardholder and do not have structures of their own.
+Other data such as cards, access group memberships, and competency assignments are one level down,
+in arrays, and contain other fields.
+
+Before you can associate your cardholder with other items, you need to make them.
+
+## Setup:  give a cardholder access groups and PDFs
+
+For a cardholder to have a PDF, both need to be on the same access group.  You cannot create PDFs or
+assign them to access groups via REST so you must do that in the Configuration Client.  Adding
+cardholders to groups is possible via REST of course, but that is easier if you have an existing
+group membership to compare your efforts against, so for now we will do that in the client as well.
+
+### Create some PDFs
+In the Configuration Client, Configure -> Personal Data Fields (second from the top).
+
+Add -> New Personal Data Field.  Call it ‘email’ and set the type (on the Type tab) to Email.
+
+You might as well make a few more with different data types.  Make at least one text, because they
+have no constraints and are easiest to experiment with.
+
+![todo](../../assets/pdf_create_1.png "todo")
+
+### Create at least two access groups, add the PDFs, and add your cardholder
+
+In the configuration client, Manage -> Access Groups, right-click menu, New -> Access Group.
+
+Open the cardholder and PDF lists out of the Manage menu so that you can drag items out.
+
+Drag your new cardholder to the Cardholder Membership tab of the access group.
+
+Drag your PDFs to the Personal Data tab of the access group.
+
+Repeat!
+
+![todo](../../assets/pdf_to_club.png "todo")
+
+Save everything and reload your cardholder’s details to see what PDF values and group memberships
+look like in JSON.  These sections in the cardholder API documentation cover it:
+
+* ‘Cardholder detail’ gives the layout of a cardholder’s detail page.
+* ‘Cardholder PDF’ describes the items in the `personalDataDefinitions` array.
+* ‘Cardholder access group’ describes the items in the `accessGroups` array.
+
+Now you can change some of those values.
+
+##  Change a name, authorise, change simple PDFs, set user code, etc.
+
+This example changes a cardholder’s first name and two PDFs, authorises it (de-authorised
+cardholders always fail access checks), turns on a flag that allows extra unlock time on doors, and
+sets the user code (which is a number you can use at keypads):
+
+    PATCH /api/cardholders/{id}
+    {
+        "firstname": "Jeremiah",
+        "@datePDF": "2099-03-31",
+        "@email": "a@b.com",
+        "authorised": true,
+        "useExtendedAccessTime": true,
+        "userCode": "1234"
+    }
+
+It looks like this in Postman:
+
+![todo](../../assets/postman_patch_cardholder_1.png "todo")
+
+It looks a lot like that in the cardholder’s details page too, so here is the rule:
+
+> When PATCHing flat fields on a cardholder, send back the same kind of JSON you got from a GET.
+
+## Image PDFs and Base64
+
+Here is a cutting from the details page of a cardholder with an image PDF:
+
+    "@datePDF": "2099-03-31T00:00:00Z",
+    "@Email": "a@b.com",
+    "@Mugshot": {
+        "href": "https://localhost:8904/api/cardholders/325/personal_data/8449"
+    } 
+
+Notice that the image PDF does not show in a cardholder’s details, because they can be massive.
+Instead you get a URL.  If you follow that link you will see the image.
+
+In order to send binary data in JSON (which cannot contain non-printable characters), you have to
+encode it to Base64.  This turns raw bytes into a string of letters, numbers, plusses, and slashes
+(64 possible characters), sometimes with equals signs on the end.  It also increases the size of the
+data by about a third.  You can put the string between quotes and send it like any other PDF:
+
+    PATCH /api/cardholders/{id}
+    {
+        "@photo": "Kilobytes+of+Base64+encoded+data==="
+    } 
+
+If you see a load of what looks like garbage ending with equals signs, it is probably Base64.
+
+
+
+
+
+# Cards
+
+Meaning credentials.  In this section you will see how to give a cardholder a card and modify existing cards.
+
+## Adding, updating, and deleting cards
+
+Like all cardholder modifications, you do this with a PATCH to the cardholder href.  However a card
+is not a flat field:  it is a member of an array in the cardholder object called cards.  To add an
+item to the cards array, or change one, you pass in an object also called cards.  True to previous
+advice, we do all operations in one PATCH.
+
+Borrowing from the API documentation:
+
+The cards object can contain three arrays, named add, update, and remove.  Every element you put in
+those arrays should be in the card schema that you see in a cardholder detail.
+
+Each element of the add array will need a type member, at the very least.  The only card field that
+does not make sense here is href, because an href in a card block names an existing card and you are
+creating one.  The example below adds two cards: one has nothing more than the type, so it will
+receive a computed number and issue level, and blank from and until dates.  The other is a mobile
+credential with a custom initial state ‘Pending sign-off’.  You can tell it is a mobile credential
+because only they have invitation blocks.
+
+Each element of the update array should be a card to modify.  It will need the href of that card,
+plus the fields you want to change.  Remember you cannot change a card's type.  The example changes
+the issue level and resets the until date (making it valid forever).
+
+The only field that makes sense in an element of the remove array is href.
+
+Do not put the same href in both the update and remove arrays.
+
+End quote.  Here is the example.  As well as adding two credentials, modifying a third, and removing
+another, it authorises the cardholder and sets a PDF called `employeeID` just to remind you that you
+can combine operations:
+
+    PATCH /api/cardholders/{id}
+    {
+      "authorised": true,
+      "@employeeID": "THX1139",
+      "cards": {
+        "add": [
+          {
+            "type": {
+              "href": "https://localhost:8904/api/card_types/354"
+            }
+          },
+          {
+            "type": {
+              "href": "https://localhost:8904/api/card_types/600"
+            },
+            "number": "Jock's iPhone 8",
+            "status": {
+              "value": "Pending sign-off"
+            },
+            "invitation": {
+              "email": "jock@example.com"
+            }
+          }
+        ],
+        "update": [
+          {
+            "href": "https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d",
+            "issueLevel": 2,
+            "until": ""
+          }
+        ],
+        "remove": [
+          {
+            "href": "https://localhost:8904/api/cardholders/325/cards/77e8affe7c7e4b56"
+          }
+        ]
+      }
+    }
+    
+Notice how the hrefs of a card include the cardholder’s href and end with a long identifier.  That
+is because a card is a property of a cardholder.  Do not read anything more into it:  treat it as
+opaque.
+
+## Don’t delete cards—disable them
+Generally, when you have reason to stop a card from working you want a permanent reminder of why you
+did it, you want to prevent another operator assigning the same card number to them later (so that
+if someone finds a card on the ground and tries it, it won’t open the building), and you want to
+know who a lost card was assigned to in case it turns up again.  Command Centre achieves the first
+two of these goals if you delete an old card but it is easier if you leave it card in the system,
+non-functional.  You can set its end date into the past or set its state to one of the disabled
+states.
