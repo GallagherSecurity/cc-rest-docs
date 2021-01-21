@@ -1351,7 +1351,7 @@ access group (which is necessary for the PDF to work), and gives them a card.
         "@email": "a@b.com",
         "accessGroups": [
             {
-                "accessGroup": {"href": "https://localhost:8904/api/access_groups/<i>334<i>"},
+                "accessGroup": {"href": "https://localhost:8904/api/access_groups/<i>334</i>"},
                 "from": "2019-01-01"
             }
         ],
