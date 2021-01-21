@@ -4,6 +4,8 @@ TODOs:
 
 Change all ‘ and ’ to '.
 Change all Word's directional double-quotes to ".
+Look for —.  Or leave them be, because they look like proper em-dashes in HTML, better than --
+Look for …
 Newer screenshots.
 All references.
 
@@ -82,6 +84,8 @@ Website: www.gallagher.com
 2. [First POST and search](#first-post-and-search):  create a cardholder and search for it.
 2. [Cardholder flat fields](#cardholder-flat-fields)
 2. [Cards](#cards)
+2. [Group memberships](#group-memberships)
+2. [Create a cardholder, cont.](#create-a-cardholder-cont)
 
 # Introduction
 
@@ -1222,7 +1226,7 @@ Notice how the hrefs of a card include the cardholder’s href and end with a lo
 is because a card is a property of a cardholder.  Do not read anything more into it:  treat it as
 opaque.
 
-## Don’t delete cards—disable them
+## Don’t delete cards:  disable them
 Generally, when you have reason to stop a card from working you want a permanent reminder of why you
 did it, you want to prevent another operator assigning the same card number to them later (so that
 if someone finds a card on the ground and tries it, it won’t open the building), and you want to
@@ -1230,3 +1234,179 @@ know who a lost card was assigned to in case it turns up again.  Command Centre 
 two of these goals if you delete an old card but it is easier if you leave it card in the system,
 non-functional.  You can set its end date into the past or set its state to one of the disabled
 states.
+
+
+
+# 14.	Group memberships
+In this section you will add your cardholder to an access group and modify the membership.
+
+## Add an access group membership
+You will need the href of your cardholder that you used in the GET in TODO_LINK8.4 or the PATCH in
+TODO_LINK13.1, or that came back from your POST when you created a cardholder in TODO_LINK11.1.
+
+You also need the href of your access group.  You can see all your access groups by querying the
+access groups controller.  Hint:  `GET /api`.  Extra hint:  `GET /api/access_groups`.
+
+When you have those two hrefs, substitute them into:
+
+<pre>
+PATCH /api/cardholders/325
+{
+  "accessGroups": {
+    "add": [
+      {
+        "accessGroup": {"href": "https://localhost:8904/api/access_groups/<i>5388</i>"}
+        , "from": "2017-01-31T02:11:00Z"
+        , "until": "2037-01-31T02:11:00Z"
+      }
+    ]
+  }
+}
+</pre>
+
+(Remember that the first line does not go into the body of your HTTP query, and your actual URL will
+start with `https://` with a host and port.  Also note the alternative comma style:  it makes
+commenting lines out easier.)
+
+If you use the wrong access group identifier, or your operator does not have ‘Modify Access Control’
+on the access group, you will be told:
+
+    {
+      "message": "Invalid access group href: https://localhost:8904/api/access_groups/53888"
+    }
+
+When you get it right, the server will return 204 and next time you GET your cardholder the result
+will contain:
+
+    GET /api/cardholders/325
+    {
+        [...]
+        "accessGroups": [
+            {
+                "href": "https://localhost:8904/api/cardholders/325/access_groups/1069",
+                "accessGroup": {
+                    "name": "Boney M",
+                    "href": "https://localhost:8904/api/access_groups/5388"
+                },
+                "status": {
+                    "value": "Active",
+                    "type": "active"
+                },
+                "from": "2017-01-31T02:11:00Z",
+                "until": "2037-01-31T02:11:00Z"
+            }
+        ]
+    }
+
+The ‘Cardholder access group’ section of the cardholder API documentation helps with interpreting
+that.
+
+Take a copy of your version of the bold URL.  It is the href of the cardholder group membership,
+which is a link between the cardholder (ID 325, in my case) and the access group (ID 5338).  It
+starts with the href of the cardholder, because it is a property of that cardholder and serviced by
+the cardholders controller, but do not try to interpret it more.  Certainly do not read anything
+into the number on the end (1069), and do not be surprised if you have an item with the same ID.
+Sections 16.3 and 16.4 go into what you should not do with hrefs.
+
+## Edit an existing group membership
+
+Change the URL of the cardholder and the access group membership in this PATCH:
+
+    PATCH /api/cardholders/325
+    {
+        "accessGroups": {
+            "update": [
+                {
+                    "href": "https://localhost:8904/api/cardholders/325/access_groups/1069",
+                    "from": "2027-03-09"
+                }
+            ]
+        }
+    }
+
+If it returns a 204, GET your cardholder again and look at its access group memberships.  The from
+date should have changed from 2037 to 2027, and the membership href will be different.
+
+The server changes the href after an update to prevent race conditions when there are two operators
+active.  It means the two of you cannot change the group membership at the same time - the second one
+in will fail.  The advice, therefore, is to update your cardholder as soon as possible after
+retrieving its details (footnote:  probably good advice for a fetch and update on any API).
+
+> **Do not cache the hrefs of links between items**.  They change with operator actions.
+
+# Create a cardholder, cont.
+
+Now that you have access groups, cards, and PDFs, you can create a fully configured cardholder in
+one request.  Here is an example that creates a cardholder, sets a PDF called ‘email’, puts it in an
+access group (which is necessary for the PDF to work), and gives them a card.
+
+<pre>
+    POST /api/cardholders
+    {
+        "firstName": "New", "lastName": "Cardholder",
+        "description": "Test cardholder",
+        "division": {"href":"https://localhost:8904/api/divisions/2"}
+        "useextendedaccesstime": true,
+        "usercode": "1234",
+        "@email": "a@b.com",
+        "accessGroups": [
+            {
+                "accessGroup": {"href": "https://localhost:8904/api/access_groups/<i>334<i>"},
+                "from": "2019-01-01"
+            }
+        ],
+        "cards": [
+            {
+                "type": {"href": "https://localhost:8904/api/card_types/<i>342</i>"},
+                "number":"3162"
+            }
+        ],
+        "zzzcompetencies": [
+            {
+                "competency": {"href": "https://localhost:8904/api/competencies/<i>5394</i>"},
+                "enabled": true,
+            }
+        ]
+    }
+</pre>
+
+Never mind the competency yet.  The blue `zzz` makes the server ignore it.
+
+First you will need to change the red numbers to the IDs of an access group and a card type on your
+system.  You can get those with:
+
+    GET /api/access_groups
+and
+    GET /api/card_types
+
+In Chrome, those calls will look like <tt>https://<i>your_host</i>:8904/api/access_groups</tt> and
+<tt>https://<i>your_host</i>:8904/api/card_types</tt>.
+
+An actual application would also find the href of the correct division, but for today is it safe to
+assume that the href of the root division is `.../divisions/2`.
+
+After changing the first two italicised numbers, put the JSON into Postman and POST it to
+/api/cardholders.  It should return you the href of a new cardholder, as it did in 11.1.
+
+The `zzz` is in there to stop the REST API trying to add a competency to your new cardholder, which
+would fail because you have not created a competency yet.  There is nothing special about three
+‘Z’s—the server just ignores anything it does not recognise.
+
+> **The server will ignore fields it does not recognise**.  Beware of this, as you may think your
+> call is succeeding when in fact it is doing less than you want it to.
+
+That is more of an advantage that a disadvantage.  It means we can write clients that degrade
+gracefully on Command Centre servers that are not the most recent version or are missing licences.
+Also, introducing typos to the names of your JSON objects is a convenient way of commenting them
+out.  You can also prepend lines with `//`. It is not valid JSON but you can get away with it for
+now.
+
+Back to our example.  If you want to create a cardholder with a competency:
+1. make a competency in the Configuration Client,
+2. find its href from the competencies controller (`GET /api/competencies`),
+3. change your JSON (remove the `zzz` and change the third italicised number), and
+4. try the POST again.
+
+It should fail, complaining that you cannot have two cards with the same card number.  Change the
+`3162` and try again (or change number to znumber and let Command Centre pick a card number for
+you - probably 3163).
