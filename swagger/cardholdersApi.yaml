@@ -1067,8 +1067,8 @@ definitions:
               are not using Windows integrated authentication.
 
               Command Centre imposes password length and complexity restrictions.  If your password
-              does not meet those requirements, the entire update will fail.  The body of the 400
-              will tell you why.
+              does not meet those requirements, the entire update will fail.  The body of the 4xx
+              response will tell you why.
 
               Like the user code, this is write-only so you will not see it in the results of a GET.
           operatorPasswordExpired:
@@ -1148,13 +1148,17 @@ definitions:
             type: object
             format: url
             readOnly: true
-            description:  "This is a link to a [cardholder edit](#definition-Cardholder-edit) page.  Do not send it when creating or editing a cardholder."
+            description:  |
+              This is a link to a [cardholder edit](#definition-Cardholder-edit) page.  Do not send
+              it when creating or editing a cardholder.
             example:
               href: "https://localhost:8904/cardholders/325/edit"
           updateLocation:
             type: object
             readOnly: true
-            description: Link to [POST](#operation--api-cardholders--id--update_location-post) to when you want to update the location of this cardholder.  Added in 8.20.
+            description: |
+              Link to [POST](#operation--api-cardholders--id--update_location-post) to when you want
+              to update the location of this cardholder.  Added in 8.20.
             example: 
               href: "https://localhost:8904/api/cardholders/402/update_location"
           notes:
@@ -1591,8 +1595,8 @@ definitions:
         description: |
           The name of the card type, and a link to the card type object.
 
-          When creating a card, the href must be a card type that makes sense for the other values you placed this
-          object.
+          When creating a card, the href must be a card type that makes sense for the other values
+          you placed this object.
 
           You cannot change a card's type once it is created.
 
@@ -1670,7 +1674,8 @@ definitions:
               Only present if 'status' is 'sent'.
       from:
         description: |
-          The start of the time period during which this card is active.  If this time is in the future, the card is not active.
+          The start of the time period during which this card is active.  If this time is in the
+          future, the card is not active.
 
           When it is not set, Command Centre acts as though it is set to a time in the distant past.
 
@@ -1680,7 +1685,8 @@ definitions:
         example: "2017-01-01T00:00:00Z"
       until:
         description: |
-          The end of the time period during which this card is active.  If this time is in the past, the card is not active.
+          The end of the time period during which this card is active.  If this time is in the past,
+          the card is not active.
 
           When it is not set, Command Centre acts as though it is set to a time in the distant future.
 
@@ -1721,10 +1727,14 @@ definitions:
         type: string
         description: "This does not need to be numeric for mobile credentials."
       status:
-        description: Optional.  Provide a field "value" set to one of the valid starting states for the mobile credential.  If you omit it, the credential will start in the default state.
+        description: |
+          Optional.  Provide a field "value" set to one of the valid starting states for the mobile
+          credential.  If you omit it, the credential will start in the default state.
         example: {value: "active"}
       type:
-        description:  This is the only compulsory field in the POST body.  It must contain an href to the card type of the new mobile credential.
+        description: |
+          This is the only compulsory field in the POST body.  It must contain an href to the card
+          type of the new mobile credential.
         example: {"https://localhost:8904/api/card_types/654"}
       from: {type: string, format: date-time, example: "2017-01-01T00:00:00Z"}
       until: {type: string, format: date-time, example: "2018-01-01T00:00:00Z"}
@@ -1785,16 +1795,22 @@ definitions:
 
         example: "https://localhost:8904/api/cardholders/325/access_groups/D714D8A89F"
       accessGroup:
-        description:  "An object containing a link to this group's detail page and its name.  It is read-only because you cannot change a group membership's group."
+        description: |
+          An object containing a link to this group's detail page and its name.  It is read-only
+          because you cannot change a group membership's group.
         readOnly: true
         example: { name: "R&D special projects group", href: "https://localhost:8904/api/access_groups/352" }
       status:
-        description: "The two fields in this block are read-only because they are determined by the `from` and `until` dates."
+        description: |
+          The two fields in this block are read-only because they are determined by the `from` and
+          `until` dates.
         readOnly: true
         type: object
         properties:
           value:
-            description: "The state of this cardholder's access group memberhip, in the site's language.  In an English locale, the value is the same as the type, but capitalised."
+            description: |
+              The state of this cardholder's access group memberhip, in the site's language.  In an
+              English locale, the value is the same as the type, but capitalised.
             type: string
             example: "Pending"
             readOnly: true
@@ -1977,7 +1993,8 @@ definitions:
       limitedCredit:
         type: boolean
         description: |
-          If false, Command Centre's 'Pre-pay Car Parking' feature (available under its own licence) will not reduce the current credit.
+          If false, Command Centre's 'Pre-pay Car Parking' feature (available under its own licence)
+          will not reduce the current credit.
 
           This field will be in the results if its value is true.
 
@@ -1985,7 +2002,8 @@ definitions:
       credit:
         type: integer
         description: |
-          The balance, or amount of credit left on this competency for use by Pre-pay Car Parking.  It can be negative.
+          The balance, or amount of credit left on this competency for use by Pre-pay Car Parking.
+          It can be negative.
 
           This field will be in the results if its value is not zero.
         example: 37
@@ -2639,7 +2657,8 @@ definitions:
 ######################################################################
 
   Access groups:
-    description: An array of access group summaries, described in the next section, and a `next` link for more.
+    description: |
+      An array of access group summaries, described in the next section, and a `next` link for more.
     properties:
       results:
         type: array
@@ -2670,7 +2689,9 @@ definitions:
       href:
         type: string
         format: url
-        description: "A link to an [access group detail](#definition-Access-group-detail) object for this access group."
+        description: |
+          A link to an [access group detail](#definition-Access-group-detail) object for this access
+          group.
         example: "https://localhost:8904/api/access_groups/352"
       name:
         type: string
@@ -3242,7 +3263,9 @@ definitions:
           type: object
           properties:
             name: { type: string }
-            shortName: { type: string, description: "A T20 will display this instead of the long name, if it has both." }
+            shortName:
+              type: string
+              description: "A T20 will display this instead of the long name, if it has both."
             description: { type: string }
             href:
               type: string
@@ -4039,7 +4062,9 @@ paths:
           in: body
           required: true
           schema: {$ref: '#/definitions/Cardholder POST example'}
-          description: "This can be a large object as shown, or a tiny one, because the only fields you must have in the POST are the division and either the first or last name."
+          description: |
+            This can be a large object as shown, or a tiny one, because the only fields you must
+            have in the POST are the division and either the first or last name.
       responses: 
         201: 
           description: "Success."
@@ -4060,7 +4085,10 @@ paths:
             If you see 'Invalid cardholder', the server could not parse the JSON in the body of your
             POST.  Remember to quote all strings, especially those than contain @ symbols.
 
-        403: { description: "The operator does not have a privilege that allows creating cardholders, or you attempted to set a field for which the operator has no privilege (probably 'notes')." }
+        403:
+          description: |
+            The operator does not have a privilege that allows creating cardholders, or you
+            attempted to set a field for which the operator has no privilege (probably 'notes').
 
   /api/cardholders/{id}:
     parameters:
@@ -4073,7 +4101,9 @@ paths:
       tags:
         - Cardholders
       summary: Get details of a cardholder
-      description: Full details for a cardholder.  Follow the href in the [cardholder search](#definition-Cardholders) to get here.
+      description: |
+        Full details for a cardholder.  Follow the href in the [cardholder
+        search](#definition-Cardholders) to get here.
       parameters:
       - name: "fields"
         in: query
@@ -4110,8 +4140,11 @@ paths:
       description: |
         This is the call you use to update a cardholder, including:
           - changing general properties such as names, division, and description,
+
           - changing PDF values, and
-          - adding or updating cards, access group membership, roles and relationships, lockers, and competencies.
+
+          - adding or updating cards, access group membership, roles and relationships, lockers, and
+            competencies.
 
         When changing a cardholder's division at the same time as PDFs or competencies, the extra
         privilege checks required for PDFs and competency changes use the origin division, not the
@@ -4178,7 +4211,8 @@ paths:
         4xx:
           description: |
             The operator does not have the privilege to modify that cardholder, or you attempted to
-            set a field for which you have no privilege (such as 'notes').
+            set a field for which you have no privilege (such as 'notes' or 'operatorPassword', both
+            of which require special privileges).
 
     delete:
       tags: [ Cardholders ]
@@ -4427,7 +4461,8 @@ paths:
       summary:  Find out which fields you can edit
 
       description: |
-        You get here from the cardholder detail page.  It tells you which fields you have the privileges to edit.
+        You get here from the cardholder detail page.  It tells you which fields you have the
+        privileges to edit.
 
       responses:
         200:

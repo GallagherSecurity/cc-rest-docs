@@ -1400,9 +1400,15 @@
                 <section class="swagger-operation-description">
                   <p>This is the call you use to update a cardholder, including:</p>
                   <ul>
-                    <li>changing general properties such as names, division, and description,</li>
-                    <li>changing PDF values, and</li>
-                    <li>adding or updating cards, access group membership, roles and relationships, lockers, and competencies.</li>
+                    <li>
+                      <p>changing general properties such as names, division, and description,</p>
+                    </li>
+                    <li>
+                      <p>changing PDF values, and</p>
+                    </li>
+                    <li>
+                      <p>adding or updating cards, access group membership, roles and relationships, lockers, and competencies.</p>
+                    </li>
                   </ul>
                   <p>When changing a cardholder&#39;s division at the same time as PDFs or competencies, the extra privilege checks required for PDFs and competency changes use the origin division, not the destination division. So if you are moving a cardholder from a division in which your operator has no access to PDFs and competencies into one in which it does, first PATCH the cardholder into the new division then PATCH it with the other changes.</p>
                   <hr>
@@ -1671,7 +1677,7 @@
                       <div class="prop-title">4xx </div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have the privilege to modify that cardholder, or you attempted to set a field for which you have no privilege (such as &#39;notes&#39;).</p>
+                      <p>The operator does not have the privilege to modify that cardholder, or you attempted to set a field for which you have no privilege (such as &#39;notes&#39; or &#39;operatorPassword&#39;, both of which require special privileges).</p>
                     </div>
                   </div>
                 </section>
@@ -6192,7 +6198,7 @@
                         </dt>
                         <dd>
                           <p>The password this user must supply when logging in to the interactive clients, if they are not using Windows integrated authentication.</p>
-                          <p>Command Centre imposes password length and complexity restrictions. If your password does not meet those requirements, the entire update will fail. The body of the 400 will tell you why.</p>
+                          <p>Command Centre imposes password length and complexity restrictions. If your password does not meet those requirements, the entire update will fail. The body of the 4xx response will tell you why.</p>
                           <p>Like the user code, this is write-only so you will not see it in the results of a GET.</p>
                         </dd>
                         <dt data-property-name="operatorPasswordExpired" class="has-description">
