@@ -9,6 +9,7 @@ Look for …
 Newer screenshots.
 All references.
 Put &#9888; (a warning sign) on some of the notes.
+Change every tab to one space.
 
 -->
 
@@ -56,7 +57,7 @@ Website: www.gallagher.com
 1. [References](#references):  API reference, user manuals, and sample code.
 1. [Training Setup](#training-setup):  what you will need to try the API.
 1. [Useful background](#useful-background):  an introduction to Command Centre for people who are
-   new to physical access control systems or REST.  
+   new to physical access control systems or REST.
 
    [Cardholders](#cardholders),
    [Operators and operator groups](#operators-and-operator-groups),
@@ -76,18 +77,38 @@ Website: www.gallagher.com
       3. [Create a REST Client item](#create-a-rest-client-item)
       3. [What is an API key?](#what-is-an-api-key)
 1. [Try the sample client application](#try-the-sample-client-application)
-2. [Set up Chrome](#set-up-chrome)
-2. [Set up Postman](#set-up-postman)
+2. [Set up Chrome](#set-up-chrome):  install the ModHeader extension and a JSON pretty-printer, and
+   don't mind if the server certificate is bad.
+2. [Set up Postman](#set-up-postman):  send the API header, set the content type, and don't mind if
+   the server certificate is bad.
 2. [First GETs:  cardholders](#first-gets--cardholders):  get the API's contents page, get all
    cardholders, get one cardholder.
-2. [First GETs:  events](#first-gets--events):  list all events, list all alarms
-2. [Back into the theory](#back-into-the-theory)
+2. [First GETs:  events](#first-gets--events):  list all events, list all alarms.
+2. [Back into the theory](#back-into-the-theory):  API controllers, why we need operators, the
+   request process.
 2. [First POST and search](#first-post-and-search):  create a cardholder and search for it.
-2. [Cardholder flat fields](#cardholder-flat-fields)
-2. [Cards](#cards)
+2. [Cardholder flat fields](#cardholder-flat-fields):  give a cardholder access groups and PDFs,
+   changing simple fields, images.
+2. [Cards](#cards):  adding, updating, and (not!) deleting.
 2. [Group memberships](#group-memberships)
-2. [Create a cardholder, cont.](#create-a-cardholder-cont)
+2. [Create a cardholder, cont.](#create-a-cardholder-cont)  
 2. [Coding considerations](#coding-considerations)
+   Recap.  
+   Only one cardholder at a time.  
+   The importance of `/api`.  
+   Identifiers in your app.  
+   Do not build your own hrefs from ID.  
+   Sort by ID, and get all summary pages before any details.  
+   Monitoring for cardholder changes is much better in 8.30.  
+   Long polls.  
+   Benchmarks.
+2. [Advanced events](#advanced-events)  
+   Event filters
+   IDs to use in them.  
+   Filtering by date.  
+   Adding PDF values (like staff IDs) to the cardholders in events.  
+   Writing an interactive event viewer.  
+   Worked example:  reading alarms.
 
 -------------------------------------------------------------------------
 
@@ -1699,7 +1720,7 @@ Buoyed with confidence gained following links around our API, you will be tempte
 parts of hrefs that seem to matter and reconstruct them later.  In the interests of forward
 compatibility:
 
-> &#9888; **Do not interpret href paths, and do not build your own**
+> &#9888; **Do not interpret href paths, and do not build your own.**
 
 As a reminder, the parts of a URL relevant to us are the protocol (‘scheme’), host, port, path, and
 query:
@@ -1807,3 +1828,328 @@ expensive to extract.
 ### Creating cardholders
 Ten thousand took an hour.  The test added a cardholder with a card and a handful of group
 memberships and PDFs.
+
+----------------------------------------------------------------------
+
+# Advanced events
+
+## Event filters
+
+The developer documentation is authoritative on how to restrict your event results, but here is an
+introduction.
+
+You can filter by the occurrence date/time, the source item, the source’s division, the event’s
+type, the type’s group (all event types are grouped, and picking a group is synonymous with picking
+a few types), or the event’s cardholder.
+
+| To filter by ... | Add a query parameter called... |
+| --- | - |
+|Event type	|`type`|
+|Event type group|	`group`|
+|Cardholder|	`cardholder`|
+|Source	|`source`|
+|Division|	`division`|
+|Date|	`after` and / or `before`|
+
+For example, to find all card events (‘access granted’, ‘access denied’, etc.):
+
+    GET https://localhost:8904/api/events?group=23
+
+The API documentation shows you where the 23 comes from.
+
+To watch two cardholders:
+
+    GET https://localhost:8904/api/events?id=325,8445
+
+## IDs to use in filters
+To keep the query strings manageable, these filters take short, alphanumeric strings as IDs rather
+than the URLs that the API generally uses for identifying items.  In 7.90 and 8.00 these IDs are low
+numbers, but we reserve the right to introduce letters in the future, so do not interpret them as
+integers.
+
+These are your options for finding the IDs you need to build a filter string:
+* look at one of the events you want.  Everything you can filter by is there;
+* look at `/api/events/groups` for event types and their groups;
+* look at `/api/cardholders` for cardholders;
+* look at `/api/items` for all other items, using a type filter of its own from looking at
+  `/api/items/types`;
+* if running v8.00 or later, look at the controllers for doors, outputs, alarm zones, access zones,
+  and fence zones, linked from `/api`;
+* If running v8.10 or later, look at the inputs controller.
+
+For example, to find all your doors in 7.90, you would
+
+    GET https://localhost:8904/api/items?type=11
+
+That 11 came from
+
+    GET https://localhost:8904/api/items/types
+
+If you have 8.00 or later, just
+
+    GET https://localhost:8904/api/doors
+
+(after getting that URL from `GET /api`, of course)
+
+## Filtering by date
+Even though the before and after fields are only accurate to a second, filtering by date is ‘smart’
+for reports:  the result set will not include events that occurred during the before second.  For
+example, `before=2019-01-01T00:00:00Z` will not return you any events from 2019.  Pass the `before`
+parameter for one report as the `after` parameter of the next.  You never need to use `23:59:59`,
+and there is no risk of missing an event that happens in the last second, or in a leap second.
+
+All date-times should be in ISO-8601.  If you omit fields (such as minutes or seconds) Command
+Centre will assume sensible defaults, but the best advice is to be explicit (especially about the
+time zone).
+
+> &#9888; **Put a timezone specifier in all date-times!**
+
+## Adding PDF values to the cardholders in events
+Card events such as ‘access granted’ use the door as the source but also have a related cardholder.
+The event JSON includes the cardholder’s name and href, but if you want to use your own identifiers
+for cardholders you can also ask for a PDF to come out with the event.  Do that by adding
+<tt>fields=defaults,cardholder.pdf_<i>XXXX</i></tt> where <tt><i>XXXX</i></tt> is the ID of the PDF.
+Find that ID with a query to `/api/personal_data_fields`, adding `?name="your_pdf_name"` if you want
+Command Centre to do the searching for you.
+
+In order to see that PDF, your REST operator will need the appropriate privileges.  Otherwise the
+event will come out without the PDF.  ‘View Cardholder’ on the cardholder might not be enough:
+while PDFs are visible by default, an operator can hide them, in which case your REST client’s
+operator group will need to override that to readable or read/write.
+
+## Writing an interactive event viewer
+If I was writing an interactive application to monitor events as they occurred, while also allowing
+browsing the event history, I would get the most recent—enough to fill a screen—with:
+
+    GET /api/events?previous=true&top=20
+
+Then I would set an asynchronous task waiting on the `updates` link, which would return with new
+events as they happened.
+
+At the same time I would follow the `next` and `previous` links to collect more events as my user
+scrolled back and forth.
+
+## Worked example:  reading alarms
+What follows is a series of calls that collect alarms from the 7.80 version of the alarms API.
+There may be extra fields in later versions of Command Centre.
+
+### Collecting all unprocessed alarms with one active forced door
+The initial HTTP GET of `http://localhost/api/alarms` returns all unprocessed alarms: a bad login, a
+network problem, and two forced doors, in this example.  The second forced door is still open, so
+the alarm is active and instead of links for processing it we have links for force processing it,
+because you are not really meant to process active alarms.
+
+Note they are in the order that they arrived at the server, not the order they happened.
+Interesting pieces are bold.
+
+<pre>
+{
+  "alarms": [
+    {
+      "href": "http://localhost:8904/api/alarms/289",
+      "id": "289",
+      "time": "2016-11-10T14:17:00",
+      "message": "<b>Operator logon failed</b> for FT Workstation on GNZ-PC1302",
+      "source": { "name": "FT Workstation on GNZ-PC1302" },
+      "type": "Operator Logon Failed",
+      "priority": 3,
+      "state": "unacknowledged",
+      "active": false,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/289/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/289/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/289/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/289/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/289/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/289/process" }
+    },
+    {
+      "href": "http://localhost:8904/api/alarms/296",
+      "id": "296",
+      "time": "2016-11-10T13:58:16",
+      "message": "<b>Fat controller - Command Centre comms interrupted</b>",
+      "source": { "name": "Fat controller" },
+      "type": "Comms failed to Command Centre",
+      "priority": 6,
+      "state": "unacknowledged",
+      "active": false,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/296/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/296/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/296/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/296/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/296/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/296/process" }
+    },
+    {
+      "href": "http://localhost:8904/api/alarms/301",
+      "id": "301",
+      "time": "2016-11-10T14:18:27",
+      "message": "<b>Warehouse door has been forced.</b>",
+      "source": { "name": "Warehouse door" },
+      "type": "Forced Door",
+      "priority": 8,
+      "state": "unacknowledged",
+      "active": false,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/301/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/301/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/301/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/301/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/301/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/301/process" }
+    },
+    {
+      "href": "http://localhost:8904/api/alarms/306",
+      <b>"id": "306"</b>,
+      "time": "2016-11-10T14:21:41",
+      <b>"message": "Front door has been forced."</b>,
+      "source": { "name": "Front door" },
+      "type": "Forced Door",
+      "priority": 8,
+      "state": "unacknowledged",
+      <b>"active": true</b>,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/306/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/306/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/306/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/306/acknowledge" },
+      <b>"forceProcess": { "href": "http://localhost:8904/api/alarms/306/process"</b> }
+    }
+  ],
+  "updates": { "href": "http://localhost:8904/api/alarms/updates?id=306" }
+}
+</pre>
+
+### Collecting updated alarms after closing the door
+Next we close the front door, the kicking in of which caused alarm 306, and GET the updates URL at
+the end of the previous result, `http://localhost/api/alarms/updates?id=306`.  Because the alarm is
+no longer active we do not have a link for force-processing it; instead we have links for processing
+it normally with or without comments.
+
+<pre>
+"updates": [
+  {
+    "href": "http://localhost:8904/api/alarms/306",
+    <b>"id": "306"</b>,
+    "time": "2016-11-10T14:21:41",
+    "message": "Front door has been forced.",
+    "source": { "name": "Front door" },
+    "type": "Forced Door",
+    "priority": 8,
+    "state": "unacknowledged",
+    <b>"active": false</b>,
+    "division": { "href": "http://localhost:8904/api/divisions/2" },
+    "view": { "href": "http://localhost:8904/api/alarms/306/view" },
+    "comment": { "href": "http://localhost:8904/api/alarms/306/comment" },
+    "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/306/acknowledge" },
+    "acknowledge": { "href": "http://localhost:8904/api/alarms/306/acknowledge" },
+    "processWithComment": { "href": "http://localhost:8904/api/alarms/306/process" },
+    <b>"process": { "href": "http://localhost:8904/api/alarms/306/process" </b>}
+  }
+],
+"next": { "href": "http://localhost:8904/api/alarms/updates?id=306.1" }
+</pre>
+
+### Updating after cutting power
+
+This is the result of `http://localhost/api/alarms/updates?id=306.1` (the` next` link from the
+previous results) after cutting power to the controller and waiting a minute for Command Centre to
+raise an alarm about it.
+
+<pre>
+"updates": [
+  {
+    "href": "http://localhost:8904/api/alarms/308",
+    "id": "308",
+    "time": "2016-11-10T14:35:21",
+    "message": "Controller \"Fat controller\" Offline.",
+    "source": { "name": "Fat controller" },
+    <b>"type": "Controller Offline"</b>,
+    "priority": 6,
+    "state": "unacknowledged",
+    <b>"active": true</b>,
+    "division": { "href": "http://localhost:8904/api/divisions/2" },
+    "view": { "href": "http://localhost:8904/api/alarms/308/view" },
+    "comment": { "href": "http://localhost:8904/api/alarms/308/comment" },
+    "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/308/acknowledge" },
+    "acknowledge": { "href": "http://localhost:8904/api/alarms/308/acknowledge" },
+    "forceProcess": { "href": "http://localhost:8904/api/alarms/308/process" }
+  }
+],
+"next": { "href": "http://localhost:8904/api/alarms/updates?id=308" }
+</pre>
+    
+### Updating after restoring power
+Next we GET `http://localhost/api/alarms/updates?id=308` (the `next` link from the previous results,
+again) after restoring power to the controller and waiting for it to come online.
+
+The ‘controller offline’ alarm (ID 308) has changed to inactive since the controller has reappeared
+on the network.
+
+The ‘low power’ alarm has arrived from the controller stamped when it lost power, while it was
+running on internal reserve power, one minute earlier than the ‘controller offline’ alarm.
+
+Bringing up the rear is another alarm that the controller generated when it restarted.
+
+<pre>
+{
+  "updates": [
+    {
+      "href": "http://localhost:8904/api/alarms/308",
+      "id": "308",
+      <b>"time": "2016-11-10T14:35:21"</b>,
+      "message": "Controller \"Fat controller\" Offline.",
+      "source": { "name": "Fat controller" },
+      "type": "Controller Offline",
+      "priority": 6,
+      "state": "unacknowledged",
+      <b>"active": false</b>,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/308/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/308/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/308/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/308/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/308/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/308/process" }
+    },
+    {
+      "href": "http://localhost:8904/api/alarms/310",
+      "id": "310",
+      <b>"time": "2016-11-10T14:34:01"</b>,
+      "message": "Fat controller - power low.",
+      "source": { "name": "Fat controller" },
+      "type": "Controller power low",
+      "priority": 6,
+      "state": "unacknowledged",
+      "active": false,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/310/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/310/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/310/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/310/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/310/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/310/process" }
+    },
+    {
+      "href": "http://localhost:8904/api/alarms/313",
+      "id": "313",
+      "time": "2016-11-10T14:35:49",
+      "message": "Controller \"Fat controller\" restarted after power failed.",
+      "source": { "name": "Fat controller" },
+      "type": "Power failed",
+      "priority": 6,
+      "state": "unacknowledged",
+      "active": false,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/313/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/313/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/313/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/313/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/313/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/313/process" }
+    }
+  ],
+  "next": { "href": "http://localhost:8904/api/alarms/updates?id=313" }
+}
+</pre>
