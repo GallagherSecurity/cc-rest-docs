@@ -8,6 +8,7 @@ Look for —.  Or leave them be, because they look like proper em-dashes in HTML
 Look for …
 Newer screenshots.
 All references.
+Put &#9888; (a warning sign) on some of the notes.
 
 -->
 
@@ -86,6 +87,9 @@ Website: www.gallagher.com
 2. [Cards](#cards)
 2. [Group memberships](#group-memberships)
 2. [Create a cardholder, cont.](#create-a-cardholder-cont)
+2. [Coding considerations](#coding-considerations)
+
+-------------------------------------------------------------------------
 
 # Introduction
 
@@ -121,6 +125,8 @@ and leaves the variations for PIV and PIV-I to the developer documentation.
 Nor does it cover some of the features added after v7.90:  access zones, alarm zones, fence zones,
 doors, outputs, inputs, PDF definitions, macros, changing cardholder zones, operators, visitors,
 schedules, and subscribing to cardholder updates.
+
+-------------------------------------------------------------------------
 
 # References
 
@@ -175,6 +181,8 @@ using certificates.
 See `Utilities/REST API/REST API Sample Code.zip` in the Command Centre ISO.  There is a WPF client
 in there and a console application in a C# Visual Studio solution.
 
+----------------------------------------------------------------------
+
 # Training setup
 
 If you wish to try the REST API for yourself, you will require:
@@ -197,6 +205,8 @@ If you wish to try the REST API for yourself, you will require:
 Some people come to the API without knowing anything about CC.  Or even HTTP.
 #####################################################################################
 -->
+
+----------------------------------------------------------------------
 
 # Useful background
 
@@ -989,7 +999,7 @@ an alarm at maximum priority, then will remain silent on the matter until the at
 
 Errors also go to `%PROGRAMDATA%\Gallagher\Command Centre\Command_centre.log`.
 
-
+----------------------------------------------------------------------
 
 # First POST and search
 ## Create a cardholder
@@ -1045,6 +1055,8 @@ You should see your new cardholder in the results of both those queries.
 
 
 
+
+----------------------------------------------------------------------
 
 # Cardholder flat fields
 
@@ -1148,6 +1160,8 @@ If you see a load of what looks like garbage ending with equals signs, it is pro
 
 
 
+----------------------------------------------------------------------
+
 # Cards
 
 Meaning credentials.  In this section you will see how to give a cardholder a card and modify existing cards.
@@ -1237,7 +1251,9 @@ states.
 
 
 
-# 14.	Group memberships
+----------------------------------------------------------------------
+
+# Group memberships
 In this section you will add your cardholder to an access group and modify the membership.
 
 ## Add an access group membership
@@ -1334,6 +1350,10 @@ retrieving its details (footnote:  probably good advice for a fetch and update o
 
 > **Do not cache the hrefs of links between items**.  They change with operator actions.
 
+
+
+----------------------------------------------------------------------
+
 # Create a cardholder, cont.
 
 Now that you have access groups, cards, and PDFs, you can create a fully configured cardholder in
@@ -1370,13 +1390,15 @@ access group (which is necessary for the PDF to work), and gives them a card.
     }
 </pre>
 
-Never mind the competency yet.  The blue `zzz` makes the server ignore it.
+Never mind the competency yet.  The `zzz` makes the server ignore it.
 
 First you will need to change the red numbers to the IDs of an access group and a card type on your
 system.  You can get those with:
 
     GET /api/access_groups
+
 and
+
     GET /api/card_types
 
 In Chrome, those calls will look like <tt>https://<i>your_host</i>:8904/api/access_groups</tt> and
@@ -1385,8 +1407,9 @@ In Chrome, those calls will look like <tt>https://<i>your_host</i>:8904/api/acce
 An actual application would also find the href of the correct division, but for today is it safe to
 assume that the href of the root division is `.../divisions/2`.
 
-After changing the first two italicised numbers, put the JSON into Postman and POST it to
-/api/cardholders.  It should return you the href of a new cardholder, as it did in 11.1.
+After changing the first two italicised numbers, the `334` and the `342`, put the JSON into Postman
+and POST it to /api/cardholders.  It should return you the href of a new cardholder, as it did in
+11.1.
 
 The `zzz` is in there to stop the REST API trying to add a competency to your new cardholder, which
 would fail because you have not created a competency yet.  There is nothing special about three
@@ -1410,3 +1433,377 @@ Back to our example.  If you want to create a cardholder with a competency:
 It should fail, complaining that you cannot have two cards with the same card number.  Change the
 `3162` and try again (or change number to znumber and let Command Centre pick a card number for
 you - probably 3163).
+
+
+
+----------------------------------------------------------------------
+
+# Coding considerations
+
+There are several things you should keep in mind when building an integration against this API.
+
+## Recap
+
+* `/api` returns links to summary pages.  Why that is important is in [the importance of
+  `/api`](#the-importance-of-api)
+* At time of writing, the URLs of most summary pages end with the name of the controller, such as
+  `cardholders` or `access_groups`.  TODO_LINK10.1.  Others end with their specific purpose, such as
+  `card_types/assign`, which returns the card types your operator can assign to people.
+* Summary pages show you many items without much detail of each.  You can add sorting and pagination
+  parameters.  TODO_LINK8.2 for cardholders and TODO_LINK9 for alarms and events.  Always tell the
+  API to sort its results by ID, because it is quicker and more reliable when operators are changing
+  the database.  Unless you’re writing a user app and really must have your results sorted by name.
+* You can also add filters to summary pages, turning them into search pages.  TODO_LINK11.2 and
+  TODO_LINK17.1-17.3.
+* In v8.00+ you can add fields from the details page to the summary page of items, and in 8.40+,
+  events.  Or you can specify the exact fields you need, if you want to save traffic.
+* You walk the result set using links named `next` and `previous`.
+* Detail pages give you more on an item, but only one item at a time.  Their URLs end with short
+  alphanumeric identifiers.  TODO_LINK8.4.
+* To create a cardholder, POST the cardholders controller.  The body of the POST is pretty much the
+  same as you get from a GET of an existing cardholder, but with fewer fields.  TODO_LINK11.
+* To update a cardholder, PATCH its href.  TODO_LINK12.  That includes adding cards.  TODO_LINK13.
+* If you are changing PDFs or flat fields, the body of the PATCH looks a lot like what you got from
+  a GET to the same URL.  Put `@`-symbols on the front of your PDF names.
+* If you are updating cards, lockers, access groups, relationships, competencies, or operator
+  groups, you will be sending arrays called `add`, `remove`, and `update` inside objects called
+  `cards`, `lockers`, etc.
+
+## Only one cardholder at a time
+In all these flat field, card, and group membership examples you were working on one cardholder at a
+time.  That is the only way you can operate, because the cardholder you are changing is named by the
+URL.  If you want to change many cardholders, you must do it in a loop.
+
+On the upside, you can change everything about the cardholder in one PATCH.  In fact, it is most
+efficient to do so.  While you can use DELETE to remove one card or group membership or relationship
+at a time, you will see much better throughput if you combine it with the other changes for that
+cardholder and send them as one PATCH.  The same applies to creating a cardholder:  it is much
+quicker to do it as one POST than as a POST followed by one or more PATCHes.  The other advantage is
+that any one is atomic:  all the changes you put in the body happen, or none of them do.  So:
+
+> When creating a new cardholder, do it all in one POST.  
+> When modifying an existing cardholder, do it all in one PATCH.
+
+
+## The importance of /api
+Forgot all the URLs you have seen so far, except the first, and do not write them into your
+applications.  The only address that your application should have coded into it is `/api`.  You can
+learn every other address you need with a GET of that.  It will return a table of contents like
+this:
+
+    GET /api
+    {
+      "version": "7.90.0.0",
+      "features": {
+        "accessGroups": {
+          "accessGroups": {
+            "href": "https://localhost:8904/api/access_groups"
+          }
+        },
+        "accessZones": {
+          "accessZones": {
+            "href": "https://localhost:8904/api/access_zones"
+          }
+        },
+        "alarms": {
+          "alarms": {
+            "href": "https://localhost:8904/api/alarms"
+          },
+          "updates": {
+            "href": "https://localhost:8904/api/alarms/updates"
+          },
+          "divisions": {
+            "href": "https://localhost:8904/api/divisions/view_alarms"
+          }
+        },
+        "alarmZones": {
+          "alarmZones": {
+            "href": "https://localhost:8904/api/alarm_zones"
+          }
+        },
+        "cardholders": {
+          "cardholders": {
+            "href": "https://localhost:8904/api/cardholders"
+          },
+          "updateLocationAccessZones": {
+            "href": "https://localhost:8904/api/access_zones/update_cardholder_location"
+          },
+          "changes": {
+            "href": "https://localhost:8904/api/cardholders/changes"
+          }
+        },
+        "cardTypes": {
+          "cardTypes": {
+            "href": "https://localhost:8904/api/card_types"
+          },
+          "assign": {
+            "href": "https://localhost:8904/api/card_types/assign"
+          }
+        },
+        "competencies": {
+          "competencies": {
+            "href": "https://localhost:8904/api/competencies"
+          }
+        },
+        "doors": {
+          "doors": {
+            "href": "https://localhost:8904/api/doors"
+          }
+        },
+        "events": {
+          "events": {
+            "href": "https://localhost:8904/api/events"
+          },
+          "updates": {
+            "href": "https://localhost:8904/api/events/updates"
+          },
+          "eventGroups": {
+            "href": "https://localhost:8904/api/events/groups"
+          },
+          "divisions": {
+            "href": "https://localhost:8904/api/divisions/view_events"
+          }
+        },
+        "fenceZones": {
+          "fenceZones": {
+            "href": "https://localhost:8904/api/fence_zones"
+          }
+        },
+        "inputs": {
+          "inputs": {
+            "href": "https://localhost:8904/api/inputs"
+          }
+        },
+        "items": {
+          "items": {
+            "href": "https://localhost:8904/api/items"
+          },
+          "itemTypes": {
+            "href": "https://localhost:8904/api/items/types"
+          },
+          "updates": {
+            "href": "https://localhost:8904/api/items/updates"
+          }
+        },
+        "lockerBanks": {
+          "lockerBanks": {
+            "href": "https://localhost:8904/api/locker_banks"
+          }
+        },
+        "macros": {
+          "macros": {
+            "href": "https://localhost:8904/api/macros"
+          }
+        },
+        "outputs": {
+          "outputs": {
+            "href": "https://localhost:8904/api/outputs"
+          }
+        },
+        "personalDataFields": {
+          "personalDataFields": {
+            "href": "https://localhost:8904/api/personal_data_fields"
+          }
+        },
+        "roles": {
+          "roles": {
+            "href": "https://localhost:8904/api/roles"
+          }
+        }
+      }
+    }
+
+You should parse the `features` block of that page for the URLs of the calls you need.  It contains
+one block for each controller in the API:  cardholders, events, alarms, etc.  Some of those blocks
+contain one more block, in turn containing an href for the base call for that controller.  Other
+controllers (card_types) contain more than one, each containing an href for a different call.  For
+example, the events and alarms controllers also provide a divisions call which lists the divisions
+in which your operator has the privilege to see events and alarms, respectively.
+
+### Do not code URLs into applications
+
+Because Gallagher reserves the right to change them.  If you start at /api, your application will
+stay compatible through Command Centre upgrades.
+
+While it is tempting to hard-code a string "/api/cardholders" into your application, it is not that
+much more development effort to get that URL from the contents page and make your code
+forward-compatible.  Help yourself to the sample C#, starting with ClientManagerAsync.cs.
+
+## Identifiers in your app
+
+There are two API identifiers:  IDs and hrefs.
+    
+The REST API returns two kinds of identifier:
+
+The short alphanumeric string that comes in a field called id is there purely for use in filters.
+Because you add them to URLs they have to be short and free of punctuation, so we do not use the
+longer identifier that comes next.  Section 17.1 shows how to use them to find events.
+
+> &#9888; **Do not treat IDs as integers**.  They are alphanumeric.  A future version may add letters.
+
+The URL that comes in a field called `href` is how you reference objects, both as addresses in your
+own GETs, DELETEs, and PATCHes, but also in the bodies of those requests and POSTs when you need to
+connect two objects.  When adding a card to a cardholder, for example, you need to send the href for
+the new card’s card type.  You would find that href using the card_types controller.  As another
+example, when connecting two cardholders with a relationship, you need to PATCH the href of one of
+the cardholders with the href of the role (from the roles controller) and of the other cardholder
+(from a search of cardholders).
+
+### Some hrefs are meant to 404
+Many hrefs will respond to a GET, but some exist purely for identification:  cards, relationships,
+and group memberships, for example.  Those hrefs are for use inside the body of a PATCH to modify a
+cardholder.  You can DELETE some of them but GETting one of these will always return 404.
+
+### Many hrefs are dynamic
+Some hrefs change regularly:  access group membership IDs, for example, change every time you modify
+the underlying membership, even if you only change its end-date.  For that reason you must start all
+changes to a cardholder with a GET of that cardholder.  That will give you up-to-date hrefs for
+linked group memberships, roles, cards, etc., which you can then use in the body of a PATCH.
+
+### You can use them to cross-reference cardholders in an integration
+External systems will have their own user identifiers:  staff or student ID numbers, usernames, or
+national IDs.  You might like to store that ID in a PDF and use the PDF search
+(<tt>/api/cardholders?pdf_<i>yyy="<i>zzz</i>"</tt>, described in the developer documentation) to find
+the href of your cardholder when it comes time to synchronise.  Then you do not have to store a copy
+of the href.
+
+That could be slow for large numbers of cardholders.  Instead, you could retain the href returned to
+you when you created your cardholder and use that forever after.  There would be no need for a PDF
+holding the external identifier inside Command Centre.
+
+However that is no use for cardholders that your integration did not create.  Plus you risk losing
+your cardholder if its href ever changes (which could occur if another operator or integration
+deletes and recreates it, or Gallagher changes the layout of hrefs).
+
+The recommended option is a blend of the two:  give every cardholder a PDF containing their external
+ID and cache their href externally.  If your cache does not have it, or if using it returns a
+400-level error, refresh your cache using a PDF search.
+
+### Subtract the host and port then replace them with values from your integration’s configuration
+You will note that every cardholder href begins with the scheme, host, and port:
+`https://localhost:8904` in these examples.  I am going to contradict earlier advice ever so
+slightly and suggest that you drop the `https://host:port` from the front of an href before storing
+it, then add the host and port from your integration’s configuration before using it again.  By
+doing that you give yourself the flexibility to change the hostname or port without invalidating
+your cache of hrefs.
+
+For example, for a cardholder with href `https://localhost:8904/api/cardholders/123`, store
+`api/cardholders/123` in your database.  The application must have `locahost` and `8904` in its
+configuration somewhere (how else could it make HTTP requests?), so when it comes to find that
+cardholder again, prepend `https://localhost:8904/` to the stored value.  When your IT people change
+the server’s hostname or shift the service to another port, all you have to do is change your
+configuration.  Which you had to anyway.
+
+## Do not build your own hrefs from IDs
+Buoyed with confidence gained following links around our API, you will be tempted to store just the
+parts of hrefs that seem to matter and reconstruct them later.  In the interests of forward
+compatibility:
+
+> &#9888; **Do not interpret href paths, and do not build your own**
+
+As a reminder, the parts of a URL relevant to us are the protocol (‘scheme’), host, port, path, and
+query:
+
+    scheme://host:port/path?query
+
+The scheme will always be HTTPS—you can take that as read.  By all means, replace the hostname and
+port number and add your own search parameters to the query on the end of URLs you take from GET
+/api, but please do not tinker with the path.  Treat that as opaque.
+
+For example, in version 8.10 the path to a locker was
+
+    /api/locker_banks/locker_bank_id/lockers/locker_id 
+
+In 8.20 it changed to
+
+    /api/lockers/locker_id
+
+Client code that inserts a locker bank ID and locker ID into the hard-coded string
+`/api/locker_banks/{1}/lockers/{2}` will work against an 8.10 server but fail when the server
+upgrades to 8.20.  Client code that takes the href from a locker bank page will work with both
+versions.
+
+## Sort by ID, and get all summary pages before any details
+
+By default, item summaries arrive sorted by name.  That can cause a race condition:
+
+1. You get the first 1000 cardholders, sorted by name.
+2. Another operator (or your own update) changes the name of one of those cardholders to part of the
+   alphabet you have not collected yet, or vice versa.
+3. The next 1000 cardholders will either contain one you already received, or will skip one you did
+   not.  There are three things you can do to reduce this risk:
+   * Sort by ID.  Command Centre does not recycle them so no cardholder can slip into part of the
+     database you have already extracted.
+   * Collect hrefs from the summary pages, following the next link until it no longer arrives,
+     before using any of them.  This means you collect everyone in the minimum possible time, and if
+     you do update your cardholders you will not mess in your own yard.
+   * Get thousands at a time so that you make fewer calls.
+   
+## Monitoring for cardholder changes is much better in 8.30
+Version 7.90 supports change tracking through the events API.  If you filter for operator events you
+will be informed of every change using long polls (below):  the href of the affected cardholder or
+access group will be in the event.  In 8.00+ the href of the operator who made the change will also
+be in the event.
+
+Version 8.30 adds a call to the cardholders controller that makes synchronising them much simpler.
+It can tell you which fields changed on a cardholder and what their values were before and after the
+change, and what their current values are.  All the details are in a section called “Cardholder
+changes” in the developer documentation but here is a quick run-down:
+
+1. Send a GET to request a bookmark to the current head of the list of cardholder changes.
+2. Synchronise your system with Command Centre using other cardholder methods.  It does not matter
+   how long this takes.
+3. GET the bookmark you received previously.  That will send you all the changes that happened since
+   then, plus a new bookmark.
+4. Process those changes, if there were any.  Sleep if there were not.
+5. Go back to step 3.
+
+To reduce the work you have to do and chatter on the wire using `filter` and `fields` query
+parameters.  `filter` limits the changes you receive to those that you’re particularly interested in
+(you might not care about anything except changes to PDFs, for example), and `fields` lets you
+request more or less data about each change and its cardholder.
+
+## Long polls
+A _long poll_ is a way for HTTP servers to send updates to interested clients.  The client registers
+its interest by sending an HTTP GET, and the server pushes to the client by responding when
+something of interest occurs.
+
+Using telephone calls as an analogy, a traditional poll would have the client calling the server,
+the server answering, then hanging up immediately if there was nothing to report.  The client would
+then need to wait a time and try again.
+
+If the telephone server supported long polls, however, it would leave the incoming call ringing
+until it had something to say.  The client would carry on about its business until the server picked
+up.  After hearing the server’s response the client would call back when it wished.  Immediately if
+it was in a particular hurry.
+
+## Benchmarks
+These are the results of informal performance tests of Command Centre 7.90 running on reasonably
+capable hardware.
+
+You will not achieve these numbers without following the advice in the ‘efficiency tips’ sections of
+the developer documentation.
+
+### Extracting events
+Sustained an average of two to four thousand per second from a database of four million.
+
+### Extracting 12,000 cardholders
+Extracting their cards, access groups, and PDFs took three to four minutes on a v7.90 server.  The
+process was to request a summary page of 10,000 cardholders, then the remaining 2,000, then iterate
+through all their hrefs, getting their details pages.
+
+Extracting the same fields for the same **12,000 cardholders took 12 seconds** on the same server
+running v8.00.  This process used the fields parameter to add cards, access groups, and PDFs to the
+summary page so that the test did not have to get any detail pages.
+
+### Extracting 200,000 cardholders
+Now on 8.30 and different hardware, extracting the names of 200,000 cardholders took one minute with
+`top=1000&sort=id`, or 28 minutes without.  That is how important those query parameters are.  Use
+them!
+
+Part of the 3x speedup from the previous test will be due to the absence of PDFs:  they can be
+expensive to extract.
+
+### Creating cardholders
+Ten thousand took an hour.  The test added a cardholder with a card and a handful of group
+memberships and PDFs.
