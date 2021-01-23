@@ -109,6 +109,7 @@ Website: www.gallagher.com
    Adding PDF values (like staff IDs) to the cardholders in events.  
    Writing an interactive event viewer.  
    Worked example:  reading alarms.
+2. [Client-side certificates](#client-side-certificates)
 
 -------------------------------------------------------------------------
 
@@ -2153,3 +2154,124 @@ Bringing up the rear is another alarm that the controller generated when it rest
   "next": { "href": "http://localhost:8904/api/alarms/updates?id=313" }
 }
 </pre>
+
+----------------------------------------------------------------------
+
+<!-- s18 -->
+# Client-side certificates
+
+First see TODO_LINK3.15 for what certificates are and what the difference is between server
+certificates and client certificates.  This section deals with the client certificate check that
+happens if you left ‘Do not require pinned client certificates’ unchecked in Server Properties.
+
+The process in TODO_LINK10.3 shows that if you have not disabled client certificate checking, the
+server does it after extracting the API key.  If the server does not have the client’s certificate
+pinned to the REST Client item with that API key, it will reject the request and raise an alarm:
+
+    A REST connection was attempted with an invalid client certificate
+
+That alarm will be at the same priority as a controller disappearing off the network, which should cause a stir, so try not to do it in production.
+
+The next two sections should help you decide whether to use the feature.  The sections following
+those contain sample command lines that you can paste into a shell on your clients to create client
+certificates on disk or in the Windows certificate store.  If you receive syntax errors, you may
+have an old version of the software (I have had problems with `New SelfSignedCertificate` on Windows)
+or the hyphens may not be hyphens:  they may come through as dashes, which look very similar to us
+but not to shells.  You may have to re-type them.
+
+The red in the sample command lines reduce the protection around your private key.  That may be
+acceptable in a development environment but for proper security in a production environment you
+should omit the red.
+
+## What the feature does
+When not disabled by the checkbox in the server properties, Command Centre requests proof from the
+client that it has the private key that matches a public key that the server has configured into it
+(pinned).  A public key is hundreds of bytes so you don’t want to paste the whole thing into Command
+Centre’s configuration, and we do not want to compare all those bytes for each request, so you enter
+a signature instead.  It is known as the certificate’s thumbprint or fingerprint, and is a
+cryptographic hash of the whole certificate.  It is impossible for a client to send a fake
+certificate with a thumbprint that looks real.
+
+Certificates can also contain a chain of trust linking the certificate back to a trusted authority.
+A client uses a server certificate’s chain of trust to check the identity of the server that
+responded to its request.  It does not work in reverse:  servers do not check that part of a
+client’s certificate.  You would not have pasted the certificate’s thumbprint into Command Centre if
+you did not trust it.
+
+When you enter a thumbprint into a CC REST Client’s property page in the Configuration Client and
+leave ‘disabled pinned certificates’ unchecked in the server properties, you are saying that only
+the caller who has the matching private key is allowed to use that REST Client.  In other words, the
+client software must possess two secrets that the server can verify:  the API key and the private
+key.
+
+## Why do it
+To make it harder for an attacker to masquerade as a legitimate REST client.
+
+To do that, they must obtain your API key at the very least.  There are more barriers that you can put up:
+
+| If you: | ...the black-hat will then have to: |
+| --- | - |
+|use a firewall (Windows or hardware)|	be on the server network.|
+|use an IP filter|	spoof the source IP.|
+|pin your client’s certificate|	have a copy of the client’s private key.|
+|limit your application privileges|	settle for less access.|
+
+Pinning a client certificate is one more hoop an attacker has to jump through.
+
+You should make viewing your private key very difficult for anything that does not need it.  Do not
+leave it in the filesystem for anyone to read!  If you are running on Windows, you should use the
+certificate store.  If you are on another O/S, protect the key while it is on disk with filesystem
+permissions and by encrypting it with a password hidden in your application.
+
+## Create a certificate and record the thumbprint in CC
+
+These commands create a client certificate, so you need to run them on the system that will be
+running your REST client.  That is probably not your Command Centre server.
+
+### Using OpenSSL tools
+This works equally well on any system with OpenSSL installed, including Windows, but the later
+sections might serve Windows people better because they show how to put the certificate directly
+into the certificate store.  These OpenSSL commands put the private key on disk, which should make
+you a bit nervous if you are doing it in production.  On a Unix-like system you could do it in a
+mode-0700 folder on a filesystem that is not backed up and is cleared during a reboot, such as `/tmp`.
+
+    openssl req -x509    \
+    -newkey rsa:4096     \
+    -sha256              \
+    -nodes               \
+    -keyout rest.pem     \
+    -out rest.pem        \
+    -subj "/CN=RESTtest" \
+    -days 3650	
+
+Notice the `rsa:4096`:  a four-kilobit key might be overkill for development, but the option is
+there.
+
+Again, `-nodes` means that option reduces your security.  In this case, the `-nodes` option
+(footnote:  it means 'no DES'.  It is not the plural of 'node') means there is no password on the
+private key.  Anyone could read it from `rest.pem`, so in a production environment you should omit
+that option and type in a password (a really good one) when `openssl req` prompts you.
+
+To get the thumbprint for Command Centre:
+
+    openssl x509 -fingerprint -in rest.pem -noout
+
+If you protected the PEM with a password, `openssl x509` will ask you for it.
+
+> Those are the 20 bytes that you paste into the REST Client in Command Centre.
+
+Now you need to add it to the clients that need it.  If you use Postman, see section 18.4.  If you
+use Chrome on Windows, you need to add it to the certificate store with these two commands:
+
+    openssl pkcs12 -export -in rest.pem -out rest.pfx -passout pass:
+    explorer rest.pfx
+
+The first command converts the PEM file into a file format that Windows prefers.  The `-passout
+pass:` option means it will not put a password on it, so it is just as dangerous as the PEM file.
+
+The second line will open `rest.pfx` in Explorer (like double-clicking it) to import it into the
+certificate store.  The default options are good:  current user, determine the certificate store
+automatically, and mark the private key as not exportable.
+
+Finally, for goodness' sake, protect `rest.pfx`.  Preferably delete it, using a secure deletion
+utility.
