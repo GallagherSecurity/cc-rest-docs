@@ -112,6 +112,8 @@ Website: www.gallagher.com
 2. [Client-side certificates](#client-side-certificates)
 2. [Server-side certificates](#server-side-certificates)
 2. [Other Command Centre items](#other-command-centre-items)
+2. [Appendix:  privilege table](#appendix--privilege-table)
+2. [Appendix:  features and licences](#appendix--features-and-licences)
 
 -------------------------------------------------------------------------
 
@@ -197,9 +199,10 @@ The Command Centre hardening guide, also on the ISO, is required reading for sec
 sites.  While you may not be able to follow its leading advice regarding the REST API (‘leave it
 turned off’) there is plenty more in there to be aware of.
 
-If you are interested in the security of the REST API, look in TODO_LINK for how the server
-authenticates and authorises requests in general, and TODO_LINK for how it authenticates clients
-using certificates.
+If you are interested in the security of the REST API, look in [the request
+process](#the-request-process) for how the server authenticates and authorises requests in general,
+and [client-side certificates](#client-side-certificates) for how it authenticates clients using
+certificates.
 
 ## Sample code
 See `Utilities/REST API/REST API Sample Code.zip` in the Command Centre ISO.  There is a WPF client
@@ -254,8 +257,8 @@ operator groups.  An operator group bestows privileges on its members, including
 in to the Command Centre thick clients or run REST queries.
 
 Operator groups have no effect on access control, so they do not appear in this document again
-except in TODO_LINK which puts a cardholder in an operator group while setting up a REST client.
-Operator groups came to the API in 8.50.
+except when [creating an operator](#create-a-rest-operator) which puts a cardholder in an operator
+group while setting up a REST client.  Operator groups came to the API in 8.50.
 
 ## Access groups
 Cardholders can be members of any number of access groups.  An access group can be a member of one
@@ -392,7 +395,8 @@ cardholder’s division, or one of its ancestor divisions.
 In the interests of security, you should give your REST operators (footnote:  _all_ operators) the
 minimum privileges they require to achieve their task.
 
-A table on TODO_LINK gives some examples of privileges you will need for various tasks.
+An [appendix](#appendix--features-and-licences) gives some examples of privileges you will need for
+various tasks.
 
 ## HTTP requests
 An HTTP request has four parts:  a verb, an address, a handful of headers, and a body.
@@ -614,7 +618,8 @@ Edit Cardholders’ and ‘Edit Alarms’.  ‘Modify Access Control’ and ‘V
 
 > **Not ‘Advanced User’.  Never ‘Advanced User’**.
 
-See TODO_LINKp57 for a table of privileges an operator needs for common tasks.
+See [this appendix](#appendix--features-and-licences) for a table of privileges an operator needs
+for common tasks.
 
 One group is enough for experimenting but when it comes to production, create an operator group for
 each class of client you have connecting and give each group different privileges.  An operator can
@@ -779,7 +784,14 @@ add that after the next step.
 **There is a mistake in that screenshot**:  the value for the Authorization header should have
 GGL-API-KEY and a space before the API key.
 
-<!-- don't change this header -->
+
+<!-- don't change this header either -->
+## Set the content type to JSON
+Otherwise Command Centre will reject it as invalid.
+![todo](../../assets/postman_content_type.png "TODO")
+
+
+<!-- nor this one.  Don't change any headers without checking for links -->
 ## Never mind that your server certificate is self-signed
 In the current version of Postman, the settings are behind the cog in the top tool bar, not the
 sliders in the environment toolbar below it.
@@ -1279,8 +1291,9 @@ states.
 In this section you will add your cardholder to an access group and modify the membership.
 
 ## Add an access group membership
-You will need the href of your cardholder that you used in the GET in TODO_LINK8.4 or the PATCH in
-TODO_LINK13.1, or that came back from your POST when you created a cardholder in TODO_LINK11.1.
+You will need the href of your cardholder that you used in the [cardholder detail
+GET](#cardholder-detail) or the [cardholder PATCH](#adding-updating-and-deleting-cards), or that
+came back from your POST when you [created a cardholder](#create-a-cardholder).
 
 You also need the href of your access group.  You can see all your access groups by querying the
 access groups controller.  Hint:  `GET /api`.  Extra hint:  `GET /api/access_groups`.
@@ -2702,3 +2715,145 @@ schedules at the same time.  That suits our target use-case, which was for an in
 download the schedule, de-serialise it into an object model, change some part of it, then
 re-serialise and upload it back.
 
+----------------------------------------------------------------------
+
+# Appendix:  privilege table
+
+This is not the complete list!  See the topic ‘Which Operator Privileges you require’ in the
+Configuration Client’s online help for more.
+
+Remember that privileges lie on divisions, not on items, so when this table says you need a
+privilege on some item, take it to mean that you need that privilege on the division containing that
+item, or one of that division’s ancestors.
+
+<!-- This is very unpleasant editing.  The HTML isn't that attractive either, with no vertical
+alignment, and slightly wonky line spacing around unordered lists.  Suggestions welcome. -->
+
+|Goal|Privileges required|
+|---|---|
+|View cardholder data at `/api/cardholders` and `/api/cardholders/id` except notes and operator fields. |‘View Cardholder’ or any of the privileges that allow editing a cardholder, on the cardholder’s division. |
+|View all cardholder data|‘View Cardholder’ or any of the cardholder editing privileges on the cardholder’s division, plus:<ul><li>‘View Cardholder Notes’ reveals notes,</li><li>‘View Lockers and Assignments’ adds locker detail.</li></ul>|
+| Create cardholders, but not modify them.|‘Create Cardholders’ on the cardholder’s division.|
+|Create and edit cardholders, except their notes and operator settings.|‘Create and Edit Cardholders’ on the cardholder’s division.|
+|Edit cardholders, except their notes and operator settings.|‘Edit Cardholders’ on the cardholder’s division.|
+|Edit cardholder notes.|One of the privileges that lets you edit cardholders as well as either of<ul><li>‘Add Cardholder Notes’ or ‘Edit Cardholder Notes’ on the cardholder’s division</li><li>It is different in the thick clients:  there, one of the last two is enough.</li></ul>|
+|Modify cardholder group memberships.|One of the privileges that lets you edit cardholders on the cardholder’s division plus ‘Modify Access Control’ on the group’s division. <br>‘Modify Access Control’ on the group’s division is enough in the thick clients.|
+|Change a cardholder’s location.|‘View Cardholder’ on the cardholder, and ‘Manage Cardholder Location’ on:<ul><li>the target access zone’s division, when you are moving the cardholder into an access zone, otherwise</li><li>any division, when you are moving the cardholder outside the system.</li></ul>By the way:  collecting access zones normally requires the RESTStatus licence, but there is a variant of that call that returns just the zones your operator is allowed to move cardholders to that only requires the RESTCardholders licence.|
+|Assign a card to a cardholder.|One of the three privileges that lets you edit cardholders on the cardholder’s division and on the card type’s division.|
+|View assignable card types at `/api/card_types/assign`|One of the ‘edit cardholder’ privileges on the card type’s division.|
+|View card types at `/api/card_types`|‘View site’ or ‘configure site’ on the card type’s division.|
+|Change locker assignments.|One of the privileges that lets you edit cardholders on the cardholder’s division plus ‘Manage Locker Assignments’ on the locker’s division. <br>‘Manage Locker Assignments’ on the locker’s division is enough in the thick clients.|
+|Disable a card.|One of the privileges that lets you edit cardholders on the cardholder’s division. <br>The ‘Disable Card’ privilege has no effect on current versions of the REST API. <br>In the thick clients you do not need edit privileges on the cardholder if you have ‘Disable Card’.|
+|De-authorise a cardholder.|‘De-authorise Cardholder’ or one of the privileges that lets you edit cardholders on the cardholder’s division.|
+|Edit a relationship between cardholders.|One of the privileges that lets you edit cardholders on the cardholder’s division and on the role’s division.|
+|View PDF definitions at `/api/personal_data_fields`|‘View...’ or ‘Edit Personal Data Definitions’ on the PDF’s division.|
+|View events at `/api/events`|‘View Events and Alarms’ or any of the privileges that allow processing alarms, on the division of the source of the event or alarm.|
+|Acknowledge, process, or mark alarms as viewed.|‘Edit Alarms’ on division of the source of the event or alarm.|
+|Create new events (8.10+)|‘Create Alarms and Events’ on<ul><li>the division of the source of the event, if you set a source</li><li>any division, if you did not set a source</li></ul>|
+|List access groups.|‘View access groups’ or ‘edit access groups’ on the access group’s division.|
+|List competencies.|‘View site’ or ‘Edit site’.|
+|Receive schedule hrefs in an access group|‘View Schedules’ on the schedule’s division. <br>‘View site’, ‘Configure site’, and ‘Edit site’ will not do it.|
+|List access zones and receive their hrefs in other results|‘Edit site’, ‘View site’, or ‘Override’ on the access zone’s division.|
+|Override an access zone’s mode.|‘Override’ on the zone’s division.|
+|List alarm zones|‘Edit site’, ‘View site’, or ‘Override’ on the alarm zone’s division.|
+|List doors|‘Edit site’, ‘View site’, or ‘Override - open door’ on the door’s division.|
+|Override doors|‘Override - open door’ on the door’s division.|
+|List fence zones|‘Edit site’, ‘View site’, or ‘Maintenance override’ on the fence zone’s division.|
+|Override fence zones|‘Maintenance override’ on the fence zone’s division.|
+|List inputs|‘Edit site’, ‘View site’, ‘Maintenance override’ on the input’s division.|
+|List macros|‘View site’, ‘Run macros’, or ‘Schedule and run macros’ on the macro’s division.|
+|List outputs|‘Edit site’, ‘View site’, or ‘Override’ on the output’s division.|
+|List day categories|‘Configure site’, ‘Edit schedules’, ‘View site’.  Day categories are divisionless, so having one of those privs on any division is enough. <br>‘View schedules’ is true to its word:  it will not show you day categories.|
+|List schedules |‘View schedules’, ‘Edit schedules’, ‘Schedule access zone’ (though the last one only gives you access to access zone schedules, not the other five types).|
+|Create, edit, and delete schedules.|‘Edit schedules’.|
+|List elevator groups|‘Modify Default Floors’ is probably the one you want.  ‘View site’ lets you see elevator groups, but might not let you use them on a cardholder.|
+|Set a cardholder’s default floors (for calling elevators)|‘Modify Default Floors’|
+|Run a macro at `/api/macros/id/run`|‘Run Macros’ or ‘Schedule & Run Macros’ on the macro’s division.|
+|Shunt or unshunt an item.|‘Maintenance Override’ on the item’s division.  ‘Override’, which is good for most other overrides, is not enough to shunt or unshunt an item.|
+
+<!-- S22 -->
+----------------------------------------------------------------------
+# Appendix:  Features and licences
+
+## Alarms and events
+7.80 allows reading and writing unprocessed alarms.  Clients can read all their fields, mark them as
+viewed, add comments, acknowledge, and ultimately process them.
+
+7.80 allows reading events.  Clients can see all fields, including these related items:
+
+* cardholder, entry/exit zone, division,
+* (in 8.00) the source item, and the operator and access group on head-end events (i.e., those that did not come from a controller),
+* (in 8.30) the door on guard tour events, and
+* (in 8.40) the item that an operator modified.
+
+In 8.30 the following are absent from the list of items related to an event:  locker bank and
+locker, door (unless it is a guard tour event), missing competency, car park, and car park space.
+In practice that is rarely a problem since those items are often the event’s source, and will
+therefore be in the source block.
+
+You need RESTEvents in your licence for all the above.
+
+8.10 allows creating external events with the RESTCreateEvents licence.  Clients can use the usual
+item types as the source of the event and can attach one of each of these as related items:
+
+* cardholders,
+* operators,
+* entry access zones,
+* access groups,
+* lockers and locker banks, and
+* doors.
+
+## Cardholders and supporting items
+
+7.90 allows most administrative functions on cardholders, including full credential maintenance.
+
+It also gives read-only access to supporting items:
+
+* access groups,
+* competencies,
+* card types,
+* roles,
+* lockers,
+* (in 8.10) PDF definitions,
+* (in 8.50) default elevator floors, and (hopefully) operator privileges.
+
+8.20 allows moving cardholders between access zones.  To support that it added a call to the access
+zones controller that requires the cardholders licence, not RESTStatus as the other access zone
+calls do.
+
+8.30 allows subscribing to cardholder changes, for integrations that use Command Centre as a source
+of users.
+
+8.40 shows an access group’s access zones, Salto items, and privileges (there are 20).  In the
+Access Group window in the Configuration Client these are the ‘Access’, ‘Salto Access’, and
+‘Privileges’ tabs.  These are all read-only fields.
+
+Car parks remain on the roadmap.
+
+These cardholder functions require the RESTCardholders licence.  8.20 added lockers and locker banks
+to the RESTStatus licence as well, minus the cardholder information.
+
+## Non-cardholder items
+
+8.00 added read access to basic configuration, status, and all overrides, to:
+
+* access zones, alarm zones, and fence zones,
+* doors,
+* macros, and
+* outputs and (in 8.10) inputs.
+
+You will need the RESTStatus licence for the GETs and RESTOverrides for the override POSTs.
+
+8.20 added lockers, previously only visible with the RESTCardholders licence, to the RESTStatus
+licence.
+
+8.30 added the ability to monitor more than one item per connection.
+
+There are no functions for creating, configuring, or removing those item types.
+
+8.50 added read access to day categories and partial read-write access to schedules.  You can manage
+the day categories and times on a schedule, but not which items it affects.
+
+Day categories are divisionless, which lead to a slight change in the `/items` controller:
+divisionless items did not appear there before 8.50; now they do (subject to privilege checks, of
+course).
