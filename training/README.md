@@ -1700,7 +1700,7 @@ linked group memberships, roles, cards, etc., which you can then use in the body
 ### You can use them to cross-reference cardholders in an integration
 External systems will have their own user identifiers:  staff or student ID numbers, usernames, or
 national IDs.  You might like to store that ID in a PDF and use the PDF search
-(<tt>/api/cardholders?pdf_<i>yyy="<i>zzz</i>"</tt>, described in the developer documentation) to find
+(<tt>/api/cardholders?pdf_<i>yyy</i>="<i>zzz</i>"</tt>, described in the developer documentation) to find
 the href of your cardholder when it comes time to synchronise.  Then you do not have to store a copy
 of the href.
 
