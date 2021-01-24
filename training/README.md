@@ -110,6 +110,8 @@ Website: www.gallagher.com
    Writing an interactive event viewer.  
    Worked example:  reading alarms.
 2. [Client-side certificates](#client-side-certificates)
+2. [Server-side certificates](#server-side-certificates)
+2. [Other Command Centre items](#other-command-centre-items)
 
 -------------------------------------------------------------------------
 
@@ -517,8 +519,8 @@ you how.
 Sometimes the server also requires a proof of identity from the client.  This does not happen when
 using most web sites because (continuing the bank example) your bank has not pinned your client
 certificate:  it does not care where you are coming from.  But APIs should operate more securely
-than web sites so our recommendation is to turn it on.  Section TODO_LINK18 talks about client
-certificates.
+than web sites so our recommendation is to turn it on.  [A later section](#client-side-certificates)
+talks about client certificates.
 
 > **It is important to know the difference between the two certificate checks, and to know that they
 > are completely independent**.  If the client does not trust the server, Command Centre will not
@@ -582,7 +584,8 @@ The Configuration Client’s online help covers this in the topic called 'Web Se
 Requiring pre-shared certificates from clients is the best protection the server has against
 attackers on its network.  If you tick the box to turn off that check when you first start your
 development, come back once your application is connecting successfully and untick it again.  Read
-section TODO_LINK18 to help get your application connecting again.
+the section on [client-side certificates](#client-side-certificates) to help get your application
+connecting again.
 
 ### Installing a custom server certificate
 You do not need to install a custom server certificate for experimental development.  If you
@@ -993,8 +996,8 @@ visit in a browser.  From here on is specific to Command Centre.
    checks the thumbprint of the request’s certificate against the one on the REST Client item.  If
    it does not match, it responds with a 401 and raises an alarm ‘A REST connection was attempted
    with an invalid client certificate’.  The server does not check the client certificate’s chain of
-   trust.  Section TODO_LINK18 has all the details of why you would want your server to check client
-   certificates and how to create them.
+   trust.  [Another section](#client-side-certificates)) has all the details of why you would want
+   your server to check client certificates and how to create them.
 
 6. It checks the source host’s IP number against the REST Client item’s IP filters.  If it does not
    match, it responds with a 401 and raises an alarm ‘A REST connection was refused because of the
@@ -1177,9 +1180,6 @@ data by about a third.  You can put the string between quotes and send it like a
     } 
 
 If you see a load of what looks like garbage ending with equals signs, it is probably Base64.
-
-
-
 
 
 ----------------------------------------------------------------------
@@ -1475,8 +1475,8 @@ There are several things you should keep in mind when building an integration ag
   parameters.  TODO_LINK8.2 for cardholders and TODO_LINK9 for alarms and events.  Always tell the
   API to sort its results by ID, because it is quicker and more reliable when operators are changing
   the database.  Unless you’re writing a user app and really must have your results sorted by name.
-* You can also add filters to summary pages, turning them into search pages.  TODO_LINK11.2 and
-  TODO_LINK17.1-17.3.
+* You can also add filters to summary pages, turning them into search pages.  See [searching for a
+  cardholder](#search-for-a-cardholder) and [event filters](#event-filters).
 * In v8.00+ you can add fields from the details page to the summary page of items, and in 8.40+,
   events.  Or you can specify the exact fields you need, if you want to save traffic.
 * You walk the result set using links named `next` and `previous`.
@@ -2170,7 +2170,8 @@ pinned to the REST Client item with that API key, it will reject the request and
 
     A REST connection was attempted with an invalid client certificate
 
-That alarm will be at the same priority as a controller disappearing off the network, which should cause a stir, so try not to do it in production.
+That alarm will be at the same priority as a controller disappearing off the network, which should
+cause a stir, so try not to do it in production.
 
 The next two sections should help you decide whether to use the feature.  The sections following
 those contain sample command lines that you can paste into a shell on your clients to create client
@@ -2179,9 +2180,9 @@ have an old version of the software (I have had problems with `New SelfSignedCer
 or the hyphens may not be hyphens:  they may come through as dashes, which look very similar to us
 but not to shells.  You may have to re-type them.
 
-The red in the sample command lines reduce the protection around your private key.  That may be
+The bold in the sample command lines reduce the protection around your private key.  That may be
 acceptable in a development environment but for proper security in a production environment you
-should omit the red.
+should omit the bold parts.
 
 ## What the feature does
 When not disabled by the checkbox in the server properties, Command Centre requests proof from the
@@ -2235,19 +2236,21 @@ into the certificate store.  These OpenSSL commands put the private key on disk,
 you a bit nervous if you are doing it in production.  On a Unix-like system you could do it in a
 mode-0700 folder on a filesystem that is not backed up and is cleared during a reboot, such as `/tmp`.
 
-    openssl req -x509    \
-    -newkey rsa:4096     \
-    -sha256              \
-    -nodes               \
-    -keyout rest.pem     \
-    -out rest.pem        \
-    -subj "/CN=RESTtest" \
-    -days 3650	
+<pre>
+openssl req -x509    \
+-newkey rsa:4096     \
+-sha256              \
+<b>-nodes</b>               \
+-keyout rest.pem     \
+-out rest.pem        \
+-subj "/CN=RESTtest" \
+-days 3650
+</pre>
 
 Notice the `rsa:4096`:  a four-kilobit key might be overkill for development, but the option is
 there.
 
-Again, `-nodes` means that option reduces your security.  In this case, the `-nodes` option
+Again, the bold means that option reduces your security.  In this case, the `-nodes` option
 (footnote:  it means 'no DES'.  It is not the plural of 'node') means there is no password on the
 private key.  Anyone could read it from `rest.pem`, so in a production environment you should omit
 that option and type in a password (a really good one) when `openssl req` prompts you.
@@ -2258,13 +2261,16 @@ To get the thumbprint for Command Centre:
 
 If you protected the PEM with a password, `openssl x509` will ask you for it.
 
-> Those are the 20 bytes that you paste into the REST Client in Command Centre.
+> Those are the 20 bytes that you paste into the REST Client item in Command Centre.
 
-Now you need to add it to the clients that need it.  If you use Postman, see section 18.4.  If you
-use Chrome on Windows, you need to add it to the certificate store with these two commands:
+Now you need to add it to the clients that need it.  If you use Postman, see [this
+section](#use-the-certificate-in-your-client).  If you use Chrome on Windows, you
+need to add it to the certificate store with these two commands:
 
-    openssl pkcs12 -export -in rest.pem -out rest.pfx -passout pass:
-    explorer rest.pfx
+<pre>
+openssl pkcs12 -export -in rest.pem -out rest.pfx <b>-passout pass:</b>
+explorer rest.pfx
+</pre>
 
 The first command converts the PEM file into a file format that Windows prefers.  The `-passout
 pass:` option means it will not put a password on it, so it is just as dangerous as the PEM file.
@@ -2273,5 +2279,426 @@ The second line will open `rest.pfx` in Explorer (like double-clicking it) to im
 certificate store.  The default options are good:  current user, determine the certificate store
 automatically, and mark the private key as not exportable.
 
-Finally, for goodness' sake, protect `rest.pfx`.  Preferably delete it, using a secure deletion
-utility.
+Finally, for goodness' sake, protect the `rest.pem` and `rest.pfx` files.  Preferably delete them,
+using an eraser utility.
+
+### Using Windows tools
+If your client is on a Windows host there are two more ways to create a certificate and place it
+into Windows’s certificate store.  Obtaining the private key from there is easy for your client
+program but difficult for anyone else, Microsoft assures us.
+
+#### Powershell
+
+The topic ‘Creating the Client Certificate’ in the Configuration Client’s online help contains
+instructions for doing it in a PowerShell with `New-SelfSignedCertificate`.  Handily, it prints the
+thumbprint to the console so you can copy it into Command Centre.  You should try that first, since
+it is simplest.  But `New-SelfSignedCertificate` is not present on all versions of Windows, so here
+is an alternative using...
+
+#### makecert
+
+...which has been around for longer.
+
+1. Run a developer command prompt as administrator.  If you do not have a developer command prompt,
+   try a regular command prompt (as administrator).
+2. In it:
+
+    <pre>
+    makecert c:\ignoreme.der
+ 	         -a sha1
+             -ss My
+             -sky signature
+             <b>-pe</b>
+             -len 2048
+ 	         -n "CN=RESTClientCert"
+ 	         -sr CurrentUser
+    </pre>
+
+That will create a certificate and place it in your certificate store with a copy on disk.
+
+The `-pe` marked the key as exportable—more on that later.
+
+You do not need to keep the file `ignoreme.der`, but the easiest way to get the thumbprint of your
+new certificate is to open `ignoreme.der` by double-clicking on it in Explorer, go to the Details
+tab, scroll to the bottom, and click the thumbprint.  You could then skip the next three steps, but
+when starting out it is a good idea to carry on and verify that `makecert` put your new certificate
+where it should have.
+
+
+3. Run `mmc`, add the Certificates snap-in to manage “My user account,” open it and then your
+   “Personal” certificates.
+4. Ensure you can see a certificate called 'RESTClientCert' in there.  This is the cert you will
+   pick for your browser later.
+5. Double-click it, go to the Details tab, scroll to the bottom, and click the thumbprint.
+
+> Those are the 20 bytes that you paste into the REST Client item in Command Centre.
+
+#### Aside: other ways of calculating the thumbprint
+For your information, here are three more command-line options for extracting the thumbprint from
+the DER file if you didn’t get it above.  They all do the same thing.  Use whichever works for you:
+
+    openssl x509 -in c:\ignoreme.der -inform der -noout -fingerprint
+    openssl sha1 c:\ignoreme.der
+    sha1sum c:\ignoreme.der
+
+As you can see from the last two, a certificate thumbprint is really just the SHA1 hash of the
+certificate when it is stored in a DER file.
+
+#### Marking keys as exportable
+
+The `-pe` option to your `makecert` command above marked your private key as exportable.
+
+You can mark it as not exportable, so that the standard utilities will not be able to get it out of
+the certificate store.  While there are programs out there that can export non-exportable
+certificates, anything you can do to make the black-hat’s job harder is a win.
+
+The trouble is that in order to use your client certificate in Postman, you have to export the key.
+
+If you used the command `New-SelfSignedCertificate` in Windows Powershell (using the instructions in
+the Configuration Client's user guide), you can mark the certificate not exportable by adding
+`-KeyExportPolicy NonExportable` to the command line.
+
+If you used `makecert`, remove the `-pe` and your new key will not be exportable.
+
+### Extract the certificate and private key from the Windows store to disk
+
+If you are going to use Postman you need to give it files containing your private key and
+certificate, but if you used one of the Windows utilities to create a certificate and put it in the
+certificate store, you will not have the private key on disk.  You will need to extract it.
+
+1.	Run mmc.  Certificates -> Current User -> Personal -> Certificates
+2.	Right-click your certificate -> All tasks -> Export...  
+    Select the option to export the private key.  Give it a password, otherwise openssl cannot decrypt it.  
+    It does not matter what you do with the other certificates, so leave the defaults set.  
+    Export it to a `.pfx` file on disk.  
+
+    That PFX is partly secure because you put a password on it, but I expect that password was very short so, again, be careful what you do with that file.
+    
+3.	For old versions of Postman, you may have to convert that PFX into a file it understands.  The
+    current version of Postman does not need this
+
+    <pre>openssl pkcs12 -in restexported.pfx –out rest.pem <b>–nodes</b></pre>
+
+It will ask you for the password you picked for the export.  It will put the certificate and the
+private key in the PEM file, unencrypted (because of `-nodes`).  It is plain text:  you can look at
+it in Notepad.
+
+### An easy (but not so secure) way to discover your client certificate’s thumbprint
+
+Create a client certificate using one of the methods above and use it in an API call.  The server
+should raise an alarm, complaining that ‘a REST connection was attempted with an invalid client
+certificate’.  The rest of that message will tell you which REST Client Item you need to put the
+thumbprint on, and the details string will contain the thumbprint itself.
+
+If the thumbprint is ‘(null)’, your client is not sending a certificate at all.
+
+Otherwise, copy the thumbprint straight out of there and paste it into the item.  The next time you
+try your call the server should not complain about the certificate.
+
+The reason this method is not so secure is that you cannot be sure that alarm was yours.  Someone
+else may have hit the API before you did.
+
+## Use the certificate in your client
+### Postman
+The standalone version of Postman cannot read certificates out of the certificate store (footnote:
+the Chrome extension can, but it is no longer under development).
+
+Go to the cog -> Settings -> Certificates.  Add a certificate for your server and port, using the
+file containing the certificate where Postman asks for the CRT file and the file containing the
+private key where Postman asks for the key file.  They will both be in the same file if you followed
+the example above.  If you protected your private key with a password (a good idea, but turned off
+by `-nodes`), give it to Postman.
+
+![todo](../../assets/postman_client_cert.png "ToDo")
+
+Now Postman will use that certificate when it talks to Command Centre.  If you put the certificate’s
+thumbprint on the REST Client item with the API key Postman is using, you can turn on pinned
+certificates in the server properties and Postman will still be able to connect.
+
+You can leave Postman using this certificate no matter whether CC has pinned certificates turned off
+or on:  it does no harm.
+
+### Chrome
+
+When you first try to connect to Command Centre using Chrome it will give you a list of certificates
+in the store and ask you which to use.  Select the one you just put there.
+
+### wget
+
+<pre>
+wget                                                                          \
+    --no-check-certificate                                                    \
+    --certificate=<i>your_pem_file</i>                                               \
+    --header="Authorization: GGL-API-KEY <i>your-API-key</i>"                        \
+    https://localhost:8904/api
+</pre>
+
+The `--no-check-certificate` turns off client-side checking of the server certificate.
+
+Careful:  my version of wget does not complain if it cannot read the certificate file.
+
+### curl
+<pre>
+curl                                                                          \
+    --verbose                                                                 \
+    --insecure                                                                \
+    --cert <i>your_pem_file</i>                                                      \
+    --header "Authorization: GGL-API-KEY <i>your-API-key</i>"                        \
+    https://localhost:8904/api
+</pre>
+
+The `--insecure` turns off client-side checking of the server certificate.
+
+I found `--verbose` necessary to see any error codes.
+
+<!-- S19 -->
+# Server-side certificates
+Clients may refuse to talk to a server that offers a certificate that is not carrying a signature
+from one of the internet’s signing authorities.  One that has not been paid for, in other words.
+Usually the client is completely under the developer’s control because it is their own application
+and they can instruct it to skip the server certificate check, as you told Chrome and Postman to do
+earlier.  But sometimes it is not so controllable, and checking the server certificate is a good
+cyber-security move anyway, so here are a couple of approaches.
+
+You only need one of these.
+
+## Pin the server certificate on the client
+
+Go to Server Properties, Web Services, Manage Certificates, and click View on whichever type of
+certificate you are using.  Go to the Details tab in the window that appears, then choose Copy to
+File.  You have a few choices for the format to export it to.  DER is good for Windows machines, but
+a PFX – if that option is enabled – might be more widely accepted on non-Windows systems.  If you
+are ever asked if you want to export the private key, _just say “no”_.
+
+Once you have your certificate file on disk, copy it to the client machine.  Provided you didn’t let
+a private key get in there, it is not a secret.
+
+How you install it on the client depends on the client.  On a Windows box, it may be as simple as
+double-clicking it.  The Certificate Import Wizard will ask you where to install it:  you probably
+want Trusted Root Certificate Authorities.  That is a bit of a sledgehammer, because it makes not
+only your REST client but every client on that host trust that certificate.  Plus, they will trust
+any other certificate signed by it.  But it will get you going.
+
+## Buy a signed certificate for the server
+If that method does not suit, perhaps because you do not have control of the clients, you could buy
+a “real” certificate for your CC server.  One drawback is that signatures eventually expire,
+requiring you to do this every year or three.  Another is that you must buy a new certificate if you
+change the name of your server – so use a DNS alias.
+
+This is nothing new for REST APIs:  it is the process that every web site owner goes through.  If
+you want to sell scones and Toby mugs from www.itsabritishthing.com, for example, you:
+
+1. generate a certificate for www.itsabritishthing.com,
+3. generate a certificate signing request (a CSR) from that certificate,
+2. decide which signing authority to use,
+4. send the CSR to that signing authority, with your credit card details and proof that you own
+   itsabritishthing.com,
+5. wait, then
+6. use the signed certificate on your web server.
+
+That is exactly what you will need to do for Command Centre.  Start with the DNS alias for your
+server instead of www.itsabritishthing.com.  The next few steps are a Googling exercise for the
+reader because they depend on which authority you choose.  Finish with a simple process covered in
+the section called “Replacing the web service certificate” of the Configuration Client’s user guide.
+Briefly, it is:
+
+1. Go to Server properties, Web Services, REST API section Manage Certificates, and
+2. change the radio box to Custom Certificate,
+3. click Import, and
+4. browse to your certificate file.
+
+At time of writing, Gallagher Group has no association with www.itsabritishthing.com.
+
+----------------------------------------------------------------------
+
+<!-- S20 -->
+# Other Command Centre items
+Version 8.00 added fence zones, access zones, alarm zones, doors, macros, and outputs (relays and
+LEDs) under two licences.  The RESTStatus licence lets you see their status and some basic
+configuration, and the RESTOverrides licence lets you send overrides to them.  So you can open
+doors, run macros, disarm fence and alarm zones, toggle outputs, and so on.  Version 8.10 added
+inputs (switches).  Version 8.30 added a method `/api/items/updates` which lets you monitor several
+items with one connection.  Version 8.50 added operator groups, schedules, and day categories.
+
+Note that the REST API does not let you create, edit, or delete any of these items except schedules.
+The configuration client is still the place for that.
+
+Each of those item types has its own controller, its own block of links in `/api`, and its own
+section in the developer documentation.  Most are in the "non-cardholder" HTML file, but the
+`updates` method (which is on the items controller) and the operator groups controller are in the
+cardholder file, as they are all about cardholders.
+
+As an example of how to use these APIs, here is how you would list all your doors and get the link
+to open one of them:
+
+    GET /api
+    // You would find and use the URL at features.doors.doors.href, which in 8.30 is:
+    GET /api/doors
+    // To search for one door use the 'name' parameter:
+    GET /api/doors?name="Greendoor"
+    // Or, to only get the override links because all you want to do is open it, you'd use this:
+    GET /api/doors?name="Greendoor"&fields=commands
+
+## Overriding items
+To send an override to an item you make an HTTP POST to a URL that you get from the item itself.
+
+The output from the last example above, that requested the `commands` block of the door called
+‘Greendoor’, is:
+
+    "results": [
+        {
+            "commands": {
+                "open": {
+                    "href": "https://localhost:8904/api/doors/507/open"
+                },
+                "free": {
+                    "href": "https://localhost:8904/api/access_zones/533/free"
+                },
+                "freeUntil": {
+                    "href": "https://localhost:8904/api/access_zones/533/free"
+                },
+                "freePin": {
+                    "href": "https://localhost:8904/api/access_zones/533/free_pin"
+                },
+                "freePinUntil": {
+                    "href": "https://localhost:8904/api/access_zones/533/free_pin"
+                },
+                "secure": {
+                    "href": "https://localhost:8904/api/access_zones/533/secure"
+                },
+                "secureUntil": {
+                    "href": "https://localhost:8904/api/access_zones/533/secure"
+                },
+                // ... ten more commands omitted for brevity ...
+                "cancel": {
+                    "href": "https://localhost:8904/api/access_zones/533/cancel"
+                }
+            }
+        }
+    ]
+    
+Normally a search would return an ID, href, and name, and it would not return that block of
+commands, but we turned that on its head by using the `fields` query parameter to request the
+`commands` block and nothing else.  Each of the objects inside it is a named command containing an
+href which, when you POST to them, sends an override to the item.  For example, if that was a door
+on your system and you pasted the URL from `commands.open` into Postman, and POSTed it, the unlock
+relay on that door would fire.
+
+Each item type has a different set of commands you can send it.  They vary in type and number:
+outputs have four and access zones have 21.  Most of those access zone overrides are also available
+on the zone’s doors, for convenience.
+
+Overrides don’t need anything in the body of the POST, but those with ‘Until’ in the name of the
+command will use a timestamp if you send it:
+
+    POST /api/access_zones/533/free
+    {
+        "endTime": "2020-03-06T00:00:00Z"
+    }
+
+That example would put the door’s entry access zone in free mode until midnight March 6.
+
+## Status flags
+
+Just as each item type has its own commands, each also has its own set of status flags.  A door can
+be open or closed, for example, while an access zone can be secure or free.  Each also has its own
+set of flag rules that they will always follow.  Doors, inputs, and outputs are quite simple but
+fence zones have half a dozen rules thanks to the voltages they deal with.
+
+The developer documentation clearly lays out all the status flags items can return, and their rules.
+For example, here is part of the section on outputs:
+
+If the output is online, its `statusFlags` field may contain one or more of these flags:
+* `relayStateUnknown` means the controller does not know what the output should be doing.
+* `closed` means the output relay is closed.
+* `open` means the output relay is open.
+* `pulsed` means the relay's change in state is momentary.
+* `switchingDisabled` means switching this output is disabled.
+* `overridden` means the output is under the effect of an override.
+
+If and only if the output is online, one of 'relayStateUnknown', 'closed', or 'open' will appear.
+
+Of the above, only 'overridden' can appear when the output is offline.
+
+The above tells you that the first flags you should look for are ‘relayStateUnknown’, ‘closed’, and
+‘open’.  If none of those is in the flag set then your output is offline.  Other flags will tell you
+what the problem is, if you want to go deeper, but it is probably enough for your integration to
+know that the output’s state is uncertain and it should subscribe to updates in case that changes.
+
+At last count there were eleven status flags common to all items.  Some are not so serious, like the
+flags that indicate the item is shunted (muted) or is not fully configured yet.  Others indicate an
+actual problem like a network outage, a cable fault, or a service not running.  The developer
+documentation covers them all (search for ‘abnormal status’).
+
+The ‘controllerUnknown’ flag is worth a special mention.  Because Command Centre installations can
+be huge, and because a hardware controller has enough to do already, the REST server does not stay
+up to date with the status of all items all the time.  It knows about the items that someone is
+watching in the thick clients and mobile apps, and that a REST client is watching using special
+status-watching methods, but if you ask for the status of an item that nobody else is watching, the
+server will tell you ‘controllerUnknown’.  That is not the best name for the flag:  there is nothing
+unknown about the controller, in fact the server knows which controller to ask and is in contact
+with it.  All it means is that the server does not have that item’s current status.  The server sent
+the controller a request in response to yours, but the response has not arrived yet.  You should
+follow the ‘next’ link, which will block until the status changes.  With any luck it will change to
+one of the item’s normal states.
+
+This server behaviour is why, when you are the only one in the system and you open the hardware list
+in the configuration client, the icons start in error (red) then flick through to normal.  The
+client is subscribing to state changes and showing them exactly as the server reports them, which is
+controllerUnknown at first.  The updates that arrive after bring the client up todate.  If you want
+a smoother experience for your users, sleep half a second when you receive ‘controllerUnknown’ while
+starting up and try to ride it out.  Be aware, though, that some items might stay in
+‘controllerUnknown’ for longer than you should wait.  This will happen when a controller loses is
+network but has not yet missed enough pings for the server to call it offline (a minute or so).  Or
+it might be snowed under a pile of updates.
+
+End quote.
+
+## Subscribing to updates (one item, pre-8.30) TODO
+
+This section TODO.  What follows is a broad outline of what the section should contain.
+
+GET the `updates` link on an item’s details page.  It is a long poll, so the server won’t respond
+until it has something for you (or it times out after about 50s).  Then stay up to date by entering
+a loop GETting the `next` link.
+
+Why use this one instead of the one below?
+
+* You’re not running 8.30 yet, or
+* it’s slightly easier if you’re monitoring only one item (though that is debateable), or
+* your client wants to wait longer than 30s between GETs.
+
+## Subscribing to updates (many items, 8.30+) TODO
+
+A rough outline:  GET `/api` then POST a document to the link at `features.items.updates` (which is
+`/api/items/updates` in 8.30, but may change, which is why you should use the page at `/api`).
+
+The body of your POST should look like this:
+
+    {  "itemIds": ["508", "526"]  }
+
+Those numbers are item IDs.  Even though they look like integers they must be in quotes because in
+the future they could contain alphas.  Place as many in the array as you like.  We tested 1,000
+without it affecting performance.
+
+The POST will return with the status of all your items and a next link.  GET that link, and keep
+GETting it in a loop to stay up to date.  The calls will block if there are no changes to report.
+Sleep between calls to avoid tight loops.  But not longer than 30s, otherwise the server will drop
+your session, thinking you have walked away.
+
+The first GET will return the same states that the POST did, which seems redundant, but that is just
+the way it is.  Just keep looping.
+
+Why use this one instead of the per-item updates?
+
+* You want to monitor more than one item per client thread.
+
+## Schedules and day categories TODO
+
+When updating a schedule you must replace its entire list of day categories and times.  This is
+quite different from how you normally update lists via this API.  The JSON schema allows room for us
+to accept the normal style as a future enhancement, but in 8.40 you must replace all a schedule’s
+schedules at the same time.  That suits our target use-case, which was for an integration to
+download the schedule, de-serialise it into an object model, change some part of it, then
+re-serialise and upload it back.
+
