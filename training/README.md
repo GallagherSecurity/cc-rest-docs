@@ -92,7 +92,7 @@ Website: www.gallagher.com
 2. [Cards](#cards):  adding, updating, and (not!) deleting.
 2. [Group memberships](#group-memberships)
 2. [Create a cardholder, cont.](#create-a-cardholder-cont)  
-2. [Coding considerations](#coding-considerations)
+2. [Coding considerations](#coding-considerations)  
    Recap.  
    Only one cardholder at a time.  
    The importance of `/api`.  
@@ -132,14 +132,11 @@ It uses the following styles for guided examples:
 `Fixed-width fonts` indicate filenames, parts of URLs, and text that benefits from vertical
 alignment.
 
-    Indented fixed-width blocks are client requests that you can copy out for your own work,
-    and server responses pretty-printed a little to make them readable.
-
-<pre>Indented fixed-width blocks are client requests that you can copy out for your own work (values
+<pre>
+Indented fixed-width blocks are client requests that you can copy out for your own work (values
 you should change are in <i>italics</i>) and server responses, pretty-printed a little to make them
-readable.</pre>
-
-TODO ^^^
+readable.
+</pre>
 
 > **Special notes** use Markdown's type of quoting, like this.
 
@@ -526,12 +523,13 @@ certificate:  it does not care where you are coming from.  But APIs should opera
 than web sites so our recommendation is to turn it on.  [A later section](#client-side-certificates)
 talks about client certificates.
 
-> **It is important to know the difference between the two certificate checks, and to know that they
-> are completely independent**.  If the client does not trust the server, Command Centre will not
-> receive a connection and will not raise any alarms.  The problem is on the client and there is
-> nothing you can do to Command Centre to help.  But if the server certificate is acceptable to the
-> client, the server has a chance to check the client certificate.  If the server does not like the
-> client certificate, Command Centre will raise an ‘invalid client certificate’ alarm.
+> &#9888; **It is important to know the difference between the two certificate checks, and to know
+> that they are completely independent**.  If the client does not trust the server, Command Centre
+> will not receive a connection and will not raise any alarms.  The problem is on the client and
+> there is nothing you can do to Command Centre to help.  But if the server certificate is
+> acceptable to the client, the server has a chance to check the client certificate.  If the server
+> does not like the client certificate, Command Centre will raise an ‘invalid client certificate’
+> alarm.
 
 ## Items versus a cardholder’s link to them
 Talking about a PDF or a competency can be confusing, because there is a PDF item and a competency
@@ -581,9 +579,9 @@ first indication of trouble binding a socket.
 
 The Configuration Client’s online help covers this in the topic called 'Web Services'.
 
-> **Make sure 'Do not require pinned client certificates' is off in production**.  In 8.50 the label
-> changed to 'Enable REST Clients with no client certificate'.  It ships turned off:  make sure it
-> stays off on production servers.
+> &#9888; **Make sure 'Do not require pinned client certificates' is off in production**.  In 8.50
+> the label changed to 'Enable REST Clients with no client certificate'.  It ships turned off:  make
+> sure it stays off on production servers.
 
 Requiring pre-shared certificates from clients is the best protection the server has against
 attackers on its network.  If you tick the box to turn off that check when you first start your
@@ -616,7 +614,7 @@ Edit Cardholders’ and ‘Edit Alarms’.  ‘Modify Access Control’ and ‘V
 
 ![todo](../../assets/op_group_privs.png "todo")
 
-> **Not ‘Advanced User’.  Never ‘Advanced User’**.
+> &#9888; **Not ‘Advanced User’.  Never ‘Advanced User’**.
 
 See [this appendix](#appendix--features-and-licences) for a table of privileges an operator needs
 for common tasks.
@@ -739,7 +737,7 @@ characters).
 
 In 7.90, both must be in upper case.
 
-> **Set a filter so that the header only goes to your Command Centre server.  Otherwise Facebook
+> &#9888; **Set a filter so that the header only goes to your Command Centre server.  Otherwise Facebook
 > will have your API key**.
 
 Use a URL pattern in the filter that all your queries will match but other web browsing will not.
@@ -1451,7 +1449,7 @@ would fail because you have not created a competency yet.  There is nothing spec
 ‘Z’s—the server just ignores anything it does not recognise.
 
 > **The server will ignore fields it does not recognise**.  Beware of this, as you may think your
-> call is succeeding when in fact it is doing less than you want it to.
+> calls are succeeding when in fact they ard doing less than you want them to.
 
 That is more of an advantage that a disadvantage.  It means we can write clients that degrade
 gracefully on Command Centre servers that are not the most recent version or are missing licences.
@@ -1481,23 +1479,27 @@ There are several things you should keep in mind when building an integration ag
 
 * `/api` returns links to summary pages.  Why that is important is in [the importance of
   `/api`](#the-importance-of-api)
-* At time of writing, the URLs of most summary pages end with the name of the controller, such as
-  `cardholders` or `access_groups`.  TODO_LINK10.1.  Others end with their specific purpose, such as
-  `card_types/assign`, which returns the card types your operator can assign to people.
+* At time of writing, the URLs of most summary pages end with the name of the
+  [controller](#api-controllers), such as `cardholders` or `access_groups`.  Others end with their
+  specific purpose, such as `card_types/assign`, which returns the card types your operator can
+  assign to people.
 * Summary pages show you many items without much detail of each.  You can add sorting and pagination
-  parameters.  TODO_LINK8.2 for cardholders and TODO_LINK9 for alarms and events.  Always tell the
-  API to sort its results by ID, because it is quicker and more reliable when operators are changing
-  the database.  Unless you’re writing a user app and really must have your results sorted by name.
+  parameters.  [Cardholders](#cardholder-summary), [alarms and events](#first-gets--events), and
+  [other items](#other-command-centre-items).  Always tell the API to sort its results by ID,
+  because it is quicker and more reliable when operators are changing the database.  Unless you’re
+  writing a user app and really must have your results sorted by name.
 * You can also add filters to summary pages, turning them into search pages.  See [searching for a
   cardholder](#search-for-a-cardholder) and [event filters](#event-filters).
 * In v8.00+ you can add fields from the details page to the summary page of items, and in 8.40+,
   events.  Or you can specify the exact fields you need, if you want to save traffic.
 * You walk the result set using links named `next` and `previous`.
 * Detail pages give you more on an item, but only one item at a time.  Their URLs end with short
-  alphanumeric identifiers.  TODO_LINK8.4.
-* To create a cardholder, POST the cardholders controller.  The body of the POST is pretty much the
-  same as you get from a GET of an existing cardholder, but with fewer fields.  TODO_LINK11.
-* To update a cardholder, PATCH its href.  TODO_LINK12.  That includes adding cards.  TODO_LINK13.
+  alphanumeric identifiers.  [A cardholder](#cardholder-detail), for example.
+* To create a cardholder, [POST the cardholders controller](#first-post-and-search).  The body of
+  the POST is pretty much the same as you get from a GET of an existing cardholder, but with fewer
+  fields.
+* To update a cardholder, [PATCH its href](#cardholder-flat-fields).  That includes [adding
+  cards](#cards).
 * If you are changing PDFs or flat fields, the body of the PATCH looks a lot like what you got from
   a GET to the same URL.  Put `@`-symbols on the front of your PDF names.
 * If you are updating cards, lockers, access groups, relationships, competencies, or operator
@@ -2173,13 +2175,15 @@ Bringing up the rear is another alarm that the controller generated when it rest
 <!-- s18 -->
 # Client-side certificates
 
-First see TODO_LINK3.15 for what certificates are and what the difference is between server
-certificates and client certificates.  This section deals with the client certificate check that
-happens if you left ‘Do not require pinned client certificates’ unchecked in Server Properties.
+First see [auth certificates](#authentication-and-encryption-certificates) for what certificates are
+and what the difference is between server certificates and client certificates.  This section deals
+with the client certificate check that happens if you left ‘Do not require pinned client
+certificates’ unchecked in Server Properties.
 
-The process in TODO_LINK10.3 shows that if you have not disabled client certificate checking, the
-server does it after extracting the API key.  If the server does not have the client’s certificate
-pinned to the REST Client item with that API key, it will reject the request and raise an alarm:
+The process in [the request process](#the-request-process) shows that if you have not disabled
+client certificate checking, the server does it after extracting the API key.  If the server does
+not have the client’s certificate pinned to the REST Client item with that API key, it will reject
+the request and raise an alarm:
 
     A REST connection was attempted with an invalid client certificate
 
