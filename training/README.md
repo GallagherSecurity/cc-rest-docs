@@ -876,7 +876,7 @@ of cardholders at once:
 v8.00 delivered the ability to add all the fields from the details page to the summary page, using
 the fields parameter.  See the developer documentation for a proper description, but in short, try
 adding <tt>fields=<i>fieldname</i></tt> to your request URL (after a `?` or `&` of course) where
-<tt><i>fieldname</i><tt> is the name of a field you can see in a detail page, such as `cards` or
+<tt><i>fieldname</i></tt> is the name of a field you can see in a detail page, such as `cards` or
 `accessGroups`.  For example:
 
     GET /api/cardholders?sort=id&top=10000&fields=firstName,lastName,cards
@@ -2634,7 +2634,6 @@ If the output is online, its `statusFlags` field may contain one or more of thes
 * `overridden` means the output is under the effect of an override.
 
 If and only if the output is online, one of 'relayStateUnknown', 'closed', or 'open' will appear.
-
 Of the above, only 'overridden' can appear when the output is offline.
 
 The above tells you that the first flags you should look for are ‘relayStateUnknown’, ‘closed’, and
@@ -2647,29 +2646,7 @@ flags that indicate the item is shunted (muted) or is not fully configured yet. 
 actual problem like a network outage, a cable fault, or a service not running.  The developer
 documentation covers them all (search for ‘abnormal status’).
 
-The ‘controllerUnknown’ flag is worth a special mention.  Because Command Centre installations can
-be huge, and because a hardware controller has enough to do already, the REST server does not stay
-up to date with the status of all items all the time.  It knows about the items that someone is
-watching in the thick clients and mobile apps, and that a REST client is watching using special
-status-watching methods, but if you ask for the status of an item that nobody else is watching, the
-server will tell you ‘controllerUnknown’.  That is not the best name for the flag:  there is nothing
-unknown about the controller, in fact the server knows which controller to ask and is in contact
-with it.  All it means is that the server does not have that item’s current status.  The server sent
-the controller a request in response to yours, but the response has not arrived yet.  You should
-follow the ‘next’ link, which will block until the status changes.  With any luck it will change to
-one of the item’s normal states.
-
-This server behaviour is why, when you are the only one in the system and you open the hardware list
-in the configuration client, the icons start in error (red) then flick through to normal.  The
-client is subscribing to state changes and showing them exactly as the server reports them, which is
-controllerUnknown at first.  The updates that arrive after bring the client up todate.  If you want
-a smoother experience for your users, sleep half a second when you receive ‘controllerUnknown’ while
-starting up and try to ride it out.  Be aware, though, that some items might stay in
-‘controllerUnknown’ for longer than you should wait.  This will happen when a controller loses is
-network but has not yet missed enough pings for the server to call it offline (a minute or so).  Or
-it might be snowed under a pile of updates.
-
-End quote.
+End quote.  There is a lot more on the topic in the reference documentation.
 
 ## Subscribing to updates (one item, pre-8.30) TODO
 
