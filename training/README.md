@@ -2552,9 +2552,10 @@ Note that the REST API does not let you create, edit, or delete any of these ite
 The configuration client is still the place for that.
 
 Each of those item types has its own controller, its own block of links in `/api`, and its own
-section in the developer documentation.  Most are in the "non-cardholder" HTML file, but the
-`updates` method (which is on the items controller) and the operator groups controller are in the
-cardholder file, as they are all about cardholders.
+section in the developer documentation.  Schedules, day categories, and the items with status like
+zones and hardware have their documentation under "Status and Overrides".  Because the
+`items/updates` method is on the items controller it in with Alarms and Events.  Operator groups are
+in with cardholders.
 
 As an example of how to use these APIs, here is how you would list all your doors and get the link
 to open one of them:
