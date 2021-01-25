@@ -916,7 +916,7 @@ parameters:
 ####################################################################################################
 definitions:
 
-  Cardholders:
+  Cardholder search:
     description: An array of cardholder summaries, and a `next` link for more.
     properties:
       results:
@@ -2656,7 +2656,7 @@ definitions:
 
 ######################################################################
 
-  Access groups:
+  Access group search:
     description: |
       An array of access group summaries, described in the next section, and a `next` link for more.
     properties:
@@ -3171,7 +3171,7 @@ definitions:
 
 ######################################################################
 
-  Locker banks:
+  Locker bank search:
     description: |
       An array of locker bank summaries, and a `next` link for more.
 
@@ -3452,7 +3452,7 @@ definitions:
                   open its door.
                 example: "https://localhost:8904/api/lockers/3456/open"
 
-  Competencies:
+  Competency search:
     description: An array of competency summaries, and a `next` link for more.
     properties:
       results:
@@ -3565,7 +3565,7 @@ definitions:
           if the operator is not a member of an operator group that overrides it.  Check the
           operator group's 'Competency' tab in the Configuration Client.
 
-  Card types:
+  Card type search:
     description: |
       An array of card types, and a `next` link for more.  Sites generally have only a handful of
       card types, so when retrieving them you should set your 'top' parameter high enough that you
@@ -3641,7 +3641,7 @@ definitions:
 
 ######################################################################
 
-  Operator groups:
+  Operator group search:
     description: |
       An array of operator group summaries, described in the next section, and a `next` link for
       more.
@@ -3754,7 +3754,7 @@ definitions:
         href: "https://localhost:8904/api/cardholders/325"
 
 ######################################################################
-  PDF definitions:
+  PDF definition search:
     description: |
       An array of PDF definition summaries, and a `next` link for more.
 
@@ -3850,7 +3850,7 @@ definitions:
         example: "@ least"
 
 ######################################################################
-  Roles:
+  Role search:
     description: |
       An array of roles, and a `next` link for more.
 
@@ -4028,7 +4028,7 @@ paths:
         200:
           description: |
             Success.  See the note in the description about privileges if your result set is empty.
-          schema: {$ref: '#/definitions/Cardholders'}
+          schema: {$ref: '#/definitions/Cardholder search'}
         403:
           description: The site does not have the RESTCardholders licence.
 
@@ -4675,7 +4675,7 @@ paths:
         200:
           description: |
             Success.  See the note in the description about privileges if your result set is empty.
-          schema: { $ref: '#/definitions/Access groups' }
+          schema: { $ref: '#/definitions/Access group search' }
         403: { description: "The site does not have the RESTCardholders licence." }
 
   /api/access_groups/{id}:
@@ -4835,7 +4835,7 @@ paths:
         200:
           description: |
             Success.  See the note in the description about privileges if your result set is empty.
-          schema: {$ref: '#/definitions/Competencies'}
+          schema: {$ref: '#/definitions/Competency search'}
         403: { description: "The installation lacks a cardholders licence." }
 
   /api/competencies/{id}:
@@ -4929,7 +4929,7 @@ paths:
       responses:
         200:
           description: "Success."
-          schema: {$ref: '#/definitions/Card types'}
+          schema: {$ref: '#/definitions/Card type search'}
 
         403: { description: "The installation lacks a cardholders licence." }
 
@@ -5012,7 +5012,7 @@ paths:
       responses:
         200: 
           description: "Success."
-          schema: {$ref: '#/definitions/Locker banks'}
+          schema: {$ref: '#/definitions/Locker bank search'}
         403:
           description: |
             The installation lacks a lockers licence, or it is missing both RESTCardholders and
@@ -5319,7 +5319,7 @@ paths:
       responses:
         200: 
           description: "Success."
-          schema: {$ref: '#/definitions/PDF definitions'}
+          schema: {$ref: '#/definitions/PDF definition search'}
         403:
           description: The site does not have the RESTCardholders or RESTEvents licence.
 
@@ -5377,7 +5377,7 @@ paths:
       responses:
         200:
           description: "Success."
-          schema: {$ref: '#/definitions/Roles'}
+          schema: {$ref: '#/definitions/Role search'}
         403:
           description: The site does not have the RESTCardholders licence.
 
