@@ -189,12 +189,6 @@ schedules, and subscribing to cardholder updates.
 
 # References
 
-[devdocslong]: https://gallaghersecurity.github.io/ "Developer reference documentation on Github.io"
-[devdocs]: .. "Developer reference documentation on Github.io"
-
-*[PDF]: Personal Data Field.  Not Adobe's kind of PDF
-*[CC]: Command Centre
-
 This document refers to API documentation, online help, and sample code.  All are on the Command
 Centre ISO (or DVD, if you have physical media).
 
@@ -243,6 +237,18 @@ certificates.
 ## Sample code
 See `Utilities/REST API/REST API Sample Code.zip` in the Command Centre ISO.  There is a WPF client
 in there and a console application in a C# Visual Studio solution.
+
+[devdocslong]: https://gallaghersecurity.github.io/ "Developer reference documentation on Github.io"
+[devdocs]: .. "Developer reference documentation on Github.io"
+
+## Abbreviations
+
+Visible at github.com, integrated into hover text at gallaghersecurity.github.io .
+
+*[PDF]: Personal Data Field.  Not Adobe's kind of PDF
+
+*[CC]: Command Centre
+
 
 ----------------------------------------------------------------------
 
@@ -1096,13 +1102,16 @@ tells the server that the body is JSON.
 This document uses this shorthand to represent that kind of HTTP query:
 
     POST /api/cardholders
-    {
-        "firstName": "New",
-        "lastName": "Cardholder",
-        "division": {
-            "href":"https://localhost:8904/api/divisions/2"
-        }
+
+~~~json
+{
+    "firstName": "New",
+    "lastName": "Cardholder",
+    "division": {
+        "href":"https://localhost:8904/api/divisions/2"
     }
+}
+~~~
 
 The first line gives the verb and the file part of URL.  It needs the protocol, host, and port
 prepended:  <tt>https://<i>your_server</i>:8904</tt>.  The rest is the body.
@@ -2010,7 +2019,7 @@ because you are not really meant to process active alarms.
 Note they are in the order that they arrived at the server, not the order they happened.
 Interesting pieces are bold.
 
-~~~json
+<pre>
 {
   "alarms": [
     {
@@ -2087,7 +2096,7 @@ Interesting pieces are bold.
   ],
   "updates": { "href": "http://localhost:8904/api/alarms/updates?id=306" }
 }
-~~~
+</pre>
 
 ### Collecting updated alarms after closing the door
 Next we close the front door, the kicking in of which caused alarm 306, and GET the updates URL at
