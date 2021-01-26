@@ -76,7 +76,7 @@ manually adding a row here for each new section. -->
    [Cardholders](#cardholders),
    [Operators and operator groups](#operators-and-operator-groups),
    [Access groups](#access-groups),
-   [Personal data fields (PDFS)](#personal-data-fields-pdfs),
+   [Personal data fields (PDFs)](#personal-data-fields-pdfs),
    [Divisions](#divisions),
    [Roles](#roles), [Competencies](#competencies),
    [Card types](#card-types),
@@ -185,15 +185,15 @@ Nor does it cover some of the features added after v7.90:  access zones, alarm z
 doors, outputs, inputs, PDF definitions, macros, changing cardholder zones, operators, visitors,
 schedules, and subscribing to cardholder updates.
 
-*[PDF]: Personal Data Field.  Other than in this sentence, the API documentation never refers to the
-Adobe Portable Document Format.
-
 -------------------------------------------------------------------------
 
 # References
 
 [devdocslong]: https://gallaghersecurity.github.io/ "Developer reference documentation on Github.io"
 [devdocs]: .. "Developer reference documentation on Github.io"
+
+*[PDF]: Personal Data Field.  Not Adobe's kind of PDF
+*[CC]: Command Centre
 
 This document refers to API documentation, online help, and sample code.  All are on the Command
 Centre ISO (or DVD, if you have physical media).
@@ -225,7 +225,7 @@ If running on Windows, something in the mix of Internet Explorer, Javascript, an
 network shares prevents the HTML rendering properly so if those files look goofy to you, try a
 different browser or copy the folder to your local drive.  Or read it online.
 
-## Online help and PDF documents
+## Online help and other documents
 
 The Configuration Client's Help menu opens a CHM file that you can also find in the ISO at
 `Setup\Program Files\Gallagher\Command Centre\Bin\Resources\en`.  There is a PDF version, split into
@@ -275,6 +275,8 @@ Some people come to the API without knowing anything about CC.  Or even HTTP.
 
 This section contains material you should have aboard before reading on.  Skip it if you are
 familiar with CC.
+
+
 
 ## Cardholders
 Cardholders are user accounts.  Depending on what you give a cardholder account it can suit
@@ -509,11 +511,11 @@ JSON can contain flat fields, objects (structures), and arrays.
         "sub-field2": "bar"
     },
     "an array": [
-        "the array's first object": {
+        {
             "sub-field1": "jingle",
             "sub-field2": "bells"
         },
-        "another object": {
+        {
             "sub-field1": "foo",
             "sub-field2": "bar"
         }
@@ -617,7 +619,7 @@ Enable the REST API and--for the moment--tick the checkbox to the right of the p
 different label from this screenshot in 8.50.  Have a good look at the status because it is the
 first indication of trouble binding a socket.
 
-![Enabling the public API](../../assets/server_props_turnon.png "Enabling the web server")
+![Enabling the public API](assets/server_props_turnon.png "Enabling the web server")
 
 The Configuration Client's online help covers this in the topic called 'Web Services'.
 
@@ -654,7 +656,7 @@ You can do this in either of the clients.
 Give the group the lowest level privileges it needs.  For this exercise, you will need 'Create and
 Edit Cardholders' and 'Edit Alarms'.  'Modify Access Control' and 'View Site' could be handy later.
 
-![Adding privs to an operator group](../../assets/op_group_privs.png "Adding privs to an op group")
+![Adding privs to an operator group](assets/op_group_privs.png "Adding privs to an op group")
 
 > &#9888; **Not 'Advanced User'.  Never 'Advanced User'**.
 
@@ -668,7 +670,7 @@ be in more than one operator group; use this flexibility as you need.
 ### Create a cardholder and add it to the operator group
 You can do this in either of the clients.
 
-![Adding cardholders to an op group](../../assets/op_group_members.png "Adding cardholders to an op group")
+![Adding cardholders to an op group](assets/op_group_members.png "Adding cardholders to an op group")
 
 In production, your operator should have a bare minimum of capabilities, so do not give it a card,
 logon, password, or user code.  Do give it plenty of description about what it does, where it
@@ -698,13 +700,13 @@ like it can hold more than one:  it cannot.
 
 Take a note of the API key.  You will need it for your clients (the sample app, Chrome, or Postman).
 
-![A REST Client item's API key in the Configuration Client](../../assets/rest_client_api_key.png "A
+![A REST Client item's API key in the Configuration Client](assets/rest_client_api_key.png "A
 REST Client item's API key in the Configuration Client")
 
 IP filtering is a layer of security that makes it that much harder for an attacker to attack your
 server.
 
-![A REST Client's IP filters in the Configuration Client](../../assets/rest_client_ip_filtering.png
+![A REST Client's IP filters in the Configuration Client](assets/rest_client_ip_filtering.png
 "A REST Client's IP filters in the Configuration Client")
 
 (A space is as good as a comma.)
@@ -781,7 +783,7 @@ Use a URL pattern in the filter that all your queries will match but other web b
 ModHeader now uses regular expressions, so if you have dots in your hostname you must put
 backslashes in front, `\.`.
 
-![Install Mod Header Chrome extension](../../assets/chrome_mod_header_setup.png "Install Mod Header
+![Install Mod Header Chrome extension](assets/chrome_mod_header_setup.png "Install Mod Header
 Chrome extension")
 
 ## Install a JSON viewer
@@ -797,9 +799,9 @@ certificate, you need to click through the warning below.  It will reappear occa
 turn it off in Chrome but it is not a good idea, since you want to know when other servers are using
 self-signed certificates.
 
-![Chrome fretting about a server cert](../../assets/chrome_bad_server_cert_1.png "Chrome fretting
+![Chrome fretting about a server cert](assets/chrome_bad_server_cert_1.png "Chrome fretting
 about a server cert")
-![Chrome fretting in more detail](../../assets/chrome_bad_server_cert_2.png
+![Chrome fretting in more detail](assets/chrome_bad_server_cert_2.png
 "Chrome fretting in more detail")
 
 # Set up Postman
@@ -817,7 +819,7 @@ header containing your API key with every request.
 Your requests also need a Content Type header but you do not need to set it yourself.  Postman will
 add that after the next step.
 
-![Setting auth header in Postman](../../assets/postman_auth_header.png "Setting auth header in
+![Setting auth header in Postman](assets/postman_auth_header.png "Setting auth header in
 Postman")
 
 **There is a mistake in that screenshot**:  the value for the Authorization header should have
@@ -827,7 +829,7 @@ GGL-API-KEY and a space before the API key.
 ## Set the content type to JSON
 Otherwise Command Centre will reject it as invalid.
 
-![Content-type Postman header](../../assets/postman_content_type.png "Content-type Postman header")
+![Content-type Postman header](assets/postman_content_type.png "Content-type Postman header")
 
 
 ## Never mind that your server certificate is self-signed
@@ -837,12 +839,12 @@ sliders in the environment toolbar below it.
 For older versions of Postman, the settings are behind the open-ended wrench in the top tool bar,
 not the cog in the environment toolbar below it.
 
-![Postman settings menu](../../assets/postman_server_cert_warning_off_1.png "Postman settings menu")
+![Postman settings menu](assets/postman_server_cert_warning_off_1.png "Postman settings menu")
 
 Pick 'Settings' and turn off SSL certificate verification.  Turn off the other options if you want
 to keep it looking clean.  It makes no difference to Command Centre.
 
-![Postman SSL cert verification off](../../assets/postman_server_cert_warning_off_2.png
+![Postman SSL cert verification off](assets/postman_server_cert_warning_off_2.png
 "Postman SSL cert verification off")
 
 
@@ -860,11 +862,13 @@ message in the response body (Chrome will show it) and the most recent events in
 
 If it did accept your API key, the only thing that can stop you now is a licensing problem:
 
-    {
-        "message": "feature not licensed"
-    }
+~~~ json
+{
+    "message": "feature not licensed"
+}
+~~~
 
-With a RESTEvents licence:
+With a RESTEvents licence you will get more:
 
     {
         "version": "7.90.0.0",
@@ -892,7 +896,7 @@ With a RESTCardholdersEvents licence:
         }
     }
 
-That is not the exact JSON you will get -- it's not even JSON -- but hopefully you get the idea.
+That is not the exact JSON you will get---it's not even JSON---but hopefully you get the idea.
 
 ## Cardholder summary
 
@@ -1083,7 +1087,7 @@ Errors also go to `%PROGRAMDATA%\Gallagher\Command Centre\Command_centre.log`.
 ## Create a cardholder
 In Postman:
 
-![POST to create a cardholder](../../assets/postman_create_cardholder_1.png "POST to create a
+![POST to create a cardholder](assets/postman_create_cardholder_1.png "POST to create a
 cardholder")
 
 Notice that there are two headers set:  `authorization` contains the API key and `content type`
@@ -1108,7 +1112,7 @@ this example is about the shortest you can get away with.
 
 Look at the response from the POST.  It contains a `Location` header giving the URL of our new cardholder.
 
-![Create cardholder JSON results](../../assets/postman_create_cardholder_result.png "Create
+![Create cardholder JSON results](assets/postman_create_cardholder_result.png "Create
 cardholder JSON results")
 
 You could GET that URL to see what you created, or...
@@ -1162,7 +1166,7 @@ Add -> New Personal Data Field.  Call it 'email' and set the type (on the Type t
 You might as well make a few more with different data types.  Make at least one text, because they
 have no constraints and are easiest to experiment with.
 
-![Create a PDF in Configuration Client](../../assets/pdf_create_1.png "Create a PDF in Configuration
+![Create a PDF in Configuration Client](assets/pdf_create_1.png "Create a PDF in Configuration
 Client")
 
 ### Create at least two access groups, add the PDFs, and add your cardholder
@@ -1177,7 +1181,7 @@ Drag your PDFs to the Personal Data tab of the access group.
 
 Repeat!
 
-![Add a PDF to a group in Config Client](../../assets/pdf_to_club.png "Add a PDF to a group in
+![Add a PDF to a group in Config Client](assets/pdf_to_club.png "Add a PDF to a group in
 Config Client")
 
 Save everything and reload your cardholder's details to see what PDF values and group memberships
@@ -1207,7 +1211,7 @@ sets the user code (which is a number you can use at keypads):
 
 It looks like this in Postman:
 
-![PATCH a cardholder in Postman](../../assets/postman_patch_cardholder_1.png "PATCH a cardholder in
+![PATCH a cardholder in Postman](assets/postman_patch_cardholder_1.png "PATCH a cardholder in
 Postman")
 
 It looks a lot like that in the cardholder's details page too, so here is the rule:
@@ -2006,7 +2010,7 @@ because you are not really meant to process active alarms.
 Note they are in the order that they arrived at the server, not the order they happened.
 Interesting pieces are bold.
 
-<pre>
+~~~json
 {
   "alarms": [
     {
@@ -2083,7 +2087,7 @@ Interesting pieces are bold.
   ],
   "updates": { "href": "http://localhost:8904/api/alarms/updates?id=306" }
 }
-</pre>
+~~~
 
 ### Collecting updated alarms after closing the door
 Next we close the front door, the kicking in of which caused alarm 306, and GET the updates URL at
@@ -2474,7 +2478,7 @@ private key where Postman asks for the key file.  They will both be in the same 
 the example above.  If you protected your private key with a password (a good idea, but turned off
 by `-nodes`), give it to Postman.
 
-![Tell Postman which client cert to use](../../assets/postman_client_cert.png "Tell Postman which
+![Tell Postman which client cert to use](assets/postman_client_cert.png "Tell Postman which
 client cert to use")
 
 Now Postman will use that certificate when it talks to Command Centre.  If you put the certificate's
