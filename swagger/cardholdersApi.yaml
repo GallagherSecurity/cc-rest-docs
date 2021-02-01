@@ -81,7 +81,7 @@ info:
     * Cardholder group membership hrefs now contain a long string where they used to contain a small
       integer.  Integrations that cache membership hrefs a) should not and b) will need to refresh.
 
-    * A cardholder's card object now contain a Boolean field called `trace` indicating whether its
+    * A cardholder's card object now contains a Boolean field called `trace` indicating whether its
       trace flag is set.  A card with tracing on generates an event every time it is used.
 
     #### API changes in 8.20
@@ -1857,15 +1857,15 @@ definitions:
       href:
         type: string (url)
         description: |
-          DELETE this URL to remove this group membership.
+          DELETE this URL to remove this operator group membership.
 
           DELETE is the only verb you can use on this URL.  GET will always return a 404.
 
         example: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
-      accessGroup:
+      operatorGroup:
         description:  |
-          An object containing a link to this group's detail page and its name.  It is read-only
-          because you cannot change a group membership's group.
+          An object containing a link to this operator group's detail page and its name.  It is
+          read-only because you cannot change a group membership's group.
         readOnly: true
         example: { name: "Locker admins", href: "https://localhost:8904/api/operator_groups/532" }
 
@@ -4921,7 +4921,7 @@ paths:
 
         description: |
           Return these fields in the search results, instead of the default set (which contains
-          every field).  Separate values with commas.
+          nearly every field).  Separate values with commas.
 
           Treat the string matches as case sensitive:  use 'facilityCode' rather than
           'facilitycode'.
@@ -5195,7 +5195,7 @@ paths:
         200:
           description: |
             Success.  See the note in the description about privileges if your result set is empty.
-          schema: { $ref: '#/definitions/Operator groups' }
+          schema: { $ref: '#/definitions/Operator group search' }
         403: { description: "The site does not have the RESTCardholders licence." }
 
   /api/operator_groups/{id}:
