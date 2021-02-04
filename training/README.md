@@ -853,6 +853,8 @@ Otherwise Command Centre will reject it as invalid.
 
 ![Content-type Postman header](assets/postman_content_type.png "Content-type Postman header")
 
+You must use `application/json`, in lower case, nothing more.  People have tried adding a semicolon
+and `charset=utf8`, but that just stops all queries from working.
 
 ## Never mind that your server certificate is self-signed
 In the current version of Postman, the settings are behind the cog in the top tool bar, not the
