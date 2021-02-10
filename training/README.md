@@ -2317,16 +2317,16 @@ It behaves like this:
 | Connection attempt to a REST Client item *with* a certificate thumbprint configured | Client certificate checked | Client certificate ignored, connection accepted |
 | Connection attempt to a REST Client item *without* a certificate thumbprint configured | Connection rejected | Connection accepted |
 
-In 8.50, the top-right quadrant changed.  The others remain the same.
+In 8.50, the top-right quadrant changed.
 
 | 8.50 | 'Enable REST Clients with no client certificate' *off* | 'Enable REST Clients with no client certificate' *on* |
 | --- | - | - |
 | Connection attempt to a REST Client item *with* a certificate thumbprint configured | Client certificate checked | **New in 8.50:  client certificate checked** |
 | Connection attempt to a REST Client item *without* a certificate thumbprint configured | Connection rejected | Connection accepted |
 
-That change will have negatively affected sites that had 'Do not require...' turned off, but also
-had thumbprints (uselessly) configured into their client items.  However there is a huge upside:  in
-8.50 or later a site can have some clients using client certificates and some not.
+That change will have negatively affected sites that had 'Do not require...' turned on, but also had
+thumbprints (uselessly) configured into their client items.  However there is a huge upside to the
+change:  in 8.50 or later a site can have some clients using client certificates and some not.
 
 
 ## Why use client certificates?
