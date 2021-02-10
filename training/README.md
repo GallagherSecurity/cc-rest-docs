@@ -2314,15 +2314,15 @@ It behaves like this:
 
 | 8.40 | 'Do not require pinned client certificates' *off* | 'Do not require pinned client certificates' *on* |
 | --- | - | - |
-| Connection attempt to a REST Client item with a certificate thumbprint configured | Client certificate checked | Client certificate ignored, connection accepted |
-| Connection attempt to a REST Client item without a certificate thumbprint configured | Connection rejected | Connection accepted |
+| Connection attempt to a REST Client item *with* a certificate thumbprint configured | Client certificate checked | Client certificate ignored, connection accepted |
+| Connection attempt to a REST Client item *without* a certificate thumbprint configured | Connection rejected | Connection accepted |
 
 In 8.50, the top-right quadrant changed.  The others remain the same.
 
-| 8.50 | 'Enable REST Clients with no client certificate' *off* | 'Enable REST Clients with no client certificate *on* |
+| 8.50 | 'Enable REST Clients with no client certificate' *off* | 'Enable REST Clients with no client certificate' *on* |
 | --- | - | - |
-| Connection attempt to a REST Client item with a certificate thumbprint configured | Client certificate checked | **New in 8.50:  client certificate checked** |
-| Connection attempt to a REST Client item without a certificate thumbprint configured | Connection rejected | Connection accepted |
+| Connection attempt to a REST Client item *with* a certificate thumbprint configured | Client certificate checked | **New in 8.50:  client certificate checked** |
+| Connection attempt to a REST Client item *without* a certificate thumbprint configured | Connection rejected | Connection accepted |
 
 That change will have negatively affected sites that had 'Do not require...' turned off, but also
 had thumbprints (uselessly) configured into their client items.  However there is a huge upside:  in
