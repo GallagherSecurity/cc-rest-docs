@@ -57,6 +57,7 @@ info:
 
     #### API changes in 8.50
 
+    * The server property that turns off [client certificate checking](#authentication) changed.
     * You can manage operators by setting their operator group memberships and logon credentials.
     * You can view [operator groups](#tag-Operator-groups).
     * Lockers and locker banks report the hardware controller where they reside.
@@ -527,12 +528,15 @@ tags:
     ### Notes
 
     - The API will not notify changes to any fields that you cannot see in the cardholders API, such
-      as user codes, card PINs, car park assignments, biometric credentials, and (in versions before
-      8.50) operator settings.
+      as user codes, passwords, card PINs, car park assignments, biometric credentials, and (in
+      versions before 8.50) operator settings.
 
     - The API will return the pre-change values of some fields, but not those that require a lot of
       storage such as image PDFs and PIV certificates.  Command Centre does not hang on to them
       after they change.
+
+    - There is a known issue in 8.50 preventing operator groups changes coming out of this API.
+      Changes to the other five operator settings work correctly.
 
 - name: Access groups
 
@@ -1180,13 +1184,15 @@ definitions:
             description: |-
               This block shows the cardholder's notification settings.  It deserves some explanation.
 
-              The 'enabled' field is correct at the time of your call, and both the 'from' and
-              'until' date-times will be in the future.  When the 'from' date-time passes, the state
-              will change, the 'from' date-time will take the 'until' value, and 'until' will become
-              null.  This continues until 'from' is null.
+              The 'enabled' bool is correct at the time of your call.  If false, CC will not be
+              sending your cardholder any notifications.
 
-              CC will not allow you to set an 'until' date without a 'from' date.  Both must be in
-              the future.
+              The 'from' and 'until' date-times show if and when 'enabled' will change.  When the
+              'from' date-time passes, 'enabled' will flip, the 'from' date-time will take the
+              'until' value, and 'until' will become null.  This continues until 'from' is null.
+
+              You can set 'from' with a null 'until', but not 'until' with a null 'from'.  They must
+              both be in the future or null, and 'from' must be before 'until'.
             example:
               enabled: true
               from: "2017-10-10T14:59:00Z"

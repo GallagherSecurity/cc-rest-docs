@@ -38,6 +38,10 @@ info:
     The body of this document clearly indicates when recent features arrived in the API so that
     readers with older versions of Command Centre know not to expect them.
 
+    #### Alarms and events API changes in 8.50
+
+    * The server property that turns off [client certificate checking](#authentication) changed.
+
     #### Alarms and events API changes in 8.40
 
     - You may now use the `fields` query parameter to tailor the fields that come back for events
@@ -312,16 +316,31 @@ securityDefinitions:
       request.  Command Centre generates an API key when you create an endpoint for your clients to
       connect to.  Search the Configuration Client online help for 'REST API' for how do do that.
 
-      The API key will be in the format `xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx` and should be in
-      the header following an authorisation method of `GGL-API-KEY`.  Both should be in upper case.
-      For example:
+      The API key will be in the format `XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX` and should be in
+      the header following an authorisation method of `GGL-API-KEY` and a space.  Both should be in
+      upper case.  For example:
 
       `Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB`
 
       Depending on Command Centre's site configuration, its REST API may also require a client
-      certificate with each request.  Command Centre must have the thumbprint of the client's
-      certificate in order to 'pin' it. See the Configuration Client help for instructions on where
-      to enter the thumbprint.
+      certificate with each request.  In versions up to and including 8.40 this was controlled by a
+      boolean labelled 'Do not require pinned client certficates' on the 'Web Services' tab of the
+      server properties.  In 8.50 that control's label changed to 'Enable REST Clients with no
+      client certificate', and its behaviour changed slightly when turned on.
+
+      If off, for all versions of CC, an incoming request's certificate has to match the thumbprint
+      on its API key's REST Client item, and items with a blank thumbprint field do not work at all.
+      This is how it ships, and it is the recommended way of running a production server.
+
+      If 'Do not require pinned client certificates' was turned on in versions up to and including
+      8.40, the server did not check any client certificates.  If 'Enable REST Clients with no
+      client certificate' is turned on in 8.50, it still does not check the client certificate if
+      the thumbprint field of the matching REST Client item is blank, but if the Client item has a
+      thumbprint, the server will reject connections with the wrong certificate.
+
+      The behaviour for all other cases is the same in 8.40 and 8.50.
+
+      See the Configuration Client help for instructions on where to enter REST Client thumbprints.
 
       Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API
       will only accept connections from the IP address ranges configurated into that client item.

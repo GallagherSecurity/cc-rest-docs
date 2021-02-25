@@ -153,6 +153,11 @@
                 <p>All of the GETs in this document and the POSTs that manage alarms require the RESTEvents licence. The POST to create a new event requires RESTCreateEvents.</p>
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
+                <h4 id="alarms-and-events-api-changes-in-850">Alarms and events API changes in 8.50</h4>
+                <ul>
+                  <li>The server property that turns off
+                    <a href="#authentication">client certificate checking</a> changed.</li>
+                </ul>
                 <h4 id="alarms-and-events-api-changes-in-840">Alarms and events API changes in 8.40</h4>
                 <ul>
                   <li>
@@ -233,9 +238,13 @@
                 </h3>
                 <section class="security-definition-description">
                   <p>Clients authenticate by including a pre-shared API key in the <code>Authorization</code> header of each request. Command Centre generates an API key when you create an endpoint for your clients to connect to. Search the Configuration Client online help for &#39;REST API&#39; for how do do that.</p>
-                  <p>The API key will be in the format <code>xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx</code> and should be in the header following an authorisation method of <code>GGL-API-KEY</code>. Both should be in upper case. For example:</p>
+                  <p>The API key will be in the format <code>XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX</code> and should be in the header following an authorisation method of <code>GGL-API-KEY</code> and a space. Both should be in upper case. For example:</p>
                   <p><code>Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB</code></p>
-                  <p>Depending on Command Centre&#39;s site configuration, its REST API may also require a client certificate with each request. Command Centre must have the thumbprint of the client&#39;s certificate in order to &#39;pin&#39; it. See the Configuration Client help for instructions on where to enter the thumbprint.</p>
+                  <p>Depending on Command Centre&#39;s site configuration, its REST API may also require a client certificate with each request. In versions up to and including 8.40 this was controlled by a boolean labelled &#39;Do not require pinned client certficates&#39; on the &#39;Web Services&#39; tab of the server properties. In 8.50 that control&#39;s label changed to &#39;Enable REST Clients with no client certificate&#39;, and its behaviour changed slightly when turned on.</p>
+                  <p>If off, for all versions of CC, an incoming request&#39;s certificate has to match the thumbprint on its API key&#39;s REST Client item, and items with a blank thumbprint field do not work at all. This is how it ships, and it is the recommended way of running a production server.</p>
+                  <p>If &#39;Do not require pinned client certificates&#39; was turned on in versions up to and including 8.40, the server did not check any client certificates. If &#39;Enable REST Clients with no client certificate&#39; is turned on in 8.50, it still does not check the client certificate if the thumbprint field of the matching REST Client item is blank, but if the Client item has a thumbprint, the server will reject connections with the wrong certificate.</p>
+                  <p>The behaviour for all other cases is the same in 8.40 and 8.50.</p>
+                  <p>See the Configuration Client help for instructions on where to enter REST Client thumbprints.</p>
                   <p>Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API will only accept connections from the IP address ranges configurated into that client item.</p>
                   <p>If a connection attempt fails, Command Centre will raise an event indicating its reason for refusing the request.</p>
                 </section>
@@ -2185,7 +2194,7 @@
                       <div class="prop-title">200 OK</div>
                       <div class="prop-ref">
                         <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Events">Events</a>
+                          <a class="json-schema-ref" href="#/definitions/Event search">Event search</a>
                         </span>
                       </div>
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
@@ -2210,6 +2219,94 @@
                     <span>(200 OK)</span>
                   </h5>
                   <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;events&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/61320&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;61320&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+      <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;2016-02-18T19:21:52Z&quot;</span>,
+      <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Operator logon failed for FT Workstation on GNZ-PC1439&quot;</span>,
+      <span class="hljs-attr">&quot;occurrences&quot;</span>: <span class="hljs-number">2</span>,
+      <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">3</span>,
+      <span class="hljs-attr">&quot;alarm&quot;</span>: {
+        <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarms/61320&quot;</span>
+      },
+      <span class="hljs-attr">&quot;operator&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Chong, Marc&quot;</span>
+      },
+      <span class="hljs-attr">&quot;source&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;321&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;FT Workstation on GNZ-PC1439&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/321&quot;</span>
+      },
+      <span class="hljs-attr">&quot;group&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;35&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Invalid Logon&quot;</span>
+      },
+      <span class="hljs-attr">&quot;type&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+      },
+      <span class="hljs-attr">&quot;division&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>
+      },
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;325&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Bruce, Jennifer&quot;</span>,
+        <span class="hljs-attr">&quot;firstName&quot;</span>: <span class="hljs-string">&quot;Jennifer&quot;</span>,
+        <span class="hljs-attr">&quot;lastName&quot;</span>: <span class="hljs-string">&quot;Caitlin&quot;</span>
+      },
+      <span class="hljs-attr">&quot;entryAccessZone&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/333&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Brookwood showroom&quot;</span>,
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;333&quot;</span>
+      },
+      <span class="hljs-attr">&quot;exitAccessZone&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/913&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Compressor room&quot;</span>,
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;913&quot;</span>
+      },
+      <span class="hljs-attr">&quot;door&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/745&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main hoist door&quot;</span>
+      },
+      <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
+      },
+      <span class="hljs-attr">&quot;card&quot;</span>: {
+        <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
+        <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;78745&quot;</span>,
+        <span class="hljs-attr">&quot;issueLevel&quot;</span>: <span class="hljs-number">1</span>
+      },
+      <span class="hljs-attr">&quot;modifiedItem&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
+        <span class="hljs-attr">&quot;type&quot;</span>: {
+          <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
+          <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+        }
+      }
+    }
+  ],
+  <span class="hljs-attr">&quot;previous&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/next?previous=True&amp;pos=61320&quot;</span>
+  },
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/next?pos=61320&quot;</span>
+  },
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/updates?pos=61320&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
                   <!-- </div> -->
                 </section>
               </div>

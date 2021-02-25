@@ -239,6 +239,8 @@
                 <p>8.60 will sort its search results differently and may increase the number it returns per page, if the query did not use query parameters to override the defaults.</p>
                 <h4 id="api-changes-in-850">API changes in 8.50</h4>
                 <ul>
+                  <li>The server property that turns off
+                    <a href="#authentication">client certificate checking</a> changed.</li>
                   <li>You can manage operators by setting their operator group memberships and logon credentials.</li>
                   <li>You can view
                     <a href="#tag-Operator-groups">operator groups</a>.</li>
@@ -270,7 +272,7 @@
                     <p>Cardholder group membership hrefs now contain a long string where they used to contain a small integer. Integrations that cache membership hrefs a) should not and b) will need to refresh.</p>
                   </li>
                   <li>
-                    <p>A cardholder&#39;s card object now contain a Boolean field called <code>trace</code> indicating whether its trace flag is set. A card with tracing on generates an event every time it is used.</p>
+                    <p>A cardholder&#39;s card object now contains a Boolean field called <code>trace</code> indicating whether its trace flag is set. A card with tracing on generates an event every time it is used.</p>
                   </li>
                 </ul>
                 <h4 id="api-changes-in-820">API changes in 8.20</h4>
@@ -413,9 +415,13 @@
                 </h3>
                 <section class="security-definition-description">
                   <p>Clients authenticate by including a pre-shared API key in the <code>Authorization</code> header of each request. Command Centre generates an API key when you create an endpoint for your clients to connect to. Search the Configuration Client online help for &#39;REST API&#39; for how do do that.</p>
-                  <p>The API key will be in the format <code>xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx-xxxx</code> and should be in the header following an authorisation method of <code>GGL-API-KEY</code>. Both should be in upper case. For example:</p>
+                  <p>The API key will be in the format <code>XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX</code> and should be in the header following an authorisation method of <code>GGL-API-KEY</code> and a space. Both should be in upper case. For example:</p>
                   <p><code>Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB</code></p>
-                  <p>Depending on Command Centre&#39;s site configuration, its REST API may also require a client certificate with each request. Command Centre must have the thumbprint of the client&#39;s certificate in order to &#39;pin&#39; it. See the Configuration Client help for instructions on where to enter the thumbprint.</p>
+                  <p>Depending on Command Centre&#39;s site configuration, its REST API may also require a client certificate with each request. In versions up to and including 8.40 this was controlled by a boolean labelled &#39;Do not require pinned client certficates&#39; on the &#39;Web Services&#39; tab of the server properties. In 8.50 that control&#39;s label changed to &#39;Enable REST Clients with no client certificate&#39;, and its behaviour changed slightly when turned on.</p>
+                  <p>If off, for all versions of CC, an incoming request&#39;s certificate has to match the thumbprint on its API key&#39;s REST Client item, and items with a blank thumbprint field do not work at all. This is how it ships, and it is the recommended way of running a production server.</p>
+                  <p>If &#39;Do not require pinned client certificates&#39; was turned on in versions up to and including 8.40, the server did not check any client certificates. If &#39;Enable REST Clients with no client certificate&#39; is turned on in 8.50, it still does not check the client certificate if the thumbprint field of the matching REST Client item is blank, but if the Client item has a thumbprint, the server will reject connections with the wrong certificate.</p>
+                  <p>The behaviour for all other cases is the same in 8.40 and 8.50.</p>
+                  <p>See the Configuration Client help for instructions on where to enter REST Client thumbprints.</p>
                   <p>Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API will only accept connections from the IP address ranges configurated into that client item.</p>
                   <p>If a connection attempt fails, Command Centre will raise an event indicating its reason for refusing the request.</p>
                 </section>
@@ -1297,7 +1303,7 @@
   <span class="hljs-attr">&quot;operatorGroups&quot;</span>: [
     {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD&quot;</span>,
-      <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+      <span class="hljs-attr">&quot;operatorGroup&quot;</span>: {
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Locker admins&quot;</span>,
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/operator_groups/532&quot;</span>
       }
@@ -2576,10 +2582,13 @@
               <h3 id="notes">Notes</h3>
               <ul>
                 <li>
-                  <p>The API will not notify changes to any fields that you cannot see in the cardholders API, such as user codes, card PINs, car park assignments, biometric credentials, and (in versions before 8.50) operator settings.</p>
+                  <p>The API will not notify changes to any fields that you cannot see in the cardholders API, such as user codes, passwords, card PINs, car park assignments, biometric credentials, and (in versions before 8.50) operator settings.</p>
                 </li>
                 <li>
                   <p>The API will return the pre-change values of some fields, but not those that require a lot of storage such as image PDFs and PIV certificates. Command Centre does not hang on to them after they change.</p>
+                </li>
+                <li>
+                  <p>There is a known issue in 8.50 preventing operator groups changes coming out of this API. Changes to the other five operator settings work correctly.</p>
                 </li>
               </ul>
             </div>
@@ -4002,7 +4011,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results, instead of the default set (which contains every field). Separate values with commas.</p>
+                      <p>Return these fields in the search results, instead of the default set (which contains nearly every field). Separate values with commas.</p>
                       <p>Treat the string matches as case sensitive: use &#39;facilityCode&#39; rather than &#39;facilitycode&#39;.</p>
                     </div>
                   </div>
@@ -5003,7 +5012,7 @@
                       <div class="prop-title">200 OK</div>
                       <div class="prop-ref">
                         <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Operator groups">Operator groups</a>
+                          <a class="json-schema-ref" href="#/definitions/Operator group search">Operator group search</a>
                         </span>
                       </div>
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
@@ -5028,6 +5037,22 @@
                     <span>(200 OK)</span>
                   </h5>
                   <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/operator_groups/523&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Locker admins.&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/operator_groups?skip=61320&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
                   <!-- </div> -->
                 </section>
               </div>
@@ -6364,8 +6389,9 @@
                         </dt>
                         <dd>
                           <p>This block shows the cardholder&#39;s notification settings. It deserves some explanation.</p>
-                          <p>The &#39;enabled&#39; field is correct at the time of your call, and both the &#39;from&#39; and &#39;until&#39; date-times will be in the future. When the &#39;from&#39; date-time passes, the state will change, the &#39;from&#39; date-time will take the &#39;until&#39; value, and &#39;until&#39; will become null. This continues until &#39;from&#39; is null.</p>
-                          <p>CC will not allow you to set an &#39;until&#39; date without a &#39;from&#39; date. Both must be in the future.</p>
+                          <p>The &#39;enabled&#39; bool is correct at the time of your call. If false, CC will not be sending your cardholder any notifications.</p>
+                          <p>The &#39;from&#39; and &#39;until&#39; date-times show if and when &#39;enabled&#39; will change. When the &#39;from&#39; date-time passes, &#39;enabled&#39; will flip, the &#39;from&#39; date-time will take the &#39;until&#39; value, and &#39;until&#39; will become null. This continues until &#39;from&#39; is null.</p>
+                          <p>You can set &#39;from&#39; with a null &#39;until&#39;, but not &#39;until&#39; with a null &#39;from&#39;. They must both be in the future or null, and &#39;from&#39; must be before &#39;until&#39;.</p>
                         </dd>
                         <dt data-property-name="relationships" class="has-description">
                           <span class="json-property-name">relationships:</span>
@@ -6545,7 +6571,7 @@
   <span class="hljs-attr">&quot;operatorGroups&quot;</span>: [
     {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD&quot;</span>,
-      <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+      <span class="hljs-attr">&quot;operatorGroup&quot;</span>: {
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Locker admins&quot;</span>,
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/operator_groups/532&quot;</span>
       }
@@ -7785,17 +7811,17 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>DELETE this URL to remove this group membership.</p>
+                      <p>DELETE this URL to remove this operator group membership.</p>
                       <p>DELETE is the only verb you can use on this URL. GET will always return a 404.</p>
                     </dd>
-                    <dt data-property-name="accessGroup" class="has-description">
-                      <span class="json-property-name">accessGroup:</span>
+                    <dt data-property-name="operatorGroup" class="has-description">
+                      <span class="json-property-name">operatorGroup:</span>
                       <span class="json-property-type">object</span>
                       <span class="json-property-range" title="Value limits"></span>
                       <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
-                      <p>An object containing a link to this group&#39;s detail page and its name. It is read-only because you cannot change a group membership&#39;s group.</p>
+                      <p>An object containing a link to this operator group&#39;s detail page and its name. It is read-only because you cannot change a group membership&#39;s group.</p>
                     </dd>
                   </dl>
                 </section>
@@ -7808,7 +7834,7 @@
                   <head></head>
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD&quot;</span>,
-  <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+  <span class="hljs-attr">&quot;operatorGroup&quot;</span>: {
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Locker admins&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/operator_groups/532&quot;</span>
   }
