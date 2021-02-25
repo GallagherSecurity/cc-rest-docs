@@ -61,6 +61,9 @@
                 <a href="#operation--api-cardholders--id--lockers--assignment_id--delete"> Remove a locker assignment </a>
               </li>
               <li>
+                <a href="#operation--api-cardholders--id--elevator_groups--assignment_id--delete"> Remove an elevator group from a cardholder </a>
+              </li>
+              <li>
                 <a href="#operation--api-cardholders--id--update_location-post"> Change a cardholder&#x27;s location </a>
               </li>
               <li>
@@ -183,6 +186,7 @@
           <a href="#definition-Cardholder-PATCH-example"> Cardholder PATCH example </a>
           <a href="#definition-Cardholder-edit"> Cardholder edit </a>
           <a href="#definition-Cardholder-locker"> Cardholder locker </a>
+          <a href="#definition-Cardholder-elevator-group"> Cardholder elevator group </a>
           <a href="#definition-Cardholder-changes"> Cardholder changes </a>
           <a href="#definition-Cardholder-change"> Cardholder change </a>
           <a href="#definition-Access-group-search"> Access group search </a>
@@ -1032,6 +1036,22 @@
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/lockers/3457&quot;</span>
       }
     }
+  ],
+  <span class="hljs-attr">&quot;elevatorGroups&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;elevatorGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>
+      },
+      <span class="hljs-attr">&quot;accessZone&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/637&quot;</span>
+      }
+    },
+    {
+      <span class="hljs-attr">&quot;elevatorGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/639&quot;</span>
+      },
+      <span class="hljs-attr">&quot;enableCodeBlueFeatures&quot;</span>: <span class="hljs-literal">true</span>
+    }
   ]
 }
 </code></pre> </body>
@@ -1371,6 +1391,26 @@
       <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2018-12-31T00:00:00Z&quot;</span>
     }
   ],
+  <span class="hljs-attr">&quot;elevatorGroups&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/567&quot;</span>,
+      <span class="hljs-attr">&quot;elevatorGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main building lower floors&quot;</span>
+      },
+      <span class="hljs-attr">&quot;accessZone&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/637&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 1 lift lobby&quot;</span>
+      },
+      <span class="hljs-attr">&quot;enableCaptureFeatures&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;enableCodeBlueFeatures&quot;</span>: <span class="hljs-literal">false</span>,
+      <span class="hljs-attr">&quot;enableExpressFeatures&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;enableServiceFeatures&quot;</span>: <span class="hljs-literal">false</span>,
+      <span class="hljs-attr">&quot;enableService2Features&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;enableService3Features&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;enableVipFeatures&quot;</span>: <span class="hljs-literal">false</span>
+    }
+  ],
   <span class="hljs-attr">&quot;lastPrintedOrEncodedTime&quot;</span>: <span class="hljs-string">&quot;2020-08-10T09:20:50Z&quot;</span>,
   <span class="hljs-attr">&quot;lastPrintedOrEncodedIssueLevel&quot;</span>: <span class="hljs-number">1</span>
 }
@@ -1632,6 +1672,30 @@
     <span class="hljs-attr">&quot;remove&quot;</span>: [
       {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD&quot;</span>
+      }
+    ]
+  },
+  <span class="hljs-attr">&quot;elevatorGroups&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;elevatorGroup&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>
+        },
+        <span class="hljs-attr">&quot;accessZone&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/637&quot;</span>
+        }
+      }
+    ],
+    <span class="hljs-attr">&quot;update&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/elevator_groups/1268613268&quot;</span>,
+        <span class="hljs-attr">&quot;enableCodeBlueFeatures&quot;</span>: <span class="hljs-string">&quot;true,&quot;</span>,
+        <span class="hljs-attr">&quot;enableVipFeatures&quot;</span>: <span class="hljs-string">&quot;false,&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/elevator_groups/3498734&quot;</span>
       }
     ]
   }
@@ -2354,6 +2418,71 @@
                     </div>
                     <div class="prop-value">
                       <p>You do not have privileges for the operation.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-cardholders--id--elevator_groups--assignment_id--delete" class="operation panel" data-traverse-target="operation--api-cardholders--id--elevator_groups--assignment_id--delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Cardholders">Cardholders</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Remove an elevator group from a cardholder</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/cardholders/{id}/elevator_groups/{assignment_id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This call removes a default floor assignment and passenger types from a cardholder for one elevator group.</p>
+                  <p>You will find this URL in the <code>elevatorGroups</code> block of a
+                    <a href="#definition-Cardholder-detail">cardholder object</a>.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Your operator does not have the necessary privilege to change this cardholder&#39;s elevator groups.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a cardholder&#39;s elevator group. You can take an href from the &#39;elevatorGroups&#39; block of a cardholder detail. The message in the results document will tell you more about the problem.</p>
                     </div>
                   </div>
                 </section>
@@ -6441,6 +6570,30 @@
                             <div class="json-inner-schema"> </div>
                           </section>
                         </dt>
+                        <dt data-property-name="elevatorGroups" class="has-description">
+                          <span class="json-property-name">elevatorGroups:</span>
+                          <span class="json-property-type">
+                            <span class="json-schema-ref-array">
+                              <a class="json-schema-ref" href="#/definitions/Cardholder elevator group">Cardholder elevator group</a>
+                            </span>
+                          </span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>The cardholder&#39;s elevator group properties. They may have one per elevator group.</p>
+                          <p>Added in 8.50.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-array-items">
+                            <span class="json-property-type">
+                              <span class="">
+                                <a class="json-schema-ref" href="#/definitions/Cardholder elevator group">Cardholder elevator group</a>
+                              </span>
+                            </span>
+                            <span class="json-property-range" title="Value limits"></span>
+                            <div class="json-inner-schema"> </div>
+                          </section>
+                        </dt>
                         <dt data-property-name="lastPrintedOrEncodedTime" class="has-description">
                           <span class="json-property-name">lastPrintedOrEncodedTime:</span>
                           <span class="json-property-type">string</span>
@@ -6637,6 +6790,26 @@
       },
       <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;2017-01-01T00:00:00Z&quot;</span>,
       <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2018-12-31T00:00:00Z&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;elevatorGroups&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/567&quot;</span>,
+      <span class="hljs-attr">&quot;elevatorGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main building lower floors&quot;</span>
+      },
+      <span class="hljs-attr">&quot;accessZone&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/637&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 1 lift lobby&quot;</span>
+      },
+      <span class="hljs-attr">&quot;enableCaptureFeatures&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;enableCodeBlueFeatures&quot;</span>: <span class="hljs-literal">false</span>,
+      <span class="hljs-attr">&quot;enableExpressFeatures&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;enableServiceFeatures&quot;</span>: <span class="hljs-literal">false</span>,
+      <span class="hljs-attr">&quot;enableService2Features&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;enableService3Features&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;enableVipFeatures&quot;</span>: <span class="hljs-literal">false</span>
     }
   ],
   <span class="hljs-attr">&quot;lastPrintedOrEncodedTime&quot;</span>: <span class="hljs-string">&quot;2020-08-10T09:20:50Z&quot;</span>,
@@ -6896,6 +7069,31 @@
                         <div class="json-inner-schema"> </div>
                       </section>
                     </dt>
+                    <dt data-property-name="elevatorGroups" class="has-description">
+                      <span class="json-property-name">elevatorGroups:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/Cardholder elevator group">Cardholder elevator group</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Here you set all the new cardholder&#39;s default elevator floors and passenger types. Passenger type properties are false by default.</p>
+                      <p>The example shows our cardholder receiving a default floor for the first elevator group, with the Code Blue feature enabled in the second group.</p>
+                      <p>Added in 8.50.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/Cardholder elevator group">Cardholder elevator group</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
                   </dl>
                 </section>
               </div>
@@ -6991,6 +7189,22 @@
       <span class="hljs-attr">&quot;locker&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/lockers/3457&quot;</span>
       }
+    }
+  ],
+  <span class="hljs-attr">&quot;elevatorGroups&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;elevatorGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>
+      },
+      <span class="hljs-attr">&quot;accessZone&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/637&quot;</span>
+      }
+    },
+    {
+      <span class="hljs-attr">&quot;elevatorGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/639&quot;</span>
+      },
+      <span class="hljs-attr">&quot;enableCodeBlueFeatures&quot;</span>: <span class="hljs-literal">true</span>
     }
   ]
 }
@@ -8389,6 +8603,35 @@
                       <p>There is nothing about an operator group membership that you can change so there is no point to an &#39;update&#39; array. Operator group memberships are, or are not - there is no update.</p>
                       <p>Supported in 8.50 and later.</p>
                     </dd>
+                    <dt data-property-name="elevatorGroups" class="has-description">
+                      <span class="json-property-name">elevatorGroups:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/Cardholder elevator group">Cardholder elevator group</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;, and that every element should be in the
+                        <a href="#definition-Cardholder-elevator-group">elevator group schema</a>.</p>
+                      <p>The server will only use the hrefs of the elevatorGroup and accessZone objects. It will ignore elevator group and access zone names, if you place them in the body of your PATCH.</p>
+                      <p>Remove the default floor in an update by supplying an accessZone block with the href set to null or &quot;&quot;.</p>
+                      <p>Change a passenger type in an update by supplying the new value. The passenger type will be unchanged otherwise.</p>
+                      <p>The example shows our cardholder receiving a default floor for one elevator group and updating the Code Blue and VIP passenger types for another elevator group.</p>
+                      <p>Added in 8.50.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/Cardholder elevator group">Cardholder elevator group</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
                   </dl>
                 </section>
               </div>
@@ -8550,6 +8793,30 @@
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD&quot;</span>
       }
     ]
+  },
+  <span class="hljs-attr">&quot;elevatorGroups&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;elevatorGroup&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>
+        },
+        <span class="hljs-attr">&quot;accessZone&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/637&quot;</span>
+        }
+      }
+    ],
+    <span class="hljs-attr">&quot;update&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/elevator_groups/1268613268&quot;</span>,
+        <span class="hljs-attr">&quot;enableCodeBlueFeatures&quot;</span>: <span class="hljs-string">&quot;true,&quot;</span>,
+        <span class="hljs-attr">&quot;enableVipFeatures&quot;</span>: <span class="hljs-string">&quot;false,&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/elevator_groups/3498734&quot;</span>
+      }
+    ]
   }
 }
 </code></pre> </body>
@@ -8695,6 +8962,139 @@
   },
   <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;2017-01-01T00:00:00Z&quot;</span>,
   <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2018-12-31T00:00:00Z&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Cardholder-elevator-group" class="definition panel" data-traverse-target="definition-Cardholder-elevator-group">
+            <h2 class="panel-title">
+              <a name="/definitions/Cardholder elevator group"></a>Cardholder elevator group:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>These appear in an array in a cardholder detail, showing the cardholder&#39;s elevator group properties.</p>
+                  <p>A cardholder can have one default floor per elevator group. The elevator system will prepare a car to carry that cardholder to the access zone shown here when the cardholder badges a card at an appropriately configured kiosk.</p>
+                  <p>Elevator system features can be activated by enabling the feature for an elevator group. e.g.enabling VIP features gives exclusive access to an elevator car to the passenger</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The href of this cardholder&#39;s elevator group.</p>
+                    </dd>
+                    <dt data-property-name="elevatorGroup" class="has-description">
+                      <span class="json-property-name">elevatorGroup:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The href and name of the elevator group for which this cardholder has a default floor or passenger types.</p>
+                    </dd>
+                    <dt data-property-name="accessZone" class="has-description">
+                      <span class="json-property-name">accessZone:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The href and name of the access zone (floor) to which this cardholder is most likely to want to travel after entering the group&#39;s main elevator lobby. This property will be missing if the cardholder does not have a default floor for this elevator group.</p>
+                    </dd>
+                    <dt data-property-name="enableCaptureFeatures" class="has-description">
+                      <span class="json-property-name">enableCaptureFeatures:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Cardholders can select and recall specific elevators to specific floors using a kiosk. Once captured, the elevator car can be placed on independent service to give users control of the car to clean the interior or perform maintenance.</p>
+                    </dd>
+                    <dt data-property-name="enableCodeBlueFeatures" class="has-description">
+                      <span class="json-property-name">enableCodeBlueFeatures:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A special elevator mode which is commonly found in hospitals. It allows an elevator to be summoned to any floor for use in an emergency situation</p>
+                    </dd>
+                    <dt data-property-name="enableExpressFeatures" class="has-description">
+                      <span class="json-property-name">enableExpressFeatures:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Program selected elevators to be cycled continuously between two floors for a pre-determined duration. For example, this feature can help hotels transport food efficiently from their kitchen to a ballroom on another floor. You can also prevent other guests from boarding to provide your banquet guests with VIP treatment.</p>
+                    </dd>
+                    <dt data-property-name="enableServiceFeatures" class="has-description">
+                      <span class="json-property-name">enableServiceFeatures:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Service personnel can use this function to call an empty elevator and ride it nonstop to their destination floor. The user simply registers a call via a card swipe or PIN entry that is pre-programmed to grant access </p>
+                    </dd>
+                    <dt data-property-name="enableService2Features" class="has-description">
+                      <span class="json-property-name">enableService2Features:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Service personnel can use this function to call an empty elevator and ride it nonstop to their destination floor. The user simply registers a call via a card swipe or PIN entry that is pre-programmed to grant access </p>
+                    </dd>
+                    <dt data-property-name="enableService3Features" class="has-description">
+                      <span class="json-property-name">enableService3Features:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Service personnel can use this function to call an empty elevator and ride it nonstop to their destination floor. The user simply registers a call via a card swipe or PIN entry that is pre-programmed to grant access</p>
+                    </dd>
+                    <dt data-property-name="enableVipFeatures" class="has-description">
+                      <span class="json-property-name">enableVipFeatures:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>VIP operation allows cardholders to swipe a card or enter a PIN to isolate the elevator and provide uninterrupted access to their designated floor.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/567&quot;</span>,
+  <span class="hljs-attr">&quot;elevatorGroup&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main building lower floors&quot;</span>
+  },
+  <span class="hljs-attr">&quot;accessZone&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/637&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 1 lift lobby&quot;</span>
+  },
+  <span class="hljs-attr">&quot;enableCaptureFeatures&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;enableCodeBlueFeatures&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;enableExpressFeatures&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;enableServiceFeatures&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;enableService2Features&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;enableService3Features&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;enableVipFeatures&quot;</span>: <span class="hljs-literal">false</span>
 }
 </code></pre> </body>
                   </html>

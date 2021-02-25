@@ -130,6 +130,20 @@
             </ul>
           </section>
           <section>
+            <a href="#tag-Elevator-Groups">Elevator Groups</a>
+            <ul>
+              <li>
+                <a href="#operation--api-elevator_groups-modify_passenger_details-get"> Search assignable elevator groups </a>
+              </li>
+              <li>
+                <a href="#operation--api-elevator_groups-get"> Search elevator groups </a>
+              </li>
+              <li>
+                <a href="#operation--api-elevator-groups--id--get"> Get details of a elevator group </a>
+              </li>
+            </ul>
+          </section>
+          <section>
             <a href="#tag-Fence-Zones">Fence Zones</a>
             <ul>
               <li>
@@ -264,6 +278,9 @@
           <a href="#definition-Door-search"> Door search </a>
           <a href="#definition-Door-summary"> Door summary </a>
           <a href="#definition-Door-detail"> Door detail </a>
+          <a href="#definition-Elevator-Group-summary"> Elevator Group summary </a>
+          <a href="#definition-Elevator-Group-Floor-Access-detail"> Elevator Group Floor Access detail </a>
+          <a href="#definition-Elevator-Group-detail"> Elevator Group detail </a>
           <a href="#definition-Fence-Zone-search"> Fence Zone search </a>
           <a href="#definition-Fence-Zone-summary"> Fence Zone summary </a>
           <a href="#definition-Fence-Zone-detail"> Fence Zone detail </a>
@@ -298,7 +315,7 @@
           <div id="introduction" data-traverse-target="introduction">
             <div class="doc-row">
               <div class="doc-copy">
-                <p>This document describes how you can use the Command Centre REST API to view and manage access zones, alarm zones, fence zones, doors, macros, inputs, and outputs.</p>
+                <p>This document describes how you can use the Command Centre REST API to view and manage access zones, alarm zones, elevator groups, fence zones, doors, macros, inputs, and outputs.</p>
                 <p>It has companion documents describing the
                   <a href="cardholders.html">Cardholders</a> and
                   <a href="events.html">Alarms and Events</a> APIs, and Command Centre&#39;s handling of
@@ -332,6 +349,11 @@
                   </li>
                   <li>
                     <p>A &#39;connectedController&#39; field on the item types that did not already have it.</p>
+                  </li>
+                  <li>
+                    <p>An
+                      <a href="#tag-Elevator-Groups">elevator groups API</a> providing a view of elevator groups so that you can
+                      <a href="cardholders.html#operation--api-cardholders--id--patch">set a cardholder&#39;s default floor</a>.</p>
                   </li>
                 </ul>
                 <h4 id="changes-in-830">Changes in 8.30</h4>
@@ -4416,6 +4438,570 @@
   <span class="hljs-attr">&quot;next&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/332/updates/9_1&quot;</span>
   }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <h1 id="tag-Elevator-Groups" class="swagger-summary-tag" data-traverse-target="tag-Elevator-Groups">Elevator Groups</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>These methods give you read access to Elevator Groups.</p>
+              <p>The reason you would want that is to allocate default floors to cardholders. Each cardholder can have one default floor per elevator group, so that when they badge into that group&#39;s lobby area the elevator system can arrange a car to take them to their favourite floor.</p>
+              <p>Each elevator group only goes to certain floors, so to give a cardholder a default floor you need to pick an elevator group see which floors it services.</p>
+              <p>Command Centre represents floors with access zones. If an elevator car has two doors, front and rear, it may service two access zones on the same physical floor. A cardholder could pick either of those access zones as their default for that elevator group.</p>
+              <p>The main entry point is a paginated search that returns what you need to pick defaults for a cardholder, limited by the privilege that enables that operation on a cardholder. That is the call that you are most likely to need, but there is another that gives you all elevator groups that your operator can view, rather than the ones your operator can use in a cardholder edit.</p>
+              <h3 id="use-case-choosing-and-setting-a-cardholders-default-floor">Use case: choosing and setting a cardholder&#39;s default floor</h3>
+              <p>Your client will first need to list all elevator groups, and the floors and access zones on those elevator groups, so that it can pick from them (if knows them by name already) or present a list and allow a user to pick one (if it is interactive).</p>
+              <p>Then it will need to send a PATCH back to the cardholder to set his or her default floor for an elevator group.</p>
+              <h4 id="listing-elevator-groups-and-their-access-zones">Listing elevator groups and their access zones</h4>
+              <ol>
+                <li><code>GET /api</code>.</li>
+                <li>Follow the link at <code>features.cardholders.modifyPassengerDetails.href</code>, appending a search term such as <code>name=substring</code> to filter the selection if you have a lot of elevator groups.</li>
+                <li>Find the elevator group you are after, following the <code>next</code> link if necessary.</li>
+                <li>Look in the <code>floorAccess</code> array for the floor names and access zone names you can use for picking the floor, and the access zone hrefs to use in the
+                  <a href="cardholders.html#operation--api-cardholders--id--patch">PATCH</a> coming up.</li>
+              </ol>
+              <h4 id="setting-a-cardholders-default-floor">Setting a cardholder&#39;s default floor</h4>
+              <ol>
+                <li>
+                  <a href="cardholders.html#tag-Cardholders">Find the href</a> for the cardholder.</li>
+                <li>
+                  <a href="cardholders.html#operation--api-cardholders--id--patch">PATCH</a> it with a
+                  <a href="cardholders.html#definition-Cardholder-PATCH-example">request body</a> containing the hrefs of the elevator groups and access zones you wish to set as that cardholder&#39;s defaults.</li>
+              </ol>
+            </div>
+          </div>
+          <div id="operation--api-elevator_groups-modify_passenger_details-get" class="operation panel" data-traverse-target="operation--api-elevator_groups-modify_passenger_details-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Elevator-Groups">Elevator Groups</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Search assignable elevator groups</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/elevator_groups/modify_passenger_details</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This searches the elevator groups that your privileges allow you to use in cardholders&#39; default floor and passenger type assignments, returning everything you need to make those assignments.</p>
+                  <p>Unlike most of the other calls in this document, it requires the RESTCardholders licence.</p>
+                  <p>The result will contain no more than 100, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to assign elevator groups to cardholders (&#39;Modify Passenger Details&#39;). Perhaps there are no elevator groups in the divisions in which your operator has that privilege.</p>
+                  <p>When you have loaded them all there will be no <code>next</code> link.</p>
+                  <p>Take this URL from the <code>href</code> field in the <code>features.cardholders.modifyDefaultFloors</code> section of <code>/api</code>.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">sort</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">-id</span>,
+                          <span class="json-property-enum-item">-name</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
+                      <p>There are two reasons to prefer sorting by ID:</p>
+                      <ol>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
+                        <li>Following a <code>next</code> link is dramatically quicker when sorting by ID.</li>
+                      </ol>
+                      <p>They are such significant motivators that we strongly recommend sorting by ID in the query when there is a chance your results will overflow one page.</p>
+                      <p>The default is changing in a future version of Command Centre.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">top</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">integer</span>
+                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The maximum number of items to return per page.</p>
+                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">name</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>The search is always case-insensitive.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">floorAccess</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
+                      <p>Treat the string matches as case-sensitive.</p>
+                      <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. An array of [elevator group(#definition-Elevator-Group-Floor-Access-detail) objects and a <code>next</code> link for more.</p>
+                      <p>See the note in the description about privileges if your result set is empty.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main building lower floors&quot;</span>,
+      <span class="hljs-attr">&quot;division&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;floorAccess&quot;</span>: [
+        {
+          <span class="hljs-attr">&quot;floorNumber&quot;</span>: <span class="hljs-number">1</span>,
+          <span class="hljs-attr">&quot;frontService&quot;</span>: <span class="hljs-literal">true</span>,
+          <span class="hljs-attr">&quot;rearService&quot;</span>: <span class="hljs-literal">true</span>,
+          <span class="hljs-attr">&quot;floorName&quot;</span>: <span class="hljs-string">&quot;Level 1&quot;</span>,
+          <span class="hljs-attr">&quot;frontAccessZone&quot;</span>: {
+            <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;637&quot;</span>,
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 1 lift lobby&quot;</span>,
+            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;http://localhost:8904/access_zones/637&quot;</span>
+          },
+          <span class="hljs-attr">&quot;rearAccessZone&quot;</span>: {
+            <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;638&quot;</span>,
+            <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 1 lift lobby rear&quot;</span>,
+            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;http://localhost:8904/access_zones/638&quot;</span>
+          }
+        }
+      ]
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-elevator_groups-get" class="operation panel" data-traverse-target="operation--api-elevator_groups-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Elevator-Groups">Elevator Groups</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Search elevator groups</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/elevator_groups</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns the name and href of the elevator groups matching your search criteria. This uses a different privilege from the <code>modify_default_floors</code> call, so it may not return you the groups you need. If your goal is to set cardholders&#39; default floors, you should that call instead.</p>
+                  <p>The result will contain no more than 100, or as many as you asked for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any elevator groups, such as &#39;View Site&#39; or &#39;Edit Site&#39;. Perhaps there are no elevator groups in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
+                  <p>When you have loaded them all there will be no <code>next</code> link.</p>
+                  <p>Take this URL from the <code>href</code> field in the <code>features.elevators.elevatorGroups</code> section of <code>/api</code>.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">sort</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">-id</span>,
+                          <span class="json-property-enum-item">-name</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
+                      <p>There are two reasons to prefer sorting by ID:</p>
+                      <ol>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
+                        <li>Following a <code>next</code> link is dramatically quicker when sorting by ID.</li>
+                      </ol>
+                      <p>They are such significant motivators that we strongly recommend sorting by ID in the query when there is a chance your results will overflow one page.</p>
+                      <p>The default is changing in a future version of Command Centre.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">top</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">integer</span>
+                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The maximum number of items to return per page.</p>
+                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">name</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>The search is always case-insensitive.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">shortName</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">notes</span>,
+                          <span class="json-property-enum-item">elevatorSystem</span>,
+                          <span class="json-property-enum-item">elevatorGroupNumber</span>,
+                          <span class="json-property-enum-item">floorAccess</span>,
+                          <span class="json-property-enum-item">rearAccessEnabled</span>,
+                          <span class="json-property-enum-item">groundFloorNumber</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the search results. The values you can list are the same as the field names in the details page. Using this you can return everything on the summary page that you would find on the details page. Separate values with commas.</p>
+                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
+                      <p>Treat the string matches as case-sensitive.</p>
+                      <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. An array of
+                        <a href="#definition-Elevator-Group">elevator group</a> objects and a <code>next</code> link for more.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main building lower floors&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups?skip=100&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-elevator-groups--id--get" class="operation panel" data-traverse-target="operation--api-elevator-groups--id--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Elevator-Groups">Elevator Groups</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get details of a elevator group</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/elevator groups/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns the detail of one elevator group.</p>
+                  <p>If you are setting cardholders&#39; default floors, you should be using the <code>modify_default_floors</code> call rather than this one.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the elevator group.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">shortName</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">notes</span>,
+                          <span class="json-property-enum-item">elevatorSystem</span>,
+                          <span class="json-property-enum-item">elevatorGroupNumber</span>,
+                          <span class="json-property-enum-item">floorAccess</span>,
+                          <span class="json-property-enum-item">rearAccessEnabled</span>,
+                          <span class="json-property-enum-item">groundFloorNumber</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the details page instead of the default set. The values you can list are the same as the field names you would see in the results. Use it to cut back on the size of the response. Separate values with commas.</p>
+                      <p>Treat the string matches as case-sensitive.</p>
+                      <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 and later you will only get what you asked for. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Elevator Group detail">Elevator Group detail</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTStatus licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The request&#39;s URL does not represent an elevator group, or the operator does not have a privilege on the elevator group&#39;s division that allows viewing them, such as &#39;View Site&#39; or &#39;Edit Site&#39;.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main building lower floors&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Main building lobby elevator group.&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
+  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;Short text&quot;</span>,
+  <span class="hljs-attr">&quot;elevatorGroupNumber&quot;</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">&quot;elevatorSystem&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;632&quot;</span>
+  },
+  <span class="hljs-attr">&quot;rearAccessEnabled&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;groundFloorNumber&quot;</span>: <span class="hljs-number">1</span>
 }
 </code></pre> </body>
                   </html>
@@ -10738,6 +11324,384 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/508&quot;</span>,
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;634&quot;</span>
   }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Elevator-Group-summary" class="definition panel" data-traverse-target="definition-Elevator-Group-summary">
+            <h2 class="panel-title">
+              <a name="/definitions/Elevator Group summary"></a>Elevator Group summary:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>The
+                    <a href="#operation--api-elevator_groups-get">elevator group search</a> returns an array of these, if you don&#39;t use the <code>fields</code> parameter to ask for more. It is a subset of what you get from the &#39;modify passenger details&#39; search or the elevator group&#39;s detail page (which is linked as the href in this object).</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A link to a
+                        <a href="#definition-Elevator-Group-detail">elevator group</a> object for this elevator group.</p>
+                    </dd>
+                    <dt data-property-name="name">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main building lower floors&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Elevator-Group-Floor-Access-detail" class="definition panel" data-traverse-target="definition-Elevator-Group-Floor-Access-detail">
+            <h2 class="panel-title">
+              <a name="/definitions/Elevator Group Floor Access detail"></a>Elevator Group Floor Access detail:
+              <!-- <span class="json-property-type"><span class="json-property-type"></span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>The
+                    <a href="#operation--api-elevator_groups-modify_passenger_details-get">modify passenger details search</a> returns an array of these. It is everything you need to pick a default floor for a cardholder, but a subset of what you get from a elevator group&#39;s detail page (which is linked as the href in this object).</p>
+                </section>
+                <section class="json-schema-allOf">
+                  <section class="json-schema-allOf-inherited">
+                    <ul>
+                      <span class="">
+                        <a class="json-schema-ref" href="#/definitions/Elevator Group summary">Elevator Group summary</a>
+                      </span>
+                    </ul>
+                  </section>
+                  <section class="json-schema-allOf-additional">
+                    <section class="json-schema-properties">
+                      <dl>
+                        <dt data-property-name="division" class="has-description">
+                          <span class="json-property-name">division:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>The division containing this elevator group.</p>
+                        </dd>
+                        <dt data-property-name="floorAccess" class="has-description">
+                          <span class="json-property-name">floorAccess:</span>
+                          <span class="json-property-type">object[]</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>An array of objects describing the floors in this elevator group.</p>
+                          <p>This example only has one floor. Expect more from production systems.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-array-items">
+                            <span class="json-property-type">object</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                            <div class="json-inner-schema">
+                              <section class="json-schema-properties">
+                                <dl>
+                                  <dt data-property-name="floorNumber" class="has-description">
+                                    <span class="json-property-name">floorNumber:</span>
+                                    <span class="json-property-type">integer</span>
+                                    <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                                  </dt>
+                                  <dd>
+                                    <p>This is Command Centre&#39;s internal identifier for the floor. Passengers do not see it.</p>
+                                  </dd>
+                                  <dt data-property-name="frontService" class="has-description">
+                                    <span class="json-property-name">frontService:</span>
+                                    <span class="json-property-type">boolean</span>
+                                    <span class="json-property-range" title="Value limits"></span>
+                                  </dt>
+                                  <dd>
+                                    <p>True iff the elevator car has a front-facing door and the elevator services the floor with the front of the elevator.</p>
+                                    <p>This field requires the RESTStatus licence.</p>
+                                  </dd>
+                                  <dt data-property-name="rearService" class="has-description">
+                                    <span class="json-property-name">rearService:</span>
+                                    <span class="json-property-type">boolean</span>
+                                    <span class="json-property-range" title="Value limits"></span>
+                                  </dt>
+                                  <dd>
+                                    <p>True iff the elevator car has a rear-facing door and the elevator services the floor with the rear of the elevator.</p>
+                                    <p>This field requires the RESTStatus licence.</p>
+                                  </dd>
+                                  <dt data-property-name="floorName" class="has-description">
+                                    <span class="json-property-name">floorName:</span>
+                                    <span class="json-property-type">string</span>
+                                    <span class="json-property-range" title="Value limits"></span>
+                                  </dt>
+                                  <dd>
+                                    <p>This is a friendly name that Command Centre presents to operators as the name of the floor.</p>
+                                  </dd>
+                                  <dt data-property-name="frontAccessZone" class="has-description">
+                                    <span class="json-property-name">frontAccessZone:</span>
+                                    <span class="json-property-type">object</span>
+                                    <span class="json-property-range" title="Value limits"></span>
+                                  </dt>
+                                  <dd>
+                                    <p>The access zone into which the elevator car&#39;s front door opens. It will be missing if the car&#39;s front door does not open on ths floor.</p>
+                                  </dd>
+                                  <dt class="json-inner-schema">
+                                    <section class="json-schema-properties">
+                                      <dl>
+                                        <dt data-property-name="id" class="has-description">
+                                          <span class="json-property-name">id:</span>
+                                          <span class="json-property-type">string</span>
+                                          <span class="json-property-range" title="Value limits"></span>
+                                        </dt>
+                                        <dd>
+                                          <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                                            <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                                        </dd>
+                                        <dt data-property-name="name">
+                                          <span class="json-property-name">name:</span>
+                                          <span class="json-property-type">string</span>
+                                          <span class="json-property-range" title="Value limits"></span>
+                                        </dt>
+                                        <dt data-property-name="href">
+                                          <span class="json-property-name">href:</span>
+                                          <span class="json-property-type">string</span>
+                                          <span class="json-property-format">(url)</span>
+                                          <span class="json-property-range" title="Value limits"></span>
+                                        </dt>
+                                      </dl>
+                                    </section>
+                                  </dt>
+                                  <dt data-property-name="rearAccessZone" class="has-description">
+                                    <span class="json-property-name">rearAccessZone:</span>
+                                    <span class="json-property-type">object</span>
+                                    <span class="json-property-range" title="Value limits"></span>
+                                  </dt>
+                                  <dd>
+                                    <p>The access zone into which the elevator car&#39;s rear door opens. It will be missing if the car&#39;s rear door does not open on this floor, or if the elevator group&#39;s <code>rearAccessEnabled</code> is false.</p>
+                                  </dd>
+                                  <dt class="json-inner-schema">
+                                    <section class="json-schema-properties">
+                                      <dl>
+                                        <dt data-property-name="id" class="has-description">
+                                          <span class="json-property-name">id:</span>
+                                          <span class="json-property-type">string</span>
+                                          <span class="json-property-range" title="Value limits"></span>
+                                        </dt>
+                                        <dd>
+                                          <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                                            <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                                        </dd>
+                                        <dt data-property-name="name">
+                                          <span class="json-property-name">name:</span>
+                                          <span class="json-property-type">string</span>
+                                          <span class="json-property-range" title="Value limits"></span>
+                                        </dt>
+                                        <dt data-property-name="href">
+                                          <span class="json-property-name">href:</span>
+                                          <span class="json-property-type">string</span>
+                                          <span class="json-property-format">(url)</span>
+                                          <span class="json-property-range" title="Value limits"></span>
+                                        </dt>
+                                      </dl>
+                                    </section>
+                                  </dt>
+                                </dl>
+                              </section>
+                            </div>
+                          </section>
+                        </dt>
+                      </dl>
+                    </section>
+                  </section>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main building lower floors&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;floorAccess&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;floorNumber&quot;</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attr">&quot;frontService&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;rearService&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;floorName&quot;</span>: <span class="hljs-string">&quot;Level 1&quot;</span>,
+      <span class="hljs-attr">&quot;frontAccessZone&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;637&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 1 lift lobby&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;http://localhost:8904/access_zones/637&quot;</span>
+      },
+      <span class="hljs-attr">&quot;rearAccessZone&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;638&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 1 lift lobby rear&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;http://localhost:8904/access_zones/638&quot;</span>
+      }
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Elevator-Group-detail" class="definition panel" data-traverse-target="definition-Elevator-Group-detail">
+            <h2 class="panel-title">
+              <a name="/definitions/Elevator Group detail"></a>Elevator Group detail:
+              <!-- <span class="json-property-type"><span class="json-property-type"></span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>
+                    <a href="#operation--api-elevator-groups--id--get">/api/elevator_groups/{id}</a> returns one of these.</p>
+                </section>
+                <section class="json-schema-allOf">
+                  <section class="json-schema-allOf-inherited">
+                    <ul>
+                      <span class="">
+                        <a class="json-schema-ref" href="#/definitions/Elevator Group summary">Elevator Group summary</a>
+                      </span>
+                    </ul>
+                  </section>
+                  <section class="json-schema-allOf-additional">
+                    <section class="json-schema-properties">
+                      <dl>
+                        <dt data-property-name="description">
+                          <span class="json-property-name">description:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dt data-property-name="notes" class="has-description">
+                          <span class="json-property-name">notes:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>Because of their potential size, notes are only available by request. Use the &#39;fields&#39; parameter:</p>
+                          <p><code>?fields=defaults,notes,...</code></p>
+                        </dd>
+                        <dt data-property-name="shortName" class="has-description">
+                          <span class="json-property-name">shortName:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                          <span class="json-property-range" title="String length limits"> (up to 16 chars) </span>
+                        </dt>
+                        <dd>
+                          <p>Short names are not displayed by default. You must ask for them using the &#39;fields&#39; parameter:</p>
+                          <p><code>?fields=shortname,...</code>.</p>
+                        </dd>
+                        <dt data-property-name="elevatorGroupNumber" class="has-description">
+                          <span class="json-property-name">elevatorGroupNumber:</span>
+                          <span class="json-property-type">integer</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>The elevator system&#39;s internal identifier for this elevator group.</p>
+                        </dd>
+                        <dt data-property-name="elevatorSystem">
+                          <span class="json-property-name">elevatorSystem:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="id" class="has-description">
+                                <span class="json-property-name">id:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>An alphanumeric identifier, unique to the server. This is the ID to use in the <code>source</code> parameter of
+                                  <a href="events.html#operation--api-events-get">event filters</a>.</p>
+                              </dd>
+                            </dl>
+                          </section>
+                        </dt>
+                        <dt data-property-name="rearAccessEnabled" class="has-description">
+                          <span class="json-property-name">rearAccessEnabled:</span>
+                          <span class="json-property-type">boolean</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>True only if the elevator group uses rear doors on its cars to service the other side of the shaft.</p>
+                        </dd>
+                        <dt data-property-name="groundFloorNumber" class="has-description">
+                          <span class="json-property-name">groundFloorNumber:</span>
+                          <span class="json-property-type">integer</span>
+                          <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                        </dt>
+                        <dd>
+                          <p>The identifier of the floor that this elevator group calls &#39;ground&#39;.</p>
+                        </dd>
+                      </dl>
+                    </section>
+                  </section>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main building lower floors&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Main building lobby elevator group.&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
+  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;Short text&quot;</span>,
+  <span class="hljs-attr">&quot;elevatorGroupNumber&quot;</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">&quot;elevatorSystem&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;632&quot;</span>
+  },
+  <span class="hljs-attr">&quot;rearAccessEnabled&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;groundFloorNumber&quot;</span>: <span class="hljs-number">1</span>
 }
 </code></pre> </body>
                   </html>

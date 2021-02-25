@@ -1213,6 +1213,14 @@ definitions:
               All the cardholder's locker assignments.
             items: {$ref: '#/definitions/Cardholder locker'}
 
+          elevatorGroups:
+            type: array
+            description: |
+              The cardholder's elevator group properties. They may have one per elevator group.
+
+              Added in 8.50.
+            items: {$ref: '#/definitions/Cardholder elevator group'}
+
           lastPrintedOrEncodedTime:
             type: string
             format: date-time
@@ -1381,6 +1389,26 @@ definitions:
               href:  "https://localhost:8904/api/lockers/3456"
           - locker:
               href:  "https://localhost:8904/api/lockers/3457"
+
+      elevatorGroups:
+        type: array
+        description: |
+          Here you set all the new cardholder's default elevator floors and passenger types. Passenger type properties
+          are false by default.
+
+          The example shows our cardholder receiving a default floor for the first elevator group,
+          with the Code Blue feature enabled in the second group.
+
+          Added in 8.50.
+        items: {$ref: '#/definitions/Cardholder elevator group'}
+        example:
+          - elevatorGroup:
+              href:  "https://localhost:8904/api/elevator_groups/635"
+            accessZone:
+              href:  "https://localhost:8904/api/access_zones/637"
+          - elevatorGroup:
+              href:  "https://localhost:8904/api/elevator_groups/639"
+            enableCodeBlueFeatures: true
 
   Cardholder Update Location POST example:
     description: |
@@ -2414,6 +2442,38 @@ definitions:
           remove:
             - href: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
 
+      elevatorGroups:
+        type: array
+        description: |
+          This can contain three arrays named 'add', 'update', and
+          'remove', and that every element should be in the [elevator group
+          schema](#definition-Cardholder-elevator-group).
+
+          The server will only use the hrefs of the elevatorGroup and accessZone objects.  It will ignore elevator group and access zone names,
+          if you place them in the body of your PATCH.
+
+          Remove the default floor in an update by supplying an accessZone block with the href set to null or "".
+
+          Change a passenger type in an update by supplying the new value. The passenger type will be unchanged otherwise.
+
+          The example shows our cardholder receiving a default floor for one elevator group and
+          updating the Code Blue and VIP passenger types for another elevator group.
+
+          Added in 8.50.
+        items: {$ref: '#/definitions/Cardholder elevator group'}
+        example:
+          add:
+            - elevatorGroup:
+                href:  "https://localhost:8904/api/elevator_groups/635"
+              accessZone:
+                href:  "https://localhost:8904/api/access_zones/637"
+          update:
+            - href: "https://localhost:8904/api/cardholders/325/elevator_groups/1268613268"
+              enableCodeBlueFeatures: true,
+              enableVipFeatures: false,
+          remove:
+            - href: "https://localhost:8904/api/cardholders/325/elevator_groups/3498734"
+
   Cardholder edit:
     description: |
       Returned from the `edit` href in the cardholder detail object.  It gives the fields the
@@ -2499,6 +2559,89 @@ definitions:
         type: string
         format: date-time
         example: "2018-12-31T00:00:00Z"
+
+  Cardholder elevator group:
+    description: |
+      These appear in an array in a cardholder detail, showing the cardholder's elevator
+      group properties.
+
+      A cardholder can have one default floor per elevator group. The elevator system will
+      prepare a car to carry that cardholder to the access zone shown here when the cardholder
+      badges a card at an appropriately configured kiosk.
+
+      Elevator system features can be activated by enabling the feature for an elevator group.
+      e.g.enabling VIP features gives exclusive access to an elevator car to the passenger
+
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          The href of this cardholder's elevator group.
+        example: "https://localhost:8904/api/cardholders/325/567"
+      elevatorGroup:
+        description: |
+          The href and name of the elevator group for which this cardholder has a default
+          floor or passenger types.
+        example: {
+          href: "https://localhost:8904/api/elevator_groups/635",
+          name: "Main building lower floors" }
+      accessZone:
+        description: |
+          The href and name of the access zone (floor) to which this cardholder is most
+          likely to want to travel after entering the group's main elevator lobby. This 
+          property will be missing if the cardholder does not have a default floor for this elevator group.
+        example: {
+          href: "https://localhost:8904/api/access_zones/637",
+          name: "Lvl 1 lift lobby"}
+      enableCaptureFeatures:
+        type: boolean
+        description: |
+          Cardholders can select and recall specific elevators to specific floors using
+          a kiosk. Once captured, the elevator car can be placed on independent service to
+          give users control of the car to clean the interior or perform maintenance.
+        example: true
+      enableCodeBlueFeatures:
+        type: boolean
+        description: |
+          A special elevator mode which is commonly found in hospitals. It allows an elevator
+          to be summoned to any floor for use in an emergency situation
+        example: false
+      enableExpressFeatures:
+        type: boolean
+        description: |
+          Program selected elevators to be cycled continuously between two floors for a
+          pre-determined duration. For example, this feature can help hotels transport food
+          efficiently from their kitchen to a ballroom on another floor. You can also
+          prevent other guests from boarding to provide your banquet guests with VIP treatment.
+        example: true
+      enableServiceFeatures:
+        type: boolean
+        description: |
+          Service personnel can use this function to call an empty elevator and ride it nonstop
+          to their destination floor. The user simply registers a call via a card swipe or PIN entry
+          that is pre-programmed to grant access 
+        example: false
+      enableService2Features:
+        type: boolean
+        description: |
+          Service personnel can use this function to call an empty elevator and ride it nonstop
+          to their destination floor. The user simply registers a call via a card swipe or PIN entry
+          that is pre-programmed to grant access 
+        example: true
+      enableService3Features:
+        type: boolean
+        description: |
+          Service personnel can use this function to call an empty elevator and ride it nonstop to
+          their destination floor. The user simply registers a call via a card swipe or PIN entry
+          that is pre-programmed to grant access
+        example: true
+      enableVipFeatures:
+        type: boolean
+        description: |
+          VIP operation allows cardholders to swipe a card or enter a PIN to isolate the elevator
+          and provide uninterrupted access to their designated floor.
+        example: false
 
 ######################################################################
 
@@ -4416,6 +4559,31 @@ paths:
             'lockers' block of a cardholder detail, or the 'assignments' block of a locker or locker
             bank detail.  The message in the results document will tell you more about the problem.
         4xx: { description: "You do not have privileges for the operation." }
+
+  /api/cardholders/{id}/elevator_groups/{assignment_id}:
+    delete:
+      tags:
+        - Cardholders
+
+      summary: Remove an elevator group from a cardholder
+      description: |
+        This call removes a default floor assignment and passenger types from a cardholder for one elevator group.
+
+        You will find this URL in the `elevatorGroups` block of a [cardholder
+        object](#definition-Cardholder-detail).
+
+      responses:
+        204:
+          description:  Success.
+        403:
+          description: |
+            Your operator does not have the necessary privilege to change this cardholder's elevator
+            groups.
+        404:
+          description: |
+            That is not the URL of a cardholder's elevator group.  You can take an href
+            from the 'elevatorGroups' block of a cardholder detail.  The message in the results
+            document will tell you more about the problem.
 
   /api/cardholders/{id}/update_location:
     post:

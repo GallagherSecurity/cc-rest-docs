@@ -16,7 +16,7 @@ info:
 
   description: |
     This document describes how you can use the Command Centre REST API to view and manage
-    access zones, alarm zones, fence zones, doors, macros, inputs, and outputs.
+    access zones, alarm zones, elevator groups, fence zones, doors, macros, inputs, and outputs.
 
     It has companion documents describing the [Cardholders](cardholders.html) and [Alarms and
     Events](events.html) APIs, and Command Centre's handling of [PIV cards](piv.html).
@@ -64,6 +64,9 @@ info:
     * A [pulse](#operation--api-outputs--id--pulse-post) override on outputs.
 
     * A 'connectedController' field on the item types that did not already have it.
+
+    * An [elevator groups API](#tag-Elevator-Groups) providing a view of elevator groups so that you
+      can [set a cardholder's default floor](cardholders.html#operation--api-cardholders--id--patch).
 
     #### Changes in 8.30
 
@@ -447,6 +450,19 @@ x-common-blocks-this-is-made-up:
     required: false
     type: string
     enum: [href, id, name, shortName, description, division, commands, connectedController, entryAccessZone, statusFlags, status, notes, updates]
+
+  eg_ignored: &ELEVATORGROUPALLFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, name, shortName, description, division, notes, elevatorSystem,
+           elevatorGroupNumber, floorAccess, rearAccessEnabled, groundFloorNumber]
+
+  eg_ignored2: &ELEVATORGROUPCARDHOLDERFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, name, description, division, floorAccess]
 
   fz_ignored: &FZFIELDS
     in: query
@@ -1269,6 +1285,147 @@ definitions:
 
 #######################################################################
 #######################################################################
+  Elevator Group summary:
+    description: |
+      The [elevator group search](#operation--api-elevator_groups-get) returns an array of these, if
+      you don't use the `fields` parameter to ask for more.  It is a subset of what you get from the
+      'modify passenger details' search or the elevator group's detail page (which is linked as the
+      href in this object).
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to a [elevator group](#definition-Elevator-Group-detail) object for this
+          elevator group.
+        example: "https://localhost:8904/api/elevator_groups/635"
+      name:
+        type: string
+        example: "Main building lower floors"
+
+  Elevator Group Floor Access detail:
+    description: |
+      The [modify passenger details search](#operation--api-elevator_groups-modify_passenger_details-get)
+      returns an array of these.  It is everything you need to pick a default floor for a
+      cardholder, but a subset of what you get from a elevator group's detail page (which is linked
+      as the href in this object).
+    allOf:
+      - type: object
+        properties:
+          division:
+            type: object
+            description:  The division containing this elevator group.
+            example:
+              id: "2"
+              href: "https://localhost:8904/api/divisions/2"
+          floorAccess:
+            description: |
+              An array of objects describing the floors in this elevator group.
+
+              This example only has one floor.  Expect more from production systems.
+            type: array
+            items:
+              type: object
+              properties:
+                floorNumber:
+                  type: integer
+                  minimum: 1
+                  example: 1
+                  description: |
+                    This is Command Centre's internal identifier for the floor.  Passengers do
+                    not see it.
+                frontService:
+                  type: boolean
+                  example: true
+
+                  description: |
+                    True iff the elevator car has a front-facing door and the elevator 
+                    services the floor with the front of the elevator.
+
+                    This field requires the RESTStatus licence.
+                rearService:
+                  type: boolean
+                  example: true
+
+                  description: |
+                    True iff the elevator car has a rear-facing door and the elevator 
+                    services the floor with the rear of the elevator.
+
+                    This field requires the RESTStatus licence.
+                floorName:
+                  type: string
+                  example: "Level 1"
+                  description: |
+                    This is a friendly name that Command Centre presents to operators as the name of the
+                    floor.
+                frontAccessZone:
+                  description: |
+                    The access zone into which the elevator car's front door opens.  It will be
+                    missing if the car's front door does not open on ths floor.
+                  type: object
+                  properties:
+                    id:
+                      <<: *ID
+                      example: "637"
+                    name: {type: string, example: "Lvl 1 lift lobby"}
+                    href:
+                      type: string
+                      format: url
+                      example: "http://localhost:8904/access_zones/637"
+                rearAccessZone:
+                  description: |
+                    The access zone into which the elevator car's rear door opens.  It will be
+                    missing if the car's rear door does not open on this floor, or if the elevator
+                    group's `rearAccessEnabled` is false.
+                  type: object
+                  properties:
+                    id:
+                      <<: *ID
+                      example: "638"
+                    name: {type: string, example: "Lvl 1 lift lobby rear"}
+                    href:
+                      type: string
+                      format: url
+                      example: "http://localhost:8904/access_zones/638"
+
+      - $ref: "#/definitions/Elevator Group summary"
+
+  Elevator Group detail:
+    description: |
+      [/api/elevator_groups/{id}](#operation--api-elevator-groups--id--get) returns one of these.
+
+    allOf:
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "Main building lobby elevator group."
+          notes: {<<: *NOTES}
+          shortName: {<<: *SHORTNAME}
+          elevatorGroupNumber:
+            type: integer
+            example: 1
+            description: |
+              The elevator system's internal identifier for this elevator group.
+
+          elevatorSystem:
+            type: object
+            properties:
+              id: {<<: *ID, example: "632"}
+          rearAccessEnabled:
+            description: |
+              True only if the elevator group uses rear doors on its cars to service the other side
+              of the shaft.
+            type: boolean
+            example: true
+          groundFloorNumber:
+            type: integer
+            minimum: 1
+            example: 1
+            description: |
+              The identifier of the floor that this elevator group calls 'ground'.
+
+      - $ref: "#/definitions/Elevator Group summary"
 
 #######################################################################
 #######################################################################
@@ -2282,6 +2439,52 @@ tags:
     3. Follow the `updates` href from that page.
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
+
+- name: "Elevator Groups"
+  description: |-
+    These methods give you read access to Elevator Groups.
+
+    The reason you would want that is to allocate default floors to cardholders.  Each cardholder
+    can have one default floor per elevator group, so that when they badge into that group's lobby
+    area the elevator system can arrange a car to take them to their favourite floor.
+
+    Each elevator group only goes to certain floors, so to give a cardholder a default floor you
+    need to pick an elevator group see which floors it services.
+
+    Command Centre represents floors with access zones.  If an elevator car has two doors, front and
+    rear, it may service two access zones on the same physical floor.  A cardholder could pick
+    either of those access zones as their default for that elevator group.
+
+    The main entry point is a paginated search that returns what you need to pick defaults for a
+    cardholder, limited by the privilege that enables that operation on a cardholder.  That is the
+    call that you are most likely to need, but there is another that gives you all elevator groups
+    that your operator can view, rather than the ones your operator can use in a cardholder edit.
+
+    ### Use case: choosing and setting a cardholder's default floor
+
+    Your client will first need to list all elevator groups, and the floors and access zones on
+    those elevator groups, so that it can pick from them (if knows them by name already) or present
+    a list and allow a user to pick one (if it is interactive).
+
+    Then it will need to send a PATCH back to the cardholder to set his or her default floor for an
+    elevator group.
+
+    #### Listing elevator groups and their access zones
+
+    1. `GET /api`.
+    2. Follow the link at `features.cardholders.modifyPassengerDetails.href`, appending a search term
+       such as `name=substring` to filter the selection if you have a lot of elevator groups.
+    3. Find the elevator group you are after, following the `next` link if necessary.
+    4. Look in the `floorAccess` array for the floor names and access zone names you can use for
+       picking the floor, and the access zone hrefs to use in the
+       [PATCH](cardholders.html#operation--api-cardholders--id--patch) coming up.
+
+    #### Setting a cardholder's default floor
+
+    1. [Find the href](cardholders.html#tag-Cardholders) for the cardholder.
+    2. [PATCH](cardholders.html#operation--api-cardholders--id--patch) it with a [request
+       body](cardholders.html#definition-Cardholder-PATCH-example) containing the hrefs of the
+       elevator groups and access zones you wish to set as that cardholder's defaults.
 
 - name: "Fence Zones"
   description: |
@@ -3326,6 +3529,146 @@ paths:
         404: {$ref: "#responses/404door"}
 
 ######################################################################
+  /api/elevator_groups/modify_passenger_details:
+    get:
+      tags:
+        - "Elevator Groups"
+      summary: Search assignable elevator groups
+      description: |
+        This searches the elevator groups that your privileges allow you to use in cardholders'
+        default floor and passenger type assignments, returning everything you need to make those
+        assignments.
+
+        Unlike most of the other calls in this document, it requires the RESTCardholders licence.
+
+        The result will contain no more than 100, or as many as you asked for more in your request;
+        you should follow the `next` link, if it is present, to collect the next batch.
+
+        If your result set is empty it means your operator does not have the privilege to assign
+        elevator groups to cardholders ('Modify Passenger Details').  Perhaps there are no elevator
+        groups in the divisions in which your operator has that privilege.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the `href` field in the `features.cardholders.modifyDefaultFloors`
+        section of `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - $ref: "cardholdersApi.yaml#/parameters/division"
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *ELEVATORGROUPCARDHOLDERFIELDS
+
+      responses:
+        200:
+          description: |
+            Success.  An array of [elevator group(#definition-Elevator-Group-Floor-Access-detail) objects and a
+            `next` link for more.
+
+            See the note in the description about privileges if your result set is empty.
+          schema:
+            properties:
+              results:
+                type: array
+                items: {$ref: '#/definitions/Elevator Group Floor Access detail'}
+              next:
+                type: object
+                properties:
+                  href:
+                    type: string
+                    format: url
+                    example: "https://localhost:8904/api/elevator_groups/635"
+        403:
+          description: The site does not have the RESTCardholders licence.
+
+  /api/elevator_groups:
+    get:
+      tags:
+        - "Elevator Groups"
+      summary: Search elevator groups
+      description: |
+        This returns the name and href of the elevator groups matching your search criteria.  This
+        uses a different privilege from the `modify_default_floors` call, so it may not return you
+        the groups you need.  If your goal is to set cardholders' default floors, you should that
+        call instead.
+
+        The result will contain no more than 100, or as many as you asked for more in your request;
+        you should follow the `next` link, if it is present, to collect the next batch.
+
+        If your result set is empty it means your operator does not have the privilege to view any
+        elevator groups, such as 'View Site' or 'Edit Site'.  Perhaps there are no elevator groups
+        in the divisions in which your operator has privileges, or your operator has no privileges
+        at all.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the `href` field in the `features.elevators.elevatorGroups` section of
+        `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - $ref: "cardholdersApi.yaml#/parameters/division"
+      - name: "fields"
+        <<: *FIELDSDESC_SUM
+        <<: *ELEVATORGROUPALLFIELDS
+
+      responses:
+        200:
+          description: |
+            Success.  An array of [elevator group](#definition-Elevator-Group) objects
+            and a `next` link for more.
+          schema:
+            properties:
+              results:
+                type: array
+                items: {$ref: '#/definitions/Elevator Group summary'}
+              next:
+                type: object
+                properties:
+                  href:
+                    type: string
+                    format: url
+                    example: "https://localhost:8904/api/elevator_groups?skip=100"
+        403:
+          description: The site does not have the RESTStatus licence.
+
+  /api/elevator groups/{id}:
+    get:
+      tags:
+        - "Elevator Groups"
+      summary: Get details of a elevator group
+      description: |
+        This returns the detail of one elevator group.
+
+        If you are setting cardholders' default floors, you should be using the
+        `modify_default_floors` call rather than this one.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the elevator group.
+      - name: "fields"
+        <<: *FIELDSDESC_DET
+        <<: *ELEVATORGROUPALLFIELDS
+
+      responses:
+        200:
+          description: Success.
+          schema: {$ref: '#/definitions/Elevator Group detail'}
+        403:
+          description: The site does not have the RESTStatus licence.
+        404:
+          description: |
+            The request's URL does not represent an elevator group, or the operator does not have a
+            privilege on the elevator group's division that allows viewing them, such as 'View Site'
+            or 'Edit Site'.
 
 ######################################################################
   /api/fence_zones:
