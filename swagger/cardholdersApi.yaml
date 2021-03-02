@@ -2443,24 +2443,31 @@ definitions:
             - href: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
 
       elevatorGroups:
-        type: array
+        type: object
         description: |
           This can contain three arrays named 'add', 'update', and
-          'remove', and that every element should be in the [elevator group
+          'remove', each containing an element in the [elevator group
           schema](#definition-Cardholder-elevator-group).
 
-          The server will only use the hrefs of the elevatorGroup and accessZone objects.  It will ignore elevator group and access zone names,
+          The 'elevatorGroup' block only makes sense in the 'add' array.  The 'update' array is for
+          changing the cardholder's default floor and passenger types on an existing elevator group
+          assignment.
+
+          The server will ignore all fields in the elevatorGroup and accessZone objects except 'href'
           if you place them in the body of your PATCH.
 
           Remove the default floor in an update by supplying an accessZone block with the href set to null or "".
 
           Change a passenger type in an update by supplying the new value. The passenger type will be unchanged otherwise.
 
+          As with cards and access group memberships etc., the server ignores root-level hrefs in
+          the elements of an 'add' array, requires them in the 'update' array (since they indicate
+          the entries to work on), and ignores everything but them in the 'remove' array.
+
           The example shows our cardholder receiving a default floor for one elevator group and
           updating the Code Blue and VIP passenger types for another elevator group.
 
           Added in 8.50.
-        items: {$ref: '#/definitions/Cardholder elevator group'}
         example:
           add:
             - elevatorGroup:
@@ -2469,8 +2476,8 @@ definitions:
                 href:  "https://localhost:8904/api/access_zones/637"
           update:
             - href: "https://localhost:8904/api/cardholders/325/elevator_groups/1268613268"
-              enableCodeBlueFeatures: true,
-              enableVipFeatures: false,
+              enableCodeBlueFeatures: true
+              enableVipFeatures: false
           remove:
             - href: "https://localhost:8904/api/cardholders/325/elevator_groups/3498734"
 
@@ -2570,15 +2577,16 @@ definitions:
       badges a card at an appropriately configured kiosk.
 
       Elevator system features can be activated by enabling the feature for an elevator group.
-      e.g.enabling VIP features gives exclusive access to an elevator car to the passenger
+      For example, 'VIP features' gives exclusive access to an elevator car to the passenger.
 
     properties:
       href:
         type: string
         format: url
         description: |
-          The href of this cardholder's elevator group.
-        example: "https://localhost:8904/api/cardholders/325/567"
+          The href of this cardholder's elevator group entry.  DELETE this to remove it from the
+          cardholder.
+        example: "https://localhost:8904/api/cardholders/325/elevator_groups/567"
       elevatorGroup:
         description: |
           The href and name of the elevator group for which this cardholder has a default
@@ -2605,36 +2613,36 @@ definitions:
         type: boolean
         description: |
           A special elevator mode which is commonly found in hospitals. It allows an elevator
-          to be summoned to any floor for use in an emergency situation
+          to be summoned to any floor for use in an emergency situation.
         example: false
       enableExpressFeatures:
         type: boolean
         description: |
-          Program selected elevators to be cycled continuously between two floors for a
-          pre-determined duration. For example, this feature can help hotels transport food
-          efficiently from their kitchen to a ballroom on another floor. You can also
-          prevent other guests from boarding to provide your banquet guests with VIP treatment.
+          Allows the cardholder to program selected elevators to cycle continuously between two
+          floors for a pre-determined duration. For example, this feature can help hotels transport
+          food efficiently from their kitchen to a ballroom on another floor. You can also prevent
+          other guests from boarding to provide your banquet guests with VIP treatment.
         example: true
       enableServiceFeatures:
         type: boolean
         description: |
           Service personnel can use this function to call an empty elevator and ride it nonstop
           to their destination floor. The user simply registers a call via a card swipe or PIN entry
-          that is pre-programmed to grant access 
+          that is pre-programmed to grant access.
         example: false
       enableService2Features:
         type: boolean
         description: |
           Service personnel can use this function to call an empty elevator and ride it nonstop
           to their destination floor. The user simply registers a call via a card swipe or PIN entry
-          that is pre-programmed to grant access 
+          that is pre-programmed to grant access.
         example: true
       enableService3Features:
         type: boolean
         description: |
           Service personnel can use this function to call an empty elevator and ride it nonstop to
           their destination floor. The user simply registers a call via a card swipe or PIN entry
-          that is pre-programmed to grant access
+          that is pre-programmed to grant access.
         example: true
       enableVipFeatures:
         type: boolean
