@@ -2828,13 +2828,13 @@ Believe it or not there is some order to this.  Please don't dump your stuff on 
 |Goal|Privileges required|
 |---|---|
 |View cardholder data at `/api/cardholders` and `/api/cardholders/id` except notes and operator fields. |'View Cardholder' or any of the privileges that allow editing a cardholder, on the cardholder's division. |
-|View all cardholder data|'View Cardholder' or any of the cardholder editing privileges on the cardholder's division, plus:<ul><li>'View Cardholder Notes' reveals notes,</li><li>'View Lockers and Assignments' adds locker detail.</li></ul>|
+|View all cardholder data|'View Cardholder' or any of the cardholder editing privileges on the cardholder's division, plus 'View Cardholder Notes' reveals notes, 'View Lockers and Assignments' adds locker detail.|
 | Create cardholders, but not modify them.|'Create Cardholders' on the cardholder's division.|
 |Create and edit cardholders, except their notes and operator settings.|'Create and Edit Cardholders' on the cardholder's division.|
 |Edit cardholders, except their notes and operator settings.|'Edit Cardholders' on the cardholder's division.|
-|Edit cardholder notes.|One of the privileges that lets you edit cardholders as well as either of<ul><li>'Add Cardholder Notes' or 'Edit Cardholder Notes' on the cardholder's division</li><li>It is different in the thick clients:  there, one of the last two is enough.</li></ul>|
+|Edit cardholder notes.|One of the privileges that lets you edit cardholders as well as either of 'Add Cardholder Notes' or 'Edit Cardholder Notes' on the cardholder's division.  It is different in the thick clients:  there, one of the last two is enough.|
 |Modify cardholder group memberships.|One of the privileges that lets you edit cardholders on the cardholder's division plus 'Modify Access Control' on the group's division. <br />'Modify Access Control' on the group's division is enough in the thick clients.|
-|Change a cardholder's location.|'View Cardholder' on the cardholder, and 'Manage Cardholder Location' on:<ul><li>the target access zone's division, when you are moving the cardholder into an access zone, otherwise</li><li>any division, when you are moving the cardholder outside the system.</li></ul>By the way:  collecting access zones normally requires the RESTStatus licence, but there is a variant of that call that returns just the zones your operator is allowed to move cardholders to that only requires the RESTCardholders licence.|
+|Change a cardholder's location.|'View Cardholder' on the cardholder, and 'Manage Cardholder Location' on the target access zone's division, when you are moving the cardholder into an access zone, otherwise any division, when you are moving the cardholder outside the system.<br />By the way:  collecting access zones normally requires the RESTStatus licence, but there is a variant of that call that returns just the zones your operator is allowed to move cardholders to that only requires the RESTCardholders licence.|
 |Assign a card to a cardholder.|One of the three privileges that lets you edit cardholders on the cardholder's division and on the card type's division.|
 |View assignable card types at `/api/card_types/assign`|One of the 'edit cardholder' privileges on the card type's division.|
 |View card types at `/api/card_types`|'View site' or 'configure site' on the card type's division.  The privileges that let you create or edit cardholders also reveal PIV types.'|
@@ -2847,7 +2847,7 @@ Believe it or not there is some order to this.  Please don't dump your stuff on 
 |View PDF definitions at `/api/personal_data_fields`|'View...' or 'Edit Personal Data Definitions' on the PDF's division.|
 |View events at `/api/events`|'View Events and Alarms' or any of the privileges that allow processing alarms, on the division of the source of the event or alarm.|
 |Acknowledge, process, or mark alarms as viewed.|'Edit Alarms' on division of the source of the event or alarm.|
-|Create new events (8.10+)|'Create Alarms and Events' on<ul><li>the division of the source of the event, if you set a source</li><li>any division, if you did not set a source</li></ul>|
+|Create new events (8.10+)|'Create Alarms and Events' on the division of the source of the event, if you set a source, or any division if you did not set a source.|
 |List access groups.|'View access groups' or 'edit access groups' on the access group's division.|
 |List competencies.|'View site' or 'Edit site'.|
 |Receive schedule hrefs in an access group|'View Schedules' on the schedule's division. <br />'View site', 'Configure site', and 'Edit site' will not do it.|
