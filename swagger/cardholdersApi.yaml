@@ -172,12 +172,12 @@ info:
     When you send dates and times to Command Centre, you must use an ISO-8601 calendar
     date, time, and time zone designator, with hyphens separating the date fields and
     colons separating the time fields.  This looks like `YYYY-MM-DDTHH:MM:SSZ`, where `T`
-    is an actual T, and `Z` is a timezone designator such as 'Z' or '-0800'.  Specify up
-    to seven decimals on the seconds if you wish, but be aware that some Command Centre
-    fields will not use them.  You must supply the year and month but omit the other
-    fields as you like.  Command Centre will assume sensible defaults, such as the top of
-    the minute when you omit seconds, midnight when you omit the time, or first of the
-    month when you omit the day.
+    is an actual T, and `Z` is a timezone designator such as 'Z' for UTC or '-0800' for
+    Pacific Standard Time.  Specify up to seven decimals on the seconds if you wish, but
+    be aware that some Command Centre fields will not use them.  You must supply the year
+    and month but omit the other fields as you like.  Command Centre will assume sensible
+    defaults, such as the top of the minute when you omit seconds, midnight when you omit
+    the time, or first of the month when you omit the day.
 
     Do not omit the timezone designator.  If you do, Command Centre will make an assumption.
 
@@ -1533,12 +1533,18 @@ definitions:
           of the same card type.  If you leave it blank when creating a card of a type that has a
           decimal number format, Command Centre will use the next available number.
 
-          For a mobile credential, it need not be unique.  It is actually a string, and is not used
-          by Command Centre except for display.
+          Something to be aware of when extracting very large card numbers:  a decimal card number
+          comes out as signed 32-bit number, so if it is over two billion (give or take) it will
+          come out of the API negative.  A future version of Command Centre will change to unsigned
+          numbers, but in the meantime you should cast it to an unsigned 32-bit integer in your
+          client.
 
-          It is mandatory for card types with text or PIV number formats.  If the card type has a
-          text card number format with a regex, and you supply a card number that does not match it,
-          Command Centre will reject your update.
+          Card numbers for a mobile credential need not be unique.  They are strings, and are not
+          used by Command Centre except for display.
+
+          This field is mandatory for card types with text or PIV number formats.  If the card type
+          has a text card number format with a regular expression and you supply a card number that
+          does not match that regex, Command Centre will reject your update.
 
           PIV card numbers must be the same as the card's FASC-N.  PIV-I card numbers must not.
 
