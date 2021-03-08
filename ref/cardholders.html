@@ -1243,6 +1243,7 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
   <span class="hljs-attr">&quot;@Student ID&quot;</span>: <span class="hljs-string">&quot;8904640&quot;</span>,
+  <span class="hljs-attr">&quot;disableCipherPad&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;usercode&quot;</span>: <span class="hljs-string">&quot;numeric, and write-only&quot;</span>,
   <span class="hljs-attr">&quot;operatorLoginEnabled&quot;</span>: <span class="hljs-literal">true</span>,
   <span class="hljs-attr">&quot;operatorUsername&quot;</span>: <span class="hljs-string">&quot;qmaster&quot;</span>,
@@ -5468,8 +5469,8 @@
           <h1 id="tag-PDF-definitions" class="swagger-summary-tag" data-traverse-target="tag-PDF-definitions">PDF definitions</h1>
           <div class="tag-description doc-row">
             <div class="doc-copy">
-              <p>A Personal Data Field is an item that adds a custom value to a cardholder. Each PDF has a type (text, image, numeric, ...) and optional constraints on the values that it can hold. For example, text, email, and telephone number types can have a regular expression attached with which new values must match. A date can have a maximum and a minimum. Text PDFs can have a list of valid values, like an enumeration.</p>
-              <p>There is more configuration: image PDFs have a type and size, to which Command Centre will transcode incoming images. Mobile numbers and email addresses have a flag indicating whether they are suitable to receive SMS and email notifications. All PDFs have their own access level (hidden, read-only, or full access) that applies to operators in operator groups that do not expressly override it.</p>
+              <p>A Personal Data Field is an item that adds a custom value to a cardholder. Each PDF has a type (text, image, numeric, ...) and optional constraints on the values that it can hold. For example, text, email, and telephone number types can have a regular expression with which new values must match. A date can have a maximum and a minimum. Text PDFs can have a list of valid values, like an enumeration.</p>
+              <p>There is more configuration: image PDFs have a type and size, to which Command Centre will transcode incoming images. All PDFs have their own access level (hidden, read-only, or full access) that applies to operators in operator groups that do not expressly override it.</p>
               <p>Importantly, PDFs are attached to access groups. A cardholder can have a value for a PDF only if he or she is a member of one of the PDF&#39;s access groups.</p>
               <p>This API lets you see the definitions and configuration of all the personal data fields in the system.</p>
               <h3 id="use-cases">Use cases</h3>
@@ -6302,6 +6303,14 @@
                             <a href="#definition-Cardholder-POST-example">cardholder POST example</a>.</p>
                           <p>When you send in date PDFs, Command Centre will set the time to midnight because date PDFs are only accurate to a day. If you specified a time in your PATCH, the server will first perform a timezone correction then convert it to UTC before truncating the time, which might shift the date back a day if you specified a positive timezone offset. To be sure that does not happen, put <code>T00:00:00Z</code> on the end of your date.</p>
                         </dd>
+                        <dt data-property-name="disableCipherPad" class="has-description">
+                          <span class="json-property-name">disableCipherPad:</span>
+                          <span class="json-property-type">boolean</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>True if this cardholder should not have the numbers on an alarms terminal scrambled when the terminal is configured as a cipher pad. Usually the reason is a vision impairment, making a randomised keypad impracticable.</p>
+                        </dd>
                         <dt data-property-name="usercode" class="has-description">
                           <span class="json-property-name">usercode:</span>
                           <span class="json-property-type">string</span>
@@ -6644,6 +6653,7 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
   <span class="hljs-attr">&quot;@Student ID&quot;</span>: <span class="hljs-string">&quot;8904640&quot;</span>,
+  <span class="hljs-attr">&quot;disableCipherPad&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;usercode&quot;</span>: <span class="hljs-string">&quot;numeric, and write-only&quot;</span>,
   <span class="hljs-attr">&quot;operatorLoginEnabled&quot;</span>: <span class="hljs-literal">true</span>,
   <span class="hljs-attr">&quot;operatorUsername&quot;</span>: <span class="hljs-string">&quot;qmaster&quot;</span>,

@@ -1327,9 +1327,9 @@ paths:
         This is a long poll, so if there are no updates waiting when you make the call it will block
         until some arrive or a timeout passes (about 50 seconds).
 
-        If you receive a 404 from this call it means that either too long has passed since the
-        server sent the link, or the server has restarted.  You will need to create a new
-        subscription with a fresh POST.
+        If you receive a 404 from this call it means that too much time has passed since the server
+        sent the link, or the server has restarted.  In either case the server will have dropped
+        your subscription.  You will need to create a new one with a fresh POST.
 
         Therefore your loop can be:
 

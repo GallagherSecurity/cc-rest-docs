@@ -739,13 +739,12 @@ tags:
 
     A Personal Data Field is an item that adds a custom value to a cardholder.  Each PDF has a type
     (text, image, numeric, ...) and optional constraints on the values that it can hold.  For
-    example, text, email, and telephone number types can have a regular expression attached with
+    example, text, email, and telephone number types can have a regular expression with
     which new values must match.  A date can have a maximum and a minimum.  Text PDFs can have a
     list of valid values, like an enumeration.
 
     There is more configuration:  image PDFs have a type and size, to which Command Centre will
-    transcode incoming images.  Mobile numbers and email addresses have a flag indicating whether
-    they are suitable to receive SMS and email notifications.  All PDFs have their own access level
+    transcode incoming images.  All PDFs have their own access level
     (hidden, read-only, or full access) that applies to operators in operator groups that do not
     expressly override it.
 
@@ -1011,7 +1010,9 @@ definitions:
             <<: *SERVER
           division:
             type: object
-            description:  The division containing this cardholder.  You must send this when creating a cardholder.
+            description: |
+              The division containing this cardholder.  You must send this when creating a
+              cardholder.
             example:
               href: "https://localhost:8904/api/divisions/2"
           "@Student ID":
@@ -1038,6 +1039,13 @@ definitions:
               happen, put `T00:00:00Z` on the end of your date.
 
             example: "8904640"
+          disableCipherPad:
+            type: boolean
+            example: false
+            description: |
+              True if this cardholder should not have the numbers on an alarms terminal scrambled
+              when the terminal is configured as a cipher pad.  Usually the reason is a vision
+              impairment, making a randomised keypad impracticable.
           usercode:
             type: string
             writeOnly: true
@@ -2462,9 +2470,11 @@ definitions:
           The server will ignore all fields in the elevatorGroup and accessZone objects except 'href'
           if you place them in the body of your PATCH.
 
-          Remove the default floor in an update by supplying an accessZone block with the href set to null or "".
+          Remove the default floor in an update by supplying an accessZone block with the href set
+          to null or "".
 
-          Change a passenger type in an update by supplying the new value. The passenger type will be unchanged otherwise.
+          Change a passenger type in an update by supplying the new value. The passenger type will
+          be unchanged otherwise.
 
           As with cards and access group memberships etc., the server ignores root-level hrefs in
           the elements of an 'add' array, requires them in the 'update' array (since they indicate
