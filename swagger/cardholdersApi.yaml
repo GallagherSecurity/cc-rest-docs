@@ -62,6 +62,7 @@ info:
     * You can view [operator groups](#tag-Operator-groups).
     * Lockers and locker banks report the hardware controller where they reside.
     * Cardholders report their 'disable cipher pad' setting (vision impairment).
+    * Card types will show their division on request.
 
     #### API changes in 8.40
 
@@ -832,7 +833,6 @@ parameters:
     in: query
     type: string
     required: false
-    default: DEPRECATED
     enum: [ id, name, -id, -name]
     description: |
       Before paginating your results the server can sort them by name or database ID.
@@ -888,7 +888,6 @@ parameters:
     default: ['defaults']
     enum: [href, id, name, description, division, serverDisplayName, type, default, required,
                unique, sortPriority, accessGroups, regex, regexDescription]
-
     description: |
           Return these fields in the search results.  The values you can list are the same in the
           search and details pages.  Using it you can return everything on the search page that
@@ -3778,6 +3777,20 @@ definitions:
 
       id: {type: string, example: "600"}
       name: {type: string, example: "Red DESFire visitor badge"}
+      division:
+        type: object
+        description: The division that contains this card type.  New to 8.50.
+        example:
+          id: "2"
+          href: "https://localhost:8904/api/divisions/2"
+      notes:
+        type: string
+        example: "Disabled after 7d inactivity, 6-char PIN"
+        description: |
+          Free text.
+
+          Because of its potential size, the server does not return the notes field by default.  You
+          need to ask for it with `fields=notes`.
       facilityCode:
         type: string
         description: |
@@ -4118,7 +4131,6 @@ paths:
         required: false
         type: integer
         minimum: 1
-        default: DEPRECATED
         description: |
           The maximum number of cardholders to return per page.
 
@@ -5115,8 +5127,8 @@ paths:
         in: query
         type: array
         items: { type: string }
-        enum: [ href, id, name, facilityCode, availableCardStates, credentialClass, minimumNumber,
-        maximumNumber ]
+        enum: [ href, id, name, division, facilityCode, availableCardStates, credentialClass,
+        minimumNumber, maximumNumber, notes ]
 
         description: |
           Return these fields in the search results, instead of the default set (which contains

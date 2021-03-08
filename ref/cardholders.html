@@ -250,6 +250,7 @@
                     <a href="#tag-Operator-groups">operator groups</a>.</li>
                   <li>Lockers and locker banks report the hardware controller where they reside.</li>
                   <li>Cardholders report their &#39;disable cipher pad&#39; setting (vision impairment).</li>
+                  <li>Card types will show their division on request.</li>
                 </ul>
                 <h4 id="api-changes-in-840">API changes in 8.40</h4>
                 <ul>
@@ -748,7 +749,6 @@
                           <span class="json-property-enum-item">-name</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -770,7 +770,6 @@
                       <div class="prop-subtitle">
                         <span class="json-property-type">integer</span>
                         <span class="json-property-range" title="Value limits">x ≥ 1</span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -3079,7 +3078,6 @@
                           <span class="json-property-enum-item">-name</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -3670,7 +3668,6 @@
                           <span class="json-property-enum-item">-name</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -4063,7 +4060,6 @@
                           <span class="json-property-enum-item">-name</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -4132,11 +4128,13 @@
                           <span class="json-property-enum-item">href</span>,
                           <span class="json-property-enum-item">id</span>,
                           <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">facilityCode</span>,
                           <span class="json-property-enum-item">availableCardStates</span>,
                           <span class="json-property-enum-item">credentialClass</span>,
                           <span class="json-property-enum-item">minimumNumber</span>,
-                          <span class="json-property-enum-item">maximumNumber</span>
+                          <span class="json-property-enum-item">maximumNumber</span>,
+                          <span class="json-property-enum-item">notes</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                       </div>
@@ -4191,6 +4189,11 @@
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
+      <span class="hljs-attr">&quot;division&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Disabled after 7d inactivity, 6-char PIN&quot;</span>,
       <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
       <span class="hljs-attr">&quot;availableCardStates&quot;</span>: [
         <span class="hljs-string">&quot;Active&quot;</span>,
@@ -4343,7 +4346,6 @@
                           <span class="json-property-enum-item">-name</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -5046,7 +5048,6 @@
                           <span class="json-property-enum-item">-name</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -5542,7 +5543,6 @@
                           <span class="json-property-enum-item">-name</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -5919,7 +5919,6 @@
                           <span class="json-property-enum-item">-name</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <span class="json-property-default-value" title="Default value">DEPRECATED</span>
                       </div>
                     </div>
                     <div class="prop-value">
@@ -11344,6 +11343,11 @@
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
+      <span class="hljs-attr">&quot;division&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Disabled after 7d inactivity, 6-char PIN&quot;</span>,
       <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
       <span class="hljs-attr">&quot;availableCardStates&quot;</span>: [
         <span class="hljs-string">&quot;Active&quot;</span>,
@@ -11407,6 +11411,23 @@
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
+                    <dt data-property-name="division" class="has-description">
+                      <span class="json-property-name">division:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The division that contains this card type. New to 8.50.</p>
+                    </dd>
+                    <dt data-property-name="notes" class="has-description">
+                      <span class="json-property-name">notes:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Free text.</p>
+                      <p>Because of its potential size, the server does not return the notes field by default. You need to ask for it with <code>fields=notes</code>.</p>
+                    </dd>
                     <dt data-property-name="facilityCode" class="has-description">
                       <span class="json-property-name">facilityCode:</span>
                       <span class="json-property-type">string</span>
@@ -11485,6 +11506,11 @@
   <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Disabled after 7d inactivity, 6-char PIN&quot;</span>,
   <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
   <span class="hljs-attr">&quot;availableCardStates&quot;</span>: [
     <span class="hljs-string">&quot;Active&quot;</span>,
