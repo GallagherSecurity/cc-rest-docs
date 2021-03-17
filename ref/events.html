@@ -52,6 +52,17 @@
             </ul>
           </section>
           <section>
+            <a href="#tag-Divisions">Divisions</a>
+            <ul>
+              <li>
+                <a href="#operation--api-divisions--operation--get"> List divisions </a>
+              </li>
+              <li>
+                <a href="#operation--api-divisions--id--get"> Get details of a division </a>
+              </li>
+            </ul>
+          </section>
+          <section>
             <a href="#tag-Events">Events</a>
             <ul>
               <li>
@@ -68,17 +79,6 @@
               </li>
               <li>
                 <a href="#operation--api-events-groups-get"> List event types </a>
-              </li>
-            </ul>
-          </section>
-          <section>
-            <a href="#tag-Divisions">Divisions</a>
-            <ul>
-              <li>
-                <a href="#operation--api-divisions--operation--get"> List divisions </a>
-              </li>
-              <li>
-                <a href="#operation--api-divisions--id--get"> Get details of a division </a>
               </li>
             </ul>
           </section>
@@ -115,7 +115,7 @@
           <a href="#definition-EventDetail"> EventDetail </a>
           <a href="#definition-Event-POST-body"> Event POST body </a>
           <a href="#definition-EventGroups"> EventGroups </a>
-          <a href="#definition-DivisionsResult"> DivisionsResult </a>
+          <a href="#definition-Divisions"> Divisions </a>
           <a href="#definition-Division"> Division </a>
           <a href="#definition-Item-search"> Item search </a>
           <a href="#definition-ItemSummary"> ItemSummary </a>
@@ -155,8 +155,13 @@
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
                 <h4 id="alarms-and-events-api-changes-in-850">Alarms and events API changes in 8.50</h4>
                 <ul>
-                  <li>The server property that turns off
-                    <a href="#authentication">client certificate checking</a> changed.</li>
+                  <li>
+                    <p>The server property that turns off
+                      <a href="#authentication">client certificate checking</a> changed.</p>
+                  </li>
+                  <li>
+                    <p>Divisions can return some of their Visitor Management configuration.</p>
+                  </li>
                 </ul>
                 <h4 id="alarms-and-events-api-changes-in-840">Alarms and events API changes in 8.40</h4>
                 <ul>
@@ -246,7 +251,7 @@
                   <p>The behaviour for all other cases is the same in 8.40 and 8.50.</p>
                   <p>See the Configuration Client help for instructions on where to enter REST Client thumbprints.</p>
                   <p>Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API will only accept connections from the IP address ranges configurated into that client item.</p>
-                  <p>If a connection attempt fails, Command Centre will raise an event indicating its reason for refusing the request.</p>
+                  <p>If a connection attempt fails, Command Centre will raise an event indicating its reason for refusing the request. If that happens too often, the server will stop reporting each offence and will instead create a summary alarm at a much lower rate. The details of the alarm tell you how many failed attempts there have been since the start of the flood. The server will stay in this mode of reduced reporting until several minutes pass without a failed connection attempt.</p>
                 </section>
                 <section class="swagger-security-definition-properties">
                   <div class="prop-row security-definition-property">
@@ -1330,6 +1335,336 @@
                 </section>
               </div>
               <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <h1 id="tag-Divisions" class="swagger-summary-tag" data-traverse-target="tag-Divisions">Divisions</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>These methods provide access to the Command Centre divisions that are available to the REST client. Call <code>/api</code> and use the link at <code>features.{your_feature}.divisions.href</code> to retrieve the divisions in which the REST operator has privileges for that feature, alarms or events. Pick out the ones of interest and use those IDs in event, alarm, or item searches to make them more efficient.</p>
+              <p>Or, following a division&#39;s link from a reception item to retrieve the visitor management configuration for that reception&#39;s division.</p>
+              <h3 id="licensing">Licensing</h3>
+              <p>Every REST licence enables the divisions controller: RESTEvents, RESTCreateEvents, RESTCardholders, RESTStatus, and RESTOverrides.</p>
+            </div>
+          </div>
+          <div id="operation--api-divisions--operation--get" class="operation panel" data-traverse-target="operation--api-divisions--operation--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Divisions">Divisions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">List divisions</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/divisions/{operation}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>The functions inside <code>/api/divisions/</code> retrieve the divisions in which the operator can perform other functions. They all return the same data structure.</p>
+                  <p>For example, <code>/api/divisions/view_events</code> retrieves the list of divisions in which the REST operator has privileges to view events, and <code>/api/division/view_alarms</code> does the same for alarms.</p>
+                  <p>Do not code these URLs into your application. Take them from the results of <code>GET /api</code>. For the events and alarms examples, the links will be at <code>events.divisions.href</code> and <code>alarms.division.href</code>.</p>
+                  <p><code>/api</code> only shows API features for which you have the necessary licence.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">top</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">integer</span>
+                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The maximum number of divisions to return per page.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">sort</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">-id</span>,
+                          <span class="json-property-enum-item">-name</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
+                      <p>There are two reasons to prefer sorting by ID:</p>
+                      <ol>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
+                        <li>Following a <code>next</code> link is dramatically quicker when sorting by ID.</li>
+                      </ol>
+                      <p>They are such significant motivators that we strongly recommend sorting by ID in the query when there is a chance your results will overflow one page.</p>
+                      <p>The default is changing in a future version of Command Centre.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">parent</span>,
+                          <span class="json-property-enum-item">visitorManagement</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields instead of the default set. The values you can list are the same as the field names you would see in the results, plus <code>visitorManagement</code>, which does not come out by default. Use it to specify the fields you want in your results. Separate values with commas.</p>
+                      <p>Treat the string matches as case-sensitive.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Divisions">Divisions</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have a REST licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+      <span class="hljs-attr">&quot;parent&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>
+      }
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/view_events?skip=10&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-divisions--id--get" class="operation panel" data-traverse-target="operation--api-divisions--id--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Divisions">Divisions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get details of a division</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/divisions/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Details of a division. Follow the <code>href</code> in a division summary to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the division.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">parent</span>,
+                          <span class="json-property-enum-item">visitorManagement</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields instead of the default set. The values you can list are the same as the field names you would see in the results, plus <code>visitorManagement</code>, which does not come out by default. Use it to specify the fields you want in your results. Separate values with commas.</p>
+                      <p>Treat the string matches as case-sensitive.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Division">Division</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have a REST licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the href of a division or you do not have privileges to read divisions (View Site, Configure Site, or Advanced User).</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;parent&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;visitorManagement&quot;</span>: {
+    <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">&quot;visitortypes&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925&quot;</span>,
+        <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+          <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor access group 1&quot;</span>,
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+        },
+        <span class="hljs-attr">&quot;hostAccessGroups&quot;</span>: [
+          {
+            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/h_a_g/938&quot;</span>,
+            <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+              <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Host access group 1&quot;</span>,
+              <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/938&quot;</span>
+            }
+          }
+        ],
+        <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
+          {
+            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/926&quot;</span>,
+            <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+              <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
+              <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
+            }
+          },
+          {
+            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/927&quot;</span>,
+            <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+              <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 30&quot;</span>,
+              <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/927&quot;</span>
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
             </div>
           </div>
           <h1 id="tag-Events" class="swagger-summary-tag" data-traverse-target="tag-Events">Events</h1>
@@ -2616,253 +2951,6 @@
       ]
     }
   ]
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <h1 id="tag-Divisions" class="swagger-summary-tag" data-traverse-target="tag-Divisions">Divisions</h1>
-          <div class="tag-description doc-row">
-            <div class="doc-copy">
-              <p>These methods provide access to the Command Centre divisions that are available to the REST client. Call <code>/api</code> and use the link at <code>features.{your_feature}.divisions.href</code> to retrieve the divisions in which the REST operator has privileges for that feature, alarms or events. Pick out the ones of interest and use those IDs in event, alarm, or item searches to make them more efficient.</p>
-              <h3 id="licensing">Licensing</h3>
-              <p>Every REST licence enables the divisions controller: RESTEvents, RESTCreateEvents, RESTCardholders, RESTStatus, and RESTOverrides.</p>
-            </div>
-          </div>
-          <div id="operation--api-divisions--operation--get" class="operation panel" data-traverse-target="operation--api-divisions--operation--get">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Divisions">Divisions</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">List divisions</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">GET</span>
-                  <span class="operation-path">/api/divisions/{operation}</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>The functions inside <code>/api/divisions/</code> retrieve the divisions in which the operator can perform other functions. They all return the same data structure.</p>
-                  <p>For example, <code>/api/divisions/view_events</code> retrieves the list of divisions in which the REST operator has privileges to view events, and <code>/api/division/view_alarms</code> does the same for alarms.</p>
-                  <p>Do not code these URLs into your application. Take them from the results of <code>GET /api</code>. For the events and alarms examples, the links will be at <code>events.divisions.href</code> and <code>alarms.division.href</code>.</p>
-                  <p><code>/api</code> only shows API features for which you have the necessary licence.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">fields</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-enum" title="Possible values">
-                          <span class="json-property-enum-item">href</span>,
-                          <span class="json-property-enum-item">id</span>,
-                          <span class="json-property-enum-item">name</span>,
-                          <span class="json-property-enum-item">parent</span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Return these fields in the details page instead of the default set. The values you can list are the same as the field names you would see in the results. Use it to cut back on the size of the response. Separate values with commas.</p>
-                      <p>Treat the string matches as case-sensitive.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">200 OK</div>
-                      <div class="prop-ref">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/DivisionsResult">DivisionsResult</a>
-                        </span>
-                      </div>
-                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
-                    </div>
-                    <div class="prop-value">
-                      <p>Success</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The site does not have a REST licence.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Response Example
-                    <span>(200 OK)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;results&quot;</span>: [
-    {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2707&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2707&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>,
-      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
-      <span class="hljs-attr">&quot;parent&quot;</span>: {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>
-      }
-    }
-  ]
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="operation--api-divisions--id--get" class="operation panel" data-traverse-target="operation--api-divisions--id--get">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Divisions">Divisions</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">Get details of a division</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">GET</span>
-                  <span class="operation-path">/api/divisions/{id}</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>Details of a division. Follow the <code>href</code> in a division summary to get here.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">id</div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in path </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The ID of the division.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">fields</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-enum" title="Possible values">
-                          <span class="json-property-enum-item">href</span>,
-                          <span class="json-property-enum-item">id</span>,
-                          <span class="json-property-enum-item">name</span>,
-                          <span class="json-property-enum-item">parent</span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Return these fields in the details page instead of the default set. The values you can list are the same as the field names you would see in the results. Use it to cut back on the size of the response. Separate values with commas.</p>
-                      <p>Treat the string matches as case-sensitive.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">200 OK</div>
-                      <div class="prop-ref">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Division">Division</a>
-                        </span>
-                      </div>
-                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
-                    </div>
-                    <div class="prop-value">
-                      <p>Success</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The site does not have a REST licence.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">404 Not Found</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Division ID is invalid or you do not have privileges to read divisions (View Site, Configure Site, or Advanced User).</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Response Example
-                    <span>(200 OK)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2707&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2707&quot;</span>,
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>,
-  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
-  <span class="hljs-attr">&quot;parent&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>
-  }
 }
 </code></pre> </body>
                   </html>
@@ -6025,9 +6113,9 @@
               </div>
             </div>
           </div>
-          <div id="definition-DivisionsResult" class="definition panel" data-traverse-target="definition-DivisionsResult">
+          <div id="definition-Divisions" class="definition panel" data-traverse-target="definition-Divisions">
             <h2 class="panel-title">
-              <a name="/definitions/DivisionsResult"></a>DivisionsResult: object
+              <a name="/definitions/Divisions"></a>Divisions: object
               <!-- <span class="json-property-type"><span class="json-property-type">object</span>
               <span class="json-property-range" title="Value limits"></span>
               
@@ -6043,11 +6131,7 @@
                   <dl>
                     <dt data-property-name="results" class="has-description">
                       <span class="json-property-name">results:</span>
-                      <span class="json-property-type">
-                        <span class="json-schema-ref-array">
-                          <a class="json-schema-ref" href="#/definitions/Division">Division</a>
-                        </span>
-                      </span>
+                      <span class="json-property-type">object[]</span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
@@ -6055,13 +6139,87 @@
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-array-items">
-                        <span class="json-property-type">
-                          <span class="">
-                            <a class="json-schema-ref" href="#/definitions/Division">Division</a>
-                          </span>
-                        </span>
+                        <span class="json-property-type">object</span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <div class="json-inner-schema"> </div>
+                        <div class="json-inner-schema">
+                          <section class="json-schema-properties">
+                            <dl>
+                              <dt data-property-name="href" class="has-description">
+                                <span class="json-property-name">href:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-format">(url)</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>A self reference.</p>
+                              </dd>
+                              <dt data-property-name="id" class="has-description">
+                                <span class="json-property-name">id:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>The alphanumeric ID of the division. Use this ID in the <code>division</code> filter when requesting events.</p>
+                              </dd>
+                              <dt data-property-name="name" class="has-description">
+                                <span class="json-property-name">name:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>The division&#39;s name.</p>
+                              </dd>
+                              <dt data-property-name="serverDisplayName" class="has-description">
+                                <span class="json-property-name">serverDisplayName:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
+                              </dd>
+                              <dt data-property-name="parent" class="has-description">
+                                <span class="json-property-name">parent:</span>
+                                <span class="json-property-type">object</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>An object containing an href to the division entity representing the current division&#39;s parent. GET the href for full details.</p>
+                              </dd>
+                              <dt class="json-inner-schema">
+                                <section class="json-schema-properties">
+                                  <dl>
+                                    <dt data-property-name="href">
+                                      <span class="json-property-name">href:</span>
+                                      <span class="json-property-type">string</span>
+                                      <span class="json-property-format">(url)</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                    </dt>
+                                  </dl>
+                                </section>
+                              </dt>
+                            </dl>
+                          </section>
+                        </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="next" class="has-description">
+                      <span class="json-property-name">next:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A site generally does not have too many divisions. You should be able to collect them all in one request by using the <code>top</code> parameter. If not, follow this link to get the next page of divisions.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
                       </section>
                     </dt>
                   </dl>
@@ -6076,15 +6234,18 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;results&quot;</span>: [
     {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2707&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2707&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>,
       <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
       <span class="hljs-attr">&quot;parent&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>
       }
     }
-  ]
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/view_events?skip=10&quot;</span>
+  }
 }
 </code></pre> </body>
                   </html>
@@ -6162,6 +6323,193 @@
                         </dl>
                       </section>
                     </dt>
+                    <dt data-property-name="visitorManagement" class="has-description">
+                      <span class="json-property-name">visitorManagement:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>An object containing the division&#39;s visitor management configuration. It only appears if you ask for it with <code>fields=visitorManagement</code>.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="active" class="has-description">
+                            <span class="json-property-name">active:</span>
+                            <span class="json-property-type">boolean</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>If present, true. It indicates whether a division has its own visitor management configuration or uses its parent&#39;s. Which is also indicated by the presence or absence of the <code>visitorTypes</code> block.</p>
+                          </dd>
+                          <dt data-property-name="visitortypes" class="has-description">
+                            <span class="json-property-name">visitortypes:</span>
+                            <span class="json-property-type">object[]</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>This is an array of items, each containing a &#39;visitor type&#39;. A visitor type comprises three things: an access group to which visitor management will add every visitor as soon as they are on the visit, host access groups, to one of which the host must belong, and visitor access groups to which Command Centre will add a visitor when they sign in.</p>
+                            <p>You must pick a visitor type when creating a visit. It must be on the same division as the reception.</p>
+                          </dd>
+                          <dt class="json-inner-schema">
+                            <section class="json-schema-array-items">
+                              <span class="json-property-type">object</span>
+                              <span class="json-property-range" title="Value limits"></span>
+                              <div class="json-inner-schema">
+                                <section class="json-schema-properties">
+                                  <dl>
+                                    <dt data-property-name="href" class="has-description">
+                                      <span class="json-property-name">href:</span>
+                                      <span class="json-property-type">string</span>
+                                      <span class="json-property-format">(url)</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                    </dt>
+                                    <dd>
+                                      <p>This is the href to use for a visitor type when creating a visit.</p>
+                                      <p>It is only used for identification: GETting it will 404.</p>
+                                    </dd>
+                                    <dt data-property-name="accessGroup" class="has-description">
+                                      <span class="json-property-name">accessGroup:</span>
+                                      <span class="json-property-type">object</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                    </dt>
+                                    <dd>
+                                      <p>The name and href of an access group.</p>
+                                      <p>Command Centre will add cardholders to this access group as soon as you add them to a visit of this type. The purpose of this group is to grant access to PDFs for personal data that will help them sign in on the day, such as passport and driver&#39;s licence numbers, and photos.</p>
+                                    </dd>
+                                    <dt class="json-inner-schema">
+                                      <section class="json-schema-properties">
+                                        <dl>
+                                          <dt data-property-name="name">
+                                            <span class="json-property-name">name:</span>
+                                            <span class="json-property-type">string</span>
+                                            <span class="json-property-range" title="Value limits"></span>
+                                          </dt>
+                                          <dt data-property-name="href">
+                                            <span class="json-property-name">href:</span>
+                                            <span class="json-property-type">string</span>
+                                            <span class="json-property-format">(url)</span>
+                                            <span class="json-property-range" title="Value limits"></span>
+                                          </dt>
+                                        </dl>
+                                      </section>
+                                    </dt>
+                                    <dt data-property-name="hostAccessGroups" class="has-description">
+                                      <span class="json-property-name">hostAccessGroups:</span>
+                                      <span class="json-property-type">object[]</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                    </dt>
+                                    <dd>
+                                      <p>Names and hrefs of more access groups. When you create or modify a visit of this type, its host cardholder must belong to one of these.</p>
+                                      <p>A host is the cardholder Command Centre notifies when a visitor arrives, and is ultimately responsible for the visitor while on site.</p>
+                                    </dd>
+                                    <dt class="json-inner-schema">
+                                      <section class="json-schema-array-items">
+                                        <span class="json-property-type">object</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        <div class="json-inner-schema">
+                                          <section class="json-schema-properties">
+                                            <dl>
+                                              <dt data-property-name="href" class="has-description">
+                                                <span class="json-property-name">href:</span>
+                                                <span class="json-property-type">string</span>
+                                                <span class="json-property-format">(url)</span>
+                                                <span class="json-property-range" title="Value limits"></span>
+                                              </dt>
+                                              <dd>
+                                                <p>This is only used for identification: GETting it will 404.</p>
+                                              </dd>
+                                              <dt data-property-name="accessGroup">
+                                                <span class="json-property-name">accessGroup:</span>
+                                                <span class="json-property-type">object</span>
+                                                <span class="json-property-range" title="Value limits"></span>
+                                              </dt>
+                                              <dt class="json-inner-schema">
+                                                <section class="json-schema-properties">
+                                                  <dl>
+                                                    <dt data-property-name="name">
+                                                      <span class="json-property-name">name:</span>
+                                                      <span class="json-property-type">string</span>
+                                                      <span class="json-property-range" title="Value limits"></span>
+                                                    </dt>
+                                                    <dt data-property-name="href">
+                                                      <span class="json-property-name">href:</span>
+                                                      <span class="json-property-type">string</span>
+                                                      <span class="json-property-format">(url)</span>
+                                                      <span class="json-property-range" title="Value limits"></span>
+                                                    </dt>
+                                                  </dl>
+                                                </section>
+                                              </dt>
+                                            </dl>
+                                          </section>
+                                        </div>
+                                      </section>
+                                    </dt>
+                                    <dt data-property-name="visitorAccessGroups" class="has-description">
+                                      <span class="json-property-name">visitorAccessGroups:</span>
+                                      <span class="json-property-type">object[]</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                    </dt>
+                                    <dd>
+                                      <p>Names and hrefs of more access groups. When creating a visit, you can only pick visitor access groups from this list.</p>
+                                      <p>Command Centre will add visitors to a visit&#39;s &#39;visitor access groups&#39; when they sign in. Their purpose is to grant visitors access through the site&#39;s doors so that they can move around the site.</p>
+                                    </dd>
+                                    <dt class="json-inner-schema">
+                                      <section class="json-schema-array-items">
+                                        <span class="json-property-type">object</span>
+                                        <span class="json-property-range" title="Value limits"></span>
+                                        <div class="json-inner-schema">
+                                          <section class="json-schema-properties">
+                                            <dl>
+                                              <dt data-property-name="href" class="has-description">
+                                                <span class="json-property-name">href:</span>
+                                                <span class="json-property-type">string</span>
+                                                <span class="json-property-format">(url)</span>
+                                                <span class="json-property-range" title="Value limits"></span>
+                                              </dt>
+                                              <dd>
+                                                <p>This is the href to use for a visitor type when removing a visitor access group from a visit.</p>
+                                                <p>It is only used for identification: GETting it will 404.</p>
+                                              </dd>
+                                              <dt data-property-name="accessGroup" class="has-description">
+                                                <span class="json-property-name">accessGroup:</span>
+                                                <span class="json-property-type">object</span>
+                                                <span class="json-property-range" title="Value limits"></span>
+                                              </dt>
+                                              <dd>
+                                                <p>The name and href of an access group. Command Centre will add the visitors on the visit to this access group when they sign in.</p>
+                                              </dd>
+                                              <dt class="json-inner-schema">
+                                                <section class="json-schema-properties">
+                                                  <dl>
+                                                    <dt data-property-name="name">
+                                                      <span class="json-property-name">name:</span>
+                                                      <span class="json-property-type">string</span>
+                                                      <span class="json-property-range" title="Value limits"></span>
+                                                    </dt>
+                                                    <dt data-property-name="href">
+                                                      <span class="json-property-name">href:</span>
+                                                      <span class="json-property-type">string</span>
+                                                      <span class="json-property-format">(url)</span>
+                                                      <span class="json-property-range" title="Value limits"></span>
+                                                    </dt>
+                                                  </dl>
+                                                </section>
+                                              </dt>
+                                            </dl>
+                                          </section>
+                                        </div>
+                                      </section>
+                                    </dt>
+                                  </dl>
+                                </section>
+                              </div>
+                            </section>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
                   </dl>
                 </section>
               </div>
@@ -6172,12 +6520,49 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2707&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2707&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>,
   <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;parent&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;visitorManagement&quot;</span>: {
+    <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">true</span>,
+    <span class="hljs-attr">&quot;visitortypes&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925&quot;</span>,
+        <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+          <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor access group 1&quot;</span>,
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+        },
+        <span class="hljs-attr">&quot;hostAccessGroups&quot;</span>: [
+          {
+            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/h_a_g/938&quot;</span>,
+            <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+              <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Host access group 1&quot;</span>,
+              <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/938&quot;</span>
+            }
+          }
+        ],
+        <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
+          {
+            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/926&quot;</span>,
+            <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+              <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
+              <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
+            }
+          },
+          {
+            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/927&quot;</span>,
+            <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+              <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 30&quot;</span>,
+              <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/927&quot;</span>
+            }
+          }
+        ]
+      }
+    ]
   }
 }
 </code></pre> </body>

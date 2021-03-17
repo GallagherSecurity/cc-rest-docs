@@ -161,6 +161,10 @@
             </ul>
           </section>
           <section>
+            <a href="#tag-Receptions">Receptions</a>
+            <ul> </ul>
+          </section>
+          <section>
             <a href="#tag-Roles">Roles</a>
             <ul>
               <li>
@@ -243,14 +247,32 @@
                 <p>8.60 will sort its search results differently and may increase the number it returns per page, if the query did not use query parameters to override the defaults.</p>
                 <h4 id="api-changes-in-850">API changes in 8.50</h4>
                 <ul>
-                  <li>The server property that turns off
-                    <a href="#authentication">client certificate checking</a> changed.</li>
-                  <li>You can manage operators by setting their operator group memberships and logon credentials.</li>
-                  <li>You can view
-                    <a href="#tag-Operator-groups">operator groups</a>.</li>
-                  <li>Lockers and locker banks report the hardware controller where they reside.</li>
-                  <li>Cardholders report their &#39;disable cipher pad&#39; setting (vision impairment).</li>
-                  <li>Card types will show their division on request.</li>
+                  <li>
+                    <p>The server property that turns off
+                      <a href="#authentication">client certificate checking</a> changed.</p>
+                  </li>
+                  <li>
+                    <p>You can manage operators by setting their operator group memberships and logon credentials.</p>
+                  </li>
+                  <li>
+                    <p>You can view
+                      <a href="#tag-Operator-groups">operator groups</a>.</p>
+                  </li>
+                  <li>
+                    <p>Lockers and locker banks report the hardware controller where they reside.</p>
+                  </li>
+                  <li>
+                    <p>Cardholders report their &#39;disable cipher pad&#39; setting (vision impairment).</p>
+                  </li>
+                  <li>
+                    <p>Card types will show their division on request.</p>
+                  </li>
+                  <li>
+                    <p>Cardholders can have default floors and passenger type flags per elevator group. Thyssen-Krupp systems can prepare an elevator car when Command Centre grants a cardholder access through lobby turnstiles.</p>
+                  </li>
+                  <li>
+                    <p>You can list visitor management receptions.</p>
+                  </li>
                 </ul>
                 <h4 id="api-changes-in-840">API changes in 8.40</h4>
                 <ul>
@@ -429,7 +451,7 @@
                   <p>The behaviour for all other cases is the same in 8.40 and 8.50.</p>
                   <p>See the Configuration Client help for instructions on where to enter REST Client thumbprints.</p>
                   <p>Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API will only accept connections from the IP address ranges configurated into that client item.</p>
-                  <p>If a connection attempt fails, Command Centre will raise an event indicating its reason for refusing the request.</p>
+                  <p>If a connection attempt fails, Command Centre will raise an event indicating its reason for refusing the request. If that happens too often, the server will stop reporting each offence and will instead create a summary alarm at a much lower rate. The details of the alarm tell you how many failed attempts there have been since the start of the flood. The server will stay in this mode of reduced reporting until several minutes pass without a failed connection attempt.</p>
                 </section>
                 <section class="swagger-security-definition-properties">
                   <div class="prop-row security-definition-property">
@@ -2715,10 +2737,10 @@
                   <p>The API will not notify changes to any fields that you cannot see in the cardholders API, such as user codes, passwords, card PINs, car park assignments, biometric credentials, and (in versions before 8.50) operator settings.</p>
                 </li>
                 <li>
-                  <p>The API will return the pre-change values of some fields, but not those that require a lot of storage such as image PDFs and PIV certificates. Command Centre does not hang on to them after they change.</p>
+                  <p>There is a known issue in 8.50 preventing operator groups changes coming out of this API. Changes to the other five operator settings work correctly.</p>
                 </li>
                 <li>
-                  <p>There is a known issue in 8.50 preventing operator groups changes coming out of this API. Changes to the other five operator settings work correctly.</p>
+                  <p>The API will return the pre-change values of some fields, but not those that require a lot of storage such as image PDFs and PIV certificates. Command Centre does not hang on to them after they change.</p>
                 </li>
               </ul>
             </div>
@@ -5852,6 +5874,20 @@
                   <!-- </div> -->
                 </section>
               </div>
+            </div>
+          </div>
+          <h1 id="tag-Receptions" class="swagger-summary-tag" data-traverse-target="tag-Receptions">Receptions</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>A reception is an item that represents a location at which site visitors identify themselves, meet their hosts, and fulfil induction requirements. Every visit item has a reception. This controller gives you the list of receptions you can pick from when creating a visit.</p>
+              <p>This controller is read-only. It lets you pick a reception by name so that you can use its href on the visits controller.</p>
+              <p>Receptions are new to 8.50.</p>
+              <h3 id="use-case--finding-a-reception-by-name">Use case: finding a reception by name</h3>
+              <ol>
+                <li><code>GET /api</code></li>
+                <li>Follow the link at <code>features.receptions.receptions.href</code> after adding search terms such as <code>name=&quot;Front lobby&quot;</code>. A site typically has very few receptions, so if you add <code>top=1000</code> you&#39;re very unlikely to need to follow a <code>next</code> link.</li>
+                <li>Find the reception you&#39;re after and use its href in a visit.</li>
+              </ol>
             </div>
           </div>
           <h1 id="tag-Roles" class="swagger-summary-tag" data-traverse-target="tag-Roles">Roles</h1>

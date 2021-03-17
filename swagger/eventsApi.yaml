@@ -42,6 +42,8 @@ info:
 
     * The server property that turns off [client certificate checking](#authentication) changed.
 
+    * Divisions can return some of their Visitor Management configuration.
+
     #### Alarms and events API changes in 8.40
 
     - You may now use the `fields` query parameter to tailor the fields that come back for events
@@ -109,6 +111,22 @@ tags:
     After getting all the current alarms using the process above, follow the link at
     `updates.href`.  It will block until there is a new alarm or a change to an
     existing alarm.
+
+- name: Divisions
+  description: |
+    These methods provide access to the Command Centre divisions that are available to the REST
+    client.  Call `/api` and use the link at `features.{your_feature}.divisions.href` to retrieve
+    the divisions in which the REST operator has privileges for that feature, alarms or events.
+    Pick out the ones of interest and use those IDs in event, alarm, or item searches to make them
+    more efficient.
+
+    Or, following a division's link from a reception item to retrieve the visitor management
+    configuration for that reception's division.
+
+    ### Licensing
+
+    Every REST licence enables the divisions controller:  RESTEvents, RESTCreateEvents, RESTCardholders,
+    RESTStatus, and RESTOverrides.
 
 - name: Events
   description: |
@@ -233,19 +251,6 @@ tags:
       each time.  However if you sleep for ten seconds after each call you will receive 20 events at
       a time, saving CPU and I/O.
 
-- name: Divisions
-  description: |
-    These methods provide access to the Command Centre divisions that are available to the REST
-    client.  Call `/api` and use the link at `features.{your_feature}.divisions.href` to retrieve
-    the divisions in which the REST operator has privileges for that feature, alarms or events.
-    Pick out the ones of interest and use those IDs in event, alarm, or item searches to make them
-    more efficient.
-
-    ### Licensing
-
-    Every REST licence enables the divisions controller:  RESTEvents, RESTCreateEvents, RESTCardholders,
-    RESTStatus, and RESTOverrides.
-
 - name: Items
   description: |
 
@@ -345,8 +350,12 @@ securityDefinitions:
       Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API
       will only accept connections from the IP address ranges configurated into that client item.
 
-      If a connection attempt fails, Command Centre will raise an event indicating its
-      reason for refusing the request.
+      If a connection attempt fails, Command Centre will raise an event indicating its reason for
+      refusing the request.  If that happens too often, the server will stop reporting each offence
+      and will instead create a summary alarm at a much lower rate.  The details of the alarm tell
+      you how many failed attempts there have been since the start of the flood.  The server will
+      stay in this mode of reduced reporting until several minutes pass without a failed connection
+      attempt.
 
 x-spectacle-topics:
   Forward compatibility (HATEOAS):
@@ -521,6 +530,14 @@ x-common-blocks-this-is-made-up:
 
       Added in 8.40.
 
+  divfdd_ignored: &DIVFIELDSDESC
+    description: |
+      Return these fields instead of the default set.  The values you can list are the same as the
+      field names you would see in the results, plus `visitorManagement`, which does not come out by
+      default.  Use it to specify the fields you want in your results.  Separate values with commas.
+
+      Treat the string matches as case-sensitive.
+
   item_ignored: &ITEMFIELDS
     in: query
     required: false
@@ -530,7 +547,7 @@ x-common-blocks-this-is-made-up:
     in: query
     required: false
     type: string
-    enum: [href, id, name, parent]
+    enum: [href, id, name, parent, visitorManagement]
 
 security:
   - "API key": []
@@ -1126,14 +1143,21 @@ paths:
 
         `/api` only shows API features for which you have the necessary licence.
       parameters:
+      - name: "top"
+        in: query
+        required: false
+        description: The maximum number of divisions to return per page.
+        type: integer
+        minimum: 1
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
       - name: "fields"
-        <<: *FIELDSDESC_DET
+        <<: *DIVFIELDSDESC
         <<: *DIVFIELDS
       responses:
         200:
           description: Success
           schema:
-            $ref: '#/definitions/DivisionsResult'
+            $ref: '#/definitions/Divisions'
         403: { description: The site does not have a REST licence. }
 
   /api/divisions/{id}:
@@ -1149,14 +1173,14 @@ paths:
         type: string
         description: The ID of the division.
       - name: "fields"
-        <<: *FIELDSDESC_DET
+        <<: *DIVFIELDSDESC
         <<: *DIVFIELDS
       responses: 
         200: 
           description: "Success"
           schema: { $ref: '#/definitions/Division' }
         403: { description: The site does not have a REST licence. }
-        404: { description: "Division ID is invalid or you do not have privileges to read divisions (View Site, Configure Site, or Advanced User)." }
+        404: { description: "That is not the href of a division or you do not have privileges to read divisions (View Site, Configure Site, or Advanced User)." }
 
 ######################################################################
 
@@ -2287,16 +2311,55 @@ definitions:
                 id: "23052"
                 name: Wrong Code only Code
 
-  DivisionsResult:
+  Divisions:
     type: object
     description: |
       Calls inside `/api/divisions/` return this object, which is simply a named array of
       objects each containing some information about a division.
+
     properties:
       results:
         type: array
         description: An array of division objects.
-        items: { $ref: '#/definitions/Division' }
+        items:
+          type: object
+          properties:
+            href:
+              type: string
+              format: url
+              description: A self reference.
+              example: "https://localhost:8904/divisions/2"
+            id:
+              type: string
+              description: |
+                The alphanumeric ID of the division.  Use this ID in the `division` filter when
+                requesting events.
+              example: "2"
+            name:
+              type: string
+              description: The division's name.
+              example: "Root division"
+            serverDisplayName:
+              $ref: "cardholdersApi.yaml#/x-common-blocks/server"
+            parent:
+              description: "An object containing an href to the division entity representing the current division's parent. GET the href for full details."
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: url
+                  example: "https://localhost:8904/divisions/2"
+      next:
+        description: |
+          A site generally does not have too many divisions.  You should be able to collect them all
+          in one request by using the `top` parameter.  If not, follow this link to get the next
+          page of divisions.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/divisions/view_events?skip=10"
 
   Division:
     type: object
@@ -2309,11 +2372,13 @@ definitions:
         type: string
         format: url
         description: A self reference.
-        example: "https://localhost:8904/divisions/2707"
+        example: "https://localhost:8904/divisions/2"
       id:
         type: string
-        description: The alphanumeric ID of the division.  Use this ID in the `division` filter when requesting events.
-        example: "2707"
+        description: |
+          The alphanumeric ID of the division.  Use this ID in the `division` filter when requesting
+          events.
+        example: "2"
       name:
         type: string
         description: The division's name.
@@ -2328,6 +2393,131 @@ definitions:
             type: string
             format: url
             example: "https://localhost:8904/divisions/2"
+      visitorManagement:
+        description: |
+          An object containing the division's visitor management configuration.  It only appears if
+          you ask for it with `fields=visitorManagement`.
+        type: object
+        properties:
+          active:
+            type: boolean
+            example: true
+            description: |
+              If present, true.  It indicates whether a division has its own visitor management
+              configuration or uses its parent's.  Which is also indicated by the presence or
+              absence of the `visitorTypes` block.
+          visitortypes:
+            type: array
+            description: |
+              This is an array of items, each containing a 'visitor type'.  A visitor type comprises
+              three things:  an access group to which visitor management will add every visitor as
+              soon as they are on the visit, host access groups, to one of which the host must
+              belong, and visitor access groups to which Command Centre will add a visitor when they
+              sign in.
+
+              You must pick a visitor type when creating a visit.  It must be on the same division
+              as the reception.
+            items:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: url
+                  example: "https://localhost:8904/api/divisions/2/visitor_types/925"
+                  description: |
+                    This is the href to use for a visitor type when creating a visit.
+
+                    It is only used for identification:  GETting it will 404.
+                accessGroup:
+                  type: object
+                  description: |
+                    The name and href of an access group.
+
+                    Command Centre will add cardholders to this access group as soon as you add them
+                    to a visit of this type.  The purpose of this group is to grant access to PDFs
+                    for personal data that will help them sign in on the day, such as passport and
+                    driver's licence numbers, and photos.
+                  properties:
+                    name:
+                      type: string
+                      example: "Visitor access group 1"
+                    href:
+                      type: string
+                      format: url
+                      example: "https://localhost:8904/api/access_groups/925"
+                hostAccessGroups:
+                  type: array
+                  description: |
+                    Names and hrefs of more access groups.  When you create or modify a visit of
+                    this type, its host cardholder must belong to one of these.
+
+                    A host is the cardholder Command Centre notifies when a visitor arrives, and is
+                    ultimately responsible for the visitor while on site.
+                  items:
+                    type: object
+                    properties:
+                      href:
+                        type: string
+                        format: url
+                        example: "https://localhost:8904/api/divisions/2/visitor_types/925/h_a_g/938"
+                        description: |
+                          This is only used for identification:  GETting it will 404.
+                      accessGroup:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "Host access group 1"
+                          href:
+                            type: string
+                            format: url
+                            example: "https://localhost:8904/api/access_groups/938"
+                visitorAccessGroups:
+                  description: |
+                    Names and hrefs of more access groups.  When creating a visit, you can only pick
+                    visitor access groups from this list.
+
+                    Command Centre will add visitors to a visit's 'visitor access groups' when they
+                    sign in.  Their purpose is to grant visitors access through the site's doors so
+                    that they can move around the site.
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      href:
+                        type: string
+                        format: url
+                        description: |
+                          This is the href to use for a visitor type when removing a visitor access
+                          group from a visit.
+
+                          It is only used for identification:  GETting it will 404.
+                      accessGroup:
+                        type: object
+                        description: |
+                          The name and href of an access group.  Command Centre will add the
+                          visitors on the visit to this access group when they sign in.
+                        properties:
+                          name:
+                            type: string
+                          href:
+                            type: string
+                            format: url
+                  example: [
+                    {
+                      "href": "https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/926",
+                      "accessGroup": {
+                        "name": "Access group 22",
+                        "href": "https://localhost:8904/api/access_groups/926"
+                      }
+                    }, {
+                      "href": "https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/927",
+                      "accessGroup": {
+                        "name": "Access group 30",
+                        "href": "https://localhost:8904/api/access_groups/927"
+                      }
+                    }
+                  ]
 
   Item search:
     type: object

@@ -64,6 +64,12 @@ info:
     * Cardholders report their 'disable cipher pad' setting (vision impairment).
     * Card types will show their division on request.
 
+    * Cardholders can have default floors and passenger type flags per elevator group.
+      Thyssen-Krupp systems can prepare an elevator car when Command Centre grants a cardholder
+      access through lobby turnstiles.
+
+    * You can list visitor management receptions.
+
     #### API changes in 8.40
 
     * Access groups have 22 new fields showing the privileges and access they grant their members.
@@ -275,7 +281,9 @@ x-common-blocks:
 
       Added in 8.50.
 
-######################################################################
+#####################################################################################
+#####################################################################################
+#####################################################################################
 tags:
 - name: Cardholders
   description: |
@@ -408,7 +416,8 @@ tags:
     4. Find the href for the cardholder using one of the search methods above.
     5. Optional:  follow the link at `edit.href` on the cardholder page.  If there is a link at
        `update.href`, your REST client has permission to modify the cardholder.
-    4. PATCH the cardholder's href according to the [cardholder patch schema](#definition-Cardholder-PATCH-example).
+    4. PATCH the cardholder's href according to the [cardholder patch
+       schema](#definition-Cardholder-PATCH-example).
 
     #### Deleting a cardholder's PDF value
     1. Find the URL of your cardholder using one of the processes above.
@@ -533,12 +542,12 @@ tags:
       as user codes, passwords, card PINs, car park assignments, biometric credentials, and (in
       versions before 8.50) operator settings.
 
+    - There is a known issue in 8.50 preventing operator groups changes coming out of this API.
+      Changes to the other five operator settings work correctly.
+
     - The API will return the pre-change values of some fields, but not those that require a lot of
       storage such as image PDFs and PIV certificates.  Command Centre does not hang on to them
       after they change.
-
-    - There is a known issue in 8.50 preventing operator groups changes coming out of this API.
-      Changes to the other five operator settings work correctly.
 
 - name: Access groups
 
@@ -552,8 +561,9 @@ tags:
     GETs.
 
     They also provide the links you need to manage memberships.  Those links are hrefs to
-    cardholders, to which you would send [PATCH](#definition-Cardholder-PATCH-example) requests containing
-    your updates.  Your REST operator will need 'Edit Cardholder' privilege on the cardholder for that.
+    cardholders, to which you would send [PATCH](#definition-Cardholder-PATCH-example) requests
+    containing your updates.  Your REST operator will need 'Edit Cardholder' privilege on the
+    cardholder for that.
 
     ### Use cases
 
@@ -791,6 +801,24 @@ tags:
 
     You do that by [PATCHing a cardholder](#definition-Cardholder-PATCH-example) with a field named
     after the PDF following an '@'.
+
+- name: Receptions
+  description: |
+    A reception is an item that represents a location at which site visitors identify themselves,
+    meet their hosts, and fulfil induction requirements.  Every visit item has a reception.  This
+    controller gives you the list of receptions you can pick from when creating a visit.
+
+    This controller is read-only.  It lets you pick a reception by name so that you can use its href
+    on the visits controller.
+
+    Receptions are new to 8.50.
+
+    ### Use case:  finding a reception by name
+    1. `GET /api`
+    1. Follow the link at `features.receptions.receptions.href` after adding search terms such as
+       `name="Front lobby"`.  A site typically has very few receptions, so if you add `top=1000`
+       you're very unlikely to need to follow a `next` link.
+    1. Find the reception you're after and use its href in a visit.
 
 - name: Roles
   description: |

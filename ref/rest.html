@@ -432,7 +432,7 @@
                   <p>The behaviour for all other cases is the same in 8.40 and 8.50.</p>
                   <p>See the Configuration Client help for instructions on where to enter REST Client thumbprints.</p>
                   <p>Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API will only accept connections from the IP address ranges configurated into that client item.</p>
-                  <p>If a connection attempt fails, Command Centre will raise an event indicating its reason for refusing the request.</p>
+                  <p>If a connection attempt fails, Command Centre will raise an event indicating its reason for refusing the request. If that happens too often, the server will stop reporting each offence and will instead create a summary alarm at a much lower rate. The details of the alarm tell you how many failed attempts there have been since the start of the flood. The server will stay in this mode of reduced reporting until several minutes pass without a failed connection attempt.</p>
                 </section>
                 <section class="swagger-security-definition-properties">
                   <div class="prop-row security-definition-property">
@@ -4000,6 +4000,7 @@
                           <span class="json-property-enum-item">commands</span>,
                           <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">entryAccessZone</span>,
+                          <span class="json-property-enum-item">exitAccessZone</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
                           <span class="json-property-enum-item">status</span>,
                           <span class="json-property-enum-item">notes</span>,
@@ -4135,6 +4136,7 @@
                           <span class="json-property-enum-item">commands</span>,
                           <span class="json-property-enum-item">connectedController</span>,
                           <span class="json-property-enum-item">entryAccessZone</span>,
+                          <span class="json-property-enum-item">exitAccessZone</span>,
                           <span class="json-property-enum-item">statusFlags</span>,
                           <span class="json-property-enum-item">status</span>,
                           <span class="json-property-enum-item">notes</span>,
