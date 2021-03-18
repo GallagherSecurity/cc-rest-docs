@@ -179,6 +179,17 @@
               </li>
             </ul>
           </section>
+          <section>
+            <a href="#tag-Visits">Visits</a>
+            <ul>
+              <li>
+                <a href="#operation--api-visits-get"> Search visits </a>
+              </li>
+              <li>
+                <a href="#operation--api-visits--id--get"> Get details of a visit </a>
+              </li>
+            </ul>
+          </section>
           <h5>Schema Definitions</h5>
           <a href="#definition-Cardholder-search"> Cardholder search </a>
           <a href="#definition-Cardholder-summary"> Cardholder summary </a>
@@ -223,6 +234,8 @@
           <a href="#definition-Reception"> Reception </a>
           <a href="#definition-Role-search"> Role search </a>
           <a href="#definition-Role"> Role </a>
+          <a href="#definition-Visit-search"> Visit search </a>
+          <a href="#definition-Visit"> Visit </a>
         </nav>
       </div>
       <div id="docs" class="row collapse expanded drawer" data-drawer>
@@ -280,7 +293,7 @@
                     <p>Cardholders can have default floors and passenger type flags per elevator group. Thyssen-Krupp systems can prepare an elevator car when Command Centre grants a cardholder access through lobby turnstiles.</p>
                   </li>
                   <li>
-                    <p>You can list visitor receptions.</p>
+                    <p>You can list visitor receptions, and create and manage visits.</p>
                   </li>
                 </ul>
                 <h4 id="api-changes-in-840">API changes in 8.40</h4>
@@ -5931,7 +5944,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns the receptions you are privileged to view.</p>
-                  <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Receptions are small, so a limit of 1000 is sensible.</p>
+                  <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Receptions are small, so setting a limit of 1000 is sensible.</p>
                   <p>When you have loaded all the receptions there will no <code>next</code> link.</p>
                   <p>Take this URL from the href in the <code>features.receptions.receptions</code> section of <code>/api</code>.</p>
                 </section>
@@ -6030,7 +6043,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
+                      <p>Return these fields. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the reception&#39;s notes. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
                       <p>Treat the string matches as case sensitive.</p>
                     </div>
@@ -6160,7 +6173,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
+                      <p>Return these fields. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the reception&#39;s notes. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
                       <p>Treat the string matches as case sensitive.</p>
                     </div>
@@ -6409,6 +6422,416 @@
   <span class="hljs-attr">&quot;next&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles?pos=100&amp;sort=id&quot;</span>
   }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <h1 id="tag-Visits" class="swagger-summary-tag" data-traverse-target="tag-Visits">Visits</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>Visits are new to 8.50.</p>
+              <h3 id="use-case--finding-a-visit-by-name">Use case: finding a visit by name</h3>
+              <ol>
+                <li><code>GET /api</code></li>
+                <li>Follow the link at <code>features.visits.visits.href</code> after adding search terms such as <code>name=Ginger Greeter</code>. A site typically has many visits, so add <code>top=1000</code> for efficiency&#39;s sake.</li>
+                <li>Find the visit you&#39;re after. You can then modify it by PATCHing its href.</li>
+              </ol>
+              <h3 id="use-case--creating-a-visit">Use case: creating a visit</h3>
+              <ol>
+                <li>Find the href of the
+                  <a href="#tag-Receptions">reception</a> at which your visitors will arrive.</li>
+                <li>Look at the visitor management configuration for your reception&#39;s
+                  <a href="events.html#definition-Division">division</a>.</li>
+                <li>Pick a visitor type from that configuration, and a host from that visitor type&#39;s host access groups, and (optionally) some visitor access groups.</li>
+                <li>Pick (or create) at least one cardholder for your visitor or visitors.</li>
+                <li>Build a
+                  <a href="#definition-Visit">JSON payload</a> containing all that.</li>
+                <li>POST to the link at <code>features.visits.visits.href</code> (in the payload of the <code>GET /api</code> you did for the first step).</li>
+              </ol>
+            </div>
+          </div>
+          <div id="operation--api-visits-get" class="operation panel" data-traverse-target="operation--api-visits-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Visits">Visits</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Search visits</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/visits</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns the visits you are privileged to view.</p>
+                  <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page.</p>
+                  <p>When you have loaded all the visits there will no <code>next</code> link.</p>
+                  <p>Take this URL from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">sort</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">-id</span>,
+                          <span class="json-property-enum-item">-name</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
+                      <p>There are two reasons to prefer sorting by ID:</p>
+                      <ol>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
+                        <li>Following a <code>next</code> link is dramatically quicker when sorting by ID.</li>
+                      </ol>
+                      <p>They are such significant motivators that we strongly recommend sorting by ID in the query when there is a chance your results will overflow one page.</p>
+                      <p>The default is changing in a future version of Command Centre.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">top</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">integer</span>
+                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The maximum number of items to return per page.</p>
+                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">name</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>The search is always case-insensitive.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">serverDisplayName</span>,
+                          <span class="json-property-enum-item">notes</span>,
+                          <span class="json-property-enum-item">reception</span>,
+                          <span class="json-property-enum-item">visitorType</span>,
+                          <span class="json-property-enum-item">host</span>,
+                          <span class="json-property-enum-item">from</span>,
+                          <span class="json-property-enum-item">until</span>,
+                          <span class="json-property-enum-item">location</span>,
+                          <span class="json-property-enum-item">badgeText</span>,
+                          <span class="json-property-enum-item">visitorAccessGroups</span>,
+                          <span class="json-property-enum-item">visitors</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the visit&#39;s notes. Separate values with commas.</p>
+                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
+                      <p>Treat the string matches as case sensitive.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Visit search">Visit search</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Supervisor&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1383&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/1383&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Contract manager&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1399&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/1399&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits?pos=100&amp;sort=id&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-visits--id--get" class="operation panel" data-traverse-target="operation--api-visits--id--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Visits">Visits</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get details of a visit</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/visits/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns details for a visit. Follow the href in the
+                    <a href="#definition-Visit-search">summary</a> to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>An internal identifier for the visit.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">serverDisplayName</span>,
+                          <span class="json-property-enum-item">notes</span>,
+                          <span class="json-property-enum-item">reception</span>,
+                          <span class="json-property-enum-item">visitorType</span>,
+                          <span class="json-property-enum-item">host</span>,
+                          <span class="json-property-enum-item">from</span>,
+                          <span class="json-property-enum-item">until</span>,
+                          <span class="json-property-enum-item">location</span>,
+                          <span class="json-property-enum-item">badgeText</span>,
+                          <span class="json-property-enum-item">visitorAccessGroups</span>,
+                          <span class="json-property-enum-item">visitors</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the visit&#39;s notes. Separate values with commas.</p>
+                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
+                      <p>Treat the string matches as case sensitive.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Visit">Visit</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders or RESTEvents licence</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege that allows viewing that visit (&#39;View Visits&#39;).</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Greeter, Ginger&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Initial scoping&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;reception&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main lobby&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/937&quot;</span>
+  },
+  <span class="hljs-attr">&quot;visitorType&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/v_t/925&quot;</span>,
+    <span class="hljs-attr">&quot;accessgroup&quot;</span>: {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor group 1&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+    }
+  },
+  <span class="hljs-attr">&quot;host&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Ginger Greeter&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/526&quot;</span>
+  },
+  <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;1971-03-08T12:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2021-03-08T12:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;location&quot;</span>: <span class="hljs-string">&quot;Gather in Ginger&apos;s office&quot;</span>,
+  <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v_a_g_/926&quot;</span>,
+      <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
+      }
+    }
+  ],
+  <span class="hljs-attr">&quot;visitors&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v/940&quot;</span>,
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red Adair&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/940&quot;</span>
+      }
+    },
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v/9040&quot;</span>,
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;James Page&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/9040&quot;</span>
+      }
+    }
+  ]
 }
 </code></pre> </body>
                   </html>
@@ -12834,6 +13257,286 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1383&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Visit-search" class="definition panel" data-traverse-target="definition-Visit-search">
+            <h2 class="panel-title">
+              <a name="/definitions/Visit search"></a>Visit search:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>An array of visits, and a <code>next</code> link for more.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="results" class="has-description">
+                      <span class="json-property-name">results:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/Visit">Visit</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>An array of visits.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/Visit">Visit</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="next" class="has-description">
+                      <span class="json-property-name">next:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The link to the next page of results. Absent if you have retrieved them all.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Supervisor&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1383&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/1383&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Contract manager&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1399&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/1399&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits?pos=100&amp;sort=id&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Visit" class="definition panel" data-traverse-target="definition-Visit">
+            <h2 class="panel-title">
+              <a name="/definitions/Visit"></a>Visit:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p><code>/api/visits</code> returns an array of these.</p>
+                  <p>This section is incomplete.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="name" class="has-description">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>You can name a visit however you like. Gallagher&#39;s own clients names them after their hosts.</p>
+                    </dd>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the string to use when PATCHing an existing visit.</p>
+                    </dd>
+                    <dt data-property-name="serverDisplayName" class="has-description">
+                      <span class="json-property-name">serverDisplayName:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
+                    </dd>
+                    <dt data-property-name="description" class="has-description">
+                      <span class="json-property-name">description:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A visit&#39;s description is free text. Gallagher&#39;s visitor management clients use it for the visit&#39;s purpose.</p>
+                    </dd>
+                    <dt data-property-name="division" class="has-description">
+                      <span class="json-property-name">division:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The division containing this visit. This will be the same as the visit&#39;s reception&#39;s division.</p>
+                    </dd>
+                    <dt data-property-name="reception" class="has-description">
+                      <span class="json-property-name">reception:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Every visit must have a reception. It represents the area at which your visitors will first arrive. Behind the scenes, it limits the visits a kiosk in that location can see, allowing sites to compartmentalise their visits.</p>
+                    </dd>
+                    <dt data-property-name="visitorType" class="has-description">
+                      <span class="json-property-name">visitorType:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Description coming.</p>
+                    </dd>
+                    <dt data-property-name="host" class="has-description">
+                      <span class="json-property-name">host:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Description coming.</p>
+                    </dd>
+                    <dt data-property-name="from">
+                      <span class="json-property-name">from:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(date-time)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="until">
+                      <span class="json-property-name">until:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(date-time)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="location" class="has-description">
+                      <span class="json-property-name">location:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Free text.</p>
+                    </dd>
+                    <dt data-property-name="visitorAccessGroups" class="has-description">
+                      <span class="json-property-name">visitorAccessGroups:</span>
+                      <span class="json-property-type">array</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Description coming.</p>
+                    </dd>
+                    <dt data-property-name="visitors" class="has-description">
+                      <span class="json-property-name">visitors:</span>
+                      <span class="json-property-type">array</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This array contains two hrefs for each cardholder due to arrive in this visit. The first, outside the <code>cardholder</code> block, is the one you need to use when removing cardholders from a visit using a PATCH. The one inside the <code>cardholder</code> block is simply an href to the cardholder item.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Greeter, Ginger&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Initial scoping&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;reception&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main lobby&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/937&quot;</span>
+  },
+  <span class="hljs-attr">&quot;visitorType&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/v_t/925&quot;</span>,
+    <span class="hljs-attr">&quot;accessgroup&quot;</span>: {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor group 1&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+    }
+  },
+  <span class="hljs-attr">&quot;host&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Ginger Greeter&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/526&quot;</span>
+  },
+  <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;1971-03-08T12:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2021-03-08T12:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;location&quot;</span>: <span class="hljs-string">&quot;Gather in Ginger&apos;s office&quot;</span>,
+  <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v_a_g_/926&quot;</span>,
+      <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
+      }
+    }
+  ],
+  <span class="hljs-attr">&quot;visitors&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v/940&quot;</span>,
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red Adair&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/940&quot;</span>
+      }
+    },
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v/9040&quot;</span>,
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;James Page&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/9040&quot;</span>
+      }
+    }
+  ]
 }
 </code></pre> </body>
                   </html>

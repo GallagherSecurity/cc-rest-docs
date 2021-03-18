@@ -68,7 +68,7 @@ info:
       Thyssen-Krupp systems can prepare an elevator car when Command Centre grants a cardholder
       access through lobby turnstiles.
 
-    * You can list visitor receptions.
+    * You can list visitor receptions, and create and manage visits.
 
     #### API changes in 8.40
 
@@ -849,6 +849,29 @@ tags:
        the href of the first cardholder (the supervisor) and the href of the role.  Here is an
        [example PATCH](#definition-Cardholder-PATCH-example).
 
+- name: Visits
+  description: |
+
+    Visits are new to 8.50.
+
+    ### Use case:  finding a visit by name
+    1. `GET /api`
+    1. Follow the link at `features.visits.visits.href` after adding search terms such as
+       `name=Ginger Greeter`.  A site typically has many visits, so add `top=1000` for efficiency's
+       sake.
+    1. Find the visit you're after.  You can then modify it by PATCHing its href.
+
+    ### Use case:  creating a visit
+    1. Find the href of the [reception](#tag-Receptions) at which your visitors will arrive.
+    1. Look at the visitor management configuration for your reception's
+       [division](events.html#definition-Division).
+    1. Pick a visitor type from that configuration, and a host from that visitor type's host access
+       groups, and (optionally) some visitor access groups.
+    1. Pick (or create) at least one cardholder for your visitor or visitors.
+    1. Build a [JSON payload](#definition-Visit) containing all that.
+    1. POST to the link at `features.visits.visits.href` (in the payload of the `GET /api` you did
+       for the first step).
+
 securityDefinitions:
   "API key":
     $ref: "eventsApi.yaml#/securityDefinitions/API key"
@@ -954,9 +977,29 @@ parameters:
     default: ['defaults']
     enum: [href, name, description, division, serverDisplayName, notes]
     description: |
-          Return these fields in the search results.  The values you can list are the same in the
-          search and details pages.  Using it you can return everything on the search page that
-          you would find on the details page.  Separate values with commas.
+          Return these fields.  The values you can list are the same in the search and details
+          pages.  Using it you can return everything on the search page that you would find on the
+          details page, plus the reception's notes.  Separate values with commas.
+
+          Use the special value `defaults` to return the fields you would have received had you not
+          given the parameter at all.  Add more after a comma.
+
+          Treat the string matches as case sensitive.
+
+  visit_fields:
+    name: "fields"
+    in: query
+    required: false
+    type: array
+    items: { type: string }
+    default: ['defaults']
+    enum: [href, name, description, division, serverDisplayName, notes,
+    reception, visitorType, host, from, until, location, badgeText, visitorAccessGroups, visitors
+    ]
+    description: |
+          Return these fields.  The values you can list are the same in the search and details
+          pages.  Using it you can return everything on the search page that you would find on the
+          details page, plus the visit's notes.  Separate values with commas.
 
           Use the special value `defaults` to return the fields you would have received had you not
           given the parameter at all.  Add more after a comma.
@@ -4203,6 +4246,126 @@ definitions:
         example: "1383"
 
 ######################################################################
+
+  Visit search:
+    description: |
+      An array of visits, and a `next` link for more.
+
+    properties:
+      results:
+        type: array
+        description: An array of visits.
+        items: { $ref: '#/definitions/Visit' }
+        example:
+          - name: "Supervisor"
+            id: "1383"
+            href: "https://localhost:8904/api/visits/1383"
+          - name: "Contract manager"
+            id: "1399"
+            href: "https://localhost:8904/api/visits/1399"
+            serverDisplayName: "ruatoria.satellite.int"
+      next:
+        type: object
+        description: The link to the next page of results.  Absent if you have retrieved them all.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/visits?pos=100&sort=id"
+
+  Visit:
+    description: |
+      `/api/visits` returns an array of these.
+
+      This section is incomplete.
+
+    properties:
+      name:
+        type: string
+        example: "Greeter, Ginger"
+        description: |
+          You can name a visit however you like.  Gallagher's own clients names them after their
+          hosts.
+      href:
+        type: string
+        format: url
+        description: This is the string to use when PATCHing an existing visit.
+        example: "https://localhost:8904/api/visits/941"
+      serverDisplayName:
+        <<: *SERVER
+      description:
+        type: string
+        example: "Initial scoping"
+        description: |
+          A visit's description is free text.  Gallagher's visitor management clients use it for the
+          visit's purpose.
+      division:
+        type: object
+        description: |
+          The division containing this visit.  This will be the same as the visit's reception's
+          division.
+        example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
+      reception:
+        type: object
+        description: |
+          Every visit must have a reception.  It represents the area at which your visitors will
+          first arrive.  Behind the scenes, it limits the visits a kiosk in that location can see,
+          allowing sites to compartmentalise their visits.
+        example:
+            name: "Main lobby"
+            href: "https://localhost:8904/api/receptions/937"
+      visitorType:
+        type: object
+        description: "Description coming." 
+        example:
+            href: "https://localhost:8904/api/divisions/2/v_t/925"
+            accessgroup:
+              name: "Visitor group 1"
+              href: "https://localhost:8904/api/access_groups/925"
+      host:
+        type: object
+        description: "Description coming." 
+        example:
+          name: "Ginger Greeter"
+          href: "https://localhost:8904/api/cardholders/526"
+      from:
+        type: string
+        format: date-time
+        example: "1971-03-08T12:35:00Z"
+      until:
+        type: string
+        format: date-time
+        example: "2021-03-08T12:35:00Z"
+      location:
+        type: string
+        description: Free text.
+        example: "Gather in Ginger's office"
+      visitorAccessGroups:
+        type: array
+        description: "Description coming."
+        example:
+        - href: "https://localhost:8904/api/visits/941/v_a_g_/926"
+          accessGroup:
+            name: "Access group 22"
+            href: "https://localhost:8904/api/access_groups/926"
+      visitors:
+        type: array
+        description: |
+          This array contains two hrefs for each cardholder due to arrive in this visit.  The first,
+          outside the `cardholder` block, is the one you need to use when removing cardholders from
+          a visit using a PATCH.  The one inside the `cardholder` block is simply an href to the
+          cardholder item.
+        example:
+        - href: "https://localhost:8904/api/visits/941/v/940"
+          cardholder:
+            name: "Red Adair"
+            href: "https://localhost:8904/api/cardholders/940"
+        - href: "https://localhost:8904/api/visits/941/v/9040"
+          cardholder:
+            name: "James Page"
+            href: "https://localhost:8904/api/cardholders/9040"
+
+######################################################################
 ######################################################################
 ######################################################################
 paths:
@@ -5681,7 +5844,7 @@ paths:
 
         The result will contain no more than 100 objects; you should follow the `next` link, if it
         is present, to collect more, or use the `top` parameter to get more per page.  Receptions
-        are small, so a limit of 1000 is sensible.
+        are small, so setting a limit of 1000 is sensible.
 
         When you have loaded all the receptions there will no `next` link.
 
@@ -5758,4 +5921,60 @@ paths:
           schema: {$ref: '#/definitions/Role search'}
         403:
           description: The site does not have the RESTCardholders licence.
+
+######################################################################
+  /api/visits:
+    get:
+      tags: [ "Visits" ]
+      summary: Search visits
+      description: |
+        This returns the visits you are privileged to view.
+
+        The result will contain no more than 100 objects; you should follow the `next` link, if it
+        is present, to collect more, or use the `top` parameter to get more per page.
+
+        When you have loaded all the visits there will no `next` link.
+
+        Take this URL from the href in the `features.visits.visits` section of `/api`.
+
+      parameters:
+      - $ref: "#/parameters/sort"
+      - $ref: "#/parameters/top"
+      - $ref: "#/parameters/name"
+      - $ref: "#/parameters/division"
+      - $ref: "#/parameters/visit_fields"
+
+      responses:
+        200:
+          description: "Success."
+          schema: {$ref: '#/definitions/Visit search'}
+        403:
+          description: The site does not have the RESTCardholders licence.
+
+  /api/visits/{id}:
+    get:
+      tags: [ "Visits" ]
+      summary: Get details of a visit
+      description: |
+        This returns details for a visit.  Follow the href in the
+        [summary](#definition-Visit-search) to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: An internal identifier for the visit.
+      - $ref: "#/parameters/visit_fields"
+
+      responses:
+        200:
+          description: "Success."
+          schema: {$ref: '#/definitions/Visit'}
+        403:
+          description: |
+            The site does not have the RESTCardholders or RESTEvents licence
+        404:
+          description: |
+            The operator does not have a privilege that allows viewing that visit ('View Visits').
 
