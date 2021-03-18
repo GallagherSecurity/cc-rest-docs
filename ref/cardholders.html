@@ -162,7 +162,14 @@
           </section>
           <section>
             <a href="#tag-Receptions">Receptions</a>
-            <ul> </ul>
+            <ul>
+              <li>
+                <a href="#operation--api-receptions-get"> Search receptions </a>
+              </li>
+              <li>
+                <a href="#operation--api-receptions--id--get"> Get details of a reception </a>
+              </li>
+            </ul>
           </section>
           <section>
             <a href="#tag-Roles">Roles</a>
@@ -212,6 +219,8 @@
           <a href="#definition-Operator-group-membership"> Operator group membership </a>
           <a href="#definition-PDF-definition-search"> PDF definition search </a>
           <a href="#definition-PDF-definition"> PDF definition </a>
+          <a href="#definition-Reception-search"> Reception search </a>
+          <a href="#definition-Reception"> Reception </a>
           <a href="#definition-Role-search"> Role search </a>
           <a href="#definition-Role"> Role </a>
         </nav>
@@ -271,7 +280,7 @@
                     <p>Cardholders can have default floors and passenger type flags per elevator group. Thyssen-Krupp systems can prepare an elevator car when Command Centre grants a cardholder access through lobby turnstiles.</p>
                   </li>
                   <li>
-                    <p>You can list visitor management receptions.</p>
+                    <p>You can list visitor receptions.</p>
                   </li>
                 </ul>
                 <h4 id="api-changes-in-840">API changes in 8.40</h4>
@@ -339,13 +348,21 @@
                 <h4 id="api-changes-in-810">API changes in 8.10</h4>
                 <p>All changes contain the text &quot;8.10&quot;.</p>
                 <ul>
-                  <li>A
-                    <a href="#operation--api-card_types-assign-get">card types API</a> that returns the card types your operator is able to use when assigning cards to cardholders.</li>
-                  <li>A
-                    <a href="#operation--api-personal_data_fields-get">PDF API</a> that returns the PDF definitions your operator is able to see.</li>
-                  <li>You can change the
-                    <a href="#definition-Cardholder-PATCH-example">notifications flag</a> on a cardholder&#39;s PDF.</li>
-                  <li>Certificates and biometric data are available on PIV cards.</li>
+                  <li>
+                    <p>A
+                      <a href="#operation--api-card_types-assign-get">card types API</a> that returns the card types your operator is able to use when assigning cards to cardholders.</p>
+                  </li>
+                  <li>
+                    <p>A
+                      <a href="#operation--api-personal_data_fields-get">PDF API</a> that returns the PDF definitions your operator is able to see.</p>
+                  </li>
+                  <li>
+                    <p>You can change the
+                      <a href="#definition-Cardholder-PATCH-example">notifications flag</a> on a cardholder&#39;s PDF.</p>
+                  </li>
+                  <li>
+                    <p>Certificates and biometric data are available on PIV cards.</p>
+                  </li>
                 </ul>
                 <h3 id="efficiency-tips">Efficiency tips</h3>
                 <ul>
@@ -5888,6 +5905,329 @@
                 <li>Follow the link at <code>features.receptions.receptions.href</code> after adding search terms such as <code>name=&quot;Front lobby&quot;</code>. A site typically has very few receptions, so if you add <code>top=1000</code> you&#39;re very unlikely to need to follow a <code>next</code> link.</li>
                 <li>Find the reception you&#39;re after and use its href in a visit.</li>
               </ol>
+            </div>
+          </div>
+          <div id="operation--api-receptions-get" class="operation panel" data-traverse-target="operation--api-receptions-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Receptions">Receptions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Search receptions</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/receptions</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns the receptions you are privileged to view.</p>
+                  <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Receptions are small, so a limit of 1000 is sensible.</p>
+                  <p>When you have loaded all the receptions there will no <code>next</code> link.</p>
+                  <p>Take this URL from the href in the <code>features.receptions.receptions</code> section of <code>/api</code>.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">sort</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">-id</span>,
+                          <span class="json-property-enum-item">-name</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
+                      <p>There are two reasons to prefer sorting by ID:</p>
+                      <ol>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
+                        <li>Following a <code>next</code> link is dramatically quicker when sorting by ID.</li>
+                      </ol>
+                      <p>They are such significant motivators that we strongly recommend sorting by ID in the query when there is a chance your results will overflow one page.</p>
+                      <p>The default is changing in a future version of Command Centre.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">top</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">integer</span>
+                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The maximum number of items to return per page.</p>
+                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>Version 8.60 will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">name</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>The search is always case-insensitive.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Only return items in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">serverDisplayName</span>,
+                          <span class="json-property-enum-item">notes</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the search results. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
+                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
+                      <p>Treat the string matches as case sensitive.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Reception search">Reception search</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main lobby&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/937&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Green Dragon main desk&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/979&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions?pos=100&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-receptions--id--get" class="operation panel" data-traverse-target="operation--api-receptions--id--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Receptions">Receptions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get details of a reception</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/receptions/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns details for a reception. Follow the href in the
+                    <a href="#definition-Reception-search">summary</a> to get here.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>An internal identifier for the reception.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">description</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">serverDisplayName</span>,
+                          <span class="json-property-enum-item">notes</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">defaults</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Return these fields in the search results. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
+                      <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
+                      <p>Treat the string matches as case sensitive.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Reception">Reception</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders or RESTEvents licence</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege that allows viewing that PDF&#39;s definition (&#39;View&#39; or &#39;Edit Personal Data Definition&#39;), or the PDF&#39;s own access control is hiding it from the operator.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main lobby&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/937&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Security foyer in B1&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
             </div>
           </div>
           <h1 id="tag-Roles" class="swagger-summary-tag" data-traverse-target="tag-Roles">Roles</h1>
@@ -12136,6 +12476,185 @@
   ],
   <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;.*@.*&quot;</span>,
   <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;@ least&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Reception-search" class="definition panel" data-traverse-target="definition-Reception-search">
+            <h2 class="panel-title">
+              <a name="/definitions/Reception search"></a>Reception search:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>An array of receptions, and a <code>next</code> link for more.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="results" class="has-description">
+                      <span class="json-property-name">results:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/Reception">Reception</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>An array of receptions.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/Reception">Reception</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="next" class="has-description">
+                      <span class="json-property-name">next:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The link to the next page of results. Absent if you have retrieved them all.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main lobby&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/937&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Green Dragon main desk&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/979&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions?pos=100&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Reception" class="definition panel" data-traverse-target="definition-Reception">
+            <h2 class="panel-title">
+              <a name="/definitions/Reception"></a>Reception:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p><code>/api/receptions</code> returns an array of these, and <code>/api/receptions/{id}</code> returns one. Each gives you enough about a reception to identify it and use it in a visit: its href, name, and (if you ask for them using the <code>fields</code> parameter) its description and notes.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="name">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the string to use when creating a visit.</p>
+                    </dd>
+                    <dt data-property-name="serverDisplayName" class="has-description">
+                      <span class="json-property-name">serverDisplayName:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
+                    </dd>
+                    <dt data-property-name="description" class="has-description">
+                      <span class="json-property-name">description:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Short free-form text. Searches do not return an item&#39;s description - ask for it using the <code>fields</code> parameter.</p>
+                    </dd>
+                    <dt data-property-name="division" class="has-description">
+                      <span class="json-property-name">division:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The division containing this reception.</p>
+                    </dd>
+                    <dt data-property-name="notes" class="has-description">
+                      <span class="json-property-name">notes:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Free-form text. You will only get this field if you ask for it with the <code>fields</code> parameter.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main lobby&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/937&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Security foyer in B1&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
 }
 </code></pre> </body>
                   </html>

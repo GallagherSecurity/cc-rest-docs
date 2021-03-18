@@ -68,7 +68,7 @@ info:
       Thyssen-Krupp systems can prepare an elevator car when Command Centre grants a cardholder
       access through lobby turnstiles.
 
-    * You can list visitor management receptions.
+    * You can list visitor receptions.
 
     #### API changes in 8.40
 
@@ -128,7 +128,10 @@ info:
       operator is able to use when assigning cards to cardholders.
     * A [PDF API](#operation--api-personal_data_fields-get) that returns the PDF definitions your
       operator is able to see.
-    * You can change the [notifications flag](#definition-Cardholder-PATCH-example) on a cardholder's PDF.
+
+    * You can change the [notifications flag](#definition-Cardholder-PATCH-example) on a
+      cardholder's PDF.
+
     * Certificates and biometric data are available on PIV cards.
 
     ### Efficiency tips
@@ -941,6 +944,24 @@ parameters:
 
       List the IDs of the divisions you are interested in separated by commas.  Item IDs are short
       alphanumeric strings, not URLs.
+
+  reception_fields:
+    name: "fields"
+    in: query
+    required: false
+    type: array
+    items: { type: string }
+    default: ['defaults']
+    enum: [href, name, description, division, serverDisplayName, notes]
+    description: |
+          Return these fields in the search results.  The values you can list are the same in the
+          search and details pages.  Using it you can return everything on the search page that
+          you would find on the details page.  Separate values with commas.
+
+          Use the special value `defaults` to return the fields you would have received had you not
+          given the parameter at all.  Add more after a comma.
+
+          Treat the string matches as case sensitive.
 
 ####################################################################################################
 ####################################################################################################
@@ -4065,6 +4086,65 @@ definitions:
         example: "@ least"
 
 ######################################################################
+
+  Reception search:
+    description: |
+      An array of receptions, and a `next` link for more.
+
+    properties:
+      results:
+        type: array
+        description: An array of receptions.
+        items: { $ref: '#/definitions/Reception' }
+        example:
+          - name: "Main lobby"
+            href: "https://localhost:8904/api/receptions/937"
+          - name: "Green Dragon main desk"
+            href: "https://localhost:8904/api/receptions/979"
+      next:
+        type: object
+        description: The link to the next page of results.  Absent if you have retrieved them all.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/receptions?pos=100"
+
+  Reception:
+    description: |
+      `/api/receptions` returns an array of these, and `/api/receptions/{id}` returns one.  Each
+      gives you enough about a reception to identify it and use it in a visit:  its href, name, and
+      (if you ask for them using the `fields` parameter) its description and notes.
+    properties:
+      name:
+        type: string
+        example: "Main lobby"
+      href:
+        type: string
+        format: url
+        description: |
+          This is the string to use when creating a visit.
+        example: "https://localhost:8904/api/receptions/937"
+      serverDisplayName:
+        <<: *SERVER
+      description:
+        type: string
+        example: "Security foyer in B1"
+        description: |
+          Short free-form text.  Searches do not return an item's description - ask for it using the
+          `fields` parameter.
+      division:
+        type: object
+        description: The division containing this reception.
+        example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
+      notes:
+        type: string
+        description: |
+          Free-form text.  You will only get this field if you ask for it with the `fields`
+          parameter.
+
+######################################################################
+
   Role search:
     description: |
       An array of roles, and a `next` link for more.
@@ -5582,6 +5662,65 @@ paths:
         200: 
           description: "Success."
           schema: {$ref: '#/definitions/PDF definition'}
+        403:
+          description: |
+            The site does not have the RESTCardholders or RESTEvents licence
+        404:
+          description: |
+            The operator does not have a privilege that allows viewing that PDF's definition ('View'
+            or 'Edit Personal Data Definition'), or the PDF's own access control is hiding it from
+            the operator.
+
+######################################################################
+  /api/receptions:
+    get:
+      tags: [ "Receptions" ]
+      summary: Search receptions
+      description: |
+        This returns the receptions you are privileged to view.
+
+        The result will contain no more than 100 objects; you should follow the `next` link, if it
+        is present, to collect more, or use the `top` parameter to get more per page.  Receptions
+        are small, so a limit of 1000 is sensible.
+
+        When you have loaded all the receptions there will no `next` link.
+
+        Take this URL from the href in the `features.receptions.receptions` section of `/api`.
+
+      parameters:
+      - $ref: "#/parameters/sort"
+      - $ref: "#/parameters/top"
+      - $ref: "#/parameters/name"
+      - $ref: "#/parameters/division"
+      - $ref: "#/parameters/reception_fields"
+
+      responses:
+        200:
+          description: "Success."
+          schema: {$ref: '#/definitions/Reception search'}
+        403:
+          description: The site does not have the RESTCardholders licence.
+
+  /api/receptions/{id}:
+    get:
+      tags: [ "Receptions" ]
+      summary: Get details of a reception
+      description: |
+        This returns details for a reception.  Follow the href in the
+        [summary](#definition-Reception-search) to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: An internal identifier for the reception.
+      - $ref: "#/parameters/reception_fields"
+
+      responses:
+        200:
+          description: "Success."
+          schema: {$ref: '#/definitions/Reception'}
         403:
           description: |
             The site does not have the RESTCardholders or RESTEvents licence
