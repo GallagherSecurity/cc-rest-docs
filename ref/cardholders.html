@@ -186,7 +186,13 @@
                 <a href="#operation--api-visits-get"> Search visits </a>
               </li>
               <li>
+                <a href="#operation--api-visits-post"> Create a visit </a>
+              </li>
+              <li>
                 <a href="#operation--api-visits--id--get"> Get details of a visit </a>
+              </li>
+              <li>
+                <a href="#operation--api-visits--id--patch"> Modify a visit </a>
               </li>
             </ul>
           </section>
@@ -1128,7 +1134,7 @@
                       <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The parameters are invalid.</p>
+                      <p>The body of the POST did not describe a valid cardholder.</p>
                       <p>If you see &#39;Data has not been entered for this Personal Data Field&#39; in the response body, you have attempted to create a cardholder in an access group that has a required Personal Data Field, but not supplied a value for that PDF.</p>
                       <p>If you see &#39;Invalid cardholder&#39;, the server could not parse the JSON in the body of your POST. Remember to quote all strings, especially those than contain @ symbols.</p>
                     </div>
@@ -1775,7 +1781,7 @@
                       <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The parameters are invalid, or other errors that prevented the update.</p>
+                      <p>The parameters are invalid, or other errors prevented the update.</p>
                       <p>If you receive &#39;No fields have been defined for update&#39;, check that your submission body is valid JSON.</p>
                     </div>
                   </div>
@@ -2629,7 +2635,7 @@
                       <div class="prop-title">4xx </div>
                     </div>
                     <div class="prop-value">
-                      <p>The parameters are invalid, or other errors that prevented the update, such as the cardholder being locked for editing by an interactive client, or the operator does not have a privilege that allows moving this cardholder to the target zone.</p>
+                      <p>The parameters are invalid, or other errors prevented the update, such as the cardholder being locked for editing by an interactive client, or the operator does not have a privilege that allows moving this cardholder to the target zone.</p>
                     </div>
                   </div>
                 </section>
@@ -6036,6 +6042,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">serverDisplayName</span>,
+                          <span class="json-property-enum-item">defaultVisitorType</span>,
                           <span class="json-property-enum-item">notes</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
@@ -6166,6 +6173,7 @@
                           <span class="json-property-enum-item">description</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">serverDisplayName</span>,
+                          <span class="json-property-enum-item">defaultVisitorType</span>,
                           <span class="json-property-enum-item">notes</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
@@ -6212,7 +6220,7 @@
                       <div class="prop-title">404 Not Found</div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have a privilege that allows viewing that PDF&#39;s definition (&#39;View&#39; or &#39;Edit Personal Data Definition&#39;), or the PDF&#39;s own access control is hiding it from the operator.</p>
+                      <p>The operator does not have a privilege that allows viewing that reception&#39;s definition.</p>
                     </div>
                   </div>
                 </section>
@@ -6233,6 +6241,13 @@
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;defaultVisitorType&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/v_t/925&quot;</span>,
+    <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor group 1&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+    }
   },
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
 }
@@ -6481,6 +6496,7 @@
                   <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page.</p>
                   <p>When you have loaded all the visits there will no <code>next</code> link.</p>
                   <p>Take this URL from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
+                  <p>Visits are new to 8.50.</p>
                 </section>
               </div>
             </div>
@@ -6655,6 +6671,253 @@
               </div>
             </div>
           </div>
+          <div id="operation--api-visits-post" class="operation panel" data-traverse-target="operation--api-visits-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Visits">Visits</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create a visit</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/visits</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Creates a new visit.</p>
+                  <p>This POST expects a JSON body in the same format as a
+                    <a href="#definition-Visit">visit detail</a>.</p>
+                  <p>Take this URL from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
+                  <p>All visit endpoints are new to 8.50.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Visit">Visit</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>Pay particular attention to the field descriptions in the visit schema because some of the fields that the server sends you in response to a GET will not make sense in a POST, and some are optional.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Greeter, Ginger&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Initial scoping&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;reception&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main lobby&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/937&quot;</span>
+  },
+  <span class="hljs-attr">&quot;visitorType&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/v_t/925&quot;</span>,
+    <span class="hljs-attr">&quot;accessgroup&quot;</span>: {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor group 1&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+    }
+  },
+  <span class="hljs-attr">&quot;host&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Ginger Greeter&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/526&quot;</span>
+  },
+  <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;1971-03-08T12:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2021-03-08T12:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;location&quot;</span>: <span class="hljs-string">&quot;Gather in Ginger&apos;s office&quot;</span>,
+  <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v_a_g_/926&quot;</span>,
+      <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
+      }
+    }
+  ],
+  <span class="hljs-attr">&quot;visitors&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v/940&quot;</span>,
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red Adair&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/940&quot;</span>
+      }
+    },
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v/9040&quot;</span>,
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;James Page&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/9040&quot;</span>
+      }
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Visit">Visit</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the POST did not describe a valid visit. Check the body of the server&#39;s response for hints.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(201 Created)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Greeter, Ginger&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Initial scoping&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;reception&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main lobby&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/937&quot;</span>
+  },
+  <span class="hljs-attr">&quot;visitorType&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/v_t/925&quot;</span>,
+    <span class="hljs-attr">&quot;accessgroup&quot;</span>: {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor group 1&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+    }
+  },
+  <span class="hljs-attr">&quot;host&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Ginger Greeter&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/526&quot;</span>
+  },
+  <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;1971-03-08T12:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2021-03-08T12:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;location&quot;</span>: <span class="hljs-string">&quot;Gather in Ginger&apos;s office&quot;</span>,
+  <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v_a_g_/926&quot;</span>,
+      <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
+      }
+    }
+  ],
+  <span class="hljs-attr">&quot;visitors&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v/940&quot;</span>,
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red Adair&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/940&quot;</span>
+      }
+    },
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v/9040&quot;</span>,
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;James Page&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/9040&quot;</span>
+      }
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+                <section>
+                  <h5>Response Headers
+                    <span>(201 Created)</span>
+                  </h5>
+                  <section class="swagger-response-headers">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="swagger-response-header-name"></th>
+                          <th class="swagger-response-header-description"></th>
+                          <th class="swagger-response-header-data-type"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="swagger-response-header-location">
+                          <td> location
+                            <td>
+                              <p>The href of the new visit.</p>
+                            </td>
+                            <td>
+                              <span class="json-property-type">string</span>
+                              <span class="json-property-format">(url)</span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </section>
+                </section>
+              </div>
+            </div>
+          </div>
           <div id="operation--api-visits--id--get" class="operation panel" data-traverse-target="operation--api-visits--id--get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
@@ -6680,6 +6943,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns details for a visit. Follow the href in the
                     <a href="#definition-Visit-search">summary</a> to get here.</p>
+                  <p>All visit endpoints are new to 8.50.</p>
                 </section>
               </div>
             </div>
@@ -6838,6 +7102,162 @@
                   <!-- </div> -->
                 </section>
               </div>
+            </div>
+          </div>
+          <div id="operation--api-visits--id--patch" class="operation panel" data-traverse-target="operation--api-visits--id--patch">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Visits">Visits</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Modify a visit</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">PATCH</span>
+                  <span class="operation-path">/api/visits/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Changes an existing visit.</p>
+                  <p>This section is incomplete.</p>
+                  <p>Follow the href in a
+                    <a href="#definition-Visit-search">visit search</a> to get here.</p>
+                  <p>All visit endpoints are new to 8.50.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Visit">Visit</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>As well as simple attributes such as <code>from</code> and <code>until</code>, the PATCH body you send can contain instructions for updating the lists of visitors and access groups.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Greeter, Ginger&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Initial scoping&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;reception&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main lobby&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/937&quot;</span>
+  },
+  <span class="hljs-attr">&quot;visitorType&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/v_t/925&quot;</span>,
+    <span class="hljs-attr">&quot;accessgroup&quot;</span>: {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor group 1&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+    }
+  },
+  <span class="hljs-attr">&quot;host&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Ginger Greeter&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/526&quot;</span>
+  },
+  <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;1971-03-08T12:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2021-03-08T12:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;location&quot;</span>: <span class="hljs-string">&quot;Gather in Ginger&apos;s office&quot;</span>,
+  <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v_a_g_/926&quot;</span>,
+      <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
+      }
+    }
+  ],
+  <span class="hljs-attr">&quot;visitors&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v/940&quot;</span>,
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red Adair&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/940&quot;</span>
+      }
+    },
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/v/9040&quot;</span>,
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;James Page&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/9040&quot;</span>
+      }
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the POST did not describe a valid visit. Check the body of the server&#39;s response for hints.</p>
+                      <p>If you receive &#39;No fields have been defined for update&#39;, check that your submission body is valid JSON.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">4xx </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have the privilege to modify that visit, or you attempted to set a field for which you have no privilege.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
             </div>
           </div>
           <h1>Schema Definitions</h1>
@@ -13009,7 +13429,7 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="json-schema-description">
-                  <p><code>/api/receptions</code> returns an array of these, and <code>/api/receptions/{id}</code> returns one. Each gives you enough about a reception to identify it and use it in a visit: its href, name, and (if you ask for them using the <code>fields</code> parameter) its description and notes.</p>
+                  <p><code>/api/receptions</code> returns an array of these, and <code>/api/receptions/{id}</code> returns one. Each gives you enough about a reception to identify it and use it in a visit: its href, name, and (if you ask for them using the <code>fields</code> parameter) its description, default visitor type, and notes.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -13025,7 +13445,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This is the string to use when creating a visit.</p>
+                      <p>This is the href to use when creating a visit.</p>
                     </dd>
                     <dt data-property-name="serverDisplayName" class="has-description">
                       <span class="json-property-name">serverDisplayName:</span>
@@ -13050,6 +13470,14 @@
                     </dt>
                     <dd>
                       <p>The division containing this reception.</p>
+                    </dd>
+                    <dt data-property-name="defaultVisitorType" class="has-description">
+                      <span class="json-property-name">defaultVisitorType:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Gallagher&#39;s visitor management applications use this to pre-fill a UI element prompting the user to pick a visitor type when they are creating a visit for this reception. The server does not use it.</p>
                     </dd>
                     <dt data-property-name="notes" class="has-description">
                       <span class="json-property-name">notes:</span>
@@ -13076,6 +13504,13 @@
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;defaultVisitorType&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/v_t/925&quot;</span>,
+    <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor group 1&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+    }
   },
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
 }
@@ -13370,8 +13805,16 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="json-schema-description">
-                  <p><code>/api/visits</code> returns an array of these.</p>
-                  <p>This section is incomplete.</p>
+                  <p><code>GET /api/visits</code> returns an array of these, <code>GET /api/visits/{id}</code> returns one, and you can send one in a POST or PATCH to <code>/api/visits</code>.</p>
+                  <p>These fields are required when you create a visit:</p>
+                  <ul>
+                    <li>name</li>
+                    <li>reception</li>
+                    <li>visitor type (access group)</li>
+                    <li>host cardholder</li>
+                    <li>start time (<code>from</code>)</li>
+                    <li>end time (<code>until</code>)</li>
+                  </ul>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -13381,7 +13824,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>You can name a visit however you like. Gallagher&#39;s own clients names them after their hosts.</p>
+                      <p>You can name a visit however you like. Gallagher&#39;s in-house applications name them after their hosts.</p>
+                      <p>This field is mandatory when creating a visit. No blank names allowed!</p>
                     </dd>
                     <dt data-property-name="href" class="has-description">
                       <span class="json-property-name">href:</span>
@@ -13390,7 +13834,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This is the string to use when PATCHing an existing visit.</p>
+                      <p>This is the URL to send a PATCH to when modifying an existing visit. It comes out of a GET, and the server will ignore it if you send it in a POST.</p>
                     </dd>
                     <dt data-property-name="serverDisplayName" class="has-description">
                       <span class="json-property-name">serverDisplayName:</span>
@@ -13406,7 +13850,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>A visit&#39;s description is free text. Gallagher&#39;s visitor management clients use it for the visit&#39;s purpose.</p>
+                      <p>A visit&#39;s description is free text. Gallagher&#39;s visitor management clients use it to store the visit&#39;s purpose. You can change it at any time.</p>
                     </dd>
                     <dt data-property-name="division" class="has-description">
                       <span class="json-property-name">division:</span>
@@ -13414,7 +13858,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The division containing this visit. This will be the same as the visit&#39;s reception&#39;s division.</p>
+                      <p>The division containing this visit. This will be the same as the visit&#39;s reception&#39;s division. You cannot change it, except by changing the visit&#39;s reception.</p>
                     </dd>
                     <dt data-property-name="reception" class="has-description">
                       <span class="json-property-name">reception:</span>
@@ -13422,7 +13866,12 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Every visit must have a reception. It represents the area at which your visitors will first arrive. Behind the scenes, it limits the visits a kiosk in that location can see, allowing sites to compartmentalise their visits.</p>
+                      <p>Every visit must have a reception. It represents the location at which your visitors will first arrive. Having one attached to a visit allows a kiosk at that location to hide visits for other receptions, revealing only those meant to start there.</p>
+                      <p>The reception&#39;s name comes from the server in a GET, but if you put it in a POST or a PATCH the server will ignore it. Command Centre only needs its href.</p>
+                      <p>Note that you must send it like it appears in the example, as an href inside a block called <code>reception</code>, like this:</p>
+                      <p><code>&quot;reception&quot;: { &quot;href&quot;: &quot;https://localhost:8904/api/receptions/123&quot; }</code></p>
+                      <p>This will not work:</p>
+                      <p><code>&quot;reception&quot;: &quot;https://localhost:8904/api/receptions/123&quot;</code></p>
                     </dd>
                     <dt data-property-name="visitorType" class="has-description">
                       <span class="json-property-name">visitorType:</span>
@@ -13430,7 +13879,10 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Description coming.</p>
+                      <p>Every visit must also have a visitor type. It provides an access group for your visitors so that they can have personal data (remember that a cardholder must be in an access group before he or she can have a PDF), and it is an index into the visitor management configuration that governs things like the host (the cardholder who is responsible for your visitors) and the access groups that the server will give your visitors when they sign in.</p>
+                      <p>Use the href from the division&#39;s visitor management configuration, or the access group&#39;s href. Both will work.</p>
+                      <p>You will receive the <code>accessGroup</code> object in a GET, but you needn&#39;t send it in a POST or PATCH. The server can find the visitor type using only its href.</p>
+                      <p>Like the reception, when you send this to the server you must use the same form as the example, as an href inside a block called <code>visitorType</code>.</p>
                     </dd>
                     <dt data-property-name="host" class="has-description">
                       <span class="json-property-name">host:</span>
@@ -13438,14 +13890,19 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Description coming.</p>
+                      <p>A host is a cardholder, and every visit has one. A visit&#39;s host is the person who (optionally) receives an email or SMS notification when visitors start signing in, and is responsible for them until they sign out again.</p>
+                      <p>A host must be a member of at least one of the visit&#39;s visitor type&#39;s host access groups at the time that you create or modify the visit. To find out what those are, get the visitor management configuration for your reception&#39;s division (remembering that your visit&#39;s division is its reception&#39;s division). That visitor type contains an array of access groups called <code>hostAccessGroups</code>. Your host cardholder must be a member of one of those groups or their descendants.</p>
+                      <p>When you GET a visit the server will send you the host cardholder&#39;s name, but when you create a visit with a POST or modify one with a PATCH, you needn&#39;t send it back. Do so if you must, but it will not have an effect.</p>
                     </dd>
-                    <dt data-property-name="from">
+                    <dt data-property-name="from" class="has-description">
                       <span class="json-property-name">from:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-format">(date-time)</span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
+                    <dd>
+                      <p>Every visit has a validity period, defined by start and end times.</p>
+                    </dd>
                     <dt data-property-name="until">
                       <span class="json-property-name">until:</span>
                       <span class="json-property-type">string</span>
@@ -13466,7 +13923,12 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Description coming.</p>
+                      <p>These are the access groups that the server will add your visitors to after they complete induction and sign in. They define the access that your visitors have to the site, the same as access groups do for all cardholders.</p>
+                      <p>It is perfectly valid to have no visitor access groups on a visit - it just means that someone will be opening all your guests&#39; doors for them. That might be the kind of thing they are used to anyway.</p>
+                      <p>The visitor access groups on a visit must be a subset of the visitor access groups on the division&#39;s visitor type (in the list of visitor access groups on the visit&#39;s reception&#39;s division&#39;s visitor management configuration, in other words).</p>
+                      <p>When you send a visitor access group block to the server in a POST to create a visit, just send an array of hrefs to access groups, without <code>accessGroups</code> blocks.</p>
+                      <p>When you send a visitor access group block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain access group hrefs, exactly as you would send when creating a visit. The <code>remove</code> array should contain the hrefs you received in the GET, like this:</p>
+                      <p> <code>&quot;remove&quot;: [ { &quot;href&quot;: &quot;https://localhost:8904/api/visits/941/visitor_access_groups/940&quot; }, { &quot;href&quot;: &quot;https://localhost:8904/api/visits/941/visitor_access_groups/9040&quot; } ]</code></p>
                     </dd>
                     <dt data-property-name="visitors" class="has-description">
                       <span class="json-property-name">visitors:</span>
@@ -13474,7 +13936,12 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This array contains two hrefs for each cardholder due to arrive in this visit. The first, outside the <code>cardholder</code> block, is the one you need to use when removing cardholders from a visit using a PATCH. The one inside the <code>cardholder</code> block is simply an href to the cardholder item.</p>
+                      <p>When the server sends this array to you, it contains two hrefs for each cardholder due to arrive in this visit. The first, outside the <code>cardholder</code> block, is the one you need to use when removing cardholders from a visit using a PATCH. The one inside the <code>cardholder</code> block is simply an href to the cardholder item.</p>
+                      <p>A visit with no visitors on it will not appear in Gallagher&#39;s visitor management application. Why clutter the screen if you&#39;re not expecting anybody, after all.</p>
+                      <p>When you send a visitor block to the server in a POST to create a visit, just send an array of hrefs to cardholders, without <code>cardholder</code> blocks. For example:</p>
+                      <p><code>&quot;visitors&quot;: [ {&quot;href&quot;: &quot;https://localhost:8904/api/cardholders/940&quot;}, {&quot;href&quot;: &quot;https://localhost:8904/api/cardholders/9040&quot;}, ]</code></p>
+                      <p>When you send a visitor block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain cardholder hrefs, exactly as you would send when creating a visit. The <code>remove</code> array should contain the hrefs you received in the GET, like this:</p>
+                      <p> <code>&quot;remove&quot;: [ { &quot;href&quot;: &quot;https://localhost:8904/api/visits/941/visitors/940&quot; }, { &quot;href&quot;: &quot;https://localhost:8904/api/visits/941/visitors/9040&quot; } ]</code></p>
                     </dd>
                   </dl>
                 </section>

@@ -975,7 +975,7 @@ parameters:
     type: array
     items: { type: string }
     default: ['defaults']
-    enum: [href, name, description, division, serverDisplayName, notes]
+    enum: [href, name, description, division, serverDisplayName, defaultVisitorType, notes]
     description: |
           Return these fields.  The values you can list are the same in the search and details
           pages.  Using it you can return everything on the search page that you would find on the
@@ -4157,7 +4157,8 @@ definitions:
     description: |
       `/api/receptions` returns an array of these, and `/api/receptions/{id}` returns one.  Each
       gives you enough about a reception to identify it and use it in a visit:  its href, name, and
-      (if you ask for them using the `fields` parameter) its description and notes.
+      (if you ask for them using the `fields` parameter) its description, default visitor type, and
+      notes.
     properties:
       name:
         type: string
@@ -4166,7 +4167,7 @@ definitions:
         type: string
         format: url
         description: |
-          This is the string to use when creating a visit.
+          This is the href to use when creating a visit.
         example: "https://localhost:8904/api/receptions/937"
       serverDisplayName:
         <<: *SERVER
@@ -4180,6 +4181,17 @@ definitions:
         type: object
         description: The division containing this reception.
         example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
+      defaultVisitorType:
+        type: object
+        description: |
+          Gallagher's visitor management applications use this to pre-fill a UI element prompting
+          the user to pick a visitor type when they are creating a visit for this reception.  The
+          server does not use it.
+        example:
+          href: "https://localhost:8904/api/divisions/2/v_t/925"
+          accessGroup:
+            name: "Visitor group 1"
+            href: "https://localhost:8904/api/access_groups/925"
       notes:
         type: string
         description: |
@@ -4275,21 +4287,32 @@ definitions:
 
   Visit:
     description: |
-      `/api/visits` returns an array of these.
+      `GET /api/visits` returns an array of these, `GET /api/visits/{id}` returns one, and you can
+      send one in a POST or PATCH to `/api/visits`.
 
-      This section is incomplete.
+      These fields are required when you create a visit:
+        - name
+        - reception
+        - visitor type (access group)
+        - host cardholder
+        - start time (`from`)
+        - end time (`until`)
 
     properties:
       name:
         type: string
         example: "Greeter, Ginger"
         description: |
-          You can name a visit however you like.  Gallagher's own clients names them after their
-          hosts.
+          You can name a visit however you like.  Gallagher's in-house applications name them after
+          their hosts.
+
+          This field is mandatory when creating a visit.  No blank names allowed!
       href:
         type: string
         format: url
-        description: This is the string to use when PATCHing an existing visit.
+        description: |
+          This is the URL to send a PATCH to when modifying an existing visit.  It comes out of a
+          GET, and the server will ignore it if you send it in a POST.
         example: "https://localhost:8904/api/visits/941"
       serverDisplayName:
         <<: *SERVER
@@ -4297,39 +4320,83 @@ definitions:
         type: string
         example: "Initial scoping"
         description: |
-          A visit's description is free text.  Gallagher's visitor management clients use it for the
-          visit's purpose.
+          A visit's description is free text.  Gallagher's visitor management clients use it to
+          store the visit's purpose.  You can change it at any time.
       division:
         type: object
         description: |
           The division containing this visit.  This will be the same as the visit's reception's
-          division.
+          division.  You cannot change it, except by changing the visit's reception.
         example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
       reception:
         type: object
         description: |
-          Every visit must have a reception.  It represents the area at which your visitors will
-          first arrive.  Behind the scenes, it limits the visits a kiosk in that location can see,
-          allowing sites to compartmentalise their visits.
+          Every visit must have a reception.  It represents the location at which your visitors will
+          first arrive.  Having one attached to a visit allows a kiosk at that location to hide
+          visits for other receptions, revealing only those meant to start there.
+
+          The reception's name comes from the server in a GET, but if you put it in a POST or a
+          PATCH the server will ignore it.  Command Centre only needs its href.
+
+          Note that you must send it like it appears in the example, as an href inside a block
+          called `reception`, like this:
+
+          `"reception": { "href": "https://localhost:8904/api/receptions/123" }`
+
+          This will not work:
+
+          `"reception": "https://localhost:8904/api/receptions/123"`
+
         example:
-            name: "Main lobby"
-            href: "https://localhost:8904/api/receptions/937"
+          name: "Main lobby"
+          href: "https://localhost:8904/api/receptions/937"
       visitorType:
         type: object
-        description: "Description coming." 
+        description: |
+          Every visit must also have a visitor type.  It provides an access group for your visitors
+          so that they can have personal data (remember that a cardholder must be in an access group
+          before he or she can have a PDF), and it is an index into the visitor management
+          configuration that governs things like the host (the cardholder who is responsible for
+          your visitors) and the access groups that the server will give your visitors when they
+          sign in.
+
+          Use the href from the division's visitor management configuration, or the access group's
+          href.  Both will work.
+
+          You will receive the `accessGroup` object in a GET, but you needn't send it in a POST or
+          PATCH.  The server can find the visitor type using only its href.
+
+          Like the reception, when you send this to the server you must use the same form as the
+          example, as an href inside a block called `visitorType`.
         example:
-            href: "https://localhost:8904/api/divisions/2/v_t/925"
-            accessgroup:
-              name: "Visitor group 1"
-              href: "https://localhost:8904/api/access_groups/925"
+          href: "https://localhost:8904/api/divisions/2/v_t/925"
+          accessgroup:
+            name: "Visitor group 1"
+            href: "https://localhost:8904/api/access_groups/925"
       host:
         type: object
-        description: "Description coming." 
+        description: |
+          A host is a cardholder, and every visit has one.  A visit's host is the person who
+          (optionally) receives an email or SMS notification when visitors start signing in, and is
+          responsible for them until they sign out again.
+
+          A host must be a member of at least one of the visit's visitor type's host access groups
+          at the time that you create or modify the visit.  To find out what those are, get the
+          visitor management configuration for your reception's division (remembering that your
+          visit's division is its reception's division).  That visitor type contains an array of
+          access groups called `hostAccessGroups`.  Your host cardholder must be a member of one of
+          those groups or their descendants.
+
+          When you GET a visit the server will send you the host cardholder's name, but when you
+          create a visit with a POST or modify one with a PATCH, you needn't send it back.  Do so if
+          you must, but it will not have an effect.
         example:
           name: "Ginger Greeter"
           href: "https://localhost:8904/api/cardholders/526"
       from:
         type: string
+        description: |
+          Every visit has a validity period, defined by start and end times.
         format: date-time
         example: "1971-03-08T12:35:00Z"
       until:
@@ -4342,7 +4409,29 @@ definitions:
         example: "Gather in Ginger's office"
       visitorAccessGroups:
         type: array
-        description: "Description coming."
+        description: |
+          These are the access groups that the server will add your visitors to after they complete
+          induction and sign in.  They define the access that your visitors have to the site, the
+          same as access groups do for all cardholders.
+
+          It is perfectly valid to have no visitor access groups on a visit - it just means that
+          someone will be opening all your guests' doors for them.  That might be the kind of thing
+          they are used to anyway.
+
+          The visitor access groups on a visit must be a subset of the visitor access groups on the
+          division's visitor type (in the list of visitor access groups on the visit's reception's
+          division's visitor management configuration, in other words).
+
+          When you send a visitor access group block to the server in a POST to create a visit, just
+          send an array of hrefs to access groups, without `accessGroups` blocks.
+
+          When you send a visitor access group block in a PATCH to edit an existing visit, the
+          server expects it to contain one or two arrays called `add` and `remove`.  The `add` array
+          should contain access group hrefs, exactly as you would send when creating a visit.  The
+          `remove` array should contain the hrefs you received in the GET, like this:
+
+            `"remove": [ { "href": "https://localhost:8904/api/visits/941/visitor_access_groups/940" }, { "href": "https://localhost:8904/api/visits/941/visitor_access_groups/9040" } ]`
+
         example:
         - href: "https://localhost:8904/api/visits/941/v_a_g_/926"
           accessGroup:
@@ -4351,10 +4440,26 @@ definitions:
       visitors:
         type: array
         description: |
-          This array contains two hrefs for each cardholder due to arrive in this visit.  The first,
-          outside the `cardholder` block, is the one you need to use when removing cardholders from
-          a visit using a PATCH.  The one inside the `cardholder` block is simply an href to the
-          cardholder item.
+          When the server sends this array to you, it contains two hrefs for each cardholder due to
+          arrive in this visit.  The first, outside the `cardholder` block, is the one you need to
+          use when removing cardholders from a visit using a PATCH.  The one inside the `cardholder`
+          block is simply an href to the cardholder item.
+
+          A visit with no visitors on it will not appear in Gallagher's visitor management
+          application.  Why clutter the screen if you're not expecting anybody, after all.
+
+          When you send a visitor block to the server in a POST to create a visit, just send an
+          array of hrefs to cardholders, without `cardholder` blocks.  For example:
+
+          `"visitors": [ {"href": "https://localhost:8904/api/cardholders/940"}, {"href": "https://localhost:8904/api/cardholders/9040"}, ]`
+
+          When you send a visitor block in a PATCH to edit an existing visit, the server expects it
+          to contain one or two arrays called `add` and `remove`.  The `add` array should contain
+          cardholder hrefs, exactly as you would send when creating a visit.  The `remove` array
+          should contain the hrefs you received in the GET, like this:
+
+            `"remove": [ { "href": "https://localhost:8904/api/visits/941/visitors/940" }, { "href": "https://localhost:8904/api/visits/941/visitors/9040" } ]`
+
         example:
         - href: "https://localhost:8904/api/visits/941/v/940"
           cardholder:
@@ -4532,7 +4637,7 @@ paths:
               description: The href of the new cardholder.
         400:
           description: |
-            The parameters are invalid.
+            The body of the POST did not describe a valid cardholder.
 
             If you see 'Data has not been entered for this Personal Data Field' in the
             response body, you have attempted to create a cardholder in an access group
@@ -4655,7 +4760,7 @@ paths:
           description: "Success."
         400:
           description: |
-            The parameters are invalid, or other errors that prevented the update.
+            The parameters are invalid, or other errors prevented the update.
 
             If you receive 'No fields have been defined for update', check that your submission body
             is valid JSON.
@@ -4932,9 +5037,9 @@ paths:
           description: "Success."
         4xx:
           description: |
-            The parameters are invalid, or other errors that prevented the update, such as the
-            cardholder being locked for editing by an interactive client, or the operator does not
-            have a privilege that allows moving this cardholder to the target zone.
+            The parameters are invalid, or other errors prevented the update, such as the cardholder
+            being locked for editing by an interactive client, or the operator does not have a
+            privilege that allows moving this cardholder to the target zone.
 
   /api/cardholders/{id}/edit:
     get:
@@ -5889,9 +5994,7 @@ paths:
             The site does not have the RESTCardholders or RESTEvents licence
         404:
           description: |
-            The operator does not have a privilege that allows viewing that PDF's definition ('View'
-            or 'Edit Personal Data Definition'), or the PDF's own access control is hiding it from
-            the operator.
+            The operator does not have a privilege that allows viewing that reception's definition.
 
 ######################################################################
   /api/roles:
@@ -5937,6 +6040,8 @@ paths:
 
         Take this URL from the href in the `features.visits.visits` section of `/api`.
 
+        Visits are new to 8.50.
+
       parameters:
       - $ref: "#/parameters/sort"
       - $ref: "#/parameters/top"
@@ -5951,6 +6056,43 @@ paths:
         403:
           description: The site does not have the RESTCardholders licence.
 
+    post:
+      tags: [ "Visits" ]
+      summary: Create a visit
+      description: |
+        Creates a new visit.
+
+        This POST expects a JSON body in the same format as a [visit detail](#definition-Visit).
+
+        Take this URL from the href in the `features.visits.visits` section of `/api`.
+
+        All visit endpoints are new to 8.50.
+
+      parameters:
+        - name: "this string not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Visit'}
+          description: |
+            Pay particular attention to the field descriptions in the visit schema because some of
+            the fields that the server sends you in response to a GET will not make sense in a POST,
+            and some are optional.
+      responses:
+        201:
+          description: "Success."
+          schema: {$ref: '#/definitions/Visit'}
+          headers:
+            location:
+              type: string
+              format: url
+              description: The href of the new visit.
+        400:
+          description: |
+            The body of the POST did not describe a valid visit.  Check the body of the server's
+            response for hints.
+        403:
+          description: The site does not have the RESTCardholders licence.
+
   /api/visits/{id}:
     get:
       tags: [ "Visits" ]
@@ -5958,6 +6100,8 @@ paths:
       description: |
         This returns details for a visit.  Follow the href in the
         [summary](#definition-Visit-search) to get here.
+
+        All visit endpoints are new to 8.50.
 
       parameters:
       - name: "id"
@@ -5977,4 +6121,41 @@ paths:
         404:
           description: |
             The operator does not have a privilege that allows viewing that visit ('View Visits').
+
+    patch:
+      tags: [ "Visits" ]
+      summary: Modify a visit
+      description: |
+        Changes an existing visit.
+
+        This section is incomplete.
+
+        Follow the href in a [visit search](#definition-Visit-search) to get here.
+
+        All visit endpoints are new to 8.50.
+
+      parameters:
+      - name: "this string not rendered"
+        in: body
+        required: true
+        schema: {$ref: '#/definitions/Visit'}
+        description: |
+          As well as simple attributes such as `from` and `until`, the PATCH body you send can
+          contain instructions for updating the lists of visitors and access groups.
+      responses:
+        204:
+          description: "Success."
+        400:
+          description: |
+            The body of the POST did not describe a valid visit.  Check the body of the server's
+            response for hints.
+
+            If you receive 'No fields have been defined for update', check that your submission body
+            is valid JSON.
+        403:
+          description: The site does not have the RESTCardholders licence.
+        4xx:
+          description: |
+            The operator does not have the privilege to modify that visit, or you attempted to set a
+            field for which you have no privilege.
 
