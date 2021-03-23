@@ -2396,7 +2396,9 @@ definitions:
       visitorManagement:
         description: |
           An object containing the division's visitor management configuration.  It only appears if
-          you ask for it with `fields=visitorManagement`.
+          you ask for it with `fields=visitorManagement` and if your operator has the necessary
+          privilege ('View Site', 'Edit Site', 'View Visits', 'Edit Visits', or 'Manage
+          Receptions').
         type: object
         properties:
           active:
@@ -2411,9 +2413,9 @@ definitions:
             description: |
               This is an array of items, each containing a 'visitor type'.  A visitor type comprises
               three things:  an access group to which visitor management will add every visitor as
-              soon as they are on the visit, host access groups, to one of which the host must
-              belong, and visitor access groups to which Command Centre will add a visitor when they
-              sign in.
+              soon as they are on the visit, host access groups, to one of which the host cardholder
+              must belong, and visitor access groups to which Command Centre will add a visitor when
+              they sign in.
 
               You must pick a visitor type when creating a visit.  It must be on the same division
               as the reception.
@@ -2425,7 +2427,8 @@ definitions:
                   format: url
                   example: "https://localhost:8904/api/divisions/2/visitor_types/925"
                   description: |
-                    This is the href to use for a visitor type when creating a visit.
+                    This is the href you should use for a visitor type when you create or update a
+                    visit.
 
                     It is only used for identification:  GETting it will 404.
                 accessGroup:
@@ -2456,12 +2459,6 @@ definitions:
                   items:
                     type: object
                     properties:
-                      href:
-                        type: string
-                        format: url
-                        example: "https://localhost:8904/api/divisions/2/visitor_types/925/h_a_g/938"
-                        description: |
-                          This is only used for identification:  GETting it will 404.
                       accessGroup:
                         type: object
                         properties:
@@ -2474,24 +2471,23 @@ definitions:
                             example: "https://localhost:8904/api/access_groups/938"
                 visitorAccessGroups:
                   description: |
-                    Names and hrefs of more access groups.  When creating a visit, you can only pick
-                    visitor access groups from this list.
+                    An array of access groups.
 
                     Command Centre will add visitors to a visit's 'visitor access groups' when they
                     sign in.  Their purpose is to grant visitors access through the site's doors so
                     that they can move around the site.
+
+                    When creating a visit using this visitor type, you can only pick visitor access
+                    groups from this list.
+
+                    The server puts each group's name and href inside a block called `accessGroup`,
+                    rather than in the root of the array element, to allow for expansion in a future
+                    version.
+
                   type: array
                   items:
                     type: object
                     properties:
-                      href:
-                        type: string
-                        format: url
-                        description: |
-                          This is the href to use for a visitor type when removing a visitor access
-                          group from a visit.
-
-                          It is only used for identification:  GETting it will 404.
                       accessGroup:
                         type: object
                         description: |
@@ -2505,13 +2501,11 @@ definitions:
                             format: url
                   example: [
                     {
-                      "href": "https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/926",
                       "accessGroup": {
                         "name": "Access group 22",
                         "href": "https://localhost:8904/api/access_groups/926"
                       }
                     }, {
-                      "href": "https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/927",
                       "accessGroup": {
                         "name": "Access group 30",
                         "href": "https://localhost:8904/api/access_groups/927"

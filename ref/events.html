@@ -1634,7 +1634,6 @@
         },
         <span class="hljs-attr">&quot;hostAccessGroups&quot;</span>: [
           {
-            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/h_a_g/938&quot;</span>,
             <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Host access group 1&quot;</span>,
               <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/938&quot;</span>
@@ -1643,14 +1642,12 @@
         ],
         <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
           {
-            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/926&quot;</span>,
             <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
               <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
             }
           },
           {
-            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/927&quot;</span>,
             <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 30&quot;</span>,
               <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/927&quot;</span>
@@ -6330,7 +6327,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>An object containing the division&#39;s visitor management configuration. It only appears if you ask for it with <code>fields=visitorManagement</code>.</p>
+                      <p>An object containing the division&#39;s visitor management configuration. It only appears if you ask for it with <code>fields=visitorManagement</code> and if your operator has the necessary privilege (&#39;View Site&#39;, &#39;Edit Site&#39;, &#39;View Visits&#39;, &#39;Edit Visits&#39;, or &#39;Manage Receptions&#39;).</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -6349,7 +6346,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>This is an array of items, each containing a &#39;visitor type&#39;. A visitor type comprises three things: an access group to which visitor management will add every visitor as soon as they are on the visit, host access groups, to one of which the host must belong, and visitor access groups to which Command Centre will add a visitor when they sign in.</p>
+                            <p>This is an array of items, each containing a &#39;visitor type&#39;. A visitor type comprises three things: an access group to which visitor management will add every visitor as soon as they are on the visit, host access groups, to one of which the host cardholder must belong, and visitor access groups to which Command Centre will add a visitor when they sign in.</p>
                             <p>You must pick a visitor type when creating a visit. It must be on the same division as the reception.</p>
                           </dd>
                           <dt class="json-inner-schema">
@@ -6366,7 +6363,7 @@
                                       <span class="json-property-range" title="Value limits"></span>
                                     </dt>
                                     <dd>
-                                      <p>This is the href to use for a visitor type when creating a visit.</p>
+                                      <p>This is the href you should use for a visitor type when you create or update a visit.</p>
                                       <p>It is only used for identification: GETting it will 404.</p>
                                     </dd>
                                     <dt data-property-name="accessGroup" class="has-description">
@@ -6411,15 +6408,6 @@
                                         <div class="json-inner-schema">
                                           <section class="json-schema-properties">
                                             <dl>
-                                              <dt data-property-name="href" class="has-description">
-                                                <span class="json-property-name">href:</span>
-                                                <span class="json-property-type">string</span>
-                                                <span class="json-property-format">(url)</span>
-                                                <span class="json-property-range" title="Value limits"></span>
-                                              </dt>
-                                              <dd>
-                                                <p>This is only used for identification: GETting it will 404.</p>
-                                              </dd>
                                               <dt data-property-name="accessGroup">
                                                 <span class="json-property-name">accessGroup:</span>
                                                 <span class="json-property-type">object</span>
@@ -6453,8 +6441,10 @@
                                       <span class="json-property-range" title="Value limits"></span>
                                     </dt>
                                     <dd>
-                                      <p>Names and hrefs of more access groups. When creating a visit, you can only pick visitor access groups from this list.</p>
+                                      <p>An array of access groups.</p>
                                       <p>Command Centre will add visitors to a visit&#39;s &#39;visitor access groups&#39; when they sign in. Their purpose is to grant visitors access through the site&#39;s doors so that they can move around the site.</p>
+                                      <p>When creating a visit using this visitor type, you can only pick visitor access groups from this list.</p>
+                                      <p>The server puts each group&#39;s name and href inside a block called <code>accessGroup</code>, rather than in the root of the array element, to allow for expansion in a future version.</p>
                                     </dd>
                                     <dt class="json-inner-schema">
                                       <section class="json-schema-array-items">
@@ -6463,16 +6453,6 @@
                                         <div class="json-inner-schema">
                                           <section class="json-schema-properties">
                                             <dl>
-                                              <dt data-property-name="href" class="has-description">
-                                                <span class="json-property-name">href:</span>
-                                                <span class="json-property-type">string</span>
-                                                <span class="json-property-format">(url)</span>
-                                                <span class="json-property-range" title="Value limits"></span>
-                                              </dt>
-                                              <dd>
-                                                <p>This is the href to use for a visitor type when removing a visitor access group from a visit.</p>
-                                                <p>It is only used for identification: GETting it will 404.</p>
-                                              </dd>
                                               <dt data-property-name="accessGroup" class="has-description">
                                                 <span class="json-property-name">accessGroup:</span>
                                                 <span class="json-property-type">object</span>
@@ -6539,7 +6519,6 @@
         },
         <span class="hljs-attr">&quot;hostAccessGroups&quot;</span>: [
           {
-            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/h_a_g/938&quot;</span>,
             <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Host access group 1&quot;</span>,
               <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/938&quot;</span>
@@ -6548,14 +6527,12 @@
         ],
         <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
           {
-            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/926&quot;</span>,
             <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
               <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
             }
           },
           {
-            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925/v_a_g/927&quot;</span>,
             <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
               <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 30&quot;</span>,
               <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/927&quot;</span>

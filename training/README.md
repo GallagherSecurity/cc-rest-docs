@@ -2869,7 +2869,9 @@ Believe it or not there is some order to this.  Please don't dump your stuff on 
 |Run a macro at `/api/macros/id/run`|'Run Macros' or 'Schedule & Run Macros' on the macro's division.|
 |Shunt or unshunt an item.|'Maintenance Override' on the item's division.  'Override', which is good for most other overrides, is not enough to shunt or unshunt an item.|
 
-|View a division's visitor management configuration | 'Edit visits'|
+|View a division's visitor management configuration, and view receptions| 'View Site', 'Edit Site', 'View Visits', 'Edit Visits', or 'Manage Receptions'|
+|View a visit|'View' or 'Edit Visits'.  'Manage Receptions' will not do it.|
+|Modify a visit|'Edit Visits'.  'Manage Receptions' will not do this either.|
 
 <!-- S22 -->
 ----------------------------------------------------------------------
