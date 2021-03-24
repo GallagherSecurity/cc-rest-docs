@@ -49,7 +49,7 @@ info:
     - You may now use the `fields` query parameter to tailor the fields that come back for events
       and alarms.
 
-    - Operator add, modify, and delete [events](#definition-EventSummary) now contain a link to the
+    - Operator add, modify, and delete [events](#definition-Event-summary) now contain a link to the
       affected item in a new `modifiedItem` block, deprecating the `accessGroup` block for those
       event types.
 
@@ -82,7 +82,7 @@ info:
     #### Alarms and events API changes in 8.10
 
     - [Incoming events](#operation--api-events-post)
-    - Events now show their related [access groups and doors](#definition-EventSummary)
+    - Events now show their related [access groups and doors](#definition-Event-summary)
       for external event types.
 
 schemes:
@@ -452,7 +452,7 @@ x-spectacle-topics:
       versions, so explaining it is a topic in itself.
 
       In 8.40 and later the values you can list are the same as the field names in the [details
-      page](#definition-EventDetail), plus the special value for a personal data field described
+      page](#definition-Event-detail), plus the special value for a personal data field described
       below.  You can pick whichever fields you want, including `defaults`, though we urge you to
       not do that and only list the fields you need.  Anything you wrote for 8.30 or earlier will
       work in 8.40 as it did before.
@@ -614,7 +614,7 @@ paths:
         follow to long-poll for live updates to alarms.
 
         The alarm summary only contains unprocessed alarms, but you can still access
-        processed alarms by finding them in the [event summary](#definition-EventSummary)
+        processed alarms by finding them in the [event summary](#definition-Event-summary)
         and following its `alarm.href` link to the alarm details.
 
         Do not code this URL into your application.  Take it from `alarms.alarms.href` in the
@@ -625,7 +625,7 @@ paths:
       responses:
         200:
           description: Success
-          schema: {$ref: '#/definitions/Alarms'}
+          schema: {$ref: '#/definitions/Alarm search'}
         403:
           description: The site does not have a RESTEvents licence.
 
@@ -656,7 +656,7 @@ paths:
         200:
           description: Success
           schema:
-            $ref: '#/definitions/AlarmUpdates'
+            $ref: '#/definitions/Alarm updates'
         403:
           description: The site does not have a RESTEvents licence.
 
@@ -672,7 +672,7 @@ paths:
       responses: 
         200: 
           description: "Success"
-          schema: { $ref: '#/definitions/AlarmDetail' }
+          schema: { $ref: '#/definitions/Alarm detail' }
         404: { description: "The alarm ID is invalid or you do not have privileges for the alarm." }
 
   /api/alarms/{id}/view:
@@ -687,7 +687,7 @@ paths:
         description: Optional comment.
         in: body
         required: false
-        schema: { $ref: '#/definitions/AlarmUpdateRequest' }
+        schema: { $ref: '#/definitions/Alarm update request' }
       responses: 
         200: { description: "Success" }
         404: { description: "Alarm ID is invalid or you do not have privileges for the alarm." }
@@ -704,7 +704,7 @@ paths:
         description: The comment string.
         in: body
         required: true
-        schema: { $ref: '#/definitions/AlarmUpdateRequest' }
+        schema: { $ref: '#/definitions/Alarm update request' }
       responses: 
         200: { description: "Success" }
         404: { description: "Alarm ID is invalid or you do not have privileges for the alarm." }
@@ -723,7 +723,7 @@ paths:
         description: Optional comment.
         in: body
         required: false
-        schema: { $ref: '#/definitions/AlarmUpdateRequest' }
+        schema: { $ref: '#/definitions/Alarm update request' }
       responses: 
         200: { description: "Success" }
         404: { description: "Alarm ID is invalid or you do not have privileges for the alarm." }
@@ -740,7 +740,7 @@ paths:
         description: Optional comment.
         in: body
         required: false
-        schema: { $ref: '#/definitions/AlarmUpdateRequest' }
+        schema: { $ref: '#/definitions/Alarm update request' }
       responses: 
         200: { description: "Success" }
         404: { description: "Alarm ID is invalid or you do not have privileges for the alarm." }
@@ -1091,7 +1091,7 @@ paths:
       responses: 
         200: 
           description: "Success"
-          schema: { $ref: '#/definitions/EventDetail' }
+          schema: { $ref: '#/definitions/Event detail' }
         403: { description: The site does not have a RESTEvents licence. }
         404:
           description: |
@@ -1119,7 +1119,7 @@ paths:
       responses:
         200:
           description: Success
-          schema: { $ref: '#/definitions/EventGroups' }
+          schema: { $ref: '#/definitions/Event groups' }
         403: { description: The site does not have the RESTEvents or RESTCreateEvents licence. }
 
 ######################################################################
@@ -1405,7 +1405,7 @@ paths:
 ####################################################################################################
 definitions:
 
-  Alarms:
+  Alarm search:
     description: |
       An array of alarm summaries, and either a 'next' or an 'updates' link you should follow to
       retrieve more alarms.
@@ -1415,7 +1415,7 @@ definitions:
         type: array
         description: An array of alarm summaries.
         items:
-          { $ref: '#/definitions/AlarmSummary' }
+          { $ref: '#/definitions/Alarm summary' }
       next:
         type: object
         description: The link to the next page of alarms. Missing if you have retrieved all the current alarms.
@@ -1431,14 +1431,14 @@ definitions:
         example:
           href: "https://localhost:8904/api/alarms/updates?id=92143.1"
 
-  AlarmUpdates:
+  Alarm updates:
     type: object
     properties:
       updates:
         type: array
         description: An array of summaries of alarms created or modified since the previous call.
         items:
-          { $ref: '#/definitions/AlarmSummary' }
+          { $ref: '#/definitions/Alarm summary' }
       next:
         type: object
         description: Follow this link to perform another long poll.
@@ -1447,14 +1447,14 @@ definitions:
             type: string
             example: "https://localhost:8904/api/alarms/updates?id=10135"
 
-  AlarmSummary:
+  Alarm summary:
     description: "`/api/alarms` returns an array of these, and `/api/alarms/{id}` returns one with more fields."
     type: object
     properties:
       href:
         type: string
         format: url
-        description: A link to an AlarmDetail object for this alarm.
+        description: A link to the details of this alarm.
         example: "https://localhost:8904/api/alarms/10135"
       id:
         type: string
@@ -1526,7 +1526,9 @@ definitions:
           - "Security staff dispatched"
       view:
         type: object
-        description: POST an AlarmUpdateRequest JSON object to the href to indicate the operator has viewed the alarm.
+        description: |
+          POST an alarm update request JSON object to the href to indicate the operator has viewed
+          the alarm.
         properties:
           href:
             type: string
@@ -1534,7 +1536,9 @@ definitions:
             example: "https://localhost:8904/api/alarms/92210/view"
       comment:
         type: object
-        description: POST an AlarmUpdateRequest JSON object to the href to place an arbitrary alarm note against the alarm.
+        description: |
+          POST an alarm update request JSON object to the href to place an arbitrary alarm note
+          against the alarm.
         properties:
           href:
             type: string
@@ -1542,7 +1546,9 @@ definitions:
             example: "https://localhost:8904/api/alarms/92210/comment"
       acknowledgeWithComment:
         type: object
-        description: POST an AlarmUpdateRequest JSON object to the href to acknowledge an alarm and place an alarm note against it.  Missing if the alarm is already acknowledged.
+        description: |
+          POST an alarm update request JSON object to the href to acknowledge an alarm and place an
+          alarm note against it.  Missing if the alarm is already acknowledged.
         properties:
           href:
             type: string
@@ -1550,7 +1556,10 @@ definitions:
             example: "https://localhost:8904/api/alarms/92210/acknowledge"
       acknowledge:
         type: object
-        description: POST an AlarmUpdateRequest JSON object to the href to acknowledge an alarm. Missing if the system has mandatory alarm notes on for this alarm, or if the alarm is already acknowledged.
+        description: |
+          POST an alarm update request JSON object to the href to acknowledge an alarm. Missing if
+          the system has mandatory alarm notes on for this alarm, or if the alarm is already
+          acknowledged.
         properties:
           href:
             type: string
@@ -1558,7 +1567,7 @@ definitions:
             example: "https://localhost:8904/api/alarms/92210/acknowledge"
       processWithComment:
         type: object
-        description: POST an AlarmUpdateRequest JSON object to the href to process an alarm and place an alarm note against it.  Missing if the alarm cannot be processed (if it is active, for example).
+        description: POST an alarm update request JSON object to the href to process an alarm and place an alarm note against it.  Missing if the alarm cannot be processed (if it is active, for example).
         properties:
           href:
             type: string
@@ -1566,14 +1575,14 @@ definitions:
             example: "https://localhost:8904/api/alarms/92210/process"
       process:
         type: object
-        description: POST an AlarmUpdateRequest JSON object to the href to process an alarm. Missing if the system has mandatory alarm notes on for this alarm.  Missing if the alarm cannot be processed (if it is active, for example).
+        description: POST an alarm update request JSON object to the href to process an alarm. Missing if the system has mandatory alarm notes on for this alarm.  Missing if the alarm cannot be processed (if it is active, for example).
         properties:
           href:
             type: string
             format: url
             example: "https://localhost:8904/api/alarms/92210/process"
 
-  AlarmDetail:
+  Alarm detail:
     description: |
       [/api/alarms/{id}](#operation--api-alarms--id--get) returns one of these.  It contains
       everything from the alarm summary results, plus some extra fields that are too expensive to
@@ -1590,7 +1599,7 @@ definitions:
           history:
             type: array
             description: An array of alarm history entries.  Missing if there is no history.
-            items: { $ref: '#/definitions/AlarmHistoryEntry' }
+            items: { $ref: '#/definitions/Alarm history entry' }
           instruction:
             type: object
             description: GET this link to retrieve the alarm instruction body inside an HTML document.  Missing if there is no alarm instruction for this alarm.
@@ -1617,9 +1626,9 @@ definitions:
                 type: string
                 description: The current value of the lastName field of this cardholder.  Added in 8.20.
                 example: "Smith-Jones"
-      - $ref: "#/definitions/AlarmSummary"
+      - $ref: "#/definitions/Alarm summary"
 
-  AlarmHistoryEntry:
+  Alarm history entry:
     type: object
     properties:
       time:
@@ -1641,7 +1650,7 @@ definitions:
         example:
           name: "System Operator"
 
-  AlarmUpdateRequest:
+  Alarm update request:
     type: object
     properties:
       comment:
@@ -1656,8 +1665,8 @@ definitions:
     properties:
       events:
         type: array
-        description: A list of EventSummary events.
-        items: { $ref: "#/definitions/EventSummary" }
+        description: A list of event summaries.
+        items: { $ref: "#/definitions/Event summary" }
       previous:
         type: object
         description: |
@@ -1694,7 +1703,7 @@ definitions:
             format: url
             example: "https://localhost:8904/api/events/updates?pos=61320"
 
-  EventSummary:
+  Event summary:
     type: object
     description: |
       `/api/events` and `/api/events/updates` return an array of these, and `/api/events/{id}`
@@ -1709,7 +1718,7 @@ definitions:
       href:
         type: string
         format: url
-        description: A link to an EventDetail object for this event.
+        description: A link to this event's details.
         example: "https://localhost:8904/api/events/61320"
       id:
         type: string
@@ -2052,28 +2061,13 @@ definitions:
                 description: |
                   A human-readable name of the item's type, suitable for display.
 
-  EventAlarm:
-    type: object
-    description: "Part of the results of an `/api/events` call, containing a summary of an alarm-priority event. GET the contained href for full alarm details."
-    properties:
-      state:
-        description: Alarms start unacknowledged.
-        type: string
-        enum: [ "unacknowledged", "acknowledged", "processed" ]
-        example: "unacknowledged"
-      href:
-        type: string
-        format: url
-        description: Link to the alarm entity corresponding to the event. GET the href for full alarm details.
-        example: "https://localhost:8904/api/alarms/61320"
-
-  EventDetail:
+  Event detail:
     description: |
       [/api/events/{id}](#operation--api-events--id--get) returns one of these.  It contains
       everything from the event summary results, plus some extra fields that are too expensive to
       compute and return for large result sets.
 
-      Like the example in the [summary](#definition-AlarmSummary), this is somewhat forced:  no
+      Like the example in the [summary](#definition-Alarm-summary), this is somewhat forced:  no
       actual Command Centre event will contain all of these fields, unless you create one yourself.
 
     allOf:
@@ -2093,7 +2087,7 @@ definitions:
               The full alarm details text.  This may be up to 2048 UTF-8 characters, each of which
               could (theoretically) be four bytes long.
             example: "Originating IP address: 192.168.2.3"
-      - $ref: "#/definitions/EventSummary"
+      - $ref: "#/definitions/Event summary"
 
   Event POST body:
     properties:
@@ -2269,7 +2263,7 @@ definitions:
               This can be the href of any door your operator can see.  Get the href using the
               [doors](rest.html#tag-Doors) or [items](#tag-Items) controller.
 
-  EventGroups:
+  Event groups:
     description:  Calls to `/api/events/groups/` return this object, which is a named array of groups of event types.
     type: object
     properties:

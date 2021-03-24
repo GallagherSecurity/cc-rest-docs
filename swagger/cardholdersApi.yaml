@@ -5850,8 +5850,11 @@ paths:
         200: 
           description: "Success."
           schema: { $ref: '#/definitions/Operator group detail' }
-        403: { description: "The operator does not have a privilege that allows viewing that operator groups." }
-        404: { description: "That is not the URL of an operator group." }
+        403: { description: "The site does not have the RESTCardholders licence." }
+        404:
+          description: |
+            That is not the URL of an operator group, or it is the URL of an operator group that the
+            operator does not have the privilege to see ('View' or 'Edit Operators').
 
   /api/operator_groups/{id}/cardholders:
     get:

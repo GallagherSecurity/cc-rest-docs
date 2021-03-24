@@ -2843,6 +2843,7 @@ Believe it or not there is some order to this.  Please don't dump your stuff on 
 |De-authorise a cardholder.|'De-authorise Cardholder' or one of the privileges that lets you edit cardholders on the cardholder's division.|
 |Edit a relationship between cardholders.|One of the privileges that lets you edit cardholders on the cardholder's division and on the role's division.|
 |View a cardholder's operator configuration|'View Operators' or one of the privileges that let you modify an operator, such as 'Edit Operators' or 'Enable/disable Operator'|
+|View operator groups| 'Edit Operator Groups' or 'View Operator Groups' |
 |Change a cardholder's operator groups | 'Modify Operator Group Membership' |
 |View PDF definitions at `/api/personal_data_fields`|'View...' or 'Edit Personal Data Definitions' on the PDF's division.|
 |View events at `/api/events`|'View Events and Alarms' or any of the privileges that allow processing alarms, on the division of the source of the event or alarm.|
