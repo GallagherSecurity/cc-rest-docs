@@ -44,6 +44,9 @@ info:
 
     * Divisions can return some of their Visitor Management configuration.
 
+    * You can view any item's notes.  You have been able to for a while now, but it was missing from
+      this document.
+
     #### Alarms and events API changes in 8.40
 
     - You may now use the `fields` query parameter to tailor the fields that come back for events
@@ -542,12 +545,21 @@ x-common-blocks-this-is-made-up:
     in: query
     required: false
     type: string
-    enum: [href, id, name, type, division, notes]
+    enum: [href, id, name, type, division, serverDisplayName, notes]
   division_ignored_but_must_be_unique: &DIVFIELDS
     in: query
     required: false
     type: string
     enum: [href, id, name, parent, visitorManagement]
+
+  notes_ignored: &NOTES
+    type: string
+    example: "Multi-line text..."
+    description: |
+      Because of their potential size, notes are only available by request.  Use the 'fields'
+      parameter:
+
+      `?fields=defaults,notes,...`
 
 security:
   - "API key": []
@@ -2514,7 +2526,7 @@ definitions:
       results:
         description: A list of item objects, each containing the alphanumeric ID of the item, its name, and its type.
         type: array
-        items: { $ref: "#/definitions/ItemSummary" }
+        items: { $ref: "#/definitions/Item Summary" }
         example:
           - id: "325"
             name: "Brick, Eva"
@@ -2535,7 +2547,7 @@ definitions:
             format: url
             example: "https://localhost:8904/api/items?pos=2"
 
-  ItemSummary:
+  Item Summary:
     type: object
     description: |
       `/api/items` returns an array of these.  Because it can contain an item of any type, it only
@@ -2562,6 +2574,8 @@ definitions:
           name: { type: string, example: "Cardholder" }
       serverDisplayName:
         $ref: "cardholdersApi.yaml#/x-common-blocks/server"
+      notes:
+        <<: *NOTES
 
   ItemDetail:
     type: object
@@ -2581,7 +2595,7 @@ definitions:
                 type: string
                 format: url
                 example: "https://localhost:8904/api/divisions/2"
-      - $ref: "#/definitions/ItemSummary"
+      - $ref: "#/definitions/Item Summary"
 
   ItemTypes:
     type: object

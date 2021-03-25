@@ -117,7 +117,7 @@
           <a href="#definition-Divisions"> Divisions </a>
           <a href="#definition-Division"> Division </a>
           <a href="#definition-Item-search"> Item search </a>
-          <a href="#definition-ItemSummary"> ItemSummary </a>
+          <a href="#definition-Item-Summary"> Item Summary </a>
           <a href="#definition-ItemDetail"> ItemDetail </a>
           <a href="#definition-ItemTypes"> ItemTypes </a>
           <a href="#definition-ItemUpdate"> ItemUpdate </a>
@@ -161,6 +161,9 @@
                   </li>
                   <li>
                     <p>Divisions can return some of their Visitor Management configuration.</p>
+                  </li>
+                  <li>
+                    <p>You can view any item&#39;s notes. You have been able to for a while now, but it was missing from this document.</p>
                   </li>
                 </ul>
                 <h4 id="alarms-and-events-api-changes-in-840">Alarms and events API changes in 8.40</h4>
@@ -3123,6 +3126,7 @@
                           <span class="json-property-enum-item">name</span>,
                           <span class="json-property-enum-item">type</span>,
                           <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">serverDisplayName</span>,
                           <span class="json-property-enum-item">notes</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
@@ -3261,6 +3265,7 @@
                           <span class="json-property-enum-item">name</span>,
                           <span class="json-property-enum-item">type</span>,
                           <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">serverDisplayName</span>,
                           <span class="json-property-enum-item">notes</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
@@ -3319,6 +3324,7 @@
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
   },
   <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
@@ -6513,7 +6519,7 @@
                       <span class="json-property-name">results:</span>
                       <span class="json-property-type">
                         <span class="json-schema-ref-array">
-                          <a class="json-schema-ref" href="#/definitions/ItemSummary">ItemSummary</a>
+                          <a class="json-schema-ref" href="#/definitions/Item Summary">Item Summary</a>
                         </span>
                       </span>
                       <span class="json-property-range" title="Value limits"></span>
@@ -6525,7 +6531,7 @@
                       <section class="json-schema-array-items">
                         <span class="json-property-type">
                           <span class="">
-                            <a class="json-schema-ref" href="#/definitions/ItemSummary">ItemSummary</a>
+                            <a class="json-schema-ref" href="#/definitions/Item Summary">Item Summary</a>
                           </span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
@@ -6591,9 +6597,9 @@
               </div>
             </div>
           </div>
-          <div id="definition-ItemSummary" class="definition panel" data-traverse-target="definition-ItemSummary">
+          <div id="definition-Item-Summary" class="definition panel" data-traverse-target="definition-Item-Summary">
             <h2 class="panel-title">
-              <a name="/definitions/ItemSummary"></a>ItemSummary: object
+              <a name="/definitions/Item Summary"></a>Item Summary: object
               <!-- <span class="json-property-type"><span class="json-property-type">object</span>
               <span class="json-property-range" title="Value limits"></span>
               
@@ -6655,6 +6661,15 @@
                     <dd>
                       <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
                     </dd>
+                    <dt data-property-name="notes" class="has-description">
+                      <span class="json-property-name">notes:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Because of their potential size, notes are only available by request. Use the &#39;fields&#39; parameter:</p>
+                      <p><code>?fields=defaults,notes,...</code></p>
+                    </dd>
                   </dl>
                 </section>
               </div>
@@ -6671,7 +6686,8 @@
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
   },
-  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -6698,7 +6714,7 @@
                   <section class="json-schema-allOf-inherited">
                     <ul>
                       <span class="">
-                        <a class="json-schema-ref" href="#/definitions/ItemSummary">ItemSummary</a>
+                        <a class="json-schema-ref" href="#/definitions/Item Summary">Item Summary</a>
                       </span>
                     </ul>
                   </section>
@@ -6746,6 +6762,7 @@
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
   },
   <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
