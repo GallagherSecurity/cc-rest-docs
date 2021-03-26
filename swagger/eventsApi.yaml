@@ -361,6 +361,9 @@ securityDefinitions:
       attempt.
 
 x-spectacle-topics:
+  Documentation suite:
+    $ref: "indexApi.yaml#/x-spectacle-topics/Documentation suite"
+
   Forward compatibility (HATEOAS):
     description: |
       This is a self-referencing REST API that follows the principles of HATEOAS.  Other than the
@@ -1276,7 +1279,7 @@ paths:
       responses:
         200:
           description: Success
-          schema: { $ref: '#/definitions/ItemDetail' }
+          schema: { $ref: '#/definitions/Item detail' }
         404:
           description: |
             That is not the href of an item.  At least not one that your operator has the privilege
@@ -1299,7 +1302,7 @@ paths:
       responses:
         200:
           description: Success
-          schema: { $ref: '#/definitions/ItemTypes' }
+          schema: { $ref: '#/definitions/Item types' }
         403: { description: The site does not have a REST licence. }
 
   /api/items/updates:
@@ -1325,13 +1328,13 @@ paths:
             The body of the POST needs to contain a list of item IDs in an array called `itemIds`.
             Even though they look like small integers, these IDs are actually strings so don't
             forget the quotes.
-          schema: {$ref: "#/definitions/ItemUpdateSubscription"}
+          schema: {$ref: "#/definitions/Item update subscription"}
           example: { "itemIds": ["508", "526"] }
 
       responses:
         200:
           description: Success
-          schema: { $ref: '#/definitions/ItemUpdate' }
+          schema: { $ref: '#/definitions/Item update' }
           example: {
             "updates": [
               {
@@ -1391,7 +1394,7 @@ paths:
       responses:
         200:
           description: Success
-          schema: { $ref: '#/definitions/ItemUpdate' }
+          schema: { $ref: '#/definitions/Item update' }
           example: {
             "updates": [
               {
@@ -2526,7 +2529,7 @@ definitions:
       results:
         description: A list of item objects, each containing the alphanumeric ID of the item, its name, and its type.
         type: array
-        items: { $ref: "#/definitions/Item Summary" }
+        items: { $ref: "#/definitions/Item summary" }
         example:
           - id: "325"
             name: "Brick, Eva"
@@ -2547,7 +2550,7 @@ definitions:
             format: url
             example: "https://localhost:8904/api/items?pos=2"
 
-  Item Summary:
+  Item summary:
     type: object
     description: |
       `/api/items` returns an array of these.  Because it can contain an item of any type, it only
@@ -2577,7 +2580,7 @@ definitions:
       notes:
         <<: *NOTES
 
-  ItemDetail:
+  Item detail:
     type: object
     description: |
       A call to `/api/items/{id}` (added in 8.40) returns one of these.  It adds the item's division
@@ -2595,9 +2598,9 @@ definitions:
                 type: string
                 format: url
                 example: "https://localhost:8904/api/divisions/2"
-      - $ref: "#/definitions/Item Summary"
+      - $ref: "#/definitions/Item summary"
 
-  ItemTypes:
+  Item types:
     type: object
     description:  Calls to `/api/items/types` return this object, an array of item types.
     properties:
@@ -2622,7 +2625,7 @@ definitions:
         - id: "2"
           name: "Access Group"
 
-  ItemUpdate:
+  Item update:
     type: object
     description: |
       POSTs and GETs to `/api/items/updates` return this object.  It contains an array of updates
@@ -2736,7 +2739,7 @@ definitions:
       }
     }
 
-  ItemUpdateSubscription:
+  Item update subscription:
     type: objecct
     description: |
       Contains a list of item IDs (short alphanums).  Send it in the body of a
