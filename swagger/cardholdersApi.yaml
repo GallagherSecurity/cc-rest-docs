@@ -288,6 +288,189 @@ x-common-blocks:
 
       Added in 8.50.
 
+  visit_name: &VISIT_NAME
+    type: string
+    example: "Greeter, Ginger"
+    description: |
+      You can name a visit however you like.  Gallagher's in-house applications name them after
+      their hosts.
+
+      This field is mandatory when creating a visit.  No blank names allowed!
+  v_desc: &VISIT_DESCRIPTION
+    type: string
+    example: "Initial scoping"
+    description: |
+      A vvisit's description is free text.  Gallagher's visitor management clients use it to
+      store the visit's purpose.  You can change it at any time.
+
+  v_recept: &VISIT_RECEPTION
+    type: object
+    description: |
+      Every visit must have a reception.  It represents the location at which your visitors will
+      first arrive.  Having one attached to a visit allows a kiosk at that location to hide
+      visits for other receptions, revealing only those meant to start there.
+
+      Since every visit must have a reception, every POST must have one.  Once you have a visit in
+      the system you can change its reception, but if any validation fails--and there is a lot of
+      it--the PATCH will fail.
+
+      The reception's name comes from the server in a GET, but if you put it in a POST or a
+      PATCH the server will ignore it.  Command Centre only needs its href.
+
+      Note that you must send it like it appears in the example, as an href inside a block
+      called `reception`, like in the example.  This will not work:
+
+      `"reception": "https://localhost:8904/api/receptions/123"`
+
+    example:
+      name: "Main lobby"
+      href: "https://localhost:8904/api/receptions/937"
+
+  v_vt: &VISIT_VISITORTYPE
+    type: object
+    description: |
+      Every visit must also have a visitor type.  It provides an access group for your visitors
+      so that they can have personal data (remember that a cardholder must be in an access group
+      before he or she can have a PDF), and it is an index into the visitor management
+      configuration that governs things like the host (the cardholder who is responsible for
+      your visitors) and the access groups that the server will give your visitors when they
+      sign in.
+
+      Use the href from the division's visitor management configuration, or the access group's
+      href.  Both will work.
+
+      You will receive the `accessGroup` object inside the `visitorType` block in a GET, but you
+      needn't send it in a POST or PATCH.  The server can find the visitor type using only its href.
+
+      Like the reception, when you send this to the server you must use the same form as the
+      example, as an href inside a block called `visitorType`.  The href can be to an access group
+      that you got from an [access group](#operation--api-access_groups-get) or the visitor
+      management configuration on a
+      [division](events.html#operation--api-divisions--operation--get).  For example, both of these
+      will work as visitor type hrefs:
+
+      `https://localhost:8904/api/access_groups/925` (taken from another visit, or a search of
+      access groups)
+
+      `https://localhost:8904/api/divisions/2/visitor_types/925` (taken from a division config)
+
+      Your operator must have the privilege to view the access group, otherwise you will be told
+      'Access denied when writing to one or more fields'.  The 'Modify Access Control' privilege
+      is a good choice because it not only gives you a view of access groups but the ability to
+      change cardholders' membership of them, which you need to add visitors and visitor groups.
+    example:
+      href: "https://localhost:8904/api/divisions/2/v_t/925"
+      accessgroup:
+        name: "Visitor group 1"
+        href: "https://localhost:8904/api/access_groups/925"
+
+  v_host: &VISIT_HOST
+    type: object
+    description: |
+      A host is a cardholder, and every visit has one.  A visit's host is the person who
+      (optionally) receives an email or SMS notification when visitors start signing in, and is
+      responsible for them until they sign out again.
+
+      A host must be a member of at least one of the visit's visitor type's host access groups
+      at the time that you create or modify the visit.  To find out what those are, get the
+      visitor management configuration for your reception's division (remembering that your
+      visit's division is its reception's division).  That visitor type contains an array of
+      access groups called `hostAccessGroups`.  Your host cardholder must be a member of one of
+      those groups or their descendants.
+
+      When you GET a visit the server will send you the host cardholder's name, but when you create
+      a visit with a POST or modify one with a PATCH, you needn't send the name back.  Do so if you
+      must, but it will not have an effect.
+    example:
+      name: "Ginger Greeter"
+      href: "https://localhost:8904/api/cardholders/526"
+  v_frontil: &VISIT_FROM_UNTIL
+    type: string
+    description: |
+      Every visit has a validity period, defined by start and end times called `from` and
+      `until`.
+
+      Not only are they both required when you create a visit, but the server will insist that
+      `until` is later than `from` and that you followed [the date-time rules](#dates-and-times).
+
+      You can use short forms such as `2021-04-01+12` and the server will fill in zeroes for the
+      parts you missed.  But because the end time must always be later than the start time you
+      cannot use the same date for both start and end.  The server will treat them both like
+      midnight, see that they are equal, and reject your API call.  So if you have a one-day visit,
+      bump `until` by a day or pad it out until the evening.  `2021-04-01T23:59:59+12`, for example.
+    format: date-time
+    example: "1971-03-08T14:35:00Z"
+  v_locn: &VISIT_LOCATION
+    type: string
+    description: Free text.  Entirely optional in the POST and PATCH.
+    example: "Gather in Ginger's office"
+  v_vags: &VISIT_AGS
+    type: array
+    description: |
+      These are the access groups that the server will add your visitors to after they complete
+      induction and sign in.  They define the access that your visitors have to the site, as
+      they do for all cardholders.
+
+      It is perfectly valid to have no visitor access groups on a visit - it just means that
+      someone will be opening all your guests' doors for them.  That might be the kind of thing
+      they are used to anyway.
+
+      The visitor access groups on a visit must be a subset of the visitor access groups on the
+      division's visitor type (in the list of visitor access groups in the visit's reception's
+      division's visitor management configuration, in other words).
+
+      When you send a visitor access group block to the server in a POST or a PATCH, just send an
+      array of hrefs to access groups, without `accessGroups` blocks.
+
+      When you send a visitor access group block in a PATCH to edit an existing visit, the server
+      expects it to contain one or two arrays called `add` and `remove`.  The `add` array should
+      contain access group hrefs, exactly as you would send when creating a visit.  The `remove`
+      array can contain access group hrefs or the hrefs you received in the GET.  The example shows
+      both.
+
+      Your operator must have a privilege such as 'Modify Access Control' that allows viewing
+      the access groups and adding and removing cardholders to and from them, otherwise you will be
+      told 'Access denied when writing to one or more fields'.
+
+    example:
+    - accessGroup:
+        name: "Access group 22"
+        href: "https://localhost:8904/api/access_groups/926"
+  v_ors: &VISIT_ORS
+    type: array
+    description: |
+      When the server sends this array to you, it contains two hrefs for each cardholder due to
+      arrive in this visit.  The first, outside the `cardholder` block, is the one you need to
+      use when removing cardholders from a visit using a PATCH.  The one inside the `cardholder`
+      block is simply an href to the cardholder item.
+
+      A visit with no visitors on it will not appear in Gallagher's visitor management
+      application.  Why clutter the screen if you're not expecting anybody, after all.
+
+      When you send a visitor block to the server in a POST to create a visit, just send an
+      array of hrefs to cardholders, without `cardholder` blocks.  For example:
+
+      `"visitors": [ {"href": "https://localhost:8904/api/cardholders/940"}, {"href": "https://localhost:8904/api/cardholders/9040"}, ]`
+
+      When you send a visitor block in a PATCH to edit an existing visit, the server expects it
+      to contain one or two arrays called `add` and `remove`.  The `add` array should contain
+      cardholder hrefs, exactly as you would send when creating a visit.  The `remove` array
+      should contain the hrefs you received in the GET, like this:
+
+        `"remove": [ { "href": "https://localhost:8904/api/visits/941/visitors/940" }, { "href": "https://localhost:8904/api/visits/941/visitors/9040" } ]`
+
+      Your operator must have a privilege such as 'Modify Access Control' that allows both
+      viewing the cardholders and changing their access groups memberships, otherwise you will
+      be told 'Access denied when writing to one or more fields'.
+
+    example:
+    - cardholder:
+        name: "Red Adair"
+        href: "https://localhost:8904/api/cardholders/940"
+    - cardholder:
+        name: "James Page"
+        href: "https://localhost:8904/api/cardholders/9040"
+
 #####################################################################################
 #####################################################################################
 #####################################################################################
@@ -4296,28 +4479,19 @@ definitions:
 
     properties:
       name:
-        type: string
-        example: "Greeter, Ginger"
-        description: |
-          You can name a visit however you like.  Gallagher's in-house applications name them after
-          their hosts.
-
-          This field is mandatory when creating a visit.  No blank names allowed!
+        <<: *VISIT_NAME
       href:
         type: string
         format: url
         description: |
           This is the URL to send a PATCH to when modifying an existing visit.  It comes out of a
-          GET, and the server will ignore it if you send it in a POST.
+          GET or in the Location header of a POST that creates a visit, and the server will ignore
+          it if you send it in the body of a POST or a PATCH.
         example: "https://localhost:8904/api/visits/941"
       serverDisplayName:
         <<: *SERVER
       description:
-        type: string
-        example: "Initial scoping"
-        description: |
-          A visit's description is free text.  Gallagher's visitor management clients use it to
-          store the visit's purpose.  You can change it at any time.
+        <<: *VISIT_DESCRIPTION
       division:
         type: object
         description: |
@@ -4325,173 +4499,67 @@ definitions:
           division.  You cannot change it, except by changing the visit's reception.
         example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
       reception:
-        type: object
-        description: |
-          Every visit must have a reception.  It represents the location at which your visitors will
-          first arrive.  Having one attached to a visit allows a kiosk at that location to hide
-          visits for other receptions, revealing only those meant to start there.
-
-          The reception's name comes from the server in a GET, but if you put it in a POST or a
-          PATCH the server will ignore it.  Command Centre only needs its href.
-
-          Note that you must send it like it appears in the example, as an href inside a block
-          called `reception`, like this:
-
-          `"reception": { "href": "https://localhost:8904/api/receptions/123" }`
-
-          This will not work:
-
-          `"reception": "https://localhost:8904/api/receptions/123"`
-
-        example:
-          name: "Main lobby"
-          href: "https://localhost:8904/api/receptions/937"
+        <<: *VISIT_RECEPTION
       visitorType:
-        type: object
-        description: |
-          Every visit must also have a visitor type.  It provides an access group for your visitors
-          so that they can have personal data (remember that a cardholder must be in an access group
-          before he or she can have a PDF), and it is an index into the visitor management
-          configuration that governs things like the host (the cardholder who is responsible for
-          your visitors) and the access groups that the server will give your visitors when they
-          sign in.
-
-          Use the href from the division's visitor management configuration, or the access group's
-          href.  Both will work.
-
-          You will receive the `accessGroup` object in a GET, but you needn't send it in a POST or
-          PATCH.  The server can find the visitor type using only its href.
-
-          Like the reception, when you send this to the server you must use the same form as the
-          example, as an href inside a block called `visitorType`.  The href can be to an access
-          group that you got from an [access group](#operation--api-access_groups-get) or the
-          visitor management configuration on a
-          [division](events.html#operation--api-divisions--operation--get).
-
-          Your operator must have the privilege to view the access group, otherwise you will be told
-          'Access denied when writing to one or more fields'.  The 'Modify Access Control' privilege
-          is a good choice because it not only gives you a view of access groups but the ability to
-          change cardholders' membership of them, which you need to add visitors and visitor groups.
-
-        example:
-          href: "https://localhost:8904/api/divisions/2/v_t/925"
-          accessgroup:
-            name: "Visitor group 1"
-            href: "https://localhost:8904/api/access_groups/925"
+        <<: *VISIT_VISITORTYPE
       host:
-        type: object
-        description: |
-          A host is a cardholder, and every visit has one.  A visit's host is the person who
-          (optionally) receives an email or SMS notification when visitors start signing in, and is
-          responsible for them until they sign out again.
-
-          A host must be a member of at least one of the visit's visitor type's host access groups
-          at the time that you create or modify the visit.  To find out what those are, get the
-          visitor management configuration for your reception's division (remembering that your
-          visit's division is its reception's division).  That visitor type contains an array of
-          access groups called `hostAccessGroups`.  Your host cardholder must be a member of one of
-          those groups or their descendants.
-
-          When you GET a visit the server will send you the host cardholder's name, but when you
-          create a visit with a POST or modify one with a PATCH, you needn't send it back.  Do so if
-          you must, but it will not have an effect.
-        example:
-          name: "Ginger Greeter"
-          href: "https://localhost:8904/api/cardholders/526"
+        <<: *VISIT_HOST
       from:
-        type: string
-        description: |
-          Every visit has a validity period, defined by start and end times called `from` and
-          `until`.
-
-          Not only is it required when you create a visit, but the server will insist that `until`
-          is later than `from` and that you followed [the date-time rules](#dates-and-times).
-
-          You can use short forms such as `2021-04-01+12` and the server will fill in zeroes for the
-          parts you missed.  But because the end time must always be later than the start time, you
-          cannot use the same date for both start and end.  The server will treat them both like
-          midnight, see that they are equal, and reject your API call.  So if you have a one-day
-          visit, bump `until` by a day or pad it out until the evenining.  `2021-04-01T23:59:59+12`,
-          for example.
-        format: date-time
+        <<: *VISIT_FROM_UNTIL
         example: "1971-03-08T14:35:00Z"
       until:
-        type: string
-        description: |
-          See `from`.
-        format: date-time
+        <<: *VISIT_FROM_UNTIL
         example: "2021-03-08T14:35:00Z"
       location:
-        type: string
-        description: Free text.  Entirely optional.
-        example: "Gather in Ginger's office"
+        <<: *VISIT_LOCATION
       visitorAccessGroups:
-        type: array
-        description: |
-          These are the access groups that the server will add your visitors to after they complete
-          induction and sign in.  They define the access that your visitors have to the site, as
-          they do for all cardholders.
-
-          It is perfectly valid to have no visitor access groups on a visit - it just means that
-          someone will be opening all your guests' doors for them.  That might be the kind of thing
-          they are used to anyway.
-
-          The visitor access groups on a visit must be a subset of the visitor access groups on the
-          division's visitor type (in the list of visitor access groups in the visit's reception's
-          division's visitor management configuration, in other words).
-
-          When you send a visitor access group block to the server in a POST to create a visit, just
-          send an array of hrefs to access groups, without `accessGroups` blocks.
-
-          When you send a visitor access group block in a PATCH to edit an existing visit, the
-          server expects it to contain one or two arrays called `add` and `remove`.  The `add` array
-          should contain access group hrefs, exactly as you would send when creating a visit.  The
-          `remove` array should contain the hrefs you received in the GET, like this:
-
-            `"remove": [ { "href": "https://localhost:8904/api/visits/941/visitor_access_groups/940" }, { "href": "https://localhost:8904/api/visits/941/visitor_access_groups/9040" } ]`
-
-          Your operator must have a privilege such as 'Modify Access Control' that allows viewing
-          the access groups and adding and removing cardholders to and from them, otherwise you will be
-          told 'Access denied when writing to one or more fields'.
-
-        example:
-        - accessGroup:
-            name: "Access group 22"
-            href: "https://localhost:8904/api/access_groups/926"
+        <<: *VISIT_AGS
       visitors:
-        type: array
-        description: |
-          When the server sends this array to you, it contains two hrefs for each cardholder due to
-          arrive in this visit.  The first, outside the `cardholder` block, is the one you need to
-          use when removing cardholders from a visit using a PATCH.  The one inside the `cardholder`
-          block is simply an href to the cardholder item.
+        <<: *VISIT_ORS
 
-          A visit with no visitors on it will not appear in Gallagher's visitor management
-          application.  Why clutter the screen if you're not expecting anybody, after all.
+  Visit PATCH example:
+    description: |
+      This is a worked example creating a visit by sending a POST to `/api/visits`.
 
-          When you send a visitor block to the server in a POST to create a visit, just send an
-          array of hrefs to cardholders, without `cardholder` blocks.  For example:
-
-          `"visitors": [ {"href": "https://localhost:8904/api/cardholders/940"}, {"href": "https://localhost:8904/api/cardholders/9040"}, ]`
-
-          When you send a visitor block in a PATCH to edit an existing visit, the server expects it
-          to contain one or two arrays called `add` and `remove`.  The `add` array should contain
-          cardholder hrefs, exactly as you would send when creating a visit.  The `remove` array
-          should contain the hrefs you received in the GET, like this:
-
-            `"remove": [ { "href": "https://localhost:8904/api/visits/941/visitors/940" }, { "href": "https://localhost:8904/api/visits/941/visitors/9040" } ]`
-
-          Your operator must have a privilege such as 'Modify Access Control' that allows both
-          viewing the cardholders and changing their access groups memberships, otherwise you will
-          be told 'Access denied when writing to one or more fields'.
-
+    properties:
+      name:
+        <<: *VISIT_NAME
+      description:
+        <<: *VISIT_DESCRIPTION
+      reception:
+        <<: *VISIT_RECEPTION
         example:
-        - cardholder:
-            name: "Red Adair"
-            href: "https://localhost:8904/api/cardholders/940"
-        - cardholder:
-            name: "James Page"
-            href: "https://localhost:8904/api/cardholders/9040"
+          href: "https://localhost:8904/api/receptions/937"
+      visitorType:
+        <<: *VISIT_VISITORTYPE
+        example:
+          accessgroup:
+            href: "https://localhost:8904/api/access_groups/925"
+      host:
+        <<: *VISIT_HOST
+        example:
+          href: "https://localhost:8904/api/cardholders/526"
+      from:
+        <<: *VISIT_FROM_UNTIL
+      until:
+        <<: *VISIT_FROM_UNTIL
+        example: "2023-03-08T14:35:00Z"
+      location:
+        <<: *VISIT_LOCATION
+      visitorAccessGroups:
+        <<: *VISIT_AGS
+        example:
+          add: [ { "href": "https://localhost:8904/api/access_groups/926" }, { "href": "https://localhost:8904/api/access_groups/9260" } ]
+          remove: [ { "href": "https://localhost:8904/api/access_groups/9370" },{ "href": "https://localhost:8904/api/visits/941/visitor_access_groups/998" }   ]
+      visitors:
+        <<: *VISIT_ORS
+        example:
+          add:
+          - href: https://localhost:8904/api/cardholders/940
+          - href: https://localhost:8904/api/cardholders/9040
+          remove:
+          - href: https://localhost:8904/api/access_groups/9370
+          - href: https://localhost:8904/api/visits/941/visitors/9981
 
 ######################################################################
 ######################################################################
@@ -6172,7 +6240,7 @@ paths:
       - name: "this string not rendered"
         in: body
         required: true
-        schema: {$ref: '#/definitions/Visit'}
+        schema: {$ref: '#/definitions/Visit PATCH example'}
         description: |
           As well as simple attributes such as `from` and `until`, the PATCH body you send can
           contain instructions for updating the lists of visitors and access groups.

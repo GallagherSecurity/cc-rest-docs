@@ -353,12 +353,12 @@ securityDefinitions:
       Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API
       will only accept connections from the IP address ranges configurated into that client item.
 
-      If a connection attempt fails, Command Centre will raise an event indicating its reason for
-      refusing the request.  If that happens too often, the server will stop reporting each offence
-      and will instead create a summary alarm at a much lower rate.  The details of the alarm tell
-      you how many failed attempts there have been since the start of the flood.  The server will
-      stay in this mode of reduced reporting until several minutes pass without a failed connection
-      attempt.
+      If a connection attempt fails, the server will return a 401 and raise an event containing its
+      reason for refusing the request.  If that happens too often, the server will stop reporting
+      each offence and will instead create a summary alarm at a much lower rate.  The details of the
+      alarm tell you how many failed attempts there have been since the start of the flood.  The
+      server will stay in this mode of reduced reporting until several minutes pass without a failed
+      connection attempt.
 
 x-spectacle-topics:
   Documentation suite:
@@ -2428,6 +2428,7 @@ definitions:
 
               You must pick a visitor type when creating a visit.  It must be on the same division
               as the reception.
+
             items:
               type: object
               properties:

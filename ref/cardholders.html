@@ -243,6 +243,7 @@
           <a href="#definition-Role"> Role </a>
           <a href="#definition-Visit-search"> Visit search </a>
           <a href="#definition-Visit"> Visit </a>
+          <a href="#definition-Visit-PATCH-example"> Visit PATCH example </a>
         </nav>
       </div>
       <div id="docs" class="row collapse expanded drawer" data-drawer>
@@ -488,7 +489,7 @@
                   <p>The behaviour for all other cases is the same in 8.40 and 8.50.</p>
                   <p>See the Configuration Client help for instructions on where to enter REST Client thumbprints.</p>
                   <p>Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API will only accept connections from the IP address ranges configurated into that client item.</p>
-                  <p>If a connection attempt fails, Command Centre will raise an event indicating its reason for refusing the request. If that happens too often, the server will stop reporting each offence and will instead create a summary alarm at a much lower rate. The details of the alarm tell you how many failed attempts there have been since the start of the flood. The server will stay in this mode of reduced reporting until several minutes pass without a failed connection attempt.</p>
+                  <p>If a connection attempt fails, the server will return a 401 and raise an event containing its reason for refusing the request. If that happens too often, the server will stop reporting each offence and will instead create a summary alarm at a much lower rate. The details of the alarm tell you how many failed attempts there have been since the start of the flood. The server will stay in this mode of reduced reporting until several minutes pass without a failed connection attempt.</p>
                 </section>
                 <section class="swagger-security-definition-properties">
                   <div class="prop-row security-definition-property">
@@ -7181,7 +7182,7 @@
                     <div class="prop-name">
                       <div class="swagger-request-model">
                         <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Visit">Visit</a>
+                          <a class="json-schema-ref" href="#/definitions/Visit PATCH example">Visit PATCH example</a>
                         </span>
                       </div>
                     </div>
@@ -7201,53 +7202,57 @@
                   <head></head>
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Greeter, Ginger&quot;</span>,
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941&quot;</span>,
-  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Initial scoping&quot;</span>,
-  <span class="hljs-attr">&quot;division&quot;</span>: {
-    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
-  },
   <span class="hljs-attr">&quot;reception&quot;</span>: {
-    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Main lobby&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/937&quot;</span>
   },
   <span class="hljs-attr">&quot;visitorType&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/v_t/925&quot;</span>,
     <span class="hljs-attr">&quot;accessgroup&quot;</span>: {
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor group 1&quot;</span>,
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
     }
   },
   <span class="hljs-attr">&quot;host&quot;</span>: {
-    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Ginger Greeter&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/526&quot;</span>
   },
   <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;1971-03-08T14:35:00Z&quot;</span>,
-  <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2021-03-08T14:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2023-03-08T14:35:00Z&quot;</span>,
   <span class="hljs-attr">&quot;location&quot;</span>: <span class="hljs-string">&quot;Gather in Ginger&apos;s office&quot;</span>,
-  <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
-    {
-      <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
-        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
+  <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
+      },
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/9260&quot;</span>
       }
-    }
-  ],
-  <span class="hljs-attr">&quot;visitors&quot;</span>: [
-    {
-      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
-        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red Adair&quot;</span>,
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/9370&quot;</span>
+      },
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/visitor_access_groups/998&quot;</span>
+      }
+    ]
+  },
+  <span class="hljs-attr">&quot;visitors&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/940&quot;</span>
-      }
-    },
-    {
-      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
-        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;James Page&quot;</span>,
+      },
+      {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/9040&quot;</span>
       }
-    }
-  ]
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/9370&quot;</span>
+      },
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/visitors/9981&quot;</span>
+      }
+    ]
+  }
 }
 </code></pre> </body>
                   </html>
@@ -13861,7 +13866,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This is the URL to send a PATCH to when modifying an existing visit. It comes out of a GET, and the server will ignore it if you send it in a POST.</p>
+                      <p>This is the URL to send a PATCH to when modifying an existing visit. It comes out of a GET or in the Location header of a POST that creates a visit, and the server will ignore it if you send it in the body of a POST or a PATCH.</p>
                     </dd>
                     <dt data-property-name="serverDisplayName" class="has-description">
                       <span class="json-property-name">serverDisplayName:</span>
@@ -13877,7 +13882,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>A visit&#39;s description is free text. Gallagher&#39;s visitor management clients use it to store the visit&#39;s purpose. You can change it at any time.</p>
+                      <p>A vvisit&#39;s description is free text. Gallagher&#39;s visitor management clients use it to store the visit&#39;s purpose. You can change it at any time.</p>
                     </dd>
                     <dt data-property-name="division" class="has-description">
                       <span class="json-property-name">division:</span>
@@ -13894,10 +13899,9 @@
                     </dt>
                     <dd>
                       <p>Every visit must have a reception. It represents the location at which your visitors will first arrive. Having one attached to a visit allows a kiosk at that location to hide visits for other receptions, revealing only those meant to start there.</p>
+                      <p>Since every visit must have a reception, every POST must have one. Once you have a visit in the system you can change its reception, but if any validation fails--and there is a lot of it--the PATCH will fail.</p>
                       <p>The reception&#39;s name comes from the server in a GET, but if you put it in a POST or a PATCH the server will ignore it. Command Centre only needs its href.</p>
-                      <p>Note that you must send it like it appears in the example, as an href inside a block called <code>reception</code>, like this:</p>
-                      <p><code>&quot;reception&quot;: { &quot;href&quot;: &quot;https://localhost:8904/api/receptions/123&quot; }</code></p>
-                      <p>This will not work:</p>
+                      <p>Note that you must send it like it appears in the example, as an href inside a block called <code>reception</code>, like in the example. This will not work:</p>
                       <p><code>&quot;reception&quot;: &quot;https://localhost:8904/api/receptions/123&quot;</code></p>
                     </dd>
                     <dt data-property-name="visitorType" class="has-description">
@@ -13908,10 +13912,12 @@
                     <dd>
                       <p>Every visit must also have a visitor type. It provides an access group for your visitors so that they can have personal data (remember that a cardholder must be in an access group before he or she can have a PDF), and it is an index into the visitor management configuration that governs things like the host (the cardholder who is responsible for your visitors) and the access groups that the server will give your visitors when they sign in.</p>
                       <p>Use the href from the division&#39;s visitor management configuration, or the access group&#39;s href. Both will work.</p>
-                      <p>You will receive the <code>accessGroup</code> object in a GET, but you needn&#39;t send it in a POST or PATCH. The server can find the visitor type using only its href.</p>
+                      <p>You will receive the <code>accessGroup</code> object inside the <code>visitorType</code> block in a GET, but you needn&#39;t send it in a POST or PATCH. The server can find the visitor type using only its href.</p>
                       <p>Like the reception, when you send this to the server you must use the same form as the example, as an href inside a block called <code>visitorType</code>. The href can be to an access group that you got from an
                         <a href="#operation--api-access_groups-get">access group</a> or the visitor management configuration on a
-                        <a href="events.html#operation--api-divisions--operation--get">division</a>.</p>
+                        <a href="events.html#operation--api-divisions--operation--get">division</a>. For example, both of these will work as visitor type hrefs:</p>
+                      <p><code>https://localhost:8904/api/access_groups/925</code> (taken from another visit, or a search of access groups)</p>
+                      <p><code>https://localhost:8904/api/divisions/2/visitor_types/925</code> (taken from a division config)</p>
                       <p>Your operator must have the privilege to view the access group, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;. The &#39;Modify Access Control&#39; privilege is a good choice because it not only gives you a view of access groups but the ability to change cardholders&#39; membership of them, which you need to add visitors and visitor groups.</p>
                     </dd>
                     <dt data-property-name="host" class="has-description">
@@ -13922,7 +13928,7 @@
                     <dd>
                       <p>A host is a cardholder, and every visit has one. A visit&#39;s host is the person who (optionally) receives an email or SMS notification when visitors start signing in, and is responsible for them until they sign out again.</p>
                       <p>A host must be a member of at least one of the visit&#39;s visitor type&#39;s host access groups at the time that you create or modify the visit. To find out what those are, get the visitor management configuration for your reception&#39;s division (remembering that your visit&#39;s division is its reception&#39;s division). That visitor type contains an array of access groups called <code>hostAccessGroups</code>. Your host cardholder must be a member of one of those groups or their descendants.</p>
-                      <p>When you GET a visit the server will send you the host cardholder&#39;s name, but when you create a visit with a POST or modify one with a PATCH, you needn&#39;t send it back. Do so if you must, but it will not have an effect.</p>
+                      <p>When you GET a visit the server will send you the host cardholder&#39;s name, but when you create a visit with a POST or modify one with a PATCH, you needn&#39;t send the name back. Do so if you must, but it will not have an effect.</p>
                     </dd>
                     <dt data-property-name="from" class="has-description">
                       <span class="json-property-name">from:</span>
@@ -13932,9 +13938,9 @@
                     </dt>
                     <dd>
                       <p>Every visit has a validity period, defined by start and end times called <code>from</code> and <code>until</code>.</p>
-                      <p>Not only is it required when you create a visit, but the server will insist that <code>until</code> is later than <code>from</code> and that you followed
+                      <p>Not only are they both required when you create a visit, but the server will insist that <code>until</code> is later than <code>from</code> and that you followed
                         <a href="#dates-and-times">the date-time rules</a>.</p>
-                      <p>You can use short forms such as <code>2021-04-01+12</code> and the server will fill in zeroes for the parts you missed. But because the end time must always be later than the start time, you cannot use the same date for both start and end. The server will treat them both like midnight, see that they are equal, and reject your API call. So if you have a one-day visit, bump <code>until</code> by a day or pad it out until the evenining. <code>2021-04-01T23:59:59+12</code>, for example.</p>
+                      <p>You can use short forms such as <code>2021-04-01+12</code> and the server will fill in zeroes for the parts you missed. But because the end time must always be later than the start time you cannot use the same date for both start and end. The server will treat them both like midnight, see that they are equal, and reject your API call. So if you have a one-day visit, bump <code>until</code> by a day or pad it out until the evening. <code>2021-04-01T23:59:59+12</code>, for example.</p>
                     </dd>
                     <dt data-property-name="until" class="has-description">
                       <span class="json-property-name">until:</span>
@@ -13943,7 +13949,10 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>See <code>from</code>.</p>
+                      <p>Every visit has a validity period, defined by start and end times called <code>from</code> and <code>until</code>.</p>
+                      <p>Not only are they both required when you create a visit, but the server will insist that <code>until</code> is later than <code>from</code> and that you followed
+                        <a href="#dates-and-times">the date-time rules</a>.</p>
+                      <p>You can use short forms such as <code>2021-04-01+12</code> and the server will fill in zeroes for the parts you missed. But because the end time must always be later than the start time you cannot use the same date for both start and end. The server will treat them both like midnight, see that they are equal, and reject your API call. So if you have a one-day visit, bump <code>until</code> by a day or pad it out until the evening. <code>2021-04-01T23:59:59+12</code>, for example.</p>
                     </dd>
                     <dt data-property-name="location" class="has-description">
                       <span class="json-property-name">location:</span>
@@ -13951,7 +13960,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Free text. Entirely optional.</p>
+                      <p>Free text. Entirely optional in the POST and PATCH.</p>
                     </dd>
                     <dt data-property-name="visitorAccessGroups" class="has-description">
                       <span class="json-property-name">visitorAccessGroups:</span>
@@ -13962,9 +13971,8 @@
                       <p>These are the access groups that the server will add your visitors to after they complete induction and sign in. They define the access that your visitors have to the site, as they do for all cardholders.</p>
                       <p>It is perfectly valid to have no visitor access groups on a visit - it just means that someone will be opening all your guests&#39; doors for them. That might be the kind of thing they are used to anyway.</p>
                       <p>The visitor access groups on a visit must be a subset of the visitor access groups on the division&#39;s visitor type (in the list of visitor access groups in the visit&#39;s reception&#39;s division&#39;s visitor management configuration, in other words).</p>
-                      <p>When you send a visitor access group block to the server in a POST to create a visit, just send an array of hrefs to access groups, without <code>accessGroups</code> blocks.</p>
-                      <p>When you send a visitor access group block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain access group hrefs, exactly as you would send when creating a visit. The <code>remove</code> array should contain the hrefs you received in the GET, like this:</p>
-                      <p> <code>&quot;remove&quot;: [ { &quot;href&quot;: &quot;https://localhost:8904/api/visits/941/visitor_access_groups/940&quot; }, { &quot;href&quot;: &quot;https://localhost:8904/api/visits/941/visitor_access_groups/9040&quot; } ]</code></p>
+                      <p>When you send a visitor access group block to the server in a POST or a PATCH, just send an array of hrefs to access groups, without <code>accessGroups</code> blocks.</p>
+                      <p>When you send a visitor access group block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain access group hrefs, exactly as you would send when creating a visit. The <code>remove</code> array can contain access group hrefs or the hrefs you received in the GET. The example shows both.</p>
                       <p>Your operator must have a privilege such as &#39;Modify Access Control&#39; that allows viewing the access groups and adding and removing cardholders to and from them, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;.</p>
                     </dd>
                     <dt data-property-name="visitors" class="has-description">
@@ -14039,6 +14047,206 @@
       }
     }
   ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Visit-PATCH-example" class="definition panel" data-traverse-target="definition-Visit-PATCH-example">
+            <h2 class="panel-title">
+              <a name="/definitions/Visit PATCH example"></a>Visit PATCH example:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>This is a worked example creating a visit by sending a POST to <code>/api/visits</code>.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="name" class="has-description">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>You can name a visit however you like. Gallagher&#39;s in-house applications name them after their hosts.</p>
+                      <p>This field is mandatory when creating a visit. No blank names allowed!</p>
+                    </dd>
+                    <dt data-property-name="description" class="has-description">
+                      <span class="json-property-name">description:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A vvisit&#39;s description is free text. Gallagher&#39;s visitor management clients use it to store the visit&#39;s purpose. You can change it at any time.</p>
+                    </dd>
+                    <dt data-property-name="reception" class="has-description">
+                      <span class="json-property-name">reception:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Every visit must have a reception. It represents the location at which your visitors will first arrive. Having one attached to a visit allows a kiosk at that location to hide visits for other receptions, revealing only those meant to start there.</p>
+                      <p>Since every visit must have a reception, every POST must have one. Once you have a visit in the system you can change its reception, but if any validation fails--and there is a lot of it--the PATCH will fail.</p>
+                      <p>The reception&#39;s name comes from the server in a GET, but if you put it in a POST or a PATCH the server will ignore it. Command Centre only needs its href.</p>
+                      <p>Note that you must send it like it appears in the example, as an href inside a block called <code>reception</code>, like in the example. This will not work:</p>
+                      <p><code>&quot;reception&quot;: &quot;https://localhost:8904/api/receptions/123&quot;</code></p>
+                    </dd>
+                    <dt data-property-name="visitorType" class="has-description">
+                      <span class="json-property-name">visitorType:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Every visit must also have a visitor type. It provides an access group for your visitors so that they can have personal data (remember that a cardholder must be in an access group before he or she can have a PDF), and it is an index into the visitor management configuration that governs things like the host (the cardholder who is responsible for your visitors) and the access groups that the server will give your visitors when they sign in.</p>
+                      <p>Use the href from the division&#39;s visitor management configuration, or the access group&#39;s href. Both will work.</p>
+                      <p>You will receive the <code>accessGroup</code> object inside the <code>visitorType</code> block in a GET, but you needn&#39;t send it in a POST or PATCH. The server can find the visitor type using only its href.</p>
+                      <p>Like the reception, when you send this to the server you must use the same form as the example, as an href inside a block called <code>visitorType</code>. The href can be to an access group that you got from an
+                        <a href="#operation--api-access_groups-get">access group</a> or the visitor management configuration on a
+                        <a href="events.html#operation--api-divisions--operation--get">division</a>. For example, both of these will work as visitor type hrefs:</p>
+                      <p><code>https://localhost:8904/api/access_groups/925</code> (taken from another visit, or a search of access groups)</p>
+                      <p><code>https://localhost:8904/api/divisions/2/visitor_types/925</code> (taken from a division config)</p>
+                      <p>Your operator must have the privilege to view the access group, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;. The &#39;Modify Access Control&#39; privilege is a good choice because it not only gives you a view of access groups but the ability to change cardholders&#39; membership of them, which you need to add visitors and visitor groups.</p>
+                    </dd>
+                    <dt data-property-name="host" class="has-description">
+                      <span class="json-property-name">host:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A host is a cardholder, and every visit has one. A visit&#39;s host is the person who (optionally) receives an email or SMS notification when visitors start signing in, and is responsible for them until they sign out again.</p>
+                      <p>A host must be a member of at least one of the visit&#39;s visitor type&#39;s host access groups at the time that you create or modify the visit. To find out what those are, get the visitor management configuration for your reception&#39;s division (remembering that your visit&#39;s division is its reception&#39;s division). That visitor type contains an array of access groups called <code>hostAccessGroups</code>. Your host cardholder must be a member of one of those groups or their descendants.</p>
+                      <p>When you GET a visit the server will send you the host cardholder&#39;s name, but when you create a visit with a POST or modify one with a PATCH, you needn&#39;t send the name back. Do so if you must, but it will not have an effect.</p>
+                    </dd>
+                    <dt data-property-name="from" class="has-description">
+                      <span class="json-property-name">from:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(date-time)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Every visit has a validity period, defined by start and end times called <code>from</code> and <code>until</code>.</p>
+                      <p>Not only are they both required when you create a visit, but the server will insist that <code>until</code> is later than <code>from</code> and that you followed
+                        <a href="#dates-and-times">the date-time rules</a>.</p>
+                      <p>You can use short forms such as <code>2021-04-01+12</code> and the server will fill in zeroes for the parts you missed. But because the end time must always be later than the start time you cannot use the same date for both start and end. The server will treat them both like midnight, see that they are equal, and reject your API call. So if you have a one-day visit, bump <code>until</code> by a day or pad it out until the evening. <code>2021-04-01T23:59:59+12</code>, for example.</p>
+                    </dd>
+                    <dt data-property-name="until" class="has-description">
+                      <span class="json-property-name">until:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(date-time)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Every visit has a validity period, defined by start and end times called <code>from</code> and <code>until</code>.</p>
+                      <p>Not only are they both required when you create a visit, but the server will insist that <code>until</code> is later than <code>from</code> and that you followed
+                        <a href="#dates-and-times">the date-time rules</a>.</p>
+                      <p>You can use short forms such as <code>2021-04-01+12</code> and the server will fill in zeroes for the parts you missed. But because the end time must always be later than the start time you cannot use the same date for both start and end. The server will treat them both like midnight, see that they are equal, and reject your API call. So if you have a one-day visit, bump <code>until</code> by a day or pad it out until the evening. <code>2021-04-01T23:59:59+12</code>, for example.</p>
+                    </dd>
+                    <dt data-property-name="location" class="has-description">
+                      <span class="json-property-name">location:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Free text. Entirely optional in the POST and PATCH.</p>
+                    </dd>
+                    <dt data-property-name="visitorAccessGroups" class="has-description">
+                      <span class="json-property-name">visitorAccessGroups:</span>
+                      <span class="json-property-type">array</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>These are the access groups that the server will add your visitors to after they complete induction and sign in. They define the access that your visitors have to the site, as they do for all cardholders.</p>
+                      <p>It is perfectly valid to have no visitor access groups on a visit - it just means that someone will be opening all your guests&#39; doors for them. That might be the kind of thing they are used to anyway.</p>
+                      <p>The visitor access groups on a visit must be a subset of the visitor access groups on the division&#39;s visitor type (in the list of visitor access groups in the visit&#39;s reception&#39;s division&#39;s visitor management configuration, in other words).</p>
+                      <p>When you send a visitor access group block to the server in a POST or a PATCH, just send an array of hrefs to access groups, without <code>accessGroups</code> blocks.</p>
+                      <p>When you send a visitor access group block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain access group hrefs, exactly as you would send when creating a visit. The <code>remove</code> array can contain access group hrefs or the hrefs you received in the GET. The example shows both.</p>
+                      <p>Your operator must have a privilege such as &#39;Modify Access Control&#39; that allows viewing the access groups and adding and removing cardholders to and from them, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;.</p>
+                    </dd>
+                    <dt data-property-name="visitors" class="has-description">
+                      <span class="json-property-name">visitors:</span>
+                      <span class="json-property-type">array</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>When the server sends this array to you, it contains two hrefs for each cardholder due to arrive in this visit. The first, outside the <code>cardholder</code> block, is the one you need to use when removing cardholders from a visit using a PATCH. The one inside the <code>cardholder</code> block is simply an href to the cardholder item.</p>
+                      <p>A visit with no visitors on it will not appear in Gallagher&#39;s visitor management application. Why clutter the screen if you&#39;re not expecting anybody, after all.</p>
+                      <p>When you send a visitor block to the server in a POST to create a visit, just send an array of hrefs to cardholders, without <code>cardholder</code> blocks. For example:</p>
+                      <p><code>&quot;visitors&quot;: [ {&quot;href&quot;: &quot;https://localhost:8904/api/cardholders/940&quot;}, {&quot;href&quot;: &quot;https://localhost:8904/api/cardholders/9040&quot;}, ]</code></p>
+                      <p>When you send a visitor block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain cardholder hrefs, exactly as you would send when creating a visit. The <code>remove</code> array should contain the hrefs you received in the GET, like this:</p>
+                      <p> <code>&quot;remove&quot;: [ { &quot;href&quot;: &quot;https://localhost:8904/api/visits/941/visitors/940&quot; }, { &quot;href&quot;: &quot;https://localhost:8904/api/visits/941/visitors/9040&quot; } ]</code></p>
+                      <p>Your operator must have a privilege such as &#39;Modify Access Control&#39; that allows both viewing the cardholders and changing their access groups memberships, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Greeter, Ginger&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Initial scoping&quot;</span>,
+  <span class="hljs-attr">&quot;reception&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions/937&quot;</span>
+  },
+  <span class="hljs-attr">&quot;visitorType&quot;</span>: {
+    <span class="hljs-attr">&quot;accessgroup&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+    }
+  },
+  <span class="hljs-attr">&quot;host&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/526&quot;</span>
+  },
+  <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;1971-03-08T14:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2023-03-08T14:35:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;location&quot;</span>: <span class="hljs-string">&quot;Gather in Ginger&apos;s office&quot;</span>,
+  <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
+      },
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/9260&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/9370&quot;</span>
+      },
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/visitor_access_groups/998&quot;</span>
+      }
+    ]
+  },
+  <span class="hljs-attr">&quot;visitors&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/940&quot;</span>
+      },
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/9040&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/9370&quot;</span>
+      },
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/visitors/9981&quot;</span>
+      }
+    ]
+  }
 }
 </code></pre> </body>
                   </html>
