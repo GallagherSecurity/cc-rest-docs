@@ -310,16 +310,19 @@ x-common-blocks:
       first arrive.  Having one attached to a visit allows a kiosk at that location to hide
       visits for other receptions, revealing only those meant to start there.
 
+      Your choice of reception also determines the rules with which the visit must comply, because
+      those rules come from the visitor management configuration on the reception's division.
+
       Since every visit must have a reception, every POST must have one.  Once you have a visit in
       the system you can change its reception, but be aware that changing receptions might change
       the visit's division, which also might change the rules to which the visit must conform, and
       if any validation fails--and there is a lot of it--the PATCH will fail.
 
-      The reception's name comes from the server in a GET, but if you put it in a POST or a
-      PATCH the server will ignore it.  Command Centre only needs its href.
+      The reception's name comes from the server in a GET, but you need not send it when creating or
+      modifying a visit.  Command Centre only needs an href from you.
 
-      Note that you must send it like it appears in the example, as an href inside a block
-      called `reception`.  This will not work:
+      Note that you must send the reception like it appears in the example, as an href inside a
+      block called `reception`.  This will not work:
 
       `"reception": "https://localhost:8904/api/receptions/123"`
 
@@ -1283,7 +1286,10 @@ definitions:
           lastSuccessfulAccessZone:
             type: object
             readOnly: true
-            description: The last zone the cardholder entered.
+            description: |
+              The last zone the cardholder entered.  If the cardholder is a visitor and their last
+              movement was to leave the site, this will be their visit's reception, not an access
+              zone, and 8.50 will present only the name of the reception and withhold the href.
             example:
               href: "https://localhost:8904/api/access_zones/333"
               name: "Twilight zone"
