@@ -8,8 +8,9 @@ TODOs:
 
 Change all Word's directional double-quotes to ".  Kramdown changes them back again anyway.
 
-Look for —.  Or leave them be, because they look like proper em-dashes in HTML, better than --.
-Kramdown changes -- and --- to en- and em-dashes resp. so might as well make this file ASCII-clean.
+Look for — (which is not -).  Or leave them be, because they look like proper em-dashes in HTML,
+better than --.  Kramdown changes -- and --- to en- and em-dashes resp. so might as well make this
+file ASCII-clean.
 
 Newer screenshots.  They are a bit out of date, and low-res.
 
@@ -419,7 +420,9 @@ benefits from the competency.
 
 ## Card types
 
-A card type carries rules for the data that a card carries, PINs, how to treat cards around their expiry time, and default values for new cards of that type.  We often use the word credential, because not all card types involve a physical card:  there are also biometric and mobile card types.
+A card type carries rules for the data that a card carries, PINs, how to treat cards around their
+expiry time, and default values for new cards of that type.  We often use the word credential,
+because not all card types involve a physical card:  there are also biometric and mobile card types.
 
 The REST API provides read access to card types so that you can manage cardholders' credentials.
 

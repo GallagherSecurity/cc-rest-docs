@@ -1844,9 +1844,9 @@
                   <p>You must supply an
                     <a href="#operation--api-events-groups-get">event type</a>. 8.10 ships with 30 external event types you can use, each in its own event type group.</p>
                   <p>You can create 970 of your own event types using the External Event Type Configuration Utility, a separate Windows application that lets you create external event types and make them appear on items&#39; Event Response and Alarm Instructions tabs in the Configuration Client. You will find the release note for that utility in the Documentation folder on the installation media.</p>
-                  <p>1000 event types sounds like a lot, but be aware that you cannot delete event types, and the only thing you can modify on an existing event type is its name. Their event type group and item types are permanent once you save them from the utility. Please plan carefully.</p>
+                  <p>1000 event types sounds like a lot, but be aware that you cannot delete event types, and the only thing you can modify on an existing event type is its name. Their event type group and item types are permanent once you save them from the utility. Please plan carefully, and take backups!</p>
                   <h4 id="usable-source-items">Usable source items</h4>
-                  <p>Every event needs a source item. You can let the server pick one for you (it will use the REST Client item identified by your API key) or you can use any item that has an &#39;Event Response&#39; tab in its Configuration Client window. Existing integrations use items like doors, external system items, and DVR cameras.</p>
+                  <p>Every event needs a source item. You can let the server pick one for you (it will use the REST Client item identified by your API key) or you can use any item that has an &#39;Event Response&#39; tab in its Configuration Client window (which is most of them). Our existing integrations use items like doors, external system items, and DVR cameras.</p>
                   <h4 id="action-plans">Action plans</h4>
                   <p>An event can fire an action plan, which will</p>
                   <ul>
@@ -1856,9 +1856,9 @@
                   <p>Macros are extremely powerful, and a thorough treatment requires more room than we have, so it is sufficient to say that you should not aim for a dramatic first test. A good first result is to turn on a virtual output made for the purpose. Just make sure that it will not trigger another macro because it is possible to create loops, causing havoc.</p>
                   <p>You do not pick an action plan to run when you POST your event. Command Centre does that in three steps:</p>
                   <ol>
-                    <li>The server looks at the configuration of the source item. The relevant entries appear in the Event Response tab of the item&#39;s property page in the Configuration Client. If there is an entry for the event type that is not &quot;use default&quot;, Command Centre will fire that action plan and skip the next steps. In versions older than 8.30 the control is per event group, not per event.</li>
-                    <li>The server looks at the configuration of the source item&#39;s alarm zone. That is in the Event Defaults tab of the alarm zone&#39;s property page in the Configuration Client. Again the control is per event group not per event type in older versions. If the event&#39;s action plan is not &#39;use default&#39; the server fires it and goes no further.</li>
-                    <li>The server looks at the configuration in the Event Defaults tab of the server properties. There is always an action plan there, even if it does nothing more than set the priority of the event.</li>
+                    <li>The server looks at the configuration of the source item in the Event Response tab of its property page in the Configuration Client. If there is an entry for the event type that is not &quot;use default&quot;, Command Centre will fire that action plan and skip the next steps. In versions older than 8.30 the control is per event group, not per event.</li>
+                    <li>Since the server did not find an action plan on the item, it tries its alarm zone. Specifically, the Event Defaults tab of the alarm zone&#39;s property page in the Configuration Client. Again the control is per event group not per event type in older versions. If the event&#39;s action plan is not &#39;use default&#39;, the server fires that action plan and goes no further.</li>
+                    <li>Since the server did not find an action plan on the item or its alarm zone, it looks at the configuration in the Event Defaults tab of the server properties. There is always an action plan there, even if it does nothing more than set the priority of the event.</li>
                   </ol>
                   <p>Once it has found the action plan to run, the server will assign the event its priority (if you did not specify a priority yourself) and run the macro if there is one on the &#39;Command Centre&#39; tab of the action plan&#39;s property page in the Configuration Client. The server will not use the configuration from the other tabs.</p>
                   <p>It is not possible to submit an event with priority zero, but it is possible to submit an event with no priority, and have the action plan assign it priority zero. This will run the macro on the action plan then drop the event before it reaches the database.</p>
@@ -1896,16 +1896,16 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">2</span>,
-  <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;2019-02-21T14:55:00Z&quot;</span>,
-  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Glass break detected in southwest sauna&quot;</span>,
-  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
   <span class="hljs-attr">&quot;type&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/types/4000&quot;</span>
   },
   <span class="hljs-attr">&quot;source&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/745&quot;</span>
   },
+  <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;2019-02-21T14:55:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Glass break detected in southwest sauna&quot;</span>,
+  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
   <span class="hljs-attr">&quot;cardholder&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>
   },
@@ -5668,41 +5668,6 @@
               <div class="doc-copy">
                 <section class="json-schema-properties">
                   <dl>
-                    <dt data-property-name="priority" class="has-description">
-                      <span class="json-property-name">priority:</span>
-                      <span class="json-property-type">integer</span>
-                      <span class="json-property-range" title="Value limits">1 ≤ x ≤ 9</span>
-                    </dt>
-                    <dd>
-                      <p>It is not possible to submit an event with priority zero in the body, but if you submit an event with no priority it will use the one on the event type&#39;s action plan, which can be zero.</p>
-                    </dd>
-                    <dt data-property-name="time" class="has-description">
-                      <span class="json-property-name">time:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-format">(date-time)</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>Like all other fields in this POST apart from the type, this field is optional. If you send it, it must be in the format described
-                        <a href="cardholders.html#dates-and-times">here</a>.</p>
-                      <p>If you do not send this, the server will use the time that it received your request (its &quot;now&quot;).</p>
-                    </dd>
-                    <dt data-property-name="message" class="has-description">
-                      <span class="json-property-name">message:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>This is the first thing an operator will see when they look at this event. Some interactive clients do not give it a lot of room on screen so put the important parts of your message first. It has a limit of 1024 characters.</p>
-                    </dd>
-                    <dt data-property-name="details" class="has-description">
-                      <span class="json-property-name">details:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>Command Centre will attach this string to event, as it does the message, but operators will have to look more closely at the event to see it. On the upside, it can be longer than the message: 2048 characters in 8.10.</p>
-                    </dd>
                     <dt data-property-name="type" class="has-description">
                       <span class="json-property-name">type:</span>
                       <span class="json-property-type">object</span>
@@ -5751,6 +5716,41 @@
                         </dl>
                       </section>
                     </dt>
+                    <dt data-property-name="priority" class="has-description">
+                      <span class="json-property-name">priority:</span>
+                      <span class="json-property-type">integer</span>
+                      <span class="json-property-range" title="Value limits">1 ≤ x ≤ 9</span>
+                    </dt>
+                    <dd>
+                      <p>It is not possible to submit an event with priority zero in the body, but if you submit an event with no priority it will use the one on the event type&#39;s action plan, which can be zero.</p>
+                    </dd>
+                    <dt data-property-name="time" class="has-description">
+                      <span class="json-property-name">time:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(date-time)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Like all other fields in this POST apart from the type, this field is optional. If you send it, it must be in the format described
+                        <a href="cardholders.html#dates-and-times">here</a>.</p>
+                      <p>If you do not send this, the server will use the time that it received your request (its &quot;now&quot;).</p>
+                    </dd>
+                    <dt data-property-name="message" class="has-description">
+                      <span class="json-property-name">message:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the first thing an operator will see when they look at this event. Some interactive clients do not give it a lot of room on screen so put the important parts of your message first. It has a limit of 1024 characters.</p>
+                    </dd>
+                    <dt data-property-name="details" class="has-description">
+                      <span class="json-property-name">details:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Command Centre will attach this string to event, as it does the message, but operators will have to look more closely at the event to see it. On the upside, it can be longer than the message: 2048 characters in 8.10.</p>
+                    </dd>
                     <dt data-property-name="cardholder" class="has-description">
                       <span class="json-property-name">cardholder:</span>
                       <span class="json-property-type">object</span>
@@ -5855,8 +5855,9 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>If you wish to attach a locker bank to your event, link it here. Command Centre does not require that the locker is in the locker bank, but downstream reporting software may assume it.</p>
+                      <p>If you wish to attach a locker bank to your event, link it here.</p>
                       <p>Like an event&#39;s access group, you can filter a Command Centre activity report to events that involve a locker bank, but the bank will not appear in the report itself.</p>
+                      <p>If you link both a locker and a locker bank to an event, Command Centre does not require that the locker is in the locker bank, but you may find that downstream reporting software misbehaves when it is not.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -5935,16 +5936,16 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">2</span>,
-  <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;2019-02-21T14:55:00Z&quot;</span>,
-  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Glass break detected in southwest sauna&quot;</span>,
-  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
   <span class="hljs-attr">&quot;type&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/types/4000&quot;</span>
   },
   <span class="hljs-attr">&quot;source&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/745&quot;</span>
   },
+  <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">2</span>,
+  <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;2019-02-21T14:55:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Glass break detected in southwest sauna&quot;</span>,
+  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
   <span class="hljs-attr">&quot;cardholder&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>
   },

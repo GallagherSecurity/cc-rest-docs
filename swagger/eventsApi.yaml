@@ -793,14 +793,15 @@ paths:
 
         1000 event types sounds like a lot, but be aware that you cannot delete event types, and the
         only thing you can modify on an existing event type is its name.  Their event type group and
-        item types are permanent once you save them from the utility.  Please plan carefully.
+        item types are permanent once you save them from the utility.  Please plan carefully, and
+        take backups!
 
         #### Usable source items
 
         Every event needs a source item.  You can let the server pick one for you (it will use the
         REST Client item identified by your API key) or you can use any item that has an 'Event
-        Response' tab in its Configuration Client window.  Existing integrations use items like
-        doors, external system items, and DVR cameras.
+        Response' tab in its Configuration Client window (which is most of them).  Our existing
+        integrations use items like doors, external system items, and DVR cameras.
 
         #### Action plans
 
@@ -816,19 +817,18 @@ paths:
         You do not pick an action plan to run when you POST your event.  Command Centre does that in
         three steps:
 
-          1. The server looks at the configuration of the source item.  The relevant entries appear
-             in the Event Response tab of the item's property page in the Configuration Client.  If
-             there is an entry for the event type that is not "use default", Command Centre will
-             fire that action plan and skip the next steps.  In versions older than 8.30 the control
-             is per event group, not per event.
-          2. The server looks at the configuration of the source item's alarm zone.  That is in the
-             Event Defaults tab of the alarm zone's property page in the Configuration Client.
-             Again the control is per event group not per event type in older versions.
-             If the event's action plan is not 'use default' the server fires it and goes no
-             further.
-          3. The server looks at the configuration in the Event Defaults tab of the server
-             properties.  There is always an action plan there, even if it does nothing more than
-             set the priority of the event.
+          1. The server looks at the configuration of the source item in the Event Response tab of
+             its property page in the Configuration Client.  If there is an entry for the event type
+             that is not "use default", Command Centre will fire that action plan and skip the next
+             steps.  In versions older than 8.30 the control is per event group, not per event.
+          2. Since the server did not find an action plan on the item, it tries its alarm zone.
+             Specifically, the Event Defaults tab of the alarm zone's property page in the
+             Configuration Client.  Again the control is per event group not per event type in older
+             versions.  If the event's action plan is not 'use default', the server fires that
+             action plan and goes no further.
+          3. Since the server did not find an action plan on the item or its alarm zone, it looks at
+             the configuration in the Event Defaults tab of the server properties.  There is always
+             an action plan there, even if it does nothing more than set the priority of the event.
 
         Once it has found the action plan to run, the server will assign the event its priority (if
         you did not specify a priority yourself) and run the macro if there is one on the 'Command
@@ -2106,6 +2106,37 @@ definitions:
 
   Event POST body:
     properties:
+      type:
+        description: |
+          This is the only mandatory field in an event.  Without it, the POST will fail.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/events/types/4000
+            description: |
+              Take this href from the list of [event types](#operation--api-events-groups-get).
+              Note that you can only use event types in one of the thirty external event groups with
+              IDs 57-66 and 190-209.  Command Centre ships with one event type per group, IDs
+              4000-4009 and 6010-6029, but you can create 970 more using the External Event Type
+              Configuration utility.
+      source:
+        description: |
+          This should be the href of the item you wish to use as the source of your event.  If you
+          do not supply it, Command Centre will use the REST Client item identified by the API key
+          in the Authorization header.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/doors/745
+            description: |
+              This can be the href of any site item to which your operator has view access including
+              all hardware items, access zones, fence zones, doors, lockers, car parks, servers,
+              external systems, and many other item types.  Get the href using the API controller
+              for that item type (such as [doors](rest.html#tag-Doors)) or from `/items`.
       priority:
         type: integer
         minimum: 1
@@ -2139,37 +2170,6 @@ definitions:
           operators will have to look more closely at the event to see it.  On the upside,
           it can be longer than the message:  2048 characters in 8.10.
         example: ""
-      type:
-        description: |
-          This is the only mandatory field in an event.  Without it, the POST will fail.
-        type: object
-        properties:
-          href:
-            type: string
-            format: url
-            example: https://localhost:8904/api/events/types/4000
-            description: |
-              Take this href from the list of [event types](#operation--api-events-groups-get).
-              Note that you can only use event types in one of the thirty external event groups with
-              IDs 57-66 and 190-209.  Command Centre ships with one event type per group, IDs
-              4000-4009 and 6010-6029, but you can create 970 more using the External Event Type
-              Configuration utility.
-      source:
-        description: |
-          This should be the href of the item you wish to use as the source of your event.  If you
-          do not supply it, Command Centre will use the REST Client item identified by the API key
-          in the Authorization header.
-        type: object
-        properties:
-          href:
-            type: string
-            format: url
-            example: https://localhost:8904/api/doors/745
-            description: |
-              This can be the href of any site item to which your operator has view access including
-              all hardware items, access zones, fence zones, doors, lockers, car parks, servers,
-              external systems, and many other item types.  Get the href using the API controller
-              for that item type (such as [doors](rest.html#tag-Doors)) or from `/items`.
       cardholder:
         description: |
           If you wish to attach a cardholder to your event, link it here.  Reports can show or
@@ -2233,12 +2233,14 @@ definitions:
               controller.
       lockerBank:
         description: |
-          If you wish to attach a locker bank to your event, link it here.  Command Centre does not
-          require that the locker is in the locker bank, but downstream reporting software may
-          assume it.
+          If you wish to attach a locker bank to your event, link it here.
 
           Like an event's access group, you can filter a Command Centre activity report to events
           that involve a locker bank, but the bank will not appear in the report itself.
+
+          If you link both a locker and a locker bank to an event, Command Centre does not require
+          that the locker is in the locker bank, but you may find that downstream reporting software
+          misbehaves when it is not.
         type: object
         properties:
           href:
