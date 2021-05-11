@@ -1991,14 +1991,16 @@ definitions:
           type:
             description: |
               This block contains a string field `type` which will (in the server's response to a
-              GET) or must (in the body of your POST) be one of the six schedule types.  It is not a
+              GET) or must (in the body of your POST) be one of the seven schedule types.  It is not a
               valid field in a PATCH, because you cannot change the type of an existing schedule.
+
+              Elevator kiosk control schedules arrived in 8.60.
             type: object
             properties:
               type:
                 type: string
                 enum: [ accessZoneSchedule, accessSchedule, alarmZoneSchedule,
-                outputSchedule, notificationSchedule, hVLFSchedule ]
+                outputSchedule, notificationSchedule, hVLFSchedule, elevatorKioskControlSchedule ]
                 example: "accessZoneSchedule"
           dayCategories:
             type: array
@@ -2124,15 +2126,17 @@ definitions:
         example: "A default schedule"
       type:
         description: |
-          This block contains a string field `type` which must be one of the six schedule types.
+          This block contains a string field `type` which must be one of the seven schedule types.
           It is not a valid field in a PATCH, because you cannot change the type of an existing
           schedule.
+
+          Elevator kiosk control schedules arrived in version 8.60.
         type: object
         properties:
           type:
             type: string
             enum: [ accessZoneSchedule, accessSchedule, alarmZoneSchedule,
-            outputSchedule, notificationSchedule, hVLFSchedule ]
+            outputSchedule, notificationSchedule, hVLFSchedule, elevatorKioskControlSchedule ]
             example: "accessZoneSchedule"
       dayCategories:
         type: array
