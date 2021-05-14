@@ -40,6 +40,15 @@ info:
 
     #### Alarms and events API changes in 8.50
 
+    * Card numbers on Bluetooth (mobile) card reads are now the phone's ID string, rather than a
+      number.  Note that neither the numbers that 8.50 returned nor the ID strings that 8.60 returns
+      are guaranteed unique across phones.
+
+    * Access events that do not have a card, such as someone entering their user code instead of
+      badging their card, will no longer return a card block.
+
+    #### Alarms and events API changes in 8.50
+
     * The server property that turns off [client certificate checking](#authentication) changed.
 
     * Divisions can return some of their Visitor Management configuration.
@@ -2028,7 +2037,13 @@ definitions:
             example: "https://localhost:8904/api/access_groups/352"
 
       card:
-        description: Details of the card associated with the event.
+        description: |
+          Details of the card associated with the event.
+
+          Versions prior to 8.60 returned this block and a card number of zero for all access
+          events, even if they did not involve a credential (after a person entered their user code
+          at a keypad, for example).  Version 8.60 does not return this block for such events.
+
         type: object
         properties:
           facilityCode:
@@ -2042,6 +2057,16 @@ definitions:
             description: |
               The card's number at the time of the event.  Despite the name it may not necessarily
               be an actual number; mobile card numbers are arbitrary strings, for example.
+
+              Note that card numbers are not guaranteed unique.  The combination of facility code,
+              issue level, and card number will be unique for card types that have a facility code
+              and issue level.
+
+              Before 8.60 this number was a signed 32-bit integer, so numeric card numbers greater
+              than 2^31 came out negative and mobile card numbers were arbitrary.  In 8.60 numeric
+              card numbers will be positive and mobile card numbers will be their ID strings, which
+              operators can set to anything, and default to GUIDs.
+
             example: "78745"
           issueLevel:
             type: integer
