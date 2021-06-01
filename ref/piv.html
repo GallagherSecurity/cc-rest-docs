@@ -53,9 +53,9 @@
           <h5>Schema Definitions</h5>
           <a href="#definition-PIV-card-GET"> PIV card GET </a>
           <a href="#definition-PIV-card-type"> PIV card type </a>
-          <a href="#definition-PIV-card-create"> PIV card create </a>
-          <a href="#definition-PIV-card-update"> PIV card update </a>
-          <a href="#definition-PIV-card-data-create"> PIV card data create </a>
+          <a href="#definition-PIV-card-create-example"> PIV card create example </a>
+          <a href="#definition-PIV-card-update-example"> PIV card update example </a>
+          <a href="#definition-PIV-card-data"> PIV card data </a>
           <a href="#definition-CHUID"> CHUID </a>
         </nav>
       </div>
@@ -79,8 +79,8 @@
                   <a href="cardholders.html#operation--api-cardholders--id--patch">PATCH</a>, and how to create a cardholder plus cards in a
                   <a href="cardholders.html#operation--api-cardholders-post">POST</a>, but in the interests of brevity its examples do not cover PIV.</p>
                 <p>The Schema Definitions section gives you the details of the PIV part of a Command Centre card, with examples of what you would submit to
-                  <a href="#definition-PIV-card-create">create one</a> or
-                  <a href="#definition-PIV-card-update">update one</a>, and what Command Centre will send you when you
+                  <a href="#definition-PIV-card-create-example">create one</a> or
+                  <a href="#definition-PIV-card-update-example">update one</a>, and what Command Centre will send you when you
                   <a href="#definition-PIV-card-GET">view one</a>.</p>
                 <p>The Paths section takes those schema examples and wraps them into a sample
                   <a href="#operation--api-cardholders--id--patch">PATCH</a> and
@@ -329,8 +329,8 @@
                   <p>Creates a new cardholder, including assigned cards.</p>
                   <p>Part of what you submit is an array called <code>cards</code>, each element of which is a card or credential you want assigned to your new cardholder. This example shows an array containing one PIV card.</p>
                   <p>See the
-                    <a href="#definition-PIV-card-create">PIV card create schema definition</a> for the PIV-specific fields. The other fields you can pass in this call are fully documented
-                    <a href="cardholders.html#operation--api-cardholders-post">in the cardholder API</a>. One, <code>division</code>, is mandatory, but not shown here.</p>
+                    <a href="#definition-PIV-card-create-example">PIV card create schema definition</a> for the PIV-specific fields. The fields that are not specific to PIV and PIV-I cards are fully documented
+                    <a href="cardholders.html#operation--api-cardholders-post">in the cardholder API</a>. One, <code>division</code>, is mandatory, and you must also supply either a first or last name for your new cardholder.</p>
                 </section>
               </div>
             </div>
@@ -339,6 +339,14 @@
                 <section class="swagger-request-body">
                   <section class="json-schema-properties">
                     <dl>
+                      <dt data-property-name="division" class="has-description">
+                        <span class="json-property-name">division:</span>
+                        <span class="json-property-type">object</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </dt>
+                      <dd>
+                        <p>Mandatory when creating any cardholder.</p>
+                      </dd>
                       <dt data-property-name="firstName" class="has-description">
                         <span class="json-property-name">firstName:</span>
                         <span class="json-property-type">string</span>
@@ -352,7 +360,7 @@
                         <span class="json-property-name">cards:</span>
                         <span class="json-property-type">
                           <span class="json-schema-ref-array">
-                            <a class="json-schema-ref" href="#/definitions/PIV card create">PIV card create</a>
+                            <a class="json-schema-ref" href="#/definitions/PIV card create example">PIV card create example</a>
                           </span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
@@ -361,7 +369,7 @@
                         <section class="json-schema-array-items">
                           <span class="json-property-type">
                             <span class="">
-                              <a class="json-schema-ref" href="#/definitions/PIV card create">PIV card create</a>
+                              <a class="json-schema-ref" href="#/definitions/PIV card create example">PIV card create example</a>
                             </span>
                           </span>
                           <span class="json-property-range" title="Value limits"></span>
@@ -379,10 +387,13 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
   <span class="hljs-attr">&quot;firstName&quot;</span>: <span class="hljs-string">&quot;There will be more fields like this&quot;</span>,
   <span class="hljs-attr">&quot;cards&quot;</span>: [
     {
-      <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;3165-4313-890987-654321134567998765&quot;</span>,
+      <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
       <span class="hljs-attr">&quot;status&quot;</span>: {
         <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;active&quot;</span>
       },
@@ -391,8 +402,8 @@
       },
       <span class="hljs-attr">&quot;pivData&quot;</span>: {
         <span class="hljs-attr">&quot;chuid&quot;</span>: {
-          <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;uIMMz9sXzX/aC2ezObKsUEi5fc1gpZjO2y8liso7ZyU=&quot;</span>,
-          <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;12346789001000111234567890698768&quot;</span>,
+          <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+          <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
           <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
           <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
         },
@@ -484,7 +495,7 @@
                 <section class="swagger-request-body">
                   <p>Part of what you submit is an object called <code>cards</code>, described below.</p>
                   <p>The other fields you can pass in this call, such as personal information, access rights, and card data such as issue levels, status, and validity to/from dates, are fully documented in the
-                    <a href="cardholders.html#operation--api-cardholders--id--patch">main cardholder API</a>. This example shows how to assign a PIV card to a cardholder, and how to change the two status fields of an existing card.</p>
+                    <a href="cardholders.html#operation--api-cardholders--id--patch">main cardholder API</a>. This example shows how to assign a PIV card to a cardholder, and how to change the two status fields of an existing PIV card.</p>
                   <section class="json-schema-properties">
                     <dl>
                       <dt data-property-name="firstName" class="has-description">
@@ -505,9 +516,10 @@
                         <p><code>cards</code> can contain three arrays called <code>add</code>, <code>update</code>, and <code>delete</code>.</p>
                         <p>An element in the <code>add</code> array is the same as you would supply to a
                           <a href="#operation--api-cardholders-post">POST</a> when creating a cardholder with cards. There is an example here. See the
-                          <a href="#definition-PIV-card-update">PIV card update schema definition</a> for the PIV-specific field definitions.</p>
+                          <a href="#definition-PIV-card-update-example">PIV card update schema definition</a> for the PIV-specific field definitions.</p>
                         <p>An element in the <code>update</code> array is much smaller, because the only PIV data you can change is the PIV status. This example changes the PIV status of a card card to &#39;notChecked&#39;, which would normally activate it, but in this example we also disable the card. Presumably we do not want this person using the card just yet.</p>
-                        <p>Deleting PIV cards is no different from deleting any other kind of credential so we will not cover it here.</p>
+                        <p>Deleting a PIV card is no different from
+                          <a href="cardholders.html#operation--api-cardholders--id--cards--card_id--delete">deleting any other kind of credential</a>.</p>
                       </dd>
                       <dt class="json-inner-schema">
                         <section class="json-schema-properties">
@@ -516,7 +528,7 @@
                               <span class="json-property-name">add:</span>
                               <span class="json-property-type">
                                 <span class="json-schema-ref-array">
-                                  <a class="json-schema-ref" href="#/definitions/PIV card create">PIV card create</a>
+                                  <a class="json-schema-ref" href="#/definitions/PIV card create example">PIV card create example</a>
                                 </span>
                               </span>
                               <span class="json-property-range" title="Value limits"></span>
@@ -525,7 +537,7 @@
                               <section class="json-schema-array-items">
                                 <span class="json-property-type">
                                   <span class="">
-                                    <a class="json-schema-ref" href="#/definitions/PIV card create">PIV card create</a>
+                                    <a class="json-schema-ref" href="#/definitions/PIV card create example">PIV card create example</a>
                                   </span>
                                 </span>
                                 <span class="json-property-range" title="Value limits"></span>
@@ -536,7 +548,7 @@
                               <span class="json-property-name">update:</span>
                               <span class="json-property-type">
                                 <span class="json-schema-ref-array">
-                                  <a class="json-schema-ref" href="#/definitions/PIV card update">PIV card update</a>
+                                  <a class="json-schema-ref" href="#/definitions/PIV card update example">PIV card update example</a>
                                 </span>
                               </span>
                               <span class="json-property-range" title="Value limits"></span>
@@ -545,7 +557,7 @@
                               <section class="json-schema-array-items">
                                 <span class="json-property-type">
                                   <span class="">
-                                    <a class="json-schema-ref" href="#/definitions/PIV card update">PIV card update</a>
+                                    <a class="json-schema-ref" href="#/definitions/PIV card update example">PIV card update example</a>
                                   </span>
                                 </span>
                                 <span class="json-property-range" title="Value limits"></span>
@@ -570,7 +582,7 @@
   <span class="hljs-attr">&quot;cards&quot;</span>: {
     <span class="hljs-attr">&quot;add&quot;</span>: [
       {
-        <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;3165-4313-890987-654321134567998765&quot;</span>,
+        <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
         <span class="hljs-attr">&quot;status&quot;</span>: {
           <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;active&quot;</span>
         },
@@ -579,8 +591,8 @@
         },
         <span class="hljs-attr">&quot;pivData&quot;</span>: {
           <span class="hljs-attr">&quot;chuid&quot;</span>: {
-            <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;uIMMz9sXzX/aC2ezObKsUEi5fc1gpZjO2y8liso7ZyU=&quot;</span>,
-            <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;12346789001000111234567890698768&quot;</span>,
+            <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+            <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
             <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
             <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
           },
@@ -720,8 +732,8 @@
       },
       <span class="hljs-attr">&quot;pivData&quot;</span>: {
         <span class="hljs-attr">&quot;chuid&quot;</span>: {
-          <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;uIMMz9sXzX/aC2ezObKsUEi5fc1gpZjO2y8liso7ZyU=&quot;</span>,
-          <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;12346789001000111234567890698768&quot;</span>,
+          <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+          <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
           <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
           <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
         },
@@ -807,7 +819,7 @@
                     </dt>
                     <dd>
                       <p>This is much like the
-                        <a href="#definition-PIV-card-data-create">pivData</a> you send when creating a card, described later, except that:</p>
+                        <a href="#definition-PIV-card-data">pivData</a> you send when creating a card, described later, except that:</p>
                       <ul>
                         <li>
                           <p>in certain cases (described below) it does not contain the certificates and biometrics, leaving just the
@@ -818,7 +830,7 @@
                         </li>
                       </ul>
                       <p>If the site is running 7.90 and the RESTPIVCardExport customisation, or if it is running a later version and you asked for extra data using the <code>fields</code> query parameter, the pivData section will contain three certificates and the fingerprint templates in the correct format for import into another installation of Command Centre.</p>
-                      <p>The certificates and biometrics are missing from the default card object in the interest of efficiency: those fields are very large, and most of our integrations do not require them. Some are running over cellular networks, where bandwidth is carries a cost. Omitting the large fields by default but sending them on request is a flexible compromise that allows integrators to build a suitable system without wastage.</p>
+                      <p>The certificates and biometrics are missing from the default result set in the interest of efficiency: those fields are very large, and most of our integrations do not require them. Some are running over cellular networks, where bandwidth is carries a cost. Omitting the large fields by default but sending them on request is a flexible compromise that allows integrators to build a suitable system without wastage.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -840,7 +852,7 @@
                           <dd>
                             <p>The <code>type</code> field in this block contains the PIV-specific status of the card, as opposed to the generic credential state which is in a block called <code>status</code> at the same level as <code>pivData</code>.</p>
                             <p>The
-                              <a href="#definition-PIV-card-data-create">schema for PIV card data</a> lists the values it might come back with.</p>
+                              <a href="#definition-PIV-card-data">schema for PIV card data</a> lists the values it might come back with.</p>
                           </dd>
                           <dt data-property-name="lastCheckTime">
                             <span class="json-property-name">lastCheckTime:</span>
@@ -854,7 +866,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>Required. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                            <p>Required when creating a PIV or PIV-I card. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
                             <p>This example is shortened to fit on screen. Real certificates are at least a thousand characters.</p>
                           </dd>
                           <dt data-property-name="cardAuthenticationCert" class="has-description">
@@ -864,7 +876,7 @@
                           </dt>
                           <dd>
                             <p>This contains the CAK, which is necessary for the secure use of contactless cards. It is not required for contact cards.</p>
-                            <p>Optional. The API will reject your request if this is present and not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                            <p>Optional when creating a PIV or PIV-I card. The API will reject your request if this is present and not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
                           </dd>
                           <dt data-property-name="pivAuthenticationCert" class="has-description">
                             <span class="json-property-name">pivAuthenticationCert:</span>
@@ -872,7 +884,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>Required. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                            <p>Required when creating a PIV or PIV-I card. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
                           </dd>
                           <dt data-property-name="fingerprints" class="has-description">
                             <span class="json-property-name">fingerprints:</span>
@@ -880,7 +892,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>If present, this should be the cardholder&#39;s fingerprints contained in the card&#39;s Cardholder Fingerprints data object with the error detection code removed: the whole CBEFF structure including the CBEFF_HEADER, CBEFF_BIOMETRIC_RECORD, and CBEFF_SIGNATURE_BLOCK components. Refer to Section 9 of NIST Special Publication 800-76-2: Biometric Data Specification for Personal Identity Verification.</p>
+                            <p>If you send this when creating a card, it should be the cardholder&#39;s fingerprints contained in the card&#39;s Cardholder Fingerprints data object with the error detection code removed: the whole CBEFF structure including the CBEFF_HEADER, CBEFF_BIOMETRIC_RECORD, and CBEFF_SIGNATURE_BLOCK components. Refer to Section 9 of NIST Special Publication 800-76-2: Biometric Data Specification for Personal Identity Verification.</p>
                             <p>It is optional. The API will check that this is Base64, but will not verify that it is valid biometric data.</p>
                           </dd>
                         </dl>
@@ -905,8 +917,8 @@
   },
   <span class="hljs-attr">&quot;pivData&quot;</span>: {
     <span class="hljs-attr">&quot;chuid&quot;</span>: {
-      <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;uIMMz9sXzX/aC2ezObKsUEi5fc1gpZjO2y8liso7ZyU=&quot;</span>,
-      <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;12346789001000111234567890698768&quot;</span>,
+      <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+      <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
       <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
       <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
     },
@@ -1015,9 +1027,9 @@
               </div>
             </div>
           </div>
-          <div id="definition-PIV-card-create" class="definition panel" data-traverse-target="definition-PIV-card-create">
+          <div id="definition-PIV-card-create-example" class="definition panel" data-traverse-target="definition-PIV-card-create-example">
             <h2 class="panel-title">
-              <a name="/definitions/PIV card create"></a>PIV card create:
+              <a name="/definitions/PIV card create example"></a>PIV card create example:
               <!-- <span class="json-property-type"><span class="json-property-type">object</span>
               <span class="json-property-range" title="Value limits"></span>
               
@@ -1041,21 +1053,18 @@
                     </dt>
                     <dd>
                       <p>Required.</p>
+                      <p>For a PIV card, this is the FASC-N.</p>
                       <p>For a PIV-I card, this is the decimal representation of the GUID in the CHUID, and must not be the same as the FASC-N.</p>
-                      <p>For a PIV card, this is the same as the FASC-N.</p>
+                      <p>The server ignores hyphens here, so you can send back the same number you received from a GET.</p>
                     </dd>
                     <dt data-property-name="status" class="has-description">
                       <span class="json-property-name">status:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-enum" title="Possible values">
-                        <span class="json-property-enum-item">active</span>,
-                        <span class="json-property-enum-item">disabled (manually)</span>
-                      </span>
+                      <span class="json-property-type">object</span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Optional, but when controlling physical access you should be explicit rather than relying on a default. Case insensitive.</p>
-                      <p>You will not be able to activate a card if its PIV status prevents it.</p>
+                      <p>Optional, but when controlling physical access you should be explicit rather than relying on a default. Set the <code>value</code> field inside it to either &#39;active&#39; or &#39;disabled (manually)&#39;. Case insensitive.</p>
+                      <p>You will not be able to activate a card if its PIV status (inside the <code>pivdata</code> block) prevents it.</p>
                     </dd>
                     <dt data-property-name="type" class="has-description">
                       <span class="json-property-name">type:</span>
@@ -1070,7 +1079,7 @@
                       <span class="json-property-name">pivData:</span>
                       <span class="json-property-type">
                         <span class="">
-                          <a class="json-schema-ref" href="#/definitions/PIV card data create">PIV card data create</a>
+                          <a class="json-schema-ref" href="#/definitions/PIV card data">PIV card data</a>
                         </span>
                       </span>
                       <span class="json-property-range" title="Value limits"></span>
@@ -1088,7 +1097,7 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;3165-4313-890987-654321134567998765&quot;</span>,
+  <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
   <span class="hljs-attr">&quot;status&quot;</span>: {
     <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;active&quot;</span>
   },
@@ -1097,8 +1106,8 @@
   },
   <span class="hljs-attr">&quot;pivData&quot;</span>: {
     <span class="hljs-attr">&quot;chuid&quot;</span>: {
-      <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;uIMMz9sXzX/aC2ezObKsUEi5fc1gpZjO2y8liso7ZyU=&quot;</span>,
-      <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;12346789001000111234567890698768&quot;</span>,
+      <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+      <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
       <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
       <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
     },
@@ -1118,9 +1127,9 @@
               </div>
             </div>
           </div>
-          <div id="definition-PIV-card-update" class="definition panel" data-traverse-target="definition-PIV-card-update">
+          <div id="definition-PIV-card-update-example" class="definition panel" data-traverse-target="definition-PIV-card-update-example">
             <h2 class="panel-title">
-              <a name="/definitions/PIV card update"></a>PIV card update:
+              <a name="/definitions/PIV card update example"></a>PIV card update example:
               <!-- <span class="json-property-type"><span class="json-property-type">object</span>
               <span class="json-property-range" title="Value limits"></span>
               
@@ -1130,10 +1139,10 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="json-schema-description">
-                  <p>This example, when placed inside <code>cards.update</code> array of a PATCH, would update a card. Consult the main cardholder API documentation for where to send the PATCH and what else you can change with it. This example only shows how to update the status (common to all credential types) and the PIV data.</p>
+                  <p>This example, when placed inside <code>cards.update</code> array of a PATCH, would update a card. The main cardholder API documentation shows where to send the PATCH and what else you can change with it. This example only shows how to update the status (common to all credential types) and the PIV data.</p>
                   <p>Specifically, the PIV status, because that is the only PIV-specific data you can change on a PIV card. Everything else--the CHUID, certificates, and biometrics--are all fixed, once set.</p>
                   <p>See the
-                    <a href="#definition-PIV-card-data-create">PIV data schema</a> for when you should set the PIV status and what you can set it to.</p>
+                    <a href="#definition-PIV-card-data">PIV data schema</a> for when you should set the PIV status and what you can set it to.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -1164,7 +1173,7 @@
                     <dd>
                       <p>This can contain only one field when you are updating a PIV card, <code>pivStatus.type</code>.</p>
                       <p>The
-                        <a href="#definition-PIV-card-data-create">PIV card data schema</a> lists the values you can send.</p>
+                        <a href="#definition-PIV-card-data">PIV card data schema</a> lists the values you can send.</p>
                     </dd>
                   </dl>
                 </section>
@@ -1193,9 +1202,9 @@
               </div>
             </div>
           </div>
-          <div id="definition-PIV-card-data-create" class="definition panel" data-traverse-target="definition-PIV-card-data-create">
+          <div id="definition-PIV-card-data" class="definition panel" data-traverse-target="definition-PIV-card-data">
             <h2 class="panel-title">
-              <a name="/definitions/PIV card data create"></a>PIV card data create:
+              <a name="/definitions/PIV card data"></a>PIV card data:
               <!-- <span class="json-property-type"><span class="json-property-type">object</span>
               <span class="json-property-range" title="Value limits"></span>
               
@@ -1254,7 +1263,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Required. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                      <p>Required when creating a PIV or PIV-I card. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
                       <p>This example is shortened to fit on screen. Real certificates are at least a thousand characters.</p>
                     </dd>
                     <dt data-property-name="cardAuthenticationCert" class="has-description">
@@ -1264,7 +1273,7 @@
                     </dt>
                     <dd>
                       <p>This contains the CAK, which is necessary for the secure use of contactless cards. It is not required for contact cards.</p>
-                      <p>Optional. The API will reject your request if this is present and not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                      <p>Optional when creating a PIV or PIV-I card. The API will reject your request if this is present and not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
                     </dd>
                     <dt data-property-name="pivAuthenticationCert" class="has-description">
                       <span class="json-property-name">pivAuthenticationCert:</span>
@@ -1272,7 +1281,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Required. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                      <p>Required when creating a PIV or PIV-I card. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
                     </dd>
                     <dt data-property-name="fingerprints" class="has-description">
                       <span class="json-property-name">fingerprints:</span>
@@ -1280,7 +1289,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>If present, this should be the cardholder&#39;s fingerprints contained in the card&#39;s Cardholder Fingerprints data object with the error detection code removed: the whole CBEFF structure including the CBEFF_HEADER, CBEFF_BIOMETRIC_RECORD, and CBEFF_SIGNATURE_BLOCK components. Refer to Section 9 of NIST Special Publication 800-76-2: Biometric Data Specification for Personal Identity Verification.</p>
+                      <p>If you send this when creating a card, it should be the cardholder&#39;s fingerprints contained in the card&#39;s Cardholder Fingerprints data object with the error detection code removed: the whole CBEFF structure including the CBEFF_HEADER, CBEFF_BIOMETRIC_RECORD, and CBEFF_SIGNATURE_BLOCK components. Refer to Section 9 of NIST Special Publication 800-76-2: Biometric Data Specification for Personal Identity Verification.</p>
                       <p>It is optional. The API will check that this is Base64, but will not verify that it is valid biometric data.</p>
                     </dd>
                   </dl>
@@ -1294,8 +1303,8 @@
                   <head></head>
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;chuid&quot;</span>: {
-    <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;uIMMz9sXzX/aC2ezObKsUEi5fc1gpZjO2y8liso7ZyU=&quot;</span>,
-    <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;12346789001000111234567890698768&quot;</span>,
+    <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+    <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
     <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
     <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
   },
@@ -1346,7 +1355,7 @@
                     <dd>
                       <p>The FASC-N identifier. Required.</p>
                       <p>It must be the same as the card number on a PIV (not PIV-I) card.</p>
-                      <p>On a PIV-I card, it must not be the same as the card number (and it may begin with fourteen nines).</p>
+                      <p>On a PIV-I card, it must not be the same as the card number (and for Federal PIV-I cards it will likely begin with fourteen nines).</p>
                     </dd>
                     <dt data-property-name="orgIdentifier" class="has-description">
                       <span class="json-property-name">orgIdentifier:</span>
@@ -1374,8 +1383,8 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;uIMMz9sXzX/aC2ezObKsUEi5fc1gpZjO2y8liso7ZyU=&quot;</span>,
-  <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;12346789001000111234567890698768&quot;</span>,
+  <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+  <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
   <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
   <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
 }

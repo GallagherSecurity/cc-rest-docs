@@ -19,9 +19,9 @@ info:
     of brevity its examples do not cover PIV.
 
     The Schema Definitions section gives you the details of the PIV part of a Command Centre card,
-    with examples of what you would submit to [create one](#definition-PIV-card-create) or [update
-    one](#definition-PIV-card-update), and what Command Centre will send you when you [view
-    one](#definition-PIV-card-GET).
+    with examples of what you would submit to [create one](#definition-PIV-card-create-example) or
+    [update one](#definition-PIV-card-update-example), and what Command Centre will send you when
+    you [view one](#definition-PIV-card-GET).
 
     The Paths section takes those schema examples and wraps them into a sample
     [PATCH](#operation--api-cardholders--id--patch) and [POST](#operation--api-cardholders-post).
@@ -109,8 +109,8 @@ x-common-blocks-this-is-made-up:
   contentSigningCert_ignored: &CSC
     type: string
     description: |
-      Required.  The API will reject your request if this is missing or not a Base64-encoded
-      certificate, but it will not validate the certificate itself.
+      Required when creating a PIV or PIV-I card.  The API will reject your request if this is
+      missing or not a Base64-encoded certificate, but it will not validate the certificate itself.
 
       This example is shortened to fit on screen.  Real certificates are at least a thousand
       characters.
@@ -122,26 +122,26 @@ x-common-blocks-this-is-made-up:
       This contains the CAK, which is necessary for the secure use of contactless cards.  It is
       not required for contact cards.
 
-      Optional.  The API will reject your request if this is present and not a Base64-encoded
-      certificate, but it will not validate the certificate itself.
+      Optional when creating a PIV or PIV-I card.  The API will reject your request if this is
+      present and not a Base64-encoded certificate, but it will not validate the certificate itself.
 
     example: "MIIE[...]e5mE="
 
   pivAuthenticationCert_etc: &PAC
     type: string
     description: |
-      Required.  The API will reject your request if this is missing or not a Base64-encoded
-      certificate, but it will not validate the certificate itself.
+      Required when creating a PIV or PIV-I card.  The API will reject your request if this is
+      missing or not a Base64-encoded certificate, but it will not validate the certificate itself.
     example: "MIIE[...]wkrp"
 
   fingerprints_etc: &FINGERS
     type: string
     description: |
-      If present, this should be the cardholder's fingerprints contained in the card's
-      Cardholder Fingerprints data object with the error detection code removed:  the whole
-      CBEFF structure including the CBEFF_HEADER, CBEFF_BIOMETRIC_RECORD, and
-      CBEFF_SIGNATURE_BLOCK components.  Refer to Section 9 of NIST Special Publication
-      800-76-2:  Biometric Data Specification for Personal Identity Verification.
+      If you send this when creating a card, it should be the cardholder's fingerprints contained in
+      the card's Cardholder Fingerprints data object with the error detection code removed:  the
+      whole CBEFF structure including the CBEFF_HEADER, CBEFF_BIOMETRIC_RECORD, and
+      CBEFF_SIGNATURE_BLOCK components.  Refer to Section 9 of NIST Special Publication 800-76-2:
+      Biometric Data Specification for Personal Identity Verification.
 
       It is optional.  The API will check that this is Base64, but will not verify that it is
       valid biometric data.
@@ -186,10 +186,11 @@ paths:
         credential you want assigned to your new cardholder.  This example shows an array containing
         one PIV card.
 
-        See the [PIV card create schema definition](#definition-PIV-card-create) for the PIV-specific fields. The
-        other fields you can pass in this call are fully documented [in the cardholder
-        API](cardholders.html#operation--api-cardholders-post).  One, `division`, is mandatory, but
-        not shown here.
+        See the [PIV card create schema definition](#definition-PIV-card-create-example) for the
+        PIV-specific fields. The fields that are not specific to PIV and PIV-I cards are fully
+        documented [in the cardholder API](cardholders.html#operation--api-cardholders-post).  One,
+        `division`, is mandatory, and you must also supply either a first or last name for your new
+        cardholder.
       parameters:
         - name: "not rendered"
           in: body
@@ -197,13 +198,21 @@ paths:
           schema:
             type: object
             properties:
+              division:
+                type: object
+                description:  |
+                  Mandatory when creating any cardholder.
+                example:
+                  href: "https://localhost:8904/api/divisions/2"
               firstName:
                 type: string
                 example: "There will be more fields like this"
-                description: Optional.  See [the cardholder API documentation](cardholders.html#operation--api-cardholders-post).
+                description: |
+                  Optional.  See [the cardholder API
+                  documentation](cardholders.html#operation--api-cardholders-post).
               cards:
                 type: array
-                items: {$ref: '#/definitions/PIV card create'}
+                items: {$ref: '#/definitions/PIV card create example'}
 
       responses: 
         201: 
@@ -230,7 +239,7 @@ paths:
             documented in the [main cardholder
             API](cardholders.html#operation--api-cardholders--id--patch).  This example shows how to
             assign a PIV card to a cardholder, and how to change the two status fields of an
-            existing card.
+            existing PIV card.
 
           in: body
           required: true
@@ -252,23 +261,24 @@ paths:
                   An element in the `add` array is the same as you would supply to a
                   [POST](#operation--api-cardholders-post) when creating a cardholder with cards.
                   There is an example here.  See the [PIV card update schema
-                  definition](#definition-PIV-card-update) for the PIV-specific field definitions.
+                  definition](#definition-PIV-card-update-example) for the PIV-specific field
+                  definitions.
 
                   An element in the `update` array is much smaller, because the only PIV data you
                   can change is the PIV status.  This example changes the PIV status of a card card
                   to 'notChecked', which would normally activate it, but in this example we also
                   disable the card.  Presumably we do not want this person using the card just yet.
 
-                  Deleting PIV cards is no different from deleting any other kind of credential so
-                  we will not cover it here.
+                  Deleting a PIV card is no different from [deleting any other kind of
+                  credential](cardholders.html#operation--api-cardholders--id--cards--card_id--delete).
                 properties:
                   add:
                     type: array
-                    items: {$ref: '#/definitions/PIV card create'}
+                    items: {$ref: '#/definitions/PIV card create example'}
 
                   update:
                     type: array
-                    items: {$ref: '#/definitions/PIV card update'}
+                    items: {$ref: '#/definitions/PIV card update example'}
 
       responses: 
         204: 
@@ -359,8 +369,8 @@ definitions:
         example: {value: "Not Trusted", type: inactive}
       pivData:
         description: |
-          This is much like the [pivData](#definition-PIV-card-data-create) you send when creating a
-          card, described later, except that:
+          This is much like the [pivData](#definition-PIV-card-data) you send when creating a card,
+          described later, except that:
 
             - in certain cases (described below) it does not contain the certificates and
               biometrics, leaving just the [CHUID](#definition-CHUID) block (a subset of the card's
@@ -375,8 +385,8 @@ definitions:
           section will contain three certificates and the fingerprint templates in the correct
           format for import into another installation of Command Centre.
 
-          The certificates and biometrics are missing from the default card object in the interest
-          of efficiency:  those fields are very large, and most of our integrations do not require
+          The certificates and biometrics are missing from the default result set in the interest of
+          efficiency:  those fields are very large, and most of our integrations do not require
           them.  Some are running over cellular networks, where bandwidth is carries a cost.
           Omitting the large fields by default but sending them on request is a flexible compromise
           that allows integrators to build a suitable system without wastage.
@@ -390,8 +400,8 @@ definitions:
               opposed to the generic credential state which is in a block called `status` at the
               same level as `pivData`.
 
-              The [schema for PIV card data](#definition-PIV-card-data-create) lists the values it
-              might come back with.
+              The [schema for PIV card data](#definition-PIV-card-data) lists the values it might
+              come back with.
 
             example:
               type: Normal
@@ -432,7 +442,7 @@ definitions:
         example: piv
         description: You are after the card type with credential class 'piv'.
 
-  PIV card create:
+  PIV card create example:
     description: |
       This example, when placed inside the `cards` array of a
       [POST](cardholders.html#operation--api-cardholders-post) or the `cards.add` array of a
@@ -443,23 +453,27 @@ definitions:
       A PIV-I example would have a different style of FASC-N, and a card number to match.
     properties:
       number:
-        example: "3165-4313-890987-654321134567998765"
+        example: "47000256001337111234567890199991"
         type: string
         description: |
           Required.
 
+          For a PIV card, this is the FASC-N.
+
           For a PIV-I card, this is the decimal representation of the GUID in the CHUID, and must
           not be the same as the FASC-N.
 
-          For a PIV card, this is the same as the FASC-N.
+          The server ignores hyphens here, so you can send back the same number you received from a
+          GET.
       status:
         description: |
           Optional, but when controlling physical access you should be explicit rather than relying
-          on a default.  Case insensitive.
+          on a default.  Set the `value` field inside it to either 'active' or 'disabled
+          (manually)'.  Case insensitive.
 
-          You will not be able to activate a card if its PIV status prevents it.
-        type: string
-        enum: [ "active", "disabled (manually)"]
+          You will not be able to activate a card if its PIV status (inside the `pivdata` block)
+          prevents it.
+        type: object
         example: { value: active }
       type:
         description: |
@@ -470,20 +484,20 @@ definitions:
         description: |
           This block contains all the PIV-specific fields.  Everything outside this block, including
           the number, status, and type, is common to all Command Centre cards and credentials.
-        $ref: '#/definitions/PIV card data create'
+        $ref: '#/definitions/PIV card data'
 
-  PIV card update:
+  PIV card update example:
     description: |
-      This example, when placed inside `cards.update` array of a PATCH, would update a card.
-      Consult the main cardholder API documentation for where to send the PATCH and what else you
-      can change with it.  This example only shows how to update the status (common to all
-      credential types) and the PIV data.
+      This example, when placed inside `cards.update` array of a PATCH, would update a card.  The
+      main cardholder API documentation shows where to send the PATCH and what else you can change
+      with it.  This example only shows how to update the status (common to all credential types)
+      and the PIV data.
 
       Specifically, the PIV status, because that is the only PIV-specific data you can change on a
       PIV card.  Everything else--the CHUID, certificates, and biometrics--are all fixed, once set.
 
-      See the [PIV data schema](#definition-PIV-card-data-create) for when you should set the PIV
-      status and what you can set it to.
+      See the [PIV data schema](#definition-PIV-card-data) for when you should set the PIV status
+      and what you can set it to.
 
     properties:
       href:
@@ -508,12 +522,11 @@ definitions:
         description: |
           This can contain only one field when you are updating a PIV card, `pivStatus.type`.
 
-          The [PIV card data schema](#definition-PIV-card-data-create) lists the values you can
-          send.
+          The [PIV card data schema](#definition-PIV-card-data) lists the values you can send.
         type: object
         example: {pivStatus: {type: "notChecked"}}
 
-  PIV card data create:
+  PIV card data:
     description: |
       This example, when placed inside one of the cards in the `cards` array of a POST or the
       `cards.add` array of a PATCH, would create a PIV card.  It contains all the PIV-specific
@@ -578,10 +591,10 @@ definitions:
       hash:
         type: string
         description: |
-          Required.  This is the hash of the CHUID object, Base64-encoded.  For a 256-bit hash it should be 44
-          characters long including one `=` pad.  The API will reject a string
-          that is not valid Base64, but it will not verify the hash.
-        example: "uIMMz9sXzX/aC2ezObKsUEi5fc1gpZjO2y8liso7ZyU="
+          Required.  This is the hash of the CHUID object, Base64-encoded.  For a 256-bit hash it
+          should be 44 characters long including one `=` pad.  The API will reject a string that is
+          not valid Base64, but it will not verify the hash.
+        example: "NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE="
       fascn:
         type: string
         description: |
@@ -589,8 +602,9 @@ definitions:
 
           It must be the same as the card number on a PIV (not PIV-I) card.
 
-          On a PIV-I card, it must not be the same as the card number (and it may begin with fourteen nines).
-        example: "12346789001000111234567890698768"
+          On a PIV-I card, it must not be the same as the card number (and for Federal PIV-I cards
+          it will likely begin with fourteen nines).
+        example: "47000256001337111234567890199991"
       orgIdentifier:
         type: string
         description: Optional.
