@@ -75,6 +75,9 @@ info:
     * You can list receptions and see enough of a division's visitor management configuration to
       create and manage visits.
 
+    * Image Personal Data Field definitions will show their width, height, and format (JPG, PNG, or
+      BMP) on request.
+
     #### API changes in 8.40
 
     * Access groups have 22 new fields showing the privileges and access they grant their members.
@@ -4326,6 +4329,31 @@ definitions:
         description: Regular expressions often need explaining.
         type: string
         example: "@ least"
+      imageWidth:
+        description: |
+          The maximum width of an image stored in this PDF, in pixels, for image PDF types.  You
+          will only get this field if you ask for it with the `fields` parameter.
+
+          New in 8.50.
+        type: integer
+        example: 600
+      imageHeight:
+        description: |
+          The maximum height of an image stored in this PDF, in pixels, for image PDF types.  You
+          will only get this field if you ask for it with the `fields` parameter.
+
+          New in 8.50.
+        type: integer
+        example: 800
+      imageFormat:
+        description: |
+          Whether this image PDF stores BMPs, JPEGs, or PNGs.  You will only get this field if you
+          ask for it with the `fields` parameter.
+
+          New in 8.50.
+        type: string
+        enum: [bmp, jpg, png]
+        example: "jpg"
 
 ######################################################################
 
