@@ -2934,6 +2934,9 @@ of users.
 Access Group window in the Configuration Client these are the 'Access', 'Salto Access', and
 'Privileges' tabs.  These are all read-only fields.
 
+8.50 adds views of operator groups, receptions, and visitor management settings, and read-write
+access to visits and cardholders' operator and elevator settings.
+
 Car parks remain on the roadmap.
 
 These cardholder functions require the RESTCardholders licence.  8.20 added lockers and locker banks
@@ -2941,7 +2944,7 @@ to the RESTStatus licence as well, minus the cardholder information.
 
 ## Non-cardholder items
 
-8.00 added read access to basic configuration, status, and all overrides, to:
+8.00 allows read access to basic configuration, status, and all overrides, to:
 
 * access zones, alarm zones, and fence zones,
 * doors,
@@ -2955,11 +2958,14 @@ licence.
 
 8.30 added the ability to monitor more than one item per connection.
 
-There are no functions for creating, configuring, or removing those item types.
-
-8.50 added read access to day categories and partial read-write access to schedules.  You can manage
-the day categories and times on a schedule, but not which items it affects.
+8.50 allows read access to day categories and partial read-write access to schedules.  You can
+manage the day categories and times on a schedule, but not which items it affects.
 
 Day categories are divisionless, which lead to a slight change in the `/items` controller:
 divisionless items did not appear there before 8.50; now they do (subject to privilege checks, of
 course).
+
+8.50 allows viewing elevator groups.
+
+There are no functions for creating, configuring, or removing those item types.
+
