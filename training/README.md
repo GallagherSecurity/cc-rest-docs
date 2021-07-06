@@ -2531,7 +2531,8 @@ else may have hit the API before you did.
 The standalone version of Postman cannot read certificates out of the certificate store (footnote:
 the Chrome extension can, but it is no longer under development).
 
-Go to the cog -> Settings -> Certificates.  Add a certificate for your server and port, using the
+Go to the cog -> Settings -> Certificates.  Add a certificate that Postman will use when talking to
+your server and port, using the
 file containing the certificate where Postman asks for the CRT file and the file containing the
 private key where Postman asks for the key file.  They will both be in the same file if you followed
 the example above.  If you protected your private key with a password (a good idea, but turned off
@@ -2587,8 +2588,17 @@ Clients may refuse to talk to a server that offers a certificate that is not car
 from one of the internet's signing authorities.  One that has not been paid for, in other words.
 Usually the client is completely under the developer's control because it is their own application
 and they can instruct it to skip the server certificate check, as you told Chrome and Postman to do
-earlier.  But sometimes it is not so controllable, and checking the server certificate is a good
-cyber-security move anyway, so here are a couple of approaches.
+earlier.
+
+If you will pardon a very brief dive into source code, here is one way of achieving that in a C#
+client:
+
+    ServicePointManager.ServerCertificateValidationCallback = delegate (
+        object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        { return true; };
+
+If you do not have control of the client application, or you wish to check the server certificate
+(which is an advisable cyber-security move), here are a couple of approaches.
 
 You only need one of these.
 
