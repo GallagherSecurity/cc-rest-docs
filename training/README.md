@@ -73,11 +73,11 @@ manually adding a row here for each new section. -->
 
 <!-- Manual ToC
 
-1. [References](#references):  API reference, user manuals, and sample code.
+2. [References](#references):  API reference, user manuals, and sample code.
 
-2. [Training Setup](#training-setup):  what you will need to try the API.
+3. [Training Setup](#training-setup):  what you will need to try the API.
 
-1. [Useful background](#useful-background):  an introduction to Command Centre for people who are
+4. [Useful background](#useful-background):  an introduction to Command Centre for people who are
    new to physical access control systems or REST.
 
    [Cardholders](#cardholders),
@@ -93,40 +93,40 @@ manually adding a row here for each new section. -->
    [HTTP requests](#http-requests) (GET, POST, PATCH, DELETE, headers, and bodies),
    [JSON](#json).
    
-2. [Set up Command Centre](#set-up-command-centre)
+5. [Set up Command Centre](#set-up-command-centre)
       1. [Turn on the web server](#turn-on-the-web-server)
       3. [Create a REST operator](#create-a-rest-operator)
       3. [Create a REST Client item](#create-a-rest-client-item)
       3. [What is an API key?](#what-is-an-api-key)
       
-5. [Try the sample client application](#try-the-sample-client-application)
+6. [Try the sample client application](#try-the-sample-client-application)
 
-2. [Set up Chrome](#set-up-chrome):  install the ModHeader extension and a JSON pretty-printer, and
+7. [Set up Chrome](#set-up-chrome):  install the ModHeader extension and a JSON pretty-printer, and
    don't mind if the server certificate is bad.
    
-2. [Set up Postman](#set-up-postman):  send the API header, set the content type, and don't mind if
+8. [Set up Postman](#set-up-postman):  send the API header, set the content type, and don't mind if
    the server certificate is bad.
    
-2. [First GETs:  cardholders](#first-gets--cardholders):  get the API's contents page, get all
+9. [First GETs:  cardholders](#first-gets--cardholders):  get the API's contents page, get all
    cardholders, get one cardholder.
    
-9. [First GETs:  events](#first-gets--events):  list all events, list all alarms.
+10. [First GETs:  events](#first-gets--events):  list all events, list all alarms.
 
-2. [Back into the theory](#back-into-the-theory):  API controllers, why we need operators, the
+11. [Back into the theory](#back-into-the-theory):  API controllers, why we need operators, the
    request process.
    
-11. [First POST and search](#first-post-and-search):  create a cardholder and search for it.
+12. [First POST and search](#first-post-and-search):  create a cardholder and search for it.
 
-2. [Cardholder flat fields](#cardholder-flat-fields):  give a cardholder access groups and PDFs,
+13. [Cardholder flat fields](#cardholder-flat-fields):  give a cardholder access groups and PDFs,
    changing simple fields, images.
    
-13. [Cards](#cards):  adding, updating, and (not!) deleting.
+14. [Cards](#cards):  adding, updating, and (not!) deleting.
 
-14. [Group memberships](#group-memberships)
+15. [Group memberships](#group-memberships)
 
-15. [Create a cardholder, cont.](#create-a-cardholder-cont)  
+16. [Create a cardholder, cont.](#create-a-cardholder-cont)  
 
-2. [Coding considerations](#coding-considerations)  
+17. [Coding considerations](#coding-considerations)  
    Recap.  
    Only one cardholder at a time.  
    The importance of `/api`.  
@@ -137,7 +137,7 @@ manually adding a row here for each new section. -->
    Long polls.  
    Benchmarks.
    
-2. [Advanced events](#advanced-events)  
+18. [Advanced events](#advanced-events)  
    Event filters
    IDs to use in them.  
    Filtering by date.  
@@ -145,15 +145,15 @@ manually adding a row here for each new section. -->
    Writing an interactive event viewer.  
    Worked example:  reading alarms.
    
-18. [Client-side certificates](#client-side-certificates)
+19. [Client-side certificates](#client-side-certificates)
 
-19. [Server-side certificates](#server-side-certificates)
+20. [Server-side certificates](#server-side-certificates)
 
-20. [Other Command Centre items](#other-command-centre-items)
+21. [Other Command Centre items](#other-command-centre-items)
 
-21. [Appendix:  privilege table](#appendix--privilege-table)
+22. [Appendix:  privilege table](#appendix--privilege-table)
 
-2. [Appendix:  features and licences](#appendix--features-and-licences)
+23. [Appendix:  features and licences](#appendix--features-and-licences)
 
 -->
 
@@ -1906,7 +1906,7 @@ Sustained an average of two to four thousand per second from a database of four 
 ### Extracting 12,000 cardholders
 Extracting their cards, access groups, and PDFs took three to four minutes on a v7.90 server.  The
 process was to request a summary page of 10,000 cardholders, then the remaining 2,000, then iterate
-through all their hrefs, getting their details pages.
+through all their hrefs, getting their details pages one by one.
 
 Extracting the same fields for the same **12,000 cardholders took 12 seconds** on the same server
 running v8.00.  This process used the fields parameter to add cards, access groups, and PDFs to the
@@ -2251,7 +2251,7 @@ Bringing up the rear is another alarm that the controller generated when it rest
 
 ----------------------------------------------------------------------
 
-<!-- s18 -->
+<!-- s19 -->
 # Client-side certificates
 
 First see [auth certificates](#authentication-and-encryption-certificates) for what certificates are
@@ -2582,7 +2582,7 @@ The `--insecure` turns off client-side checking of the server certificate.
 I found `--verbose` necessary to see any error codes.
 
 ----------------------------------------------------------------------
-<!-- S19 -->
+<!-- S20 -->
 # Server-side certificates
 Clients may refuse to talk to a server that offers a certificate that is not carrying a signature
 from one of the internet's signing authorities.  One that has not been paid for, in other words.
@@ -2651,7 +2651,7 @@ At time of writing, Gallagher Group has no association with www.itsabritishthing
 
 ----------------------------------------------------------------------
 
-<!-- S20 -->
+<!-- S21 -->
 # Other Command Centre items
 Version 8.00 added fence zones, access zones, alarm zones, doors, macros, and outputs (relays and
 LEDs) under two licences.  The RESTStatus licence lets you see their status and some basic
@@ -2887,7 +2887,7 @@ Believe it or not there is some order to this.  Please don't dump your stuff on 
 |View a visit|'View' or 'Edit Visits'.  'Manage Receptions' will not do it.|
 |Modify a visit|'Edit Visits'.  'Manage Receptions' will not do this either.|
 
-<!-- S22 -->
+<!-- S23 -->
 ----------------------------------------------------------------------
 # Appendix:  Features and licences
 
