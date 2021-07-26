@@ -556,31 +556,32 @@ Before an API call can succeed the client needs to decide to trust the server an
 needs to decide to trust the client.  They do that using _certificates_.
 
 First a little background.  Very simply put, the current algorithms for secure communication require
-a pair of _keys_.  Keys are nothing more than huge numbers.  The two in the pair are different, but
-mathematically related so that when you encrypt some data using one key, nobody can decrypt it if
-they do not have the other key.  The encryption key is public because there is no harm in encrypting
-data.  People toss encryption keys around like business cards.  Its mate, the decryption key, is
-very, very private.  They are not called the encryption and decryption keys because they do more
-than just that, so the business card one is called the _public key_ and the other is the _private
-key_.
+a pair of _keys_.  Keys are nothing more than huge numbers.  The two in the pair are different from
+each other, but mathematically related so that when you encrypt some data using one key, nobody can
+decrypt it if they do not have the other key.  The encryption key is public because there is no harm
+in encrypting data.  People toss encryption keys around like business cards.  Its mate, the
+decryption key, is very, very private.  They do more than just encrypt and decrypt data so they are
+not called the encryption and decryption keys:  the business card one is called the _public key_ and
+the other is the _private key_.
 
-A _certificate_ contains a public key plus metadata:  what the key is meant for, for how long, and
-some proof that it is authentic, if there is any.  That proof of authenticity takes the form of a
-signature from an authority that the internet has agreed to trust, such as Symantec or Verizon.
-Client certificates, and some server certificates, do not have a signature.  Or they do, but it is
-their own signature, which does not really count because nobody trusts it.  Such certificates are
-called _self-signed_.  Web browsers cook up their own self-signed certificates all the time.  Web
-server certificates, on the other hand, change infrequently (months or years).
+A _certificate_ contains a public key plus metadata:  what the key is meant for, how long it is good
+for, and some proof that it is authentic, if there is any.  That proof of authenticity takes the
+form of a signature from an authority that the internet has agreed to trust, such as Symantec or
+Verizon.  Client certificates, and some server certificates, do not have a signature.  Or they do,
+but it is their own signature, which does not really count because nobody trusts it.  Such
+certificates are called _self-signed_.  Web browsers cook up their own self-signed certificates all
+the time.  Web server certificates, on the other hand, change infrequently (they last for months or
+years).
 
 If an HTTPS client and server connect and establish an encrypted channel of communication without
-checking certificates nobody will be able to listen in, but they should not trust each other.  The
+checking certificates, nobody will be able to listen in but they should not trust each other.  The
 other end could be fibbing.  So they conduct a negotiation to establish each other's identity (i.e.,
 they _authenticate_).
 
 Usually a web client requires proof of authenticity from the server, since you want to be sure that
 it really is your bank's web site you are looking at and not a fake.  If the server does not provide
-that, the client shows a warning.  You will have to [work around it in
-Chrome](#ignore-server-certificate-warnings) and [work around it in
+that, the client shows a warning.  When working with the Command Centre API you will have to [work
+around it in Chrome](#ignore-server-certificate-warnings) and [work around it in
 Postman](#never-mind-that-your-server-certificate-is-self-signed).  If you want to install your own
 server key, the topic 'Changing the Web Services' in the Configuration Client's online help shows
 you how.
@@ -592,12 +593,12 @@ than web sites so our recommendation is to turn it on.  [A later section](#clien
 talks about client certificates.
 
 > &#9888; **It is important to know the difference between the two certificate checks, and to know
-> that they are completely independent**.  If the client does not trust the server, Command Centre
-> will not receive a connection and will not raise any alarms.  The problem is on the client and
-> there is nothing you can do to Command Centre to help.  But if the server certificate is
-> acceptable to the client, the server has a chance to check the client certificate.  If the server
-> does not like the client certificate, Command Centre will raise an 'invalid client certificate'
-> alarm.
+> that they are completely independent**.  If the client drops a connection because it does not
+> trust the server, Command Centre will cannot raise any alarms, because it never received a proper
+> connection.  The problem is on the client and there is nothing you can do to Command Centre to
+> help.  But if the server certificate is acceptable to the client, the server has a chance to check
+> the client certificate.  If the server does not like the client certificate, Command Centre will
+> raise an 'invalid client certificate' alarm.
 
 ## Items versus a cardholder's link to them
 Talking about a PDF or a competency can be confusing, because there is a PDF item and a competency
