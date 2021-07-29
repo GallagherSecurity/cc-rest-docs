@@ -262,7 +262,8 @@ in there and a console application in a C# Visual Studio solution.
 
 Visible at github.com, integrated into hover text at gallaghersecurity.github.io .
 
-*[PDF]: Personal Data Field.  Not Adobe's kind of PDF
+*[PDF]: Personal Data Field.  Not Adobe's kind of PDF.  In Gallagher's defence, these PDFs predate
+Adobe's.
 
 *[CC]: Command Centre
 

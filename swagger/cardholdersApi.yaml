@@ -1134,7 +1134,11 @@ parameters:
       `"..."` for an exact match.  Without quotes, a percent sign `%` will match any substring and
       an underscore will match any single character.
 
-      The search is always case-insensitive.
+      The search is always case-insensitive.  Results are undefined if you do a substring search for
+      the empty string (`name=`).  You will receive no items if you search for those with no name
+      (`name=""`), as all items must have a name.
+
+      Search parameters are ANDed together.
 
   pdf_fields:
     name: "fields"
@@ -1158,6 +1162,7 @@ parameters:
   division:
     name: "division"
     in: query
+    required: false
     type: array
     items:
       type: string
@@ -1170,6 +1175,26 @@ parameters:
 
       List the IDs of the divisions you are interested in separated by commas.  Item IDs are short
       alphanumeric strings, not URLs.
+
+      Results are undefined if you provide an ID that is not in the form of a division ID.
+
+      Search parameters are ANDed together.
+
+  description:
+    name: "description"
+    in: query
+    required: false
+    type: string
+    description: |
+      Only return items with a description that matches this string.  By default it is a
+      substring match; surround it with double quotes `"..."` for an exact match.  Without quotes,
+      adding a percent sign `%` or underscore `_` will anchor the string at both ends.  A `_` will
+      match any single character, and a `%` will match any substring.
+
+      The search is always case-insensitive.  Results are undefined if you search for the empty
+      string (`description=` or `description=""`).
+
+      Search parameters are ANDed together.
 
   reception_fields:
     name: "fields"
@@ -4727,9 +4752,11 @@ paths:
           substring.  For example, `boothroyd,%` will only match cardholders whose last name is
           Boothroyd.
 
-          The search is always case-insensitive.
+          The search is always case-insensitive.  Results are undefined if you do a substring search
+          for the empty string (`name=`).  You will receive no cardholders if you search for those
+          with no name (`name=""`), as all items must have a name.
 
-          The `name` and `pdf_{id}` search parameters form a logical conjunction.  They are ANDed
+          The search parameters form a logical conjunction.  They are ANDed
           together.  Therefore if you search for `name=Mary&pdf_1315=nanny` you will only get back
           cardholders with 'Mary' in their name and 'nanny' in the PDF with ID 1315.
 
@@ -4748,7 +4775,7 @@ paths:
 
           The search is always case-insensitive.
 
-          The `name` and `pdf_{id}` search parameters form a logical conjunction.  They are ANDed
+          The search parameters form a logical conjunction.  They are ANDed
           together.  Therefore the search `pdf_1315=nanny&pdf_1315=paratrooper` will only return
           cardholders whose PDF 1315 contains the strings 'nanny' and 'paratrooper'.
 
@@ -4784,6 +4811,8 @@ paths:
           description: |
             Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Cardholder search'}
+        400:
+          description: The server could not make sense of your search terms.
         403:
           description: The site does not have the RESTCardholders licence.
 

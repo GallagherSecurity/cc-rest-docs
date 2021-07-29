@@ -3093,7 +3093,8 @@
                     </div>
                     <div class="prop-value">
                       <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
-                      <p>The search is always case-insensitive.</p>
+                      <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
+                      <p>Search parameters are ANDed together.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -3497,7 +3498,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Creates a subscription to status changes. You POST a list of item IDs and the server returns the current state of those items plus a link. When you GET that link some time later the server will return the items that changed state between the two calls.</p>
-                  <p>If you do not GET the link within thirty seconds of the POST returning the server will drop your subscription and free up the resources it had allocated to servicing it.</p>
+                  <p>If you do not GET the link within thirty seconds of the POST returning, the server will drop your subscription and free up the resources it had allocated to servicing it.</p>
                   <p>Your operator must have view privileges on every item in the subscription.</p>
                   <p>Because this call returns the status of items, this call requires the RESTStatus licence.</p>
                 </section>
