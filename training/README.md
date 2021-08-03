@@ -2659,8 +2659,9 @@ Version 8.00 added fence zones, access zones, alarm zones, doors, macros, and ou
 LEDs) under two licences.  The RESTStatus licence lets you see their status and some basic
 configuration, and the RESTOverrides licence lets you send overrides to them.  So you can open
 doors, run macros, disarm fence and alarm zones, toggle outputs, and so on.  Version 8.10 added
-inputs (switches).  Version 8.30 added a method `/api/items/updates` which lets you monitor several
-items with one connection.  Version 8.50 added operator groups, schedules, and day categories.
+inputs, which are often connected to physical devices such as reed switches and infrared sensors.
+Version 8.30 added a method `/api/items/updates` which lets you monitor several items with one
+connection.  Version 8.50 added operator groups, schedules, and day categories.
 
 Note that the REST API does not let you create, edit, or delete any of these items except schedules.
 The configuration client is still the place for that.
@@ -2723,8 +2724,8 @@ The output from the last example above, that requested the `commands` block of t
 Normally a search would return an ID, href, and name, and it would not return that block of
 commands, but we turned that on its head by using the `fields` query parameter to request the
 `commands` block and nothing else.  Each of the objects inside it is a named command containing an
-href which, when you POST to them, sends an override to the item.  For example, if that was a door
-on your system and you pasted the URL from `commands.open` into Postman, and POSTed it, the unlock
+href which, when you POST to it, sends an override to the item.  For example, if that was a door on
+your system and you pasted the URL from `commands.open` into Postman, and POSTed it, the unlock
 relay on that door would fire.
 
 Each item type has a different set of commands you can send it.  They vary in type and number:
@@ -2782,7 +2783,7 @@ GET the `updates` link on an item's details page.  It is a long poll, so the ser
 until it has something for you (or it times out after about 50s).  Then stay up to date by entering
 a loop GETting the `next` link.
 
-Why use this one instead of the one below?
+You really should be using bulk item updates, in the section below.  Why use this one instead?
 
 * You're not running 8.30 yet, or
 * it's slightly easier if you're monitoring only one item (though that is debateable), or
@@ -2809,11 +2810,13 @@ your session, thinking you have walked away.
 The first GET will return the same states that the POST did, which seems redundant, but that is just
 the way it is.  Just keep looping.
 
-Why use this one instead of the per-item updates?
-
-* You want to monitor more than one item per client thread.
+This is a far better way of monitoring multiple items that the previous because it only uses one
+server connection.
 
 ## Schedules and day categories TODO
+
+Schedules arrived in 8.40.  As of 8.50, they are the only type of item that the API can create,
+other than cardholders.
 
 When updating a schedule you must replace its entire list of day categories and times.  This is
 quite different from how you normally update lists via this API.  The JSON schema allows room for us
@@ -2821,6 +2824,73 @@ to accept the normal style as a future enhancement, but in 8.40 you must replace
 schedules at the same time.  That suits our target use-case, which was for an integration to
 download the schedule, de-serialise it into an object model, change some part of it, then
 re-serialise and upload it back.
+
+----------------------------------------------------------------------
+# Visitor management TODO
+<!-- oh boy -->
+
+## Introduction
+
+The Command Centre Visitor Management feature allows you to manage _visit_ items.  A visit contains
+
+* a list of expected _visitor_ cardholders,
+* a _host_ cardholder, responsible for them while on site,
+* a _reception_, which is a location at which visitors may arrive,
+* a _visitor type_, that is actually an access group that Command Centre will add your visitors to
+  when you add them to the visit, plus an index into more visitor management configuration,
+* a list of access groups that your visitors need to be in while on site,
+* other flat fields such as the dates of the visit and a description.
+
+The host is person who Command Centre should notify when a visitor signs in.  If a visitor does not
+have a card, tag boards and reports will show them in the same access zone as their host.  A
+cardless visitor appears to follow his or her host around the site, in other words.
+
+The visitor type (an access group) is there so that visitors can have PDF values assigned before
+they arrive.  This is useful for aids to identification such as photos and driver's licence or
+passports numbers.  Recall that in order to hold a value for a PDF, a cardholder must be in one of
+the PDF's access groups.
+
+The visitor access groups (not the visitor _type_ access group) are there so that after a visitor
+signs in they can open doors using a card.  No access groups:  no access.
+
+## Capabilities of the API
+
+The API lets you read the relevant parts of visitor management configuration, list receptions, and
+CRUD visit items, including their visitors.
+
+It does not let you change visitor management configuration.  You need to do that in the
+Configuration Client.
+
+It does not let you sign visitors in or out, or mark them on or off site.
+
+
+## Setting up Command Centre to use Visitor Management via the API
+
+To use the Visitor Management feature, you must:
+
+* add some visitor management configuration to a division in the Configuration Client, including at
+  least one visitor type (access group) with at least one _host type group_ and _visitor access
+  group_, and
+* create at least one reception item in the Configuration Client.
+
+Your software can then use the API to get that division configuration and the list of receptions.
+When it creates a visit it will need to comply to the rules in the division configuration,
+including:
+
+* the visit's visitor type access group must be in the same division as the visit's reception,
+* the visit's visitor type must be one of the division's visitor types,
+* the visit's host must be a member of at least one of that visitor type's host access groups,
+* the visit's visitor access groups must be a subset of that visitor type's visitor access groups.
+
+The division in question is the visit's reception's division.
+
+Command Centre reevaluates its rules every time you change a visit.  We aimed to provide useful
+error messages, so if you receive anything except a 200-level response code please look in the body.
+
+When you add a visitor to a visit, Command Centre will add that cardholder to the visit's visitor
+type access group.  Then you can add PDFs to the cardholder (such as an image).  When the cardholder
+signs in, using a Gallagher Visitor Management Kiosk, or when a greeter signs them in using the
+Visitor Management Client, Command Centre will add the visitor to the visit's visitor access groups.
 
 ----------------------------------------------------------------------
 
