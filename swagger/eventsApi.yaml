@@ -2441,20 +2441,23 @@ definitions:
             type: boolean
             example: true
             description: |
-              If present, true.  It indicates whether a division has its own visitor management
-              configuration or uses its parent's.  Which is also indicated by the presence or
-              absence of the `visitorTypes` block.
+             If present and true, this division has its own visitor management configuration.
+             Otherwise it uses its parent's.  That is also indicated by the presence or absence of
+             the `visitorTypes` block.
           visitortypes:
             type: array
             description: |
               This is an array of items, each containing a 'visitor type'.  A visitor type comprises
-              three things:  an access group to which visitor management will add every visitor as
+              three things:  an access group, to which visitor management will add every visitor as
               soon as they are on the visit, host access groups, to one of which the host cardholder
-              must belong, and visitor access groups to which Command Centre will add a visitor when
+              must belong, and visitor access groups, to which Command Centre will add a visitor when
               they sign in.
 
-              You must pick a visitor type when creating a visit.  It must be on the same division
-              as the reception.
+              When creating a visit you must pick a visitor type that is in the same division as the
+              visit's reception.  The visitor type you pick determines which host you can assign (he
+              or she must be a member of at least one of the visitor type's host access groups) and
+              which visitor access groups you can assign (they must be in the visitor type's list of
+              visitor access groups).
 
             items:
               type: object
