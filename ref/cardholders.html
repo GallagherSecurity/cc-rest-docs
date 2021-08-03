@@ -6552,7 +6552,7 @@
                   <a href="#tag-Receptions">reception</a> at which your visitors will arrive.</li>
                 <li>Look at the visitor management configuration for your reception&#39;s
                   <a href="events.html#definition-Division">division</a>.</li>
-                <li>Pick a visitor type from that configuration, and a host from that visitor type&#39;s host access groups, and (optionally) some visitor access groups.</li>
+                <li>Pick a visitor type from that configuration, and a host from that visitor type&#39;s host access groups, and (optionally) some visitor access groups from that visitor type&#39;s visitor access groups.</li>
                 <li>Pick (or create) at least one cardholder for your visitor or visitors.</li>
                 <li>Build a
                   <a href="#definition-Visit">JSON payload</a> containing all that.</li>
@@ -14071,7 +14071,7 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>This is a sample POST body that creates a visit when sent to <code>/api/visits</code>.</p>
-                  <p>You need to put fewer fields in a POST than you receive from the server after a GET. The reception, visitor type, host, name, and start and end date-times are required but the text fields other than <code>name</code> are optional. It will ignore <code>href</code> and <code>division</code> if you send them.</p>
+                  <p>You need to put fewer fields in a POST than you receive from the server after a GET. Only the reception, visitor type, host, name, and start and end date-times are required. It will ignore <code>href</code>, and (unusually) <code>division</code> because it copies a visit&#39;s division from its reception.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -14249,7 +14249,7 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>This is a sample PATCH body that modifies a visit when sent to its href, <code>/api/visits/941</code>.</p>
-                  <p>The differences from a POST are in the <code>visitorAccessGroups</code> and <code>visitors</code> arrays. In a POST they are arrays of hrefs, but in a PATCH they must be objects. Each object should contain an array called <code>add</code> and / or an array called <code>remove</code>. Each of those should contain hrefs to add to (or remove from) the visit.</p>
+                  <p>The differences from a POST are in the <code>visitorAccessGroups</code> and <code>visitors</code> arrays. In a POST they are arrays of hrefs, but in a PATCH they must be objects. Each object should contain an array called <code>add</code> and / or an array called <code>remove</code>. Each of those should contain hrefs to add to or remove from the visit.</p>
                   <p>The other big difference is that all fields are optional in a PATCH.</p>
                 </section>
                 <section class="json-schema-properties">

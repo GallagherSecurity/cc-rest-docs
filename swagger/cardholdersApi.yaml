@@ -1069,7 +1069,8 @@ tags:
     1. Look at the visitor management configuration for your reception's
        [division](events.html#definition-Division).
     1. Pick a visitor type from that configuration, and a host from that visitor type's host access
-       groups, and (optionally) some visitor access groups.
+       groups, and (optionally) some visitor access groups from that visitor type's visitor access
+       groups.
     1. Pick (or create) at least one cardholder for your visitor or visitors.
     1. Build a [JSON payload](#definition-Visit) containing all that.
     1. POST to the link at `features.visits.visits.href` (in the payload of the `GET /api` you did
@@ -4594,9 +4595,10 @@ definitions:
     description: |
       This is a sample POST body that creates a visit when sent to `/api/visits`.
 
-      You need to put fewer fields in a POST than you receive from the server after a GET.  The
-      reception, visitor type, host, name, and start and end date-times are required but the text
-      fields other than `name` are optional.  It will ignore `href` and `division` if you send them.
+      You need to put fewer fields in a POST than you receive from the server after a GET.  Only the
+      reception, visitor type, host, name, and start and end date-times are required.  It will
+      ignore `href`, and (unusually) `division` because it copies a visit's division from its
+      reception.
 
     properties:
       name:
@@ -4640,7 +4642,7 @@ definitions:
       The differences from a POST are in the `visitorAccessGroups` and `visitors` arrays.  In a POST
       they are arrays of hrefs, but in a PATCH they must be objects.  Each object should contain an
       array called `add` and / or an array called `remove`.  Each of those should contain hrefs to
-      add to (or remove from) the visit.
+      add to or remove from the visit.
 
       The other big difference is that all fields are optional in a PATCH.
 
