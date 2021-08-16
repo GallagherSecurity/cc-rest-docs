@@ -38,19 +38,26 @@ info:
 
     ### Licensing
 
-    All of the GET calls described here require the RESTStatus licence.  All the POSTs require
-    RESTOverrides.  The two licences do not overlap:  to watch an item and override it, you will
-    need both.
+    In versions up to and including 8.50, all of the GET calls described here require the RESTStatus
+    licence.  All the POSTs require RESTOverrides.  The two licences do not overlap:  to watch an
+    item and override it, you will need both.
+
+    In 8.60 and later the GETs return a limited field set if you have RESTOverrides but not
+    RESTStatus - enough to let you find the item you want to override.
 
     ### Versions
 
     The body of this document clearly indicates when recent features arrived in the API so that
     readers with older versions of Command Centre know not to expect them.
 
+    #### API changes on the roadmap
+
+    * A future version will increase the number of items in its search results and sort them
+    differently, if you did not use query parameters to override the defaults.
+
     #### Changes in 8.60
 
-    8.60 increases the number of items in its search results and sorts them differently, if the
-    query did not use query parameters to override the defaults.
+    * The RESTOverrides licence allows you to find items and their override URLs.
 
     #### Changes in 8.50
 
@@ -1346,7 +1353,8 @@ definitions:
                     True iff the elevator car has a front-facing door and the elevator 
                     services the floor with the front of the elevator.
 
-                    This field requires the RESTStatus licence.
+                    This field requires the RESTStatus or (in 8.60 or later) the RESTOverrides
+                    licence.
                 rearService:
                   type: boolean
                   example: true
@@ -1355,7 +1363,8 @@ definitions:
                     True iff the elevator car has a rear-facing door and the elevator 
                     services the floor with the rear of the elevator.
 
-                    This field requires the RESTStatus licence.
+                    This field requires the RESTStatus or (in 8.60 or later) the RESTOverrides
+                    licence.
                 floorName:
                   type: string
                   example: "Level 1"
@@ -2804,7 +2813,8 @@ paths:
             Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Access Zone search'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
 
   /api/access_zones/update_cardholder_location:
     get:
@@ -2873,7 +2883,8 @@ paths:
           description: Success.
           schema: {$ref: '#/definitions/Access Zone detail'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404accesszone"}
 
   /api/access_zones/{id}/free:
@@ -3095,7 +3106,8 @@ paths:
               next: { href: https://localhost:8904/api/access_zones/3280/updates/9_1 }
             }
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404accesszone"}
 
 ######################################################################
@@ -3137,7 +3149,8 @@ paths:
             Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Alarm Zone search'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
 
   /api/alarm_zones/{id}:
     get:
@@ -3164,7 +3177,8 @@ paths:
           description: Success.
           schema: {$ref: '#/definitions/Alarm Zone detail'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404alarmzone"}
 
   /api/alarm_zones/{id}/arm:
@@ -3363,7 +3377,8 @@ paths:
               next: { href: https://localhost:8904/api/alarm_zones/328/updates/9_1 }
             }
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404alarmzone"}
 
 ######################################################################
@@ -3452,7 +3467,8 @@ paths:
             Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Door search'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
 
   /api/doors/{id}:
     get:
@@ -3479,7 +3495,8 @@ paths:
           description: Success.
           schema: {$ref: '#/definitions/Door detail'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404door"}
 
   /api/doors/{id}/open:
@@ -3534,7 +3551,8 @@ paths:
               next: { href: https://localhost:8904/api/doors/332/updates/9_1 }
             }
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404door"}
 
 ######################################################################
@@ -3644,7 +3662,8 @@ paths:
                     format: url
                     example: "https://localhost:8904/api/elevator_groups?skip=100"
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
 
   /api/elevator groups/{id}:
     get:
@@ -3672,7 +3691,8 @@ paths:
           description: Success.
           schema: {$ref: '#/definitions/Elevator Group detail'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404:
           description: |
             The request's URL does not represent an elevator group, or the operator does not have a
@@ -3717,7 +3737,8 @@ paths:
             Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Fence Zone search'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
 
   /api/fence_zones/{id}:
     get:
@@ -3744,7 +3765,8 @@ paths:
           schema: {$ref: '#/definitions/Fence Zone detail'}
           description: Success.
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404fencezone"}
 
   /api/fence_zones/{id}/on:
@@ -3877,7 +3899,8 @@ paths:
               next: { href: https://localhost:8904/api/fence_zones/556/updates/9_1 }
             }
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404fencezone"}
 
 ######################################################################
@@ -3918,7 +3941,8 @@ paths:
             Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Input search'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
 
   /api/inputs/{id}:
     get:
@@ -3945,7 +3969,8 @@ paths:
           description: Success.
           schema: {$ref: '#/definitions/Input detail'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404input"}
 
   /api/inputs/{id}/shunt:
@@ -4040,7 +4065,8 @@ paths:
               next: { href: https://localhost:8904/api/inputs/2365/updates/9_1 }
             }
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404input"}
 
 ######################################################################
@@ -4080,7 +4106,8 @@ paths:
             Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Macro search'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
 
   /api/macros/{id}:
     get:
@@ -4106,7 +4133,8 @@ paths:
         200:
           description: Success.
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
           schema: {$ref: '#/definitions/Macro detail'}
         404: {$ref: "#responses/404macro"}
 
@@ -4160,7 +4188,8 @@ paths:
             Success.  See the note in the description about privileges if your result set is empty.
           schema: {$ref: '#/definitions/Output search'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
 
   /api/outputs/{id}:
     get:
@@ -4187,7 +4216,8 @@ paths:
           description: Success.
           schema: {$ref: '#/definitions/Output detail'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404output"}
 
   /api/outputs/{id}/on:
@@ -4307,7 +4337,8 @@ paths:
               next: { href: https://localhost:8904/api/outputs/2365/updates/9_1 }
             }
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404output"}
 
 ######################################################################
@@ -4420,7 +4451,8 @@ paths:
           description: Success.
           schema: {$ref: '#/definitions/Schedule detail'}
         403:
-          description: The site does not have the RESTStatus licence.
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
         404: {$ref: "#responses/404schedule"}
 
     patch:

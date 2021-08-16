@@ -2815,8 +2815,7 @@ server connection.
 
 ## Schedules and day categories TODO
 
-Schedules arrived in 8.40.  As of 8.50, they are the only type of item that the API can create,
-other than cardholders.
+Schedules arrived in 8.40.
 
 When updating a schedule you must replace its entire list of day categories and times.  This is
 quite different from how you normally update lists via this API.  The JSON schema allows room for us
@@ -2824,6 +2823,8 @@ to accept the normal style as a future enhancement, but in 8.40 you must replace
 schedules at the same time.  That suits our target use-case, which was for an integration to
 download the schedule, de-serialise it into an object model, change some part of it, then
 re-serialise and upload it back.
+
+As of 8.50, only types of item that the API can create are cardholders, visits, and schedules.
 
 ----------------------------------------------------------------------
 # Visitor management TODO

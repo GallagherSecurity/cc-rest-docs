@@ -43,7 +43,8 @@ info:
     ### Licensing
 
     All of the API calls described here are available with the RESTCardholders licence.  Lockers and
-    locker banks are also available with the RESTStatus licence.
+    locker banks are also available with the RESTStatus licence, and partially with the
+    RESTOverrides licence.
 
     ### Versions
 
@@ -1759,7 +1760,7 @@ definitions:
               came from the [access zones
               controller](rest.html#operation--api-access_zones-update_cardholder_location-get), but
               you can also use an href from the [items controller](events.html#tag-Items) if you do
-              not have the RESTStatus licence.
+              not have a RESTStatus or (in 8.60) RESTOverrides licence.
 
   Cardholder PDF:
     description: |
@@ -3937,6 +3938,12 @@ definitions:
             until: "2018-04-07T00:00:00Z"
       commands:
         type: object
+        description: |
+          Overrideable items return one of these blocks if your operator has the right privilege
+          ('Override - Open Locker' in this case) and the item is fit to be overridden.
+
+          The only override you can send to a locker is 'open', so that is the only entry this block
+          will contain.
         properties:
           open:
             type: object
@@ -5826,8 +5833,8 @@ paths:
           schema: {$ref: '#/definitions/Locker bank search'}
         403:
           description: |
-            The installation lacks a lockers licence, or it is missing both RESTCardholders and
-            RESTStatus.
+            The installation lacks a lockers licence, or it is missing RESTCardholders and
+            RESTStatus and (in 8.60) RESTOverrides.
 
   /api/locker_banks/{id}:
     get:
@@ -5868,8 +5875,8 @@ paths:
           schema: {$ref: '#/definitions/Locker bank detail'}
         403:
           description: |
-            The installation lacks a lockers licence, or it is missing both RESTCardholders and
-            RESTStatus.
+            The installation lacks a lockers licence, or it is missing RESTCardholders and
+            RESTStatus and (in 8.60) RESTOverrides.
         404:
           description: |
             Your REST operator does not have the privilege to view that locker bank.
@@ -5911,7 +5918,7 @@ paths:
         403:
           description: |
             The installation lacks a lockers licence, or it is missing both RESTCardholders and
-            RESTStatus.
+            RESTStatus and (in 8.60) RESTOverrides.
         404:
           description: |
             Your REST operator does not have the privilege to view that locker bank ('Locker
@@ -5938,7 +5945,8 @@ paths:
             division.
         404:
           description: |
-            That is not the URL of a locker.
+            That is not the URL of a locker, or it is the URL of a locker your operator does not
+            have the privilege to see.
 
 ######################################################################
 

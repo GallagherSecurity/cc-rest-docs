@@ -271,7 +271,7 @@
                   <a href="events.html#authentication">Authentication section</a> of the accompanying Alarms and Events API documentation to learn how to format your queries, and Command Centre&#39;s Configuration Client online help to learn how to ready the server to receive them (search for &#39;REST API&#39;).</p>
                 <p>Each section contains a list of use cases intended as quick solutions for simple tasks or a how-to to get you started toward your particular goal. However they also serve as a good introduction to the API if you step through them using a web browser, starting at <code>/api</code> on your Command Centre server. To do that, you will need a browser plugin that lets you set an Authorization HTTP header, and a JSON formatter to prettify the results documents. Search the Configuration client&#39;s online help for &#39;test REST API&#39; for guidance. You will also need to prepare Command Centre, as above.</p>
                 <h3 id="licensing">Licensing</h3>
-                <p>All of the API calls described here are available with the RESTCardholders licence. Lockers and locker banks are also available with the RESTStatus licence.</p>
+                <p>All of the API calls described here are available with the RESTCardholders licence. Lockers and locker banks are also available with the RESTStatus licence, and partially with the RESTOverrides licence.</p>
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
                 <h4 id="cardholder-api-changes-on-the-roadmap">Cardholder API changes on the roadmap</h4>
@@ -4604,7 +4604,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The installation lacks a lockers licence, or it is missing both RESTCardholders and RESTStatus.</p>
+                      <p>The installation lacks a lockers licence, or it is missing RESTCardholders and RESTStatus and (in 8.60) RESTOverrides.</p>
                     </div>
                   </div>
                 </section>
@@ -4751,7 +4751,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The installation lacks a lockers licence, or it is missing both RESTCardholders and RESTStatus.</p>
+                      <p>The installation lacks a lockers licence, or it is missing RESTCardholders and RESTStatus and (in 8.60) RESTOverrides.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4932,7 +4932,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The installation lacks a lockers licence, or it is missing both RESTCardholders and RESTStatus.</p>
+                      <p>The installation lacks a lockers licence, or it is missing both RESTCardholders and RESTStatus and (in 8.60) RESTOverrides.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -5076,7 +5076,7 @@
                       <div class="prop-title">404 Not Found</div>
                     </div>
                     <div class="prop-value">
-                      <p>That is not the URL of a locker.</p>
+                      <p>That is not the URL of a locker, or it is the URL of a locker your operator does not have the privilege to see.</p>
                     </div>
                   </div>
                 </section>
@@ -8487,7 +8487,7 @@
                           <dd>
                             <p>The href of the access zone into which you want to move your cardholder. This example came from the
                               <a href="rest.html#operation--api-access_zones-update_cardholder_location-get">access zones controller</a>, but you can also use an href from the
-                              <a href="events.html#tag-Items">items controller</a> if you do not have the RESTStatus licence.</p>
+                              <a href="events.html#tag-Items">items controller</a> if you do not have a RESTStatus or (in 8.60) RESTOverrides licence.</p>
                           </dd>
                         </dl>
                       </section>
@@ -12048,11 +12048,15 @@
                         </div>
                       </section>
                     </dt>
-                    <dt data-property-name="commands">
+                    <dt data-property-name="commands" class="has-description">
                       <span class="json-property-name">commands:</span>
                       <span class="json-property-type">object</span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
+                    <dd>
+                      <p>Overrideable items return one of these blocks if your operator has the right privilege (&#39;Override - Open Locker&#39; in this case) and the item is fit to be overridden.</p>
+                      <p>The only override you can send to a locker is &#39;open&#39;, so that is the only entry this block will contain.</p>
+                    </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
                         <dl>
