@@ -41,8 +41,9 @@ info:
     #### Alarms and events API changes in 8.60
 
     * Card numbers on Bluetooth (mobile) and PIV card events are now full-length.  Mobile numbers
-      are now the phone's ID string, changed from the number that 8.50 returned.  Note that neither
-      8.50's numbers nor 8.60's ID strings are guaranteed unique across phones.
+      are now the phone's ID string, changed from the number that 8.50 returned.  Decimal numbers
+      now come out unsigned.  Note that neither 8.50's numbers nor 8.60's ID strings are guaranteed
+      unique across phones.
 
     * Access events that do not have a card, such as someone entering their user code instead of
       badging their card, will no longer return a card block.
@@ -2067,7 +2068,7 @@ definitions:
 
               Before 8.60 this number was a signed 32-bit integer, so numeric card numbers greater
               than 2^31 came out negative and mobile card numbers were arbitrary.  In 8.60 numeric
-              card numbers will be positive and mobile card numbers will be their ID strings, which
+              card numbers are positive and mobile card numbers are their ID strings, which
               operators can set to anything, and default to GUIDs.
 
             example: "78745"

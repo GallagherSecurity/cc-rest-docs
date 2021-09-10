@@ -1868,12 +1868,6 @@ definitions:
           of the same card type.  If you leave it blank when creating a card of a type that has a
           decimal number format, Command Centre will use the next available number.
 
-          Something to be aware of when extracting very large card numbers:  a decimal card number
-          comes out as signed 32-bit number, so if it is over two billion (give or take) it will
-          come out of the API negative.  A future version of Command Centre will change to unsigned
-          numbers, but in the meantime you should cast it to an unsigned 32-bit integer in your
-          client.
-
           Card numbers for a mobile credential need not be unique.  They are strings, and are not
           used by Command Centre except for display.
 
@@ -5368,17 +5362,19 @@ paths:
         default: ['defaults']
         enum:  [href, id, firstName, lastName, shortName, description, authorised,
           lastSuccessfulAccessZone, division, notes, useExtendedAccessTime, personalDataFields,
+          operatorLoginEnabled, operatorUsername, operatorPassword,
+          operatorPasswordExpired, windowsLoginEnabled, windowsUsername,
           cards, accessGroups, competencies, notifications, relationships, lockers]
 
         description: |
           Limit the search results to the changes that affected these fields, and limit the
-          `oldValues` and `newValues` blocks to these fields.
+          `oldValues` and `newValues` blocks to these fields.  You can specify practically any of
+          the fields in the [cardholder detail](#definition-Cardholder-detail).  You can also go
+          into more detail; for example you can monitor a cardholder's cards' validity dates using
+          `filter=cards.from,cards.until`.
 
           `filter` reduces the number of results; if you want to change the blocks in each result,
           use `fields`.
-
-          You can specify fields down to more detail than listed here.  For example you can monitor
-          a cardholder's cards' validity dates using `filter=cards.from,cards.until`.
 
           If you do not supply a filter parameter it will use the same fields you get in a
           cardholder details page.  That is nearly everything the API has for a cardholder, but
@@ -5388,6 +5384,9 @@ paths:
 
           `personalDataFields` will filter for PDF changes, and will give you the
           personalDataDefinitions block plus the PDF values that changed.
+
+          Being able to monitor operator settings arrived in 8.50 and operator group memberships in
+          8.60.
 
           Note that you cannot monitor changes in the `lastSuccessfulAccessTime` or
           `lastSuccessfulAccessZone` fields because they are not attributes of a cardholder object:

@@ -2946,6 +2946,12 @@
                           <span class="json-property-enum-item">notes</span>,
                           <span class="json-property-enum-item">useExtendedAccessTime</span>,
                           <span class="json-property-enum-item">personalDataFields</span>,
+                          <span class="json-property-enum-item">operatorLoginEnabled</span>,
+                          <span class="json-property-enum-item">operatorUsername</span>,
+                          <span class="json-property-enum-item">operatorPassword</span>,
+                          <span class="json-property-enum-item">operatorPasswordExpired</span>,
+                          <span class="json-property-enum-item">windowsLoginEnabled</span>,
+                          <span class="json-property-enum-item">windowsUsername</span>,
                           <span class="json-property-enum-item">cards</span>,
                           <span class="json-property-enum-item">accessGroups</span>,
                           <span class="json-property-enum-item">competencies</span>,
@@ -2958,11 +2964,12 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limit the search results to the changes that affected these fields, and limit the <code>oldValues</code> and <code>newValues</code> blocks to these fields.</p>
+                      <p>Limit the search results to the changes that affected these fields, and limit the <code>oldValues</code> and <code>newValues</code> blocks to these fields. You can specify practically any of the fields in the
+                        <a href="#definition-Cardholder-detail">cardholder detail</a>. You can also go into more detail; for example you can monitor a cardholder&#39;s cards&#39; validity dates using <code>filter=cards.from,cards.until</code>.</p>
                       <p><code>filter</code> reduces the number of results; if you want to change the blocks in each result, use <code>fields</code>.</p>
-                      <p>You can specify fields down to more detail than listed here. For example you can monitor a cardholder&#39;s cards&#39; validity dates using <code>filter=cards.from,cards.until</code>.</p>
                       <p>If you do not supply a filter parameter it will use the same fields you get in a cardholder details page. That is nearly everything the API has for a cardholder, but omits some seldom-used or expensive features such as card tracing and the large PIV fields. If you want to monitor them you must list them here. For example, <code>filter=defaults,cards.trace</code> will add the card trace flag to the usual results.</p>
                       <p><code>personalDataFields</code> will filter for PDF changes, and will give you the personalDataDefinitions block plus the PDF values that changed.</p>
+                      <p>Being able to monitor operator settings arrived in 8.50 and operator group memberships in 8.60.</p>
                       <p>Note that you cannot monitor changes in the <code>lastSuccessfulAccessTime</code> or <code>lastSuccessfulAccessZone</code> fields because they are not attributes of a cardholder object: they are derivatives of his or her activity. If you want to monitor a person&#39;s movements we advise subscribing to events.</p>
                     </div>
                   </div>
@@ -8694,7 +8701,6 @@
                     </dt>
                     <dd>
                       <p>For a physical access card, this is its card number. It must be unique across all cards of the same card type. If you leave it blank when creating a card of a type that has a decimal number format, Command Centre will use the next available number.</p>
-                      <p>Something to be aware of when extracting very large card numbers: a decimal card number comes out as signed 32-bit number, so if it is over two billion (give or take) it will come out of the API negative. A future version of Command Centre will change to unsigned numbers, but in the meantime you should cast it to an unsigned 32-bit integer in your client.</p>
                       <p>Card numbers for a mobile credential need not be unique. They are strings, and are not used by Command Centre except for display.</p>
                       <p>This field is mandatory for card types with text or PIV number formats. If the card type has a text card number format with a regular expression and you supply a card number that does not match that regex, Command Centre will reject your update.</p>
                       <p>PIV card numbers must be the same as the card&#39;s FASC-N. PIV-I card numbers must not.</p>

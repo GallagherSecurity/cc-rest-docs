@@ -2776,7 +2776,7 @@ documentation covers them all (search for 'abnormal status').
 
 End quote.  There is a lot more on the topic in the reference documentation.
 
-## Subscribing to updates (one item, pre-8.30) TODO
+## Subscribing to updates (one item at a time, pre-8.30) TODO
 
 This section TODO.  What follows is a broad outline of what the section should contain.
 
@@ -2787,7 +2787,7 @@ a loop GETting the `next` link.
 You really should be using bulk item updates, in the section below.  Why use this one instead?
 
 * You're not running 8.30 yet, or
-* it's slightly easier if you're monitoring only one item (though that is debateable), or
+* you're monitoring only one item and want a slightly simpler call, or
 * your client wants to wait longer than 30s between GETs.
 
 ## Subscribing to updates (many items, 8.30+) TODO
@@ -2812,23 +2812,24 @@ The first GET will return the same states that the POST did, which seems redunda
 the way it is.  Just keep looping.
 
 This is a far better way of monitoring multiple items that the previous because it only uses one
-server connection.
+server connection per client.
 
 ## Schedules and day categories TODO
 
-Schedules arrived in 8.40.
+Schedules arrived in 8.40.  The API lets you create and delete them, and modify how they affect
+their items. It does not let you change the items they affect.
 
 When updating a schedule you must replace its entire list of day categories and times.  This is
-quite different from how you normally update lists via this API.  The JSON schema allows room for us
-to accept the normal style as a future enhancement, but in 8.40 you must replace all a schedule's
+quite different from how you update other lists via this API.  The JSON schema ha room for us to
+accept the normal style as a future enhancement, but in 8.40 you must replace all a schedule's
 schedules at the same time.  That suits our target use-case, which was for an integration to
 download the schedule, de-serialise it into an object model, change some part of it, then
 re-serialise and upload it back.
 
-As of 8.50, only types of item that the API can create are cardholders, visits, and schedules.
+As of 8.60, the only types of item that the API can create are cardholders, visits, and schedules.
 
 ----------------------------------------------------------------------
-# Visitor management TODO
+# Visitor management
 <!-- oh boy -->
 
 ## Introduction
@@ -2838,9 +2839,10 @@ The Command Centre Visitor Management feature allows you to manage _visit_ items
 * a list of expected _visitor_ cardholders,
 * a _host_ cardholder, responsible for them while on site,
 * a _reception_, which is a location at which visitors may arrive,
-* a _visitor type_, that is actually an access group that Command Centre will add your visitors to
-  when you add them to the visit, plus an index into more visitor management configuration,
-* a list of access groups that your visitors need to be in while on site,
+* a _visitor type_, that servers two purposes.  It is an access group that Command Centre will add
+  your visitors to when you add them to the visit, and it is an index into more visitor management
+  configuration,
+* a list of _visitor access groups_ that your visitors need to be in while on site,
 * other flat fields such as the dates of the visit and a description.
 
 The host is person who Command Centre should notify when a visitor signs in.  If a visitor does not
@@ -2849,7 +2851,7 @@ cardless visitor appears to follow his or her host around the site, in other wor
 
 The visitor type (an access group) is there so that visitors can have PDF values assigned before
 they arrive.  This is useful for aids to identification such as photos and driver's licence or
-passports numbers.  Recall that in order to hold a value for a PDF, a cardholder must be in one of
+passport numbers.  Recall that in order to hold a value for a PDF, a cardholder must be in one of
 the PDF's access groups.
 
 The visitor access groups (not the visitor _type_ access group) are there so that after a visitor
@@ -2860,10 +2862,11 @@ signs in they can open doors using a card.  No access groups:  no access.
 The API lets you read the relevant parts of visitor management configuration, list receptions, and
 CRUD visit items, including their visitors.
 
-It does not let you change visitor management configuration.  You need to do that in the
+It does not let you change visitor management configuration.  You do that on divisions in the
 Configuration Client.
 
-It does not let you sign visitors in or out, or mark them on or off site.
+It does not let you sign visitors in or out, or mark them on or off site.  Please contact your
+account manager if you need these features.
 
 
 ## Setting up Command Centre to use Visitor Management via the API
@@ -2873,7 +2876,7 @@ To use the Visitor Management feature, you must:
 * add some visitor management configuration to a division in the Configuration Client, including at
   least one visitor type (access group) with at least one _host type group_ and _visitor access
   group_, and
-* create at least one reception item in the Configuration Client.
+* create at least one reception item in the same division, again in the Configuration Client.
 
 Your software can then use the API to get that division configuration and the list of receptions.
 When it creates a visit it will need to comply to the rules in the division configuration,
@@ -3035,14 +3038,16 @@ to the RESTStatus licence as well, minus the cardholder information.
 * macros, and
 * outputs and (in 8.10) inputs.
 
-You will need the RESTStatus licence for the GETs and RESTOverrides for the override POSTs.
+You will need the RESTStatus licence for the GETs and RESTOverrides for the override POSTs.  8.60
+added the GETs to RESTOverrides, but in a slightly limited way:  they will search for items to
+override, but they cannot return their status.
 
 8.20 added lockers, previously only visible with the RESTCardholders licence, to the RESTStatus
 licence.
 
 8.30 added the ability to monitor more than one item per connection.
 
-8.50 allows read access to day categories and partial read-write access to schedules.  You can
+8.50 allows read access to day categories and read-write access to schedules.  You can
 manage the day categories and times on a schedule, but not which items it affects.
 
 Day categories are divisionless, which lead to a slight change in the `/items` controller:
@@ -3051,5 +3056,5 @@ course).
 
 8.50 allows viewing elevator groups.
 
-There are no functions for creating, configuring, or removing those item types.
+As of 8.60, cardholders, schedules, and visits are the only items you can modify via the API.
 

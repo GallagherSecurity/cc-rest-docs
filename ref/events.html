@@ -157,7 +157,7 @@
                 <h4 id="alarms-and-events-api-changes-in-860">Alarms and events API changes in 8.60</h4>
                 <ul>
                   <li>
-                    <p>Card numbers on Bluetooth (mobile) and PIV card events are now full-length. Mobile numbers are now the phone&#39;s ID string, changed from the number that 8.50 returned. Note that neither 8.50&#39;s numbers nor 8.60&#39;s ID strings are guaranteed unique across phones.</p>
+                    <p>Card numbers on Bluetooth (mobile) and PIV card events are now full-length. Mobile numbers are now the phone&#39;s ID string, changed from the number that 8.50 returned. Decimal numbers now come out unsigned. Note that neither 8.50&#39;s numbers nor 8.60&#39;s ID strings are guaranteed unique across phones.</p>
                   </li>
                   <li>
                     <p>Access events that do not have a card, such as someone entering their user code instead of badging their card, will no longer return a card block.</p>
@@ -5384,7 +5384,7 @@
                           <dd>
                             <p>The card&#39;s number at the time of the event. Despite the name it may not necessarily be an actual number; mobile card numbers are arbitrary strings, for example.</p>
                             <p>Note that card numbers are not guaranteed unique. The combination of facility code, issue level, and card number will be unique for card types that have a facility code and issue level.</p>
-                            <p>Before 8.60 this number was a signed 32-bit integer, so numeric card numbers greater than 2^31 came out negative and mobile card numbers were arbitrary. In 8.60 numeric card numbers will be positive and mobile card numbers will be their ID strings, which operators can set to anything, and default to GUIDs.</p>
+                            <p>Before 8.60 this number was a signed 32-bit integer, so numeric card numbers greater than 2^31 came out negative and mobile card numbers were arbitrary. In 8.60 numeric card numbers are positive and mobile card numbers are their ID strings, which operators can set to anything, and default to GUIDs.</p>
                           </dd>
                           <dt data-property-name="issueLevel" class="has-description">
                             <span class="json-property-name">issueLevel:</span>
