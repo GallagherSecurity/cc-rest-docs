@@ -350,16 +350,16 @@ securityDefinitions:
       client certificate', and its behaviour changed slightly when turned on.
 
       If off, for all versions of CC, an incoming request's certificate has to match the thumbprint
-      on its API key's REST Client item, and items with a blank thumbprint field do not work at all.
-      This is how it ships, and it is the recommended way of running a production server.
+      on its API key's REST Client item, and REST Client items with a blank thumbprint field do not
+      work at all.  This is how it ships, and it is the recommended way of running a production
+      server.
 
       If 'Do not require pinned client certificates' was turned on in versions up to and including
-      8.40, the server did not check any client certificates.  If 'Enable REST Clients with no
-      client certificate' is turned on in 8.50, it still does not check the client certificate if
-      the thumbprint field of the matching REST Client item is blank, but if the Client item has a
-      thumbprint, the server will reject connections with the wrong certificate.
-
-      The behaviour for all other cases is the same in 8.40 and 8.50.
+      8.40, the server did not check any client certificates.  If the same control is turned on in
+      8.50, now relabelled 'Enable REST Clients with no client certificate', it still does not check
+      the client certificate if the thumbprint field of the matching REST Client item is blank, but
+      if the Client item has a thumbprint, the server will reject connections with the wrong
+      certificate.
 
       See the Configuration Client help for instructions on where to enter REST Client thumbprints.
 
