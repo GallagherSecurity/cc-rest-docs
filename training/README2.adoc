@@ -300,8 +300,7 @@ The Command Centre client shows a cardholder’s division in the
 Client shows the division of any item in the 'General' tab of its
 property page. The REST API shows it in the 'division' field.
 
-[quote]
-*The operator’s division and his or her operator groups' divisions in
+IMPORTANT: *The operator’s division and his or her operator groups' divisions in
 the 'General' tabs are irrelevant*. The operator group grants privileges
 on the divisions in the 'Divisions' tab.
 
@@ -642,10 +641,9 @@ image::server_props_turnon.png[Enabling the public API,title="Enabling the web s
 The Configuration Client’s online help covers this in the topic called
 'Web Services'.
 
-> ⚠ *Make sure 'Do not require pinned client certificates' is off in
-production*. In 8.50 > it is called 'Enable REST Clients with no client
-certificate'. It ships turned off: make > sure it stays off on
-production servers.
+WARNING:  ⚠ *Make sure 'Do not require pinned client certificates' is off in production*. In 8.50 it
+is called 'Enable REST Clients with no client certificate'. It ships turned off: make sure it stays
+off on production servers.
 
 Requiring pre-shared certificates from clients is the best protection
 the server has against attackers on its network. If you tick the box to
@@ -810,10 +808,10 @@ three more characters).
 
 In 7.90, both must be in upper case.
 
-____
-⚠ *Set a filter so that the header only goes to your Command Centre
+
+WARNING:  ⚠ *Set a filter so that the header only goes to your Command Centre
 server. Otherwise Facebook will have your API key*.
-____
+
 
 Use a URL pattern in the filter that all your queries will match but
 other web browsing will not. ModHeader now uses regular expressions, so
@@ -911,7 +909,6 @@ it) and the most recent events in Command Centre.
 If it did accept your API key, the only thing that can stop you now is a
 licensing problem:
 
-[source]
 ----
 {
     "message": "feature not licensed"
@@ -920,7 +917,6 @@ licensing problem:
 
 With a RESTEvents licence you will get more:
 
-[source]
 ----
 {
     "version": "7.90.0.0",
@@ -933,7 +929,6 @@ With a RESTEvents licence you will get more:
 ----
 
 With a RESTCardholdersEvents licence:
-[source]
 ----
 {
     "version": "7.90.0.0",
@@ -1333,8 +1328,9 @@ it (de-authorised cardholders always fail access checks), turns on a
 flag that allows extra unlock time on doors, and sets the user code
 (which is a number you can use at keypads):
 
-....
-PATCH /api/cardholders/{id}
+[source,json]
+----
+// PATCH /api/cardholders/{id}
 {
     "firstname": "Jeremiah",
     "@datePDF": "2099-03-31",
@@ -1343,7 +1339,7 @@ PATCH /api/cardholders/{id}
     "useExtendedAccessTime": true,
     "userCode": "1234"
 }
-....
+----
 
 It looks like this in Postman:
 
@@ -1352,10 +1348,7 @@ image::postman_patch_cardholder_1.png[PATCH a cardholder in Postman,title="PATCH
 It looks a lot like that in the cardholder’s details page too, so here
 is the rule:
 
-____
-When PATCHing flat fields on a cardholder, send back the same kind of
-JSON you got from a GET.
-____
+TIP: When PATCHing flat fields on a cardholder, send back the same kind of JSON you got from a GET.
 
 === Image PDFs and Base64
 
@@ -1593,10 +1586,7 @@ fail. The advice, therefore, is to update your cardholder as soon as
 possible after retrieving its details (footnote: probably good advice
 for a fetch and update on any API).
 
-____
-*Do not cache the hrefs of links between items*. They change with
-operator actions.
-____
+CAUTION:  *Do not cache the hrefs of links between items*. They change with operator actions.
 
 
 == Create a cardholder, cont.
@@ -1638,11 +1628,9 @@ your new cardholder, which would fail because you have not created a
 competency yet. There is nothing special about three ’Z’s—the server
 just ignores anything it does not recognise.
 
-____
-*The server will ignore fields it does not recognise*. Beware of this,
-as you may think your calls are succeeding when in fact they ard doing
-less than you want them to.
-____
+IMPORTANT: *The server will ignore fields it does not recognise*. Beware of this, as you may think
+your calls are succeeding when in fact they ard doing less than you want them to.
+
 
 That is more of an advantage that a disadvantage. It means we can write
 clients that degrade gracefully on Command Centre servers that are not
@@ -1725,10 +1713,8 @@ POST followed by one or more PATCHes. The other advantage is that any
 one is atomic: all the changes you put in the body happen, or none of
 them do. So:
 
-____
-When creating a new cardholder, do it all in one POST. +
+TIP: When creating a new cardholder, do it all in one POST. +
 When modifying an existing cardholder, do it all in one PATCH.
-____
 
 === The importance of /api
 
@@ -1894,10 +1880,7 @@ purely for use in filters. Because you add them to URLs they have to be
 short and free of punctuation, so we do not use the longer identifier
 that comes next. Section 17.1 shows how to use them to find events.
 
-____
-⚠ *Do not treat IDs as integers*. They are alphanumeric. A future
-version may add letters.
-____
+CAUTION: *Do not treat IDs as integers*. They are alphanumeric. A future version may add letters.
 
 The URL that comes in a field called `href` is how you reference
 objects, both as addresses in your own GETs, DELETEs, and PATCHes, but
@@ -1976,9 +1959,7 @@ Buoyed with confidence gained following links around our API, you will
 be tempted to store just the parts of hrefs that seem to matter and
 reconstruct them later. In the interests of forward compatibility:
 
-____
-⚠ *Do not interpret href paths, and do not build your own.*
-____
+CAUTION: *Do not interpret href paths, and do not build your own.* We change them.
 
 As a reminder, the parts of a URL relevant to us are the protocol
 (`scheme'), host, port, path, and query:
@@ -2211,9 +2192,8 @@ All date-times should be in ISO-8601. If you omit fields (such as
 minutes or seconds) Command Centre will assume sensible defaults, but
 the best advice is to be explicit (especially about the time zone).
 
-____
-⚠ *Put a timezone specifier in all date-times!*
-____
+IMPORTANT: *Put a timezone specifier in all date-times!* Otherwise the outcome will depend on settings
+on the server.
 
 === Adding PDF values to the cardholders in events
 
@@ -2477,10 +2457,7 @@ openssl x509 -fingerprint -in rest.pem -noout
 If you protected the PEM with a password, `openssl x509` will ask you
 for it.
 
-____
-Those are the 20 bytes that you paste into the REST Client item in
-Command Centre.
-____
+NOTE:  Those are the 20 bytes that you paste into the REST Client item in Command Centre.
 
 Now you need to add it to the clients that need it. If you use Postman,
 see link:#_use_the_certificate_in_your_client[this section]. If you use
@@ -2546,10 +2523,7 @@ This is the cert you will pick for your browser later.
 . Double-click it, go to the Details tab, scroll to the bottom, and
 click the thumbprint.
 
-____
-Those are the 20 bytes that you paste into the REST Client item in
-Command Centre.
-____
+NOTE:  Those are the 20 bytes that you paste into the REST Client item in Command Centre.
 
 ===== Aside: other ways of calculating the thumbprint
 
