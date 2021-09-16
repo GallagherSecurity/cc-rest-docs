@@ -10,7 +10,8 @@ This document gives
 # Table of contents
 {:.no_toc}
 
-* TOC {:toc}
+* TOC
+{:toc}
 
 -------------------------------------------------------------------------
 
