@@ -1,10 +1,12 @@
 = Work in progress: Command Centre REST API training material
-:toc: macro
+:toc: left
 :source-highlighter: highlight.js
 :source-language: json
 // highlighters are coderay highlight.js pygments rouge
 // :sectnums:
 :imagesdir: assets
+:sectanchors:
+// :sectlinks:
 
 
 This document will be an AsciiDoc port of a document used internally at Gallagher Group to train
@@ -49,14 +51,6 @@ New Zealand +
 +64 (7) 838 9800 +
 E-Mail: sales.nz@security.gallagher.com +
 Website: www.gallagher.com
-
-[float]
-== Table of contents
-
-If you're viewing this at github.com, there is a table of contents button above and to the left of
-this text.
-
-toc::[]
 
 == Introduction
 
@@ -228,7 +222,7 @@ operator group while setting up a REST client. Operator groups came to the API i
 === Access groups
 
 Cardholders can be members of any number of access groups. An access
-group can be a member of one other—its parent. Command Centre considers
+group can be a member of one other:  its parent. Command Centre considers
 a member of a group to be a member of all the groups up its parenting
 line, as you would expect.
 
@@ -367,8 +361,8 @@ the cardholder API.
 
 === All the above are items
 
-The API lets you search for items and examine them, but—other than
-cardholders and schedules—it does not let create, alter, or delete them.
+The API lets you search for items and examine them, but--other than
+cardholders and schedules--it does not let create, alter, or delete them.
 The purpose of the cardholder API is to let you associate items with
 cardholders and manage those associations.
 
@@ -946,7 +940,7 @@ With a RESTCardholdersEvents licence:
 }
 ----
 
-That is not the exact JSON you will get—it’s not even JSON—but hopefully
+That is not the exact JSON you will get (that example is not even JSON) but hopefully
 you get the idea.
 
 === Cardholder summary
@@ -1074,7 +1068,7 @@ GET /api/events?top=5000
 === List all alarms
 
 The alarms interface only returns alarms that have not been processed,
-i.e., those that are `current'. After an operator processes an alarm, it
+i.e., those that are 'current'. After an operator processes an alarm, it
 is merely an event with extra fields.
 
 ....
@@ -1152,26 +1146,26 @@ specific to Command Centre.
 finds the matching REST Client (footnote: capitalised to mean the
 configuration item in Command Centre, not the REST client software on
 the other end of the TCP connection) in the database. If it cannot find
-one, it will raise an alarm `A REST connection was attempted with an
-invalid API key'.
+one, it will raise an alarm "A REST connection was attempted with an
+invalid API key".
 . If you did not disable pinned client certificates in the server
 properties (Web Services tab), or if you are running 8.50 and the REST
 Client item has a thumbprint on it (in the API Key tab), it checks the
 thumbprint of the request’s certificate against the one on the REST
 Client item. If they do not match, it responds with a 401 and raises an
-alarm `A REST connection was attempted with an invalid client
-certificate'. The server does not check the client certificate’s chain
+alarm "A REST connection was attempted with an invalid client
+certificate". The server does not check the client certificate’s chain
 of trust. link:#_client_side_certificates[Another section] has all the
 details of why you would want your server to check client certificates
 and how to create them.
 . It checks the source host’s IP number against the REST Client item’s
 IP filters. If it does not match, it responds with a 401 and raises an
-alarm `A REST connection was refused because of the connecting IP
-address does not match the IP filter on the REST Client'__name of your
-REST Client__’’.
+alarm "A REST connection was refused because of the connecting IP
+address does not match the IP filter on the REST Client __name of your
+REST Client__".
 . It checks that it has a license for the controller that will handle
 the request. If it does not, it sends a 403 response containing the
-string `Feature not licensed'.
+string "Feature not licensed".
 . It creates a new session for the operator, if there isn’t one ready,
 then compares what the request is asking for against the REST Client’s
 operator’s privileges from the session. If the privileges do not allow
@@ -1238,7 +1232,7 @@ You could GET that URL to see what you created, or…
 GET /api/cardholders?name=new
 ....
 
-That will return all the cardholders with `new' in their name. It is
+That will return all the cardholders with 'new' in their name. It is
 case-insensitive.
 
 To be more precise:
@@ -1283,7 +1277,7 @@ will do that in the client as well.
 In the Configuration Client, Configure -> Personal Data Fields (second
 from the top).
 
-Add -> New Personal Data Field. Call it `email' and set the type (on the
+Add -> New Personal Data Field. Call it 'email' and set the type (on the
 Type tab) to Email.
 
 You might as well make a few more with different data types. Make at
@@ -1309,15 +1303,13 @@ Repeat!
 
 image::pdf_to_club.png[Add a PDF to a group in Config Client,title="Add a PDF to a group in Config Client"]
 
-Save everything and reload your cardholder’s details to see what PDF
-values and group memberships look like in JSON. These sections in the
+Save everything in the configuration client then reload your cardholder’s details in your REST
+client to see what PDF values and group memberships look like in JSON. These sections in the
 cardholder API documentation cover it:
 
-* `Cardholder detail' gives the layout of a cardholder’s detail page.
-* `Cardholder PDF' describes the items in the `personalDataDefinitions`
-array.
-* `Cardholder access group' describes the items in the `accessGroups`
-array.
+* 'Cardholder detail' gives the layout of a cardholder’s detail page.
+* 'Cardholder PDF' describes the items in the `personalDataDefinitions` array.
+* 'Cardholder access group' describes the items in the `accessGroups` array.
 
 Now you can change some of those values.
 
@@ -1410,7 +1402,7 @@ because an href in a card block names an existing card and you are
 creating one. The example below adds two cards: one has nothing more
 than the type, so it will receive a computed number and issue level, and
 blank from and until dates. The other is a mobile credential with a
-custom initial state `Pending sign-off'. You can tell it is a mobile
+custom initial state 'Pending sign-off'. You can tell it is a mobile
 credential because only they have invitation blocks.
 
 Each element of the update array should be a card to modify. It will
@@ -1511,7 +1503,7 @@ port. Also note the alternative comma style: it makes commenting lines
 out easier.)
 
 If you use the wrong access group identifier, or your operator does not
-have `Modify Access Control' on the access group, you will be told:
+have 'Modify Access Control' on the access group, you will be told:
 
 ....
 {
@@ -1544,7 +1536,7 @@ GET /api/cardholders/325
 }
 ....
 
-The `Cardholder access group' section of the cardholder API
+The 'Cardholder access group' section of the cardholder API
 documentation helps with interpreting that.
 
 Take a copy of your version of the bold URL. It is the href of the
@@ -1593,7 +1585,7 @@ CAUTION:  *Do not cache the hrefs of links between items*. They change with oper
 
 Now that you have access groups, cards, and PDFs, you can create a fully
 configured cardholder in one request. Here is an example that creates a
-cardholder, sets a PDF called `email', puts it in an access group (which
+cardholder, sets a PDF called 'email', puts it in an access group (which
 is necessary for the PDF to work), and gives them a card.
 
 Never mind the competency yet. The `zzz` makes the server ignore it.
@@ -1625,7 +1617,7 @@ should return you the href of a new cardholder, as it did in 11.1.
 
 The `zzz` is in there to stop the REST API trying to add a competency to
 your new cardholder, which would fail because you have not created a
-competency yet. There is nothing special about three ’Z’s—the server
+competency yet. There is nothing special about three 'Z’s -- the server
 just ignores anything it does not recognise.
 
 IMPORTANT: *The server will ignore fields it does not recognise*. Beware of this, as you may think
@@ -1864,7 +1856,7 @@ Because Gallagher reserves the right to change them. If you start at
 /api, your application will stay compatible through Command Centre
 upgrades.
 
-While it is tempting to hard-code a string ``/api/cardholders`` into
+While it is tempting to hard-code a string `/api/cardholders` into
 your application, it is not that much more development effort to get
 that URL from the contents page and make your code forward-compatible.
 Help yourself to the sample C#, starting with ClientManagerAsync.cs.
@@ -1911,9 +1903,11 @@ then use in the body of a PATCH.
 
 ==== You can use them to cross-reference cardholders in an integration
 
+// how do you italicise text after an underscore?
+
 External systems will have their own user identifiers: staff or student
 ID numbers, usernames, or national IDs. You might like to store that ID
-in a PDF and use the PDF search (/api/cardholders?pdf_yyy=``zzz``,
+in a PDF and use the PDF search (`/api/cardholders?pdf_yyy=__zzz__`,
 described in the developer documentation) to find the href of your
 cardholder when it comes time to synchronise. Then you do not have to
 store a copy of the href.
@@ -1962,13 +1956,13 @@ reconstruct them later. In the interests of forward compatibility:
 CAUTION: *Do not interpret href paths, and do not build your own.* We change them.
 
 As a reminder, the parts of a URL relevant to us are the protocol
-(`scheme'), host, port, path, and query:
+('scheme'), host, port, path, and query:
 
 ....
 scheme://host:port/path?query
 ....
 
-The scheme will always be HTTPS—you can take that as read. By all means,
+The scheme will always be HTTPS--you can take that as read. By all means,
 replace the hostname and port number and add your own search parameters
 to the query on the end of URLs you take from GET /api, but please do
 not tinker with the path. Treat that as opaque.
@@ -2125,7 +2119,7 @@ types), or the event’s cardholder.
 |Date |`after` and / or `before`
 |===
 
-For example, to find all card events (`access granted', `access denied',
+For example, to find all card events ('access granted', 'access denied',
 etc.):
 
 ....
@@ -2181,7 +2175,7 @@ GET https://localhost:8904/api/doors
 === Filtering by date
 
 Even though the before and after fields are only accurate to a second,
-filtering by date is `smart' for reports: the result set will not
+filtering by date is 'smart' for reports: the result set will not
 include events that occurred during the before second. For example,
 `before=2019-01-01T00:00:00Z` will not return you any events from 2019.
 Pass the `before` parameter for one report as the `after` parameter of
@@ -2197,7 +2191,7 @@ on the server.
 
 === Adding PDF values to the cardholders in events
 
-Card events such as `access granted' use the door as the source but also
+Card events such as 'access granted' use the door as the source but also
 have a related cardholder. The event JSON includes the cardholder’s name
 and href, but if you want to use your own identifiers for cardholders
 you can also ask for a PDF to come out with the event. Do that by adding
@@ -2217,7 +2211,7 @@ read/write.
 
 If I was writing an interactive application to monitor events as they
 occurred, while also allowing browsing the event history, I would get
-the most recent—enough to fill a screen—with:
+the most recent--enough to fill a screen--with:
 
 ....
 GET /api/events?previous=true&top=20
@@ -2258,7 +2252,7 @@ have links for processing it normally with or without comments.
 ==== Updating after cutting power
 
 This is the result of `http://localhost/api/alarms/updates?id=306.1`
-(the`next` link from the previous results) after cutting power to the
+(the `next` link from the previous results) after cutting power to the
 controller and waiting a minute for Command Centre to raise an alarm
 about it.
 
@@ -2268,12 +2262,12 @@ Next we GET `http://localhost/api/alarms/updates?id=308` (the `next`
 link from the previous results, again) after restoring power to the
 controller and waiting for it to come online.
 
-The `controller offline' alarm (ID 308) has changed to inactive since
+The 'controller offline' alarm (ID 308) has changed to inactive since
 the controller has reappeared on the network.
 
-The `low power' alarm has arrived from the controller stamped when it
+The 'low power' alarm has arrived from the controller stamped when it
 lost power, while it was running on internal reserve power, one minute
-earlier than the `controller offline' alarm.
+earlier than the 'controller offline' alarm.
 
 Bringing up the rear is another alarm that the controller generated when
 it restarted.
@@ -2287,7 +2281,7 @@ certificates] for what certificates are and what the difference is
 between server certificates and client certificates.
 
 This section deals with the client certificate check that happens if you
-left `Do not require pinned client certificates' off in the `Web
+left 'Do not require pinned client certificates' off in the 'Web
 Services' property tab of an 8.40 server, or if you entered a thumbprint
 into a REST Client item in 8.50 or later.
 
@@ -2310,7 +2304,7 @@ The sections following those contain sample command lines that you can
 paste into a shell on your clients to create client certificates on disk
 or in the Windows certificate store. If you receive syntax errors, you
 may have an old version of the software (I have had problems with
-`New SelfSignedCertificate` on Windows) or the hyphens may not be
+`New-SelfSignedCertificate` on Windows) or the hyphens may not be
 hyphens: they may come through as dashes, which look very similar to us
 but not to shells. You may have to re-type them.
 
@@ -2353,18 +2347,18 @@ why you should not turn it off.
 
 ==== The mysterious client certificate checkbox
 
-In `Server Properties', which you get to in the Configuration Client
-starting with the `File' menu or the top item in your hardware tree,
-there is a tab called `Web Services'. In there, in the box headed by
-`Enable REST API', is a checkbox. In 8.40 it was called `Require pinned
-client certificates'. In 8.50 it is called `Enable REST Clients with no
+In 'Server Properties', which you get to in the Configuration Client
+starting with the 'File' menu or the top item in your hardware tree,
+there is a tab called 'Web Services'. In there, in the box headed by
+'Enable REST API', is a checkbox. In 8.40 it was called 'Require pinned
+client certificates'. In 8.50 it is called 'Enable REST Clients with no
 client certificate'.
 
 It behaves like this:
 
 [width="100%",cols="60%,20%,20%",options="header",]
 |===
-|8.40 |`Do not require pinned client certificates' _off_ |`Do not
+|8.40 |'Do not require pinned client certificates' _off_ |'Do not
 require pinned client certificates' _on_
 |Connection attempt to a REST Client item _with_ a certificate
 thumbprint configured |Client certificate checked |Client certificate
@@ -2378,7 +2372,7 @@ In 8.50, the top-right quadrant changed.
 
 [width="100%",cols="60%,20%,20%",options="header",]
 |===
-|8.50 |`Enable REST Clients with no client certificate' _off_ |`Enable
+|8.50 |'Enable REST Clients with no client certificate' _off_ |'Enable
 REST Clients with no client certificate' _on_
 |Connection attempt to a REST Client item _with_ a certificate
 thumbprint configured |Client certificate checked |*New in 8.50: client
@@ -2388,7 +2382,7 @@ certificate checked*
 thumbprint configured |Connection rejected |Connection accepted
 |===
 
-That change will have negatively affected sites that had `Do not
+That change will have negatively affected sites that had 'Do not
 require…' turned on, but also had thumbprints (uselessly) configured
 into their client items. However there is a huge upside to the change:
 in 8.50 or later a site can have some clients using client certificates
@@ -2442,8 +2436,8 @@ Notice the `rsa:4096`: a four-kilobit key might be overkill for
 development, but the option is there.
 
 Again, the bold means that option reduces your security. In this case,
-the `-nodes` option (footnote: it means `no DES'. It is not the plural
-of `node') means there is no password on the private key. Anyone could
+the `-nodes` option (footnote: it means 'no DES'. It is not the plural
+of 'node') means there is no password on the private key. Anyone could
 read it from `rest.pem`, so in a production environment you should omit
 that option and type in a password (a really good one) when
 `openssl req` prompts you.
@@ -2485,7 +2479,7 @@ anyone else, Microsoft assures us.
 
 ===== Powershell
 
-The topic `Creating the Client Certificate' in the Configuration
+The topic 'Creating the Client Certificate' in the Configuration
 Client’s online help contains instructions for doing it in a PowerShell
 with `New-SelfSignedCertificate`. Handily, it prints the thumbprint to
 the console so you can copy it into Command Centre. You should try that
@@ -2506,7 +2500,7 @@ administrator).
 That will create a certificate and place it in your certificate store
 with a copy on disk.
 
-The `-pe` marked the key as exportable—more on that later.
+The `-pe` marked the key as exportable.  More on that later.
 
 You do not need to keep the file `ignoreme.der`, but the easiest way to
 get the thumbprint of your new certificate is to open `ignoreme.der` by
@@ -2518,7 +2512,7 @@ that `makecert` put your new certificate where it should have.
 [arabic, start=3]
 . Run `mmc`, add the Certificates snap-in to manage "My user account,"
 open it and then your "Personal" certificates.
-. Ensure you can see a certificate called `RESTClientCert' in there.
+. Ensure you can see a certificate called 'RESTClientCert' in there.
 This is the cert you will pick for your browser later.
 . Double-click it, go to the Details tab, scroll to the bottom, and
 click the thumbprint.
@@ -2591,13 +2585,13 @@ the certificate and the private key in the PEM file, unencrypted
 ==== An easy (but not so secure) way to discover your client certificate’s thumbprint
 
 Create a client certificate using one of the methods above and use it in
-an API call. The server should raise an alarm, complaining that `a REST
+an API call. The server should raise an alarm, complaining that 'a REST
 connection was attempted with an invalid client certificate'. The rest
 of that message will tell you which REST Client Item you need to put the
 thumbprint on, and the details string will contain the thumbprint
 itself.
 
-If the thumbprint is `(null)', your client is not sending a certificate
+If the thumbprint is `(null)`, your client is not sending a certificate
 at all.
 
 Otherwise, copy the thumbprint straight out of there and paste it into
@@ -2892,7 +2886,7 @@ At last count there were eleven status flags common to all items. Some
 are not so serious, like the flags that indicate the item is shunted
 (muted) or is not fully configured yet. Others indicate an actual
 problem like a network outage, a cable fault, or a service not running.
-The developer documentation covers them all (search for `abnormal
+The developer documentation covers them all (search for 'abnormal
 status').
 
 End quote. There is a lot more on the topic in the reference
@@ -3153,7 +3147,7 @@ Membership'
 |'View…' or 'Edit
 Personal Data Definitions' on the PDF’s division.
 
-|View events at `/api/events'
+|View events at `/api/events`
 |'View Events and Alarms' or any of the
 privileges that allow processing alarms, on the division of the source
 of the event or alarm.
