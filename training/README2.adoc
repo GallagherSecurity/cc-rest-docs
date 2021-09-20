@@ -18,7 +18,6 @@
 // :sectanchors:
 :sectlinks:
 
-
 This document will be an AsciiDoc port of a document used internally at Gallagher Group to train
 developers in the use of Command Centre’s REST API. This version is not yet suitable for
 publication, but if you are using the REST API and like the sound of 60-odd more pages of reading
@@ -76,11 +75,12 @@ It covers features first released in 7.80 and expanded in 7.90.
 
 It uses the following styles for guided examples:
 
+.Sample REST query and the resulting JSON
 [source]
 ----
 // GET /api <1>
 {
-  "a text field": "string", // comments look okay
+  "a text field": "string", // including comments
   "a numeric field": 1234,
   "a Boolean field": false
 }
@@ -88,8 +88,12 @@ It uses the following styles for guided examples:
 <1> Strictly speaking, JSON does not contain comments.
 
 
-`Fixed-width fonts` indicate filenames, parts of URLs, and text that
-benefits from vertical alignment.
+`This style` indicates filenames, URLs, and text that benefits from vertical alignment.
+
+....
+Fixed-width blocks are client requests that you can copy out for your own work and server responses,
+pretty-printed a little to make them readable.
+....
 
 
 === Exclusions
@@ -116,13 +120,7 @@ aims to be complete, and you should have it on hand whenever developing
 against Command Centre. However the amount of detail can be daunting and
 it is not very introductory, which is why this document exists.
 
-We are always improving the content so it is best read online, but if
-you need an offline copy you can either download a ZIP from
-https://github.com/GallagherSecurity/cc-rest-docs, or take a copy from
-Utilities/REST API/REST Documentation*/ in the ISO. Beware, however,
-that the copy on the DVD lags the online version by weeks or months.
-
-It comprises five HTML files:
+The reference documentation comprises five HTML files:
 
 * `index.html` gives links to the other four;
 
@@ -138,6 +136,10 @@ the ability to create your own events;
 * `rest.html` covers Command Centre items that are not cardholders, alarms, or events: alarm zones,
 access zones, fence zones, outputs, doors, and macros arrived in 8.00, and inputs in 8.10. 8.30
 added a way to mass-monitor items.
+
+We are always improving the content so it is best read online, but if you need an offline copy you
+can download a ZIP from https://github.com/GallagherSecurity/cc-rest-docs.  The documentation is no
+longer on the Command Centre install media.
 
 If running on Windows, something in the mix of Internet Explorer,
 Javascript, and `file:` URLs on network shares prevents the HTML rendering
@@ -172,7 +174,7 @@ Visual Studio solution.
 PDF:: Personal Data Field. Not Adobe’s kind of PDF. In Gallagher’s defence, these PDFs predate
 Adobe’s.
 
-CC:: Command Centre
+CC:: Command Centre.
 
 == Training setup
 
@@ -183,8 +185,8 @@ If you wish to try the REST API for yourself, you will require:
   them, and RESTCreateEvents if you wish to create events. This document does not cover the last
   three.
 
-* A host capable of reaching port 8904 on Command Centre via HTTPS, or desktop access to the CC
-  server itself.
+* A host capable of reaching port 8904 on Command Centre via HTTPS, or access to the desktop of the
+  CC server itself.
 
 * (Recommended) the sample REST client application from the Command Centre installation media (8.10
   onward).
@@ -193,7 +195,7 @@ If you wish to try the REST API for yourself, you will require:
 
 * (Optional) Chrome and access to the internet for two extensions.
 
-* (Optional) wget or curl.
+* (Optional) wget or curl, two command-line utilities commonly found on non-Windows systems.
 
 * The link:..[API developer documentation].
 
@@ -207,15 +209,12 @@ Skip it if you are familiar with CC.
 Cardholders are user accounts. Depending on what you give a cardholder
 account it can suit different purposes:
 
-* people with cards and access needs, but no administrative
-responsibilities. The REST API allows management of these kinds of
-cardholders;
-* administrative people with all that plus the rights to configure the
-system and manage its users. 8.50 added features for managing these
-kinds of cardholders;
-* system accounts with no person associated and no physical access, but
-administrative access to the system. You are about to create one of
-these.
+* people with cards and access needs, but no administrative responsibilities. The REST API allows
+management of these kinds of cardholders;
+* administrative people with all that plus the rights to configure the system and manage its
+users. 8.50 added features for managing these kinds of cardholders;
+* system accounts with no person associated and no physical access, but administrative access to the
+system. You are about to create one of these.
 
 === Operators and operator groups
 
@@ -303,9 +302,8 @@ The Command Centre client shows a cardholder’s division in the
 Client shows the division of any item in the 'General' tab of its
 property page. The REST API shows it in the 'division' field.
 
-IMPORTANT: *The operator’s division and his or her operator groups' divisions in
-the 'General' tabs are irrelevant*. The operator group grants privileges
-on the divisions in the 'Divisions' tab.
+IMPORTANT: *The operator’s division and his or her operator groups' divisions in the 'General' tabs
+are irrelevant*. The operator group grants privileges on the divisions in the 'Divisions' tab.
 
 === Roles
 
@@ -1402,33 +1400,33 @@ True to previous advice, we do all operations in one PATCH.
 
 Borrowing from the API documentation:
 
-The cards object can contain three arrays, named add, update, and
-remove. Every element you put in those arrays should be in the card
+____
+The cards object can contain three arrays, named `add`, `update`, and
+`remove`. Every element you put in those arrays should be in the card
 schema that you see in a cardholder detail.
 
-Each element of the add array will need a type member, at the very
-least. The only card field that does not make sense here is href,
-because an href in a card block names an existing card and you are
-creating one. The example below adds two cards: one has nothing more
-than the type, so it will receive a computed number and issue level, and
-blank from and until dates. The other is a mobile credential with a
-custom initial state 'Pending sign-off'. You can tell it is a mobile
-credential because only they have invitation blocks.
+Each element of the `add` array will need a `type` member, at the very least. The only card field
+that does not make sense here is `href`, because an href in a card block names an existing card to
+change, but here you are creating one.
+
+The example below adds two cards: one has nothing more than the type, so it will receive a computed
+number and issue level, and blank `from` and `until` dates. The other is a mobile credential with a
+custom initial state 'Pending sign-off'. You can tell it is a mobile credential because only they
+have `invitation` blocks.
 
 Each element of the update array should be a card to modify. It will
 need the href of that card, plus the fields you want to change. Remember
 you cannot change a card’s type. The example changes the issue level and
 resets the until date (making it valid forever).
 
-The only field that makes sense in an element of the remove array is
-href.
+The only field that makes sense in an element of the remove array is `href`.
 
-Do not put the same href in both the update and remove arrays.
+Do not put the same href in both the `update` and `remove` arrays.
+____
 
-End quote. Here is the example. As well as adding two credentials,
-modifying a third, and removing another, it authorises the cardholder
-and sets a PDF called `employeeID` just to remind you that you can
-combine operations:
+Here is the example. As well as adding two credentials, modifying a third, and removing another, it
+authorises the cardholder and sets a PDF called `employeeID` just to remind you that you can combine
+operations:
 
 ----
 //PATCH /api/cardholders/{id}
@@ -1477,15 +1475,19 @@ cardholder. Do not read anything more into it: treat it as opaque.
 
 === Don’t delete cards: disable them
 
-Generally, when you have reason to stop a card from working you want a
-permanent reminder of why you did it, you want to prevent another
-operator assigning the same card number to them later (so that if
-someone finds a card on the ground and tries it, it won’t open the
-building), and you want to know who a lost card was assigned to in case
-it turns up again. Command Centre achieves the first two of these goals
-if you delete an old card but it is easier if you leave it card in the
-system, non-functional. You can set its end date into the past or set
-its state to one of the disabled states.
+NOTE: Disabling cards can be better than deleting them.
+
+That wasn't a great example because generally, when you have reason to stop a card from working, you
+want:
+
+* a permanent reminder of why you did it,
+* to prevent another operator assigning the same card number to them later (so that if someone finds
+  a card on the ground and tries it, it won’t open the building), and
+* to know who a lost card was assigned to in case it turns up again.
+
+Command Centre achieves the first two of these goals if you delete an old card but it is easier if
+you leave it card in the system, non-functional. You can set its end date into the past or set its
+state to one of the disabled states.
 
 
 == Group memberships
@@ -1507,10 +1509,29 @@ hint: `GET /api/access_groups`.
 
 When you have those two hrefs, substitute them into:
 
-(Remember that the first line does not go into the body of your HTTP
-query, and your actual URL will start with `https://` with a host and
-port. Also note the alternative comma style: it makes commenting lines
-out easier.)
+----
+// PATCH /api/cardholders/325 <1>
+{
+  "accessGroups": {
+    "add": [
+      {
+        "accessGroup": {"href": "https://localhost:8904/api/access_groups/5388"} // <2>
+        , "from": "2017-01-31T02:11:00Z"
+        , "until": "2037-01-31T02:11:00Z"
+      }
+    ]
+  }
+}
+----
+
+<1> is the href of your cardholder.
+
+<2> is the href of your access group.
+
+
+(Remember that the first line does not go into the body of your HTTP query, and your actual URL will
+start with `https://` with a host and port. Also note the alternative comma style: putting them on
+the start of the line makes commenting them out easier.)
 
 If you use the wrong access group identifier, or your operator does not
 have 'Modify Access Control' on the access group, you will be told:
@@ -1530,7 +1551,7 @@ your cardholder the result will contain:
   ...
   "accessGroups": [
     {
-      "href": "https://localhost:8904/api/cardholders/325/access_groups/1069",
+      "href": "https://localhost:8904/api/cardholders/325/access_groups/1069", // <1>
       "accessGroup": {
         "name": "Boney M",
         "href": "https://localhost:8904/api/access_groups/5388"
@@ -1549,19 +1570,16 @@ your cardholder the result will contain:
 The 'Cardholder access group' section of the cardholder API
 documentation helps with interpreting that.
 
-Take a copy of your version of the bold URL. It is the href of the
-cardholder group membership, which is a link between the cardholder (ID
-325, in my case) and the access group (ID 5338). It starts with the href
-of the cardholder, because it is a property of that cardholder and
-serviced by the cardholders controller, but do not try to interpret it
-more. Certainly do not read anything into the number on the end (1069),
-and do not be surprised if you have an item with the same ID. Sections
-16.3 and 16.4 go into what you should not do with hrefs.
+Take a copy of your version of the first URL, the one marked <1>. It is the href of the cardholder
+group membership, which is a link between the cardholder (ID 325, in my case) and the access group
+(ID 5338). It starts with the href of the cardholder, because it is a property of that cardholder
+and serviced by the cardholders controller, but do not try to interpret it more. Certainly do not
+read anything into the number on the end (1069), and do not be surprised if you have an item with
+the same ID. Sections 16.3 and 16.4 go into what you should not do with hrefs.
 
 === Edit an existing group membership
 
-Change the URL of the cardholder and the access group membership in this
-PATCH:
+Change the URL of the cardholder and the access group membership in this PATCH:
 
 ----
 //PATCH /api/cardholders/325
@@ -1598,10 +1616,40 @@ configured cardholder in one request. Here is an example that creates a
 cardholder, sets a PDF called 'email', puts it in an access group (which
 is necessary for the PDF to work), and gives them a card.
 
-Never mind the competency yet. The `zzz` makes the server ignore it.
+----
+// POST /api/cardholders
+{
+  "firstName": "New", "lastName": "Cardholder",
+  "description": "Test cardholder",
+  "division": {"href":"https://localhost:8904/api/divisions/2"}
+  "useExtendedAccessTime": true,
+  "usercode": "1234",
+  "@email": "a@b.com",
+  "accessGroups": [
+    {
+      "accessGroup": {"href": "https://localhost:8904/api/access_groups/334"}, // <1>
+      "from": "2019-01-01"
+    }
+  ],
+  "cards": [
+    {
+      "type": {"href": "https://localhost:8904/api/card_types/342"}, // <1>
+      "number":"3162"
+    }
+  ],
+  "zzzcompetencies": [ // <2>
+    {
+      "competency": {"href": "https://localhost:8904/api/competencies/5394"},
+      "enabled": true,
+    }
+  ]
+}
+----
 
-First you will need to change the red numbers to the IDs of an access
-group and a card type on your system. You can get those with:
+Never mind the competency marked <2> yet. The `zzz` makes the server ignore it.
+
+First you will need to change the numbers marked <1> to the IDs of an access group and a card type
+on your system. You can get those with:
 
 ....
 GET /api/access_groups
@@ -1621,9 +1669,9 @@ An actual application would also find the href of the correct division,
 but for today is it safe to assume that the href of the root division is
 `.../divisions/2`.
 
-After changing the first two italicised numbers, the `334` and the
-`342`, put the JSON into Postman and POST it to /api/cardholders. It
-should return you the href of a new cardholder, as it did in 11.1.
+After changing the `334` and the `342` put the JSON into Postman and POST it to
+`/api/cardholders`. It should return you the href of a new cardholder, as it did in
+<<_create_a_cardholder>>.
 
 The `zzz` is in there to stop the REST API trying to add a competency to
 your new cardholder, which would fail because you have not created a
@@ -1642,15 +1690,16 @@ out. You can also prepend lines with `//`. It is not valid JSON but you
 can get away with it for now.
 
 Back to our example. If you want to create a cardholder with a
-competency: 1. make a competency in the Configuration Client, 2. find
-its href from the competencies controller (`GET /api/competencies`), 3.
-change your JSON (remove the `zzz` and change the third italicised
-number), and 4. try the POST again.
+competency:
 
-It should fail, complaining that you cannot have two cards with the same
-card number. Change the `3162` and try again (or change number to
-znumber and let Command Centre pick a card number for you - probably
-3163).
+. make a competency in the Configuration Client,
+. find its href from the competencies controller (`GET /api/competencies`),
+. change your JSON (remove the `zzz` and change the 5394), and
+. try the POST again.
+
+It should fail, complaining that you cannot have two cards with the same card number. Change the
+`3162` and try again (or change `number` to `znumber` and let Command Centre pick a card number for
+you -- probably 3163).
 
 
 
@@ -1862,7 +1911,7 @@ respectively.
 ==== Do not code URLs into applications
 
 Because Gallagher reserves the right to change them. If you start at
-/api, your application will stay compatible through Command Centre
+`/api`, your application will stay compatible through Command Centre
 upgrades.
 
 While it is tempting to hard-code a string `/api/cardholders` into
@@ -2248,7 +2297,88 @@ force processing it, because you are not really meant to process active
 alarms.
 
 Note they are in the order that they arrived at the server, not the
-order they happened. Interesting pieces are bold.
+order they happened.  Interesting pieces are in bold face.
+
+// enables bold
+[subs="quotes"]
+----
+{
+  "alarms": [
+    {
+      "href": "http://localhost:8904/api/alarms/289",
+      "id": "289",
+      "time": "2016-11-10T14:17:00",
+      "message": "*Operator logon failed* for FT Workstation on GNZ-PC1302",
+      "source": { "name": "FT Workstation on GNZ-PC1302" },
+      "type": "Operator Logon Failed",
+      "priority": 3,
+      "state": "unacknowledged",
+      "active": false,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/289/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/289/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/289/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/289/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/289/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/289/process" }
+    },
+    {
+      "href": "http://localhost:8904/api/alarms/296",
+      "id": "296",
+      "time": "2016-11-10T13:58:16",
+      "message": "*Fat controller - Command Centre comms interrupted*",
+      "source": { "name": "Fat controller" },
+      "type": "Comms failed to Command Centre",
+      "priority": 6,
+      "state": "unacknowledged",
+      "active": false,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/296/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/296/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/296/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/296/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/296/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/296/process" }
+    },
+    {
+      "href": "http://localhost:8904/api/alarms/301",
+      "id": "301",
+      "time": "2016-11-10T14:18:27",
+      "message": "*Warehouse door has been forced.*",
+      "source": { "name": "Warehouse door" },
+      "type": "Forced Door",
+      "priority": 8,
+      "state": "unacknowledged",
+      "active": false,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/301/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/301/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/301/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/301/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/301/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/301/process" }
+    },
+    {
+      "href": "http://localhost:8904/api/alarms/306",
+      *"id": "306"*,
+      "time": "2016-11-10T14:21:41",
+      *"message": "Front door has been forced."*,
+      "source": { "name": "Front door" },
+      "type": "Forced Door",
+      "priority": 8,
+      "state": "unacknowledged",
+      *"active": true*,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/306/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/306/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/306/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/306/acknowledge" },
+      *"forceProcess": { "href": "http://localhost:8904/api/alarms/306/process" }*
+    }
+  ],
+  "updates": { "href": "http://localhost:8904/api/alarms/updates?id=306" }
+}
+----
 
 ==== Collecting updated alarms after closing the door
 
@@ -2258,12 +2388,60 @@ and GET the updates URL at the end of the previous result,
 longer active we do not have a link for force-processing it; instead we
 have links for processing it normally with or without comments.
 
+[subs="quotes"]
+----
+"updates": [
+  {
+    "href": "http://localhost:8904/api/alarms/306",
+    *"id": "306"*,
+    "time": "2016-11-10T14:21:41",
+    "message": "Front door has been forced.",
+    "source": { "name": "Front door" },
+    "type": "Forced Door",
+    "priority": 8,
+    "state": "unacknowledged",
+    *"active": false*,
+    "division": { "href": "http://localhost:8904/api/divisions/2" },
+    "view": { "href": "http://localhost:8904/api/alarms/306/view" },
+    "comment": { "href": "http://localhost:8904/api/alarms/306/comment" },
+    "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/306/acknowledge" },
+    "acknowledge": { "href": "http://localhost:8904/api/alarms/306/acknowledge" },
+    "processWithComment": { "href": "http://localhost:8904/api/alarms/306/process" },
+    *"process": { "href": "http://localhost:8904/api/alarms/306/process" }*
+  }
+],
+"next": { "href": "http://localhost:8904/api/alarms/updates?id=306.1" }
+----
+
 ==== Updating after cutting power
 
-This is the result of `http://localhost/api/alarms/updates?id=306.1`
-(the `next` link from the previous results) after cutting power to the
-controller and waiting a minute for Command Centre to raise an alarm
-about it.
+This is the result of `http://localhost/api/alarms/updates?id=306.1` (the `next` link from the
+previous results) after cutting power to the controller and waiting a minute for Command Centre to
+raise an alarm about it.  Nothing has changed on the previous alarms so they do not come out.
+
+[subs="quotes"]
+----
+"updates": [
+  {
+    "href": "http://localhost:8904/api/alarms/308",
+    "id": "308",
+    "time": "2016-11-10T14:35:21",
+    "message": "Controller \"Fat controller\" Offline.",
+    "source": { "name": "Fat controller" },
+    *"type": "Controller Offline"*,
+    "priority": 6,
+    "state": "unacknowledged",
+    *"active": true*,
+    "division": { "href": "http://localhost:8904/api/divisions/2" },
+    "view": { "href": "http://localhost:8904/api/alarms/308/view" },
+    "comment": { "href": "http://localhost:8904/api/alarms/308/comment" },
+    "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/308/acknowledge" },
+    "acknowledge": { "href": "http://localhost:8904/api/alarms/308/acknowledge" },
+    "forceProcess": { "href": "http://localhost:8904/api/alarms/308/process" }
+  }
+],
+"next": { "href": "http://localhost:8904/api/alarms/updates?id=308" }
+----
 
 ==== Updating after restoring power
 
@@ -2274,14 +2452,75 @@ controller and waiting for it to come online.
 The 'controller offline' alarm (ID 308) has changed to inactive since
 the controller has reappeared on the network.
 
-The 'low power' alarm has arrived from the controller stamped when it
-lost power, while it was running on internal reserve power, one minute
-earlier than the 'controller offline' alarm.
+The 'low power' alarm has arrived from the controller carrying a timestamp from when it lost mains
+power, while it was running on internal reserve power, which was one minute earlier than the
+'controller offline' alarm.
 
 Bringing up the rear is another alarm that the controller generated when
 it restarted.
 
-
+[subs="quotes"]
+----
+{
+  "updates": [
+    {
+      "href": "http://localhost:8904/api/alarms/308",
+      "id": "308",
+      <b>"time": "2016-11-10T14:35:21"</b>,
+      "message": "Controller \"Fat controller\" Offline.",
+      "source": { "name": "Fat controller" },
+      "type": "Controller Offline",
+      "priority": 6,
+      "state": "unacknowledged",
+      <b>"active": false</b>,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/308/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/308/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/308/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/308/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/308/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/308/process" }
+    },
+    {
+      "href": "http://localhost:8904/api/alarms/310",
+      "id": "310",
+      <b>"time": "2016-11-10T14:34:01"</b>,
+      "message": "Fat controller - power low.",
+      "source": { "name": "Fat controller" },
+      "type": "Controller power low",
+      "priority": 6,
+      "state": "unacknowledged",
+      "active": false,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/310/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/310/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/310/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/310/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/310/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/310/process" }
+    },
+    {
+      "href": "http://localhost:8904/api/alarms/313",
+      "id": "313",
+      "time": "2016-11-10T14:35:49",
+      "message": "Controller \"Fat controller\" restarted after power failed.",
+      "source": { "name": "Fat controller" },
+      "type": "Power failed",
+      "priority": 6,
+      "state": "unacknowledged",
+      "active": false,
+      "division": { "href": "http://localhost:8904/api/divisions/2" },
+      "view": { "href": "http://localhost:8904/api/alarms/313/view" },
+      "comment": { "href": "http://localhost:8904/api/alarms/313/comment" },
+      "acknowledgeWithComment": { "href": "http://localhost:8904/api/alarms/313/acknowledge" },
+      "acknowledge": { "href": "http://localhost:8904/api/alarms/313/acknowledge" },
+      "processWithComment": { "href": "http://localhost:8904/api/alarms/313/process" },
+      "process": { "href": "http://localhost:8904/api/alarms/313/process" }
+    }
+  ],
+  "next": { "href": "http://localhost:8904/api/alarms/updates?id=313" }
+}
+----
 
 == Client-side certificates
 
@@ -2440,6 +2679,18 @@ On a Unix-like system you could do it in a mode-0700 folder on a
 filesystem that is not backed up and is cleared during a reboot, such as
 `/tmp`.
 
+[subs="quotes"]
+----
+openssl req -x509      \
+  -newkey rsa:4096     \
+  -sha256              \
+  *-nodes*               \
+  -keyout rest.pem     \
+  -out rest.pem        \
+  -subj "/CN=RESTtest" \
+  -days 3650
+----
+
 Notice the `rsa:4096`: a four-kilobit key might be overkill for
 development, but the option is there.
 
@@ -2466,6 +2717,12 @@ Now you need to add it to the clients that need it. If you use Postman,
 see <<_use_the_certificate_in_your_client>>. If you use
 Chrome on Windows, you need to add it to the certificate store with
 these two commands:
+
+[subs="quotes"]
+----
+openssl pkcs12 -export -in rest.pem -out rest.pfx <b>-passout pass:</b>
+explorer rest.pfx
+----
 
 The first command converts the PEM file into a file format that Windows
 prefers. The `-passout pass:` option means it will not put a password on
@@ -2500,9 +2757,8 @@ present on all versions of Windows, so here is an alternative using…
 …which has been around for longer.
 
 [arabic]
-. Run a developer command prompt as administrator. If you do not have a
-developer command prompt, try a regular command prompt (as
-administrator).
+. Run a developer command prompt as administrator. If you do not have a developer command prompt,
+  try a regular command prompt (as administrator).
 . In it:
 
 +
@@ -2599,8 +2855,13 @@ That PFX is partly secure because you put a password on it, but I expect
 that password was very short so, again, be careful what you do with that
 file.
 . For old versions of Postman, you may have to convert that PFX into a
-file it understands. The current version of Postman does not need this
+file it understands. The current version of Postman does not need this:
 +
+[subs="quotes"]
+....
+openssl pkcs12 -in restexported.pfx –out rest.pem *–nodes*
+....
+
 
 It will ask you for the password you picked for the export. It will put
 the certificate and the private key in the PEM file, unencrypted
@@ -2659,6 +2920,15 @@ Select the one you just put there.
 
 ==== wget
 
+[subs="quotes"]
+----
+wget                                                                          \
+    --no-check-certificate                                                    \
+    --certificate=<i>your_pem_file</i>                                               \
+    --header="Authorization: GGL-API-KEY <i>your-API-key</i>"                        \
+    https://localhost:8904/api
+----
+
 The `--no-check-certificate` turns off client-side checking of the
 server certificate.
 
@@ -2666,6 +2936,16 @@ Careful: my version of wget does not complain if it cannot read the
 certificate file.
 
 ==== curl
+
+[subs="quotes"]
+----
+curl                                                                          \
+    --verbose                                                                 \
+    --insecure                                                                \
+    --cert <i>your_pem_file</i>                                                      \
+    --header "Authorization: GGL-API-KEY <i>your-API-key<i>"                        \
+    https://localhost:8904/api
+----
 
 The `--insecure` turns off client-side checking of the server
 certificate.
@@ -2682,12 +2962,10 @@ WARNING:  *Production clients should check server certificates.* If not, an atta
 masquerade as the server.  The client would send it its API key which -- if the server was not
 checking client certificates -- the attacker could then use for calls of its own.
 
-Usually the client is completely under the developer’s control because it is their own application
-and they can instruct it to skip the server certificate check, as you told Chrome and Postman to do
-earlier.
+But if you are working in a development rig and your server does not have a signed certificate, you
+might like to stop the client from checking it as you told Chrome and Postman to do earlier.
 
-If you will pardon a very brief dive into source code, here is one way of skipping server
-certificate checking in a C# client:
+If you will pardon a very brief dive into source code, here is one way to do it in a C# client:
 
 [source,csharp]
 ServicePointManager.ServerCertificateValidationCallback = delegate (
@@ -2698,17 +2976,18 @@ ServicePointManager.ServerCertificateValidationCallback = delegate (
   { return true; };
 
 If you do not have control of the client application, or you wish to check the server certificate
-(which is advisable), here are a couple of approaches.
+(which is advisable), here are a couple of approaches to making the check succeed.
 
 You only need one of these.
 
 === Pin the server certificate on the client
 
-Go to Server Properties, Web Services, Manage Certificates, and click View on whichever type of
-certificate you are using. Go to the Details tab in the window that appears, then choose Copy to
-File. You have a few choices for the format to export it to. DER is good for Windows machines, but a
-PFX – if that option is enabled – might be more widely accepted on non-Windows systems. If you are
-ever asked if you want to export the private key, _just say "no"_.
+Go to Server Properties in Command Centre's configuration client, then Web Services -> Manage
+Certificates, and click View on whichever type of certificate you are using. Go to the Details tab
+in the window that appears, then choose Copy to File. You have a few choices for the format to
+export it to. DER is good for Windows machines, but a PFX -- if that option is enabled -- might be
+more widely accepted on non-Windows systems. If you are ever asked if you want to export the private
+key, _just say "no"_.
 
 Once you have your certificate file on disk, copy it to the client
 machine. Provided you didn’t let a private key get in there, it is not a
@@ -2721,6 +3000,17 @@ Certificate Authorities. That is a bit of a sledgehammer, because it
 makes not only your REST client but every client on that host trust that
 certificate. Plus, they will trust any other certificate signed by it.
 But it will get you going.
+
+You have more options if you are writing your own client.  You might like to have a copy of the
+server's certificate on disk to compare against.  A certificate is large, so the usual approach is
+to record a hash of it instead.  It is not a secret but you must prevent anything from changing it,
+because when your client connects to the server you want to hash the server's certificate again and
+compare it to the value you have on record.  If they are not the same, don't trust the server.
+
+Windows calls the SHA1 hash of certificate its _thumbprint_, and presents it in the Details tab of
+the window the first paragraph took you to:  Server Properties -> Web Services -> Manage
+Certificates -> View -> Details.  You'll find the thumbprint at the bottom of the field list (you
+will have to scroll).
 
 === Buy a signed certificate for the server
 
@@ -2736,16 +3026,12 @@ site owner goes through. If you want to sell scones and Toby mugs from
 www.itsabritishthing.com, for example, you:
 
 . generate a certificate for www.itsabritishthing.com,
-. generate a
-certificate signing request (a CSR) from that certificate,
-. decide
-which signing authority to use,
-. send the CSR to that signing
-authority, with your credit card details and proof that you own
-itsabritishthing.com,
+. generate a certificate signing request (a CSR) from that certificate,
+. decide which signing authority to use,
+. send the CSR to that signing authority, with your credit card details and proof that you own
+  itsabritishthing.com,
 . wait, then
-. use the signed certificate on
-your web server.
+. use the signed certificate on your web server.
 
 That is exactly what you will need to do for Command Centre. Start with
 the DNS alias for your server instead of www.itsabritishthing.com. The
@@ -2754,11 +3040,9 @@ depend on which authority you choose. Finish with a simple process
 covered in the section called "Replacing the web service certificate"
 of the Configuration Client’s user guide. Briefly, it is:
 
-. Go to Server properties, Web Services, REST API section Manage
-Certificates, and
+. Go to Server properties, Web Services, REST API section Manage Certificates,
 . change the radio box to Custom Certificate,
-3.
-click Import, and
+. click Import, and
 . browse to your certificate file.
 
 At time of writing, Gallagher Group has no association with
@@ -2887,17 +3171,12 @@ outputs:
 
 If the output is online, its `statusFlags` field may contain one or more
 of these flags:
-* `relayStateUnknown` means the controller does not know
-what the output should be doing.
-* `closed` means the output relay is
-closed.
+* `relayStateUnknown` means the controller does not know what the output should be doing.
+* `closed` means the output relay is closed.
 * `open` means the output relay is open.
-* `pulsed` means the
-relay’s change in state is momentary.
-* `switchingDisabled` means
-switching this output is disabled.
-* `overridden` means the output is
-under the effect of an override.
+* `pulsed` means the relay’s change in state is momentary.
+* `switchingDisabled` means switching this output is disabled.
+* `overridden` means the output is under the effect of an override.
 
 If and only if the output is online, one of `relayStateUnknown`,
 `closed`, or `open` will appear. Of the above, only `overridden` can
@@ -2992,18 +3271,13 @@ cardholders, visits, and schedules.
 The Command Centre Visitor Management feature allows you to manage _visit_ items. A visit contains
 
 * a list of expected _visitor_ cardholders,
-* a _host_ cardholder,
-responsible for them while on site,
-* a _reception_, which is a location
-at which visitors may arrive,
-* a _visitor type_, that servers two
-purposes. It is an access group that Command Centre will add your
-visitors to when you add them to the visit, and it is an index into more
-visitor management configuration,
-* a list of _visitor access groups_
-that your visitors need to be in while on site,
-* other flat fields such
-as the dates of the visit and a description.
+* a _host_ cardholder, responsible for them while on site,
+* a _reception_, which is a location at which visitors may arrive,
+* a _visitor type_, that servers two purposes. It is an access group that Command Centre will add
+  your visitors to when you add them to the visit, and it is an index into more visitor management
+  configuration,
+* a list of _visitor access groups_ that your visitors need to be in while on site,
+* other flat fields such as the dates of the visit and a description.
 
 The host is person who Command Centre should notify when a visitor
 signs in. If a visitor does not have a card, tag boards and reports will
@@ -3036,23 +3310,19 @@ site. Please contact your account manager if you need these features.
 
 To use the Visitor Management feature, you must:
 
-* add some visitor management configuration to a division in the
-Configuration Client, including at least one visitor type (access group)
-with at least one _host type group_ and _visitor access group_, and
-* create at least one reception item in the same division, again in the
-Configuration Client.
+* add some visitor management configuration to a division in the Configuration Client, including at
+  least one visitor type (access group) with at least one _host type group_ and _visitor access
+  group_, and
+* create at least one reception item in the same division, again in the Configuration Client.
 
 Your software can then use the API to get that division configuration
 and the list of receptions. When it creates a visit it will need to
 comply to the rules in the division configuration, including:
 
 * the visit’s visitor type access group must be in the same division as the visit’s reception,
-* the
-visit’s visitor type must be one of the division’s visitor types,
-* the visit’s host must be a
-member of at least one of that visitor type’s host access groups,
-* the visit’s visitor access
-groups must be a subset of that visitor type’s visitor access groups.
+* the visit’s visitor type must be one of the division’s visitor types,
+* the visit’s host must be a member of at least one of that visitor type’s host access groups,
+* the visit’s visitor access groups must be a subset of that visitor type’s visitor access groups.
 
 The division in question is the visit’s reception’s division.
 
@@ -3103,185 +3373,150 @@ cardholder’s division.
 Cardholders' on the cardholder’s division.
 
 |Edit cardholder notes.
-|One of the privileges that lets you edit
-cardholders as well as either of 'Add Cardholder Notes' or 'Edit
-Cardholder Notes' on the cardholder’s division. It is different in the
-thick clients: there, one of the last two is enough.
+|One of the privileges that lets you edit cardholders as well as either of 'Add Cardholder Notes' or
+'Edit Cardholder Notes' on the cardholder’s division. It is different in the thick clients: there,
+one of the last two is enough.
 
 |Modify cardholder group memberships.
-|One of the privileges that lets
-you edit cardholders on the cardholder’s division plus 'Modify Access
-Control' on the group’s division. 'Modify Access Control' on the group’s
-division is enough in the thick clients.
+|One of the privileges that lets you edit cardholders on the cardholder’s division plus 'Modify
+Access Control' on the group’s division. 'Modify Access Control' on the group’s division is enough
+in the thick clients.
 
 |Change a cardholder’s location.
-|'View Cardholder' on the cardholder,
-and 'Manage Cardholder Location' on the target access zone’s division,
-when you are moving the cardholder into an access zone, otherwise any
-division, when you are moving the cardholder outside the system.By the
-way: collecting access zones normally requires the RESTStatus licence,
-but there is a variant of that call that returns just the zones your
-operator is allowed to move cardholders to that only requires the
-RESTCardholders licence.
+|'View Cardholder' on the cardholder, and 'Manage Cardholder Location' on the target access zone’s
+division, when you are moving the cardholder into an access zone, otherwise any division, when you
+are moving the cardholder outside the system.By the way: collecting access zones normally requires
+the RESTStatus licence, but there is a variant of that call that returns just the zones your
+operator is allowed to move cardholders to that only requires the RESTCardholders licence.
 
 |Assign a card to a cardholder.
-|One of the three privileges that lets
-you edit cardholders on the cardholder’s division and on the card type’s
-division.
+|One of the three privileges that lets you edit cardholders on the cardholder’s division and on the
+card type’s division.
 
 |View assignable card types at `/api/card_types/assign`
-|One of the
-'Edit cardholder' privileges on the card type’s division.
+|One of the 'Edit cardholder' privileges on the card type’s division.
 
 |View card types at '/api/card_types'
-|'View site' or 'Configure site'
-on the card type’s division. The privileges that let you create or edit
-cardholders also reveal PIV types.’
+|'View site' or 'Configure site' on the card type’s division. The privileges that let you create or
+edit cardholders also reveal PIV types.’
 
 |Change locker assignments.
-|One of the privileges that lets you edit
-cardholders on the cardholder’s division plus 'Manage Locker
-Assignments' on the locker’s division. 'Manage Locker Assignments' on
-the locker’s division is enough in the thick clients.
+|One of the privileges that lets you edit cardholders on the cardholder’s division plus 'Manage
+Locker Assignments' on the locker’s division. 'Manage Locker Assignments' on the locker’s division
+is enough in the thick clients.
 
 |Disable a card.
-|One of the privileges that lets you edit cardholders
-on the cardholder’s division. The 'Disable Card' privilege has no effect
-on current versions of the REST API. In the thick clients you do not
+|One of the privileges that lets you edit cardholders on the cardholder’s division. The 'Disable
+Card' privilege has no effect on current versions of the REST API. In the thick clients you do not
 need edit privileges on the cardholder if you have 'Disable Card'.
 
 |De-authorise a cardholder.
-|'De-authorise Cardholder' or one of the
-privileges that lets you edit cardholders on the cardholder’s division.
+|'De-authorise Cardholder' or one of the privileges that lets you edit cardholders on the
+cardholder’s division.
 
 |Edit a relationship between cardholders.
-|One of the privileges that
-lets you edit cardholders on the cardholder’s division and on the role’s
+|One of the privileges that lets you edit cardholders on the cardholder’s division and on the role’s
 division.
 
 |View a cardholder’s operator configuration
-|'View Operators' or one of
-the privileges that let you modify an operator, such as 'Edit Operators'
+|'View Operators' or one of the privileges that let you modify an operator, such as 'Edit Operators'
 or 'Enable/disable Operator'
 
 |View operator groups
 |'Edit Operator Groups' or 'View Operator Groups'
 
 |Change a cardholder’s operator groups
-|'Modify Operator Group
-Membership'
+|'Modify Operator Group Membership'
 
 |View PDF definitions at `/api/personal_data_fields`
-|'View…' or 'Edit
-Personal Data Definitions' on the PDF’s division.
+|'View…' or 'Edit Personal Data Definitions' on the PDF’s division.
 
 |View events at `/api/events`
-|'View Events and Alarms' or any of the
-privileges that allow processing alarms, on the division of the source
-of the event or alarm.
+|'View Events and Alarms' or any of the privileges that allow processing alarms, on the division of
+the source of the event or alarm.
 
 |Acknowledge, process, or mark alarms as viewed.
-|'Edit Alarms' on
-division of the source of the event or alarm.
+|'Edit Alarms' on division of the source of the event or alarm.
 
 |Create new events (8.10+)
-|'Create Alarms and Events' on the division
-of the source of the event, if you set a source, or any division if you
-did not set a source.
+|'Create Alarms and Events' on the division of the source of the event, if you set a source, or any
+division if you did not set a source.
 
 |List access groups.
-|'View access groups' or 'edit access groups' on
-the access group’s division.
+|'View access groups' or 'edit access groups' on the access group’s division.
 
 |List competencies.
 |'View site' or 'Edit site'.
 
 |Receive schedule hrefs in an access group
-|'View Schedules' on the
-schedule’s division. 'View site', 'Configure site', and 'Edit site' will
+|'View Schedules' on the schedule’s division. 'View site', 'Configure site', and 'Edit site' will
 not do it.
 
 |List access zones and receive their hrefs in other results
-|'Edit
-site', 'View site', or 'Override' on the access zone’s division.
+|'Edit site', 'View site', or 'Override' on the access zone’s division.
 
 |Override an access zone’s mode.
 |'Override' on the zone’s division.
 
 |List alarm zones
-|'Edit site', 'View site', or 'Override' on the alarm
-zone’s division.
+|'Edit site', 'View site', or 'Override' on the alarm zone’s division.
 
 |List doors
-|'Edit site', 'View site', or 'Override - open door' on the
-door’s division.
+|'Edit site', 'View site', or 'Override - open door' on the door’s division.
 
 |Override doors
 |'Override - open door' on the door’s division.
 
 |List fence zones
-|'Edit site', 'View site', or 'Maintenance override'
-on the fence zone’s division.
+|'Edit site', 'View site', or 'Maintenance override' on the fence zone’s division.
 
 |Override fence zones
-|'Maintenance override' on the fence zone’s
-division.
+|'Maintenance override' on the fence zone’s division.
 
 |List inputs
-|'Edit site', 'View site', 'Maintenance override' on the
-input’s division.
+|'Edit site', 'View site', 'Maintenance override' on the input’s division.
 
 |List macros
-|'View site', 'Run macros', or 'Schedule and run macros' on
-the macro’s division.
+|'View site', 'Run macros', or 'Schedule and run macros' on the macro’s division.
 
 |List outputs
-|'Edit site', 'View site', or 'Override' on the output’s
-division.
+|'Edit site', 'View site', or 'Override' on the output’s division.
 
 |List day categories
-|'Configure site', 'Edit schedules', 'View site'.
-Day categories are divisionless, so having one of those privs on any
-division is enough. 'View schedules' is true to its word: it will not
-show you day categories.
+|'Configure site', 'Edit schedules', 'View site'.  Day categories are divisionless, so having one of
+those privs on any division is enough. 'View schedules' is true to its word: it will not show you
+day categories.
 
 |List schedules
-|'View schedules', 'Edit schedules', 'Schedule access
-zone' (though the last one only gives you access to access zone
-schedules, not the other five types).
+|'View schedules', 'Edit schedules', 'Schedule access zone' (though the last one only gives you
+access to access zone schedules, not the other five types).
 
 |Create, edit, and delete schedules.
 |'Edit schedules'.
 
 |List elevator groups
-|'Modify Default Floors' is probably the one you
-want. 'View site' lets you see elevator groups, but might not let you
-use them on a cardholder.
+|'Modify Default Floors' is probably the one you want. 'View site' lets you see elevator groups, but
+might not let you use them on a cardholder.
 
 |Set a cardholder’s default floors (for calling elevators)
-|'Modify
-Default Floors'
+|'Modify Default Floors'
 
 |Run a macro at '/api/macros/id/run'
-|'Run Macros' or 'Schedule & Run
-Macros' on the macro’s division.
+|'Run Macros' or 'Schedule & Run Macros' on the macro’s division.
 
 |Shunt or unshunt an item.
-|'Maintenance Override' on the item’s
-division. 'Override', which is good for most other overrides, is not
-enough to shunt or unshunt an item.
+|'Maintenance Override' on the item’s division. 'Override', which is good for most other overrides,
+is not enough to shunt or unshunt an item.
 
 |View a division’s visitor management configuration, and view receptions
-|'View Site', 'Edit Site', 'View Visits', 'Edit Visits', or 'Manage
-Receptions'
+|'View Site', 'Edit Site', 'View Visits', 'Edit Visits', or 'Manage Receptions'
 
 |View a visit
-|'View' or 'Edit Visits'. 'Manage Receptions' will not do
-it.
+|'View' or 'Edit Visits'. 'Manage Receptions' will not do it.
 
 |Modify a visit
-|'Edit Visits'. 'Manage Receptions' will not do this
-either.
+|'Edit Visits'. 'Manage Receptions' will not do this either.
+
 |===
 
 
