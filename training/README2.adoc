@@ -1570,12 +1570,14 @@ your cardholder the result will contain:
 The 'Cardholder access group' section of the cardholder API
 documentation helps with interpreting that.
 
-Take a copy of your version of the first URL, the one marked <1>. It is the href of the cardholder
-group membership, which is a link between the cardholder (ID 325, in my case) and the access group
-(ID 5338). It starts with the href of the cardholder, because it is a property of that cardholder
-and serviced by the cardholders controller, but do not try to interpret it more. Certainly do not
-read anything into the number on the end (1069), and do not be surprised if you have an item with
-the same ID. Sections 16.3 and 16.4 go into what you should not do with hrefs.
+The marked URL is the href of the cardholder's group memberrship, which is a link between the
+cardholder (ID 325, in my case) and the access group (ID 5338).  It starts with the href of the
+cardholder, because it is a property of that cardholder and serviced by the cardholders controller,
+but do not try to interpret it more. Certainly do not read anything into the number on the end
+(1069), and do not be surprised if you have an item with the same ID.
+
+<<_the_importance_of_api>> and <<_identifiers_in_your_app>> go into what you should not do with
+hrefs.
 
 === Edit an existing group membership
 
@@ -1646,10 +1648,10 @@ is necessary for the PDF to work), and gives them a card.
 }
 ----
 
-Never mind the competency marked <2> yet. The `zzz` makes the server ignore it.
+<2> Never mind the competency yet. The `zzz` makes the server ignore it.
 
-First you will need to change the numbers marked <1> to the IDs of an access group and a card type
-on your system. You can get those with:
+First you will need to change the marked numbers to the IDs of an access group and a card type on
+your system. You can get those with:
 
 ....
 GET /api/access_groups
@@ -2923,9 +2925,9 @@ Select the one you just put there.
 [subs="quotes"]
 ----
 wget                                                                          \
-    --no-check-certificate                                                    \
+    *--no-check-certificate*                                                    \
     --certificate=<i>your_pem_file</i>                                               \
-    --header="Authorization: GGL-API-KEY <i>your-API-key</i>"                        \
+    --header="Authorization: GGL-API-KEY _your-API-key_"                        \
     https://localhost:8904/api
 ----
 
@@ -2941,9 +2943,9 @@ certificate file.
 ----
 curl                                                                          \
     --verbose                                                                 \
-    --insecure                                                                \
+    *--insecure*                                                                \
     --cert <i>your_pem_file</i>                                                      \
-    --header "Authorization: GGL-API-KEY <i>your-API-key<i>"                        \
+    --header "Authorization: GGL-API-KEY _your-API-key_"                        \
     https://localhost:8904/api
 ----
 
