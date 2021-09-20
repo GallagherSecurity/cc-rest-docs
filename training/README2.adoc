@@ -1,12 +1,22 @@
 = Work in progress: Command Centre REST API training material
 :toc: left
-:source-highlighter: highlight.js
-:source-language: json
-// highlighters are coderay highlight.js pygments rouge
+:source-highlighter: rouge
+// highlighters are coderay highlight.js Pygments rouge.  Asciidoctor ships with highlight.js, but
+// gihub pages (Jeyll) uses Rouge.  Install it with 'gem install rouge'.
+
+// Practically all examples are json
+:source-language: json-doc
+
+// Section numbers are handy for things like "read sections 4 and 20" but then one day 20
+// becomes 21.  So, leave section numbers off:
 // :sectnums:
+
+// Shortens image URLs:
 :imagesdir: assets
-:sectanchors:
-// :sectlinks:
+
+// Need anchors or links, but not both, and links are less visually distracting (IMO).
+// :sectanchors:
+:sectlinks:
 
 
 This document will be an AsciiDoc port of a document used internally at Gallagher Group to train
@@ -66,13 +76,13 @@ It covers features first released in 7.80 and expanded in 7.90.
 
 It uses the following styles for guided examples:
 
-[source,json]
+[source]
 ----
 // GET /api <1>
 {
-    "a text field": "string", // comments look okay
-    "a numeric field": 1234,
-    "a Boolean field": false
+  "a text field": "string", // comments look okay
+  "a numeric field": 1234,
+  "a Boolean field": false
 }
 ----
 <1> Strictly speaking, JSON does not contain comments.
@@ -147,10 +157,9 @@ for security-conscious sites. While you may not be able to follow its
 leading advice regarding the REST API (`leave it turned off') there is
 plenty more in there to be aware of.
 
-If you are interested in the security of the REST API, look in link:#_the_request_process[the
-request process] for how the server authenticates and authorises requests in general, and
-link:#_client_side_certificates[client-side certificates] for how it authenticates clients using
-certificates.
+If you are interested in the security of the REST API, look in <<_the_request_process>> for how the
+server authenticates and authorises requests in general, and <<_client_side_certificates>> for how
+it authenticates clients using certificates.
 
 === Sample code
 
@@ -397,8 +406,7 @@ In the interests of security, you should give your REST operators
 (footnote: _all_ operators) the minimum privileges they require to
 achieve their task.
 
-An link:#_appendix_features_and_licences[appendix] gives some examples of privileges you will need
-for various tasks.
+<<_appendix_features_and_licences>> gives examples of privileges you will need for various tasks.
 
 === HTTP requests
 
@@ -489,26 +497,26 @@ quite readable.
 
 JSON can contain flat fields, objects (structures), and arrays.
 
-[source,json]
+[source]
 ----
 {
-    "a text field": "string",
-    "a numeric field": 1234,
-    "a Boolean field": false,
-    "an object": {
-        "sub-field1": "foo",
-        "sub-field2": "bar"
+  "a text field": "string",
+  "a numeric field": 1234,
+  "a Boolean field": false,
+  "an object": {
+    "sub-field1": "foo",
+    "sub-field2": "bar"
+  },
+  "an array": [
+    {
+      "sub-field1": "jingle",
+      "sub-field2": "bells"
     },
-    "an array": [
-        {
-            "sub-field1": "jingle",
-            "sub-field2": "bells"
-        },
-        {
-            "sub-field1": "foo",
-            "sub-field2": "bar"
-        }
-    ]
+    {
+      "sub-field1": "foo",
+      "sub-field2": "bar"
+    }
+  ]
 }
 ----
 
@@ -566,7 +574,7 @@ This does not happen when using most web sites because (continuing the
 bank example) your bank has not pinned your client certificate: it does
 not care where you are coming from. But APIs should operate more
 securely than web sites so our recommendation is to turn it on.
-link:#_client_side_certificates[A later section] talks about client
+<<_client_side_certificates>> covers client
 certificates.
 
 
@@ -643,8 +651,7 @@ Requiring pre-shared certificates from clients is the best protection
 the server has against attackers on its network. If you tick the box to
 turn off that check when you first start your development, come back
 once your application is connecting successfully and untick it again.
-Read the section on link:#_client_side_certificates[client-side
-certificates] to help get your application connecting again.
+Read <<_client_side_certificates>> to help get your application connecting again.
 
 === Installing a custom server certificate
 
@@ -661,8 +668,7 @@ the rights to use it. The online help lays that out step by step.
 
 === Create a REST operator
 
-We will get to the reasons why in link:#_why_we_need_an_operator[why we
-need an operator].
+We will get to the reasons why in <<_why_we_need_an_operator>>.
 
 ==== Create an operator group and give it the necessary privileges
 
@@ -905,7 +911,7 @@ licensing problem:
 
 ----
 {
-    "message": "feature not licensed"
+  "message": "feature not licensed"
 }
 ----
 
@@ -913,30 +919,30 @@ With a RESTEvents licence you will get more:
 
 ----
 {
-    "version": "7.90.0.0",
-    "features": {
-        "items": {2 items},
-        "alarms": {3 items},
-        "events": {4 items}
-    }
+  "version": "7.90.0.0",
+  "features": {
+    "items": {2 items},
+    "alarms": {3 items},
+    "events": {4 items}
+  }
 }
 ----
 
 With a RESTCardholdersEvents licence:
 ----
 {
-    "version": "7.90.0.0",
-    "features": {
-        "items": {2 items},
-        "alarms": {1 item},
-        "cardholders": {1 item},
-        "events": {1 item},
-        "accessGroups": {1 item},
-        "roles": {1 item},
-        "lockerBanks": {1 item},
-        "competencies": {1 item},
-        "cardTypes": {1 item}
-    }
+  "version": "7.90.0.0",
+  "features": {
+    "items": {2 items},
+    "alarms": {1 item},
+    "cardholders": {1 item},
+    "events": {1 item},
+    "accessGroups": {1 item},
+    "roles": {1 item},
+    "lockerBanks": {1 item},
+    "competencies": {1 item},
+    "cardTypes": {1 item}
+  }
 }
 ----
 
@@ -1155,7 +1161,7 @@ thumbprint of the request’s certificate against the one on the REST
 Client item. If they do not match, it responds with a 401 and raises an
 alarm "A REST connection was attempted with an invalid client
 certificate". The server does not check the client certificate’s chain
-of trust. link:#_client_side_certificates[Another section] has all the
+of trust. <<_client_side_certificates>> has all the
 details of why you would want your server to check client certificates
 and how to create them.
 . It checks the source host’s IP number against the REST Client item’s
@@ -1200,16 +1206,16 @@ key and `content type` tells the server that the body is JSON.
 
 This document uses this shorthand to represent that kind of HTTP query:
 
-....
-POST /api/cardholders
+----
+// POST /api/cardholders
 {
-    "firstName": "New",
-    "lastName": "Cardholder",
-    "division": {
-        "href":"https://localhost:8904/api/divisions/2"
-    }
+  "firstName": "New",
+  "lastName": "Cardholder",
+  "division": {
+    "href":"https://localhost:8904/api/divisions/2"
+  }
 }
-....
+----
 
 The first line gives the verb and the file part of URL. It needs the
 protocol, host, and port prepended: https://your_server:8904. The rest
@@ -1320,16 +1326,15 @@ it (de-authorised cardholders always fail access checks), turns on a
 flag that allows extra unlock time on doors, and sets the user code
 (which is a number you can use at keypads):
 
-[source,json]
 ----
 // PATCH /api/cardholders/{id}
 {
-    "firstname": "Jeremiah",
-    "@datePDF": "2099-03-31",
-    "@email": "a@b.com",
-    "authorised": true,
-    "useExtendedAccessTime": true,
-    "userCode": "1234"
+  "firstname": "Jeremiah",
+  "@datePDF": "2099-03-31",
+  "@email": "a@b.com",
+  "authorised": true,
+  "useExtendedAccessTime": true,
+  "userCode": "1234"
 }
 ----
 
@@ -1347,13 +1352,18 @@ TIP: When PATCHing flat fields on a cardholder, send back the same kind of JSON 
 Here is a cutting from the details page of a cardholder with an image
 PDF:
 
-....
-"@datePDF": "2099-03-31T00:00:00Z",
-"@Email": "a@b.com",
-"@Mugshot": {
+----
+// GET /api/cardholders{id}
+{
+  ...
+  "@datePDF": "2099-03-31T00:00:00Z",
+  "@Email": "a@b.com",
+  "@Mugshot": {
     "href": "https://localhost:8904/api/cardholders/325/personal_data/8449"
-} 
-....
+  }
+  ...
+}
+----
 
 Notice that the image PDF does not show in a cardholder’s details,
 because they can be massive. Instead you get a URL. If you follow that
@@ -1366,12 +1376,12 @@ characters), sometimes with equals signs on the end. It also increases
 the size of the data by about a third. You can put the string between
 quotes and send it like any other PDF:
 
-....
-PATCH /api/cardholders/{id}
+----
+// PATCH /api/cardholders/{id}
 {
-    "@photo": "Kilobytes+of+Base64+encoded+data==="
+  "@photo": "Kilobytes+of+Base64+encoded+data==="
 } 
-....
+----
 
 If you see a load of what looks like garbage ending with equals signs,
 it is probably Base64.
@@ -1420,8 +1430,8 @@ modifying a third, and removing another, it authorises the cardholder
 and sets a PDF called `employeeID` just to remind you that you can
 combine operations:
 
-....
-PATCH /api/cardholders/{id}
+----
+//PATCH /api/cardholders/{id}
 {
   "authorised": true,
   "@employeeID": "THX1139",
@@ -1459,7 +1469,7 @@ PATCH /api/cardholders/{id}
     ]
   }
 }
-....
+----
 
 Notice how the hrefs of a card include the cardholder’s href and end
 with a long identifier. That is because a card is a property of a
@@ -1505,36 +1515,36 @@ out easier.)
 If you use the wrong access group identifier, or your operator does not
 have 'Modify Access Control' on the access group, you will be told:
 
-....
+----
 {
   "message": "Invalid access group href: https://localhost:8904/api/access_groups/53888"
 }
-....
+----
 
 When you get it right, the server will return 204 and next time you GET
 your cardholder the result will contain:
 
-....
-GET /api/cardholders/325
+----
+// GET /api/cardholders/325
 {
-    // [...]
-    "accessGroups": [
-        {
-            "href": "https://localhost:8904/api/cardholders/325/access_groups/1069",
-            "accessGroup": {
-                "name": "Boney M",
-                "href": "https://localhost:8904/api/access_groups/5388"
-            },
-            "status": {
-                "value": "Active",
-                "type": "active"
-            },
-            "from": "2017-01-31T02:11:00Z",
-            "until": "2037-01-31T02:11:00Z"
-        }
-    ]
+  ...
+  "accessGroups": [
+    {
+      "href": "https://localhost:8904/api/cardholders/325/access_groups/1069",
+      "accessGroup": {
+        "name": "Boney M",
+        "href": "https://localhost:8904/api/access_groups/5388"
+      },
+      "status": {
+        "value": "Active",
+        "type": "active"
+      },
+      "from": "2017-01-31T02:11:00Z",
+      "until": "2037-01-31T02:11:00Z"
+    }
+  ]
 }
-....
+----
 
 The 'Cardholder access group' section of the cardholder API
 documentation helps with interpreting that.
@@ -1553,19 +1563,19 @@ and do not be surprised if you have an item with the same ID. Sections
 Change the URL of the cardholder and the access group membership in this
 PATCH:
 
-....
-PATCH /api/cardholders/325
+----
+//PATCH /api/cardholders/325
 {
-    "accessGroups": {
-        "update": [
-            {
-                "href": "https://localhost:8904/api/cardholders/325/access_groups/1069",
-                "from": "2027-03-09"
-            }
-        ]
-    }
+  "accessGroups": {
+    "update": [
+      {
+        "href": "https://localhost:8904/api/cardholders/325/access_groups/1069",
+        "from": "2027-03-09"
+      }
+    ]
+  }
 }
-....
+----
 
 If it returns a 204, GET your cardholder again and look at its access
 group memberships. The from date should have changed from 2037 to 2027,
@@ -1652,7 +1662,7 @@ integration against this API.
 === Recap
 
 * `/api` returns links to summary pages. Why that is important is in
-  link:#_the_importance_of_api[the importance of /api].
+  <<_the_importance_of_api>>.
 
 * At time of writing, the URLs of most summary pages end with the name of the
 link:#_api_controllers[controller], such as `cardholders` or `access_groups`. Others end with their
@@ -1660,14 +1670,13 @@ specific purpose, such as `card_types/assign`, which returns the card types your
 to people.
 
 * Summary pages show you many items without much detail of each. You can add sorting and pagination
-parameters.  link:#_cardholder_summary[Cardholders], link:#_first_gets_events[alarms and events], and
-link:#_other_command_centre_items[other items]. Always tell the API to sort its results by ID,
-because it is quicker and more reliable when operators are changing the database. Unless you’re
-writing a user app and really must have your results sorted by name.
+parameters.  link:#_cardholder_summary[Cardholders], link:#_first_gets_events[alarms and events],
+and link:#_other_command_centre_items[other items]. Tell the API to sort its results by ID because
+it is quicker, and more reliable when operators are changing the database. Unless you’re writing a
+user app and really must have your results sorted by name.
 
-* You can also add filters to summary pages, turning them into search
-pages. See link:#_search_for_a_cardholder[searching for a cardholder] and
-link:#_event_filters[event filters].
+* You can also add filters to summary pages, turning them into search pages. See
+<<_search_for_a_cardholder>> and <<_event_filters>>.
 * In v8.00+ you can add fields from the details page to the summary page
 of items, and in 8.40+, events. Or you can specify the exact fields you
 need, if you want to save traffic.
@@ -1716,8 +1725,8 @@ application should have coded into it is `/api`. You can learn every
 other address you need with a GET of that. It will return a table of
 contents like this:
 
-....
-GET /api
+----
+// GET /api
 {
   "version": "7.90.0.0",
   "features": {
@@ -1838,7 +1847,7 @@ GET /api
     }
   }
 }
-....
+----
 
 You should parse the `features` block of that page for the URLs of the
 calls you need. It contains one block for each controller in the API:
@@ -1962,7 +1971,7 @@ As a reminder, the parts of a URL relevant to us are the protocol
 scheme://host:port/path?query
 ....
 
-The scheme will always be HTTPS--you can take that as read. By all means,
+The scheme will always be `HTTPS`:  you can take that as read. By all means,
 replace the hostname and port number and add your own search parameters
 to the query on the end of URLs you take from GET /api, but please do
 not tinker with the path. Treat that as opaque.
@@ -2276,16 +2285,15 @@ it restarted.
 
 == Client-side certificates
 
-First see link:#_authentication_and_encryption_certificates[auth
-certificates] for what certificates are and what the difference is
-between server certificates and client certificates.
+First see <<_authentication_and_encryption_certificates>> for what certificates are and what the
+difference is between server certificates and client certificates.
 
 This section deals with the client certificate check that happens if you
 left 'Do not require pinned client certificates' off in the 'Web
 Services' property tab of an 8.40 server, or if you entered a thumbprint
 into a REST Client item in 8.50 or later.
 
-The process in link:#_the_request_process[the request process] shows that
+The process in <<_the_request_process>> shows that
 if you have not disabled client certificate checking, the server does it
 after extracting the API key. If the server does not have the client’s
 certificate pinned to the REST Client item with that API key, it will
@@ -2444,9 +2452,10 @@ that option and type in a password (a really good one) when
 
 To get the thumbprint for Command Centre:
 
-....
+[source,shell]
+----
 openssl x509 -fingerprint -in rest.pem -noout
-....
+----
 
 If you protected the PEM with a password, `openssl x509` will ask you
 for it.
@@ -2454,7 +2463,7 @@ for it.
 NOTE:  Those are the 20 bytes that you paste into the REST Client item in Command Centre.
 
 Now you need to add it to the clients that need it. If you use Postman,
-see link:#_use_the_certificate_in_your_client[this section]. If you use
+see <<_use_the_certificate_in_your_client>>. If you use
 Chrome on Windows, you need to add it to the certificate store with
 these two commands:
 
@@ -2495,11 +2504,25 @@ present on all versions of Windows, so here is an alternative using…
 developer command prompt, try a regular command prompt (as
 administrator).
 . In it:
-+
 
++
+[subs="quotes"]
+----
+makecert ignoreme.der
+         -a sha1
+         -ss My
+         -sky signature
+         *-pe*
+         -len 2048
+         -n "CN=RESTClientCert"
+         -sr CurrentUser
+----
+
++
 That will create a certificate and place it in your certificate store
 with a copy on disk.
 
++
 The `-pe` marked the key as exportable.  More on that later.
 
 You do not need to keep the file `ignoreme.der`, but the easiest way to
@@ -2525,10 +2548,11 @@ For your information, here are three more command-line options for
 extracting the thumbprint from the DER file if you didn’t get it above.
 They all do the same thing. Use whichever works for you:
 
+// The 'shell' parser would be good but it chooses to highlight 'sha1sum'.
 ....
-openssl x509 -in c:\ignoreme.der -inform der -noout -fingerprint
-openssl sha1 c:\ignoreme.der
-sha1sum c:\ignoreme.der
+openssl x509 -in ignoreme.der -inform der -noout -fingerprint
+openssl sha1 ignoreme.der
+sha1sum ignoreme.der
 ....
 
 As you can see from the last two, a certificate thumbprint is really
@@ -2650,15 +2674,20 @@ I found `--verbose` necessary to see any error codes.
 
 == Server-side certificates
 
-Clients may refuse to talk to a server that
-offers a certificate that is not carrying a signature from one of the
-internet’s signing authorities. One that has not been paid for, in other
-words. Usually the client is completely under the developer’s control
-because it is their own application and they can instruct it to skip the
-server certificate check, as you told Chrome and Postman to do earlier.
+In production environments, clients should refuse to talk to a server that offers a certificate that
+is not carrying a signature from one of the internet’s signing authorities. One that has not been
+paid for, in other words.
 
-If you will pardon a very brief dive into source code, here is one way
-of achieving that in a C# client:
+WARNING:  *Production clients should check server certificates.* If not, an attacker could
+masquerade as the server.  The client would send it its API key which -- if the server was not
+checking client certificates -- the attacker could then use for calls of its own.
+
+Usually the client is completely under the developer’s control because it is their own application
+and they can instruct it to skip the server certificate check, as you told Chrome and Postman to do
+earlier.
+
+If you will pardon a very brief dive into source code, here is one way of skipping server
+certificate checking in a C# client:
 
 [source,csharp]
 ServicePointManager.ServerCertificateValidationCallback = delegate (
@@ -2668,9 +2697,8 @@ ServicePointManager.ServerCertificateValidationCallback = delegate (
     SslPolicyErrors sslPolicyErrors)
   { return true; };
 
-If you do not have control of the client application, or you wish to
-check the server certificate (which is an advisable cyber-security
-move), here are a couple of approaches.
+If you do not have control of the client application, or you wish to check the server certificate
+(which is advisable), here are a couple of approaches.
 
 You only need one of these.
 
@@ -2784,35 +2812,35 @@ block of the door called 'Greendoor', is:
 [,]
 ----
 "results": [
-    {
-        "commands": {
-            "open": {
-                "href": "https://localhost:8904/api/doors/507/open"
-            },
-            "free": {
-                "href": "https://localhost:8904/api/access_zones/533/free"
-            },
-            "freeUntil": {
-                "href": "https://localhost:8904/api/access_zones/533/free"
-            },
-            "freePin": {
-                "href": "https://localhost:8904/api/access_zones/533/free_pin"
-            },
-            "freePinUntil": {
-                "href": "https://localhost:8904/api/access_zones/533/free_pin"
-            },
-            "secure": {
-                "href": "https://localhost:8904/api/access_zones/533/secure"
-            },
-            "secureUntil": {
-                "href": "https://localhost:8904/api/access_zones/533/secure"
-            },
-            // ... ten more commands omitted for brevity ...
-            "cancel": {
-                "href": "https://localhost:8904/api/access_zones/533/cancel"
-            }
-        }
+  {
+    "commands": {
+      "open": {
+        "href": "https://localhost:8904/api/doors/507/open"
+      },
+      "free": {
+        "href": "https://localhost:8904/api/access_zones/533/free"
+      },
+      "freeUntil": {
+        "href": "https://localhost:8904/api/access_zones/533/free"
+      },
+      "freePin": {
+        "href": "https://localhost:8904/api/access_zones/533/free_pin"
+      },
+      "freePinUntil": {
+        "href": "https://localhost:8904/api/access_zones/533/free_pin"
+      },
+      "secure": {
+        "href": "https://localhost:8904/api/access_zones/533/secure"
+      },
+      "secureUntil": {
+        "href": "https://localhost:8904/api/access_zones/533/secure"
+      },
+      // ... ten more commands omitted for brevity ...
+      "cancel": {
+        "href": "https://localhost:8904/api/access_zones/533/cancel"
+      }
     }
+  }
 ]
 ----
 
@@ -2837,7 +2865,7 @@ Overrides don’t need anything in the body of the POST, but those with
 ----
 // POST /api/access_zones/533/free
 {
-    "endTime": "2020-03-06T00:00:00Z"
+  "endTime": "2020-03-06T00:00:00Z"
 }
 ----
 
