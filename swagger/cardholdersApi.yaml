@@ -5031,35 +5031,6 @@ paths:
         409:
           <<: *409CH
 
-  /api/cardholders/{id}/cards/{card_id}:
-    delete:
-      tags:
-        - Cardholders
-
-      summary: Remove a card from a cardholder
-      description: |
-        This call removes a card from a cardholder.
-
-        You can find this URL in the [cardholder object](#definition-Cardholder-detail).
-
-      parameters:
-        - name: "id"
-          in: path
-          required: true
-          type: string
-          description: "The identifier of the cardholder."
-        - name: "card_id"
-          in: path
-          required: true
-          type: string
-          description: "An opaque identifier for the card."
-      responses: 
-        204: { description: "Success." }
-        403: { description: "The operator does not have a privilege that allows editing that cardholder." }
-        404: { description: "That card is not on that cardholder." }
-        409:
-          <<: *409CH
-
   /api/cardholders/{id}/access_groups/{membership_id}:
     delete:
       tags:
@@ -5096,6 +5067,35 @@ paths:
           description: |
             The operator does not have a privilege that allows editing that cardholder's access
             group memberships (such as 'Modify access control').
+
+  /api/cardholders/{id}/cards/{card_id}:
+    delete:
+      tags:
+        - Cardholders
+
+      summary: Remove a card from a cardholder
+      description: |
+        This call removes a card from a cardholder.
+
+        You can find this URL in the [cardholder object](#definition-Cardholder-detail).
+
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "The identifier of the cardholder."
+        - name: "card_id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier for the card."
+      responses: 
+        204: { description: "Success." }
+        403: { description: "The operator does not have a privilege that allows editing that cardholder." }
+        404: { description: "That card is not on that cardholder." }
+        409:
+          <<: *409CH
 
   /api/cardholders/{id}/competencies/{link_id}:
     delete:
@@ -5156,6 +5156,55 @@ paths:
         204: { description: "Success." }
         403: { description: "The operator does not have a privilege that allows editing that cardholder." }
         404: { description: "The parameters are invalid." }
+
+  /api/cardholders/{id}/elevator_groups/{assignment_id}:
+    delete:
+      tags:
+        - Cardholders
+
+      summary: Remove an elevator group from a cardholder
+      description: |
+        This call removes a default floor assignment and passenger types from a cardholder for one
+        elevator group.
+
+        You will find this URL in the `elevatorGroups` block of a [cardholder
+        object](#definition-Cardholder-detail).
+
+      responses:
+        204:
+          description:  Success.
+        403:
+          description: |
+            Your operator does not have the necessary privilege to change this cardholder's elevator
+            groups.
+        404:
+          description: |
+            That is not the URL of a cardholder's elevator group.  You can take an href
+            from the 'elevatorGroups' block of a cardholder detail.  The message in the results
+            document will tell you more about the problem.
+
+  /api/cardholders/{id}/lockers/{assignment_id}:
+    delete:
+      tags:
+        - Cardholders
+
+      summary: Remove a locker assignment
+      description: |
+        This call removes a locker assignment from a cardholder.  If the cardholder has no other
+        assignments for this locker after this operation he or she will not be able to open it.
+
+        You will find this URL in the `lockers` block of a [cardholder
+        object](#definition-Cardholder-detail).
+
+      responses:
+        204:
+          description:  Success.
+        404:
+          description: |
+            That is not the URL of a cardholder's locker assignment.  You can take an href from the
+            'lockers' block of a cardholder detail, or the 'assignments' block of a locker or locker
+            bank detail.  The message in the results document will tell you more about the problem.
+        4xx: { description: "You do not have privileges for the operation." }
 
   /api/cardholders/{id}/operator_groups/{membership_id}:
     delete:
@@ -5222,54 +5271,6 @@ paths:
           description: "Success."
         403: { description: "The operator does not have a privilege that allows editing that cardholder." }
         404: { description: "That is not the URL of a relationship.  Perhaps it is deleted already." }
-
-  /api/cardholders/{id}/lockers/{assignment_id}:
-    delete:
-      tags:
-        - Cardholders
-
-      summary: Remove a locker assignment
-      description: |
-        This call removes a locker assignment from a cardholder.  If the cardholder has no other
-        assignments for this locker after this operation he or she will not be able to open it.
-
-        You will find this URL in the `lockers` block of a [cardholder
-        object](#definition-Cardholder-detail).
-
-      responses:
-        204:
-          description:  Success.
-        404:
-          description: |
-            That is not the URL of a cardholder's locker assignment.  You can take an href from the
-            'lockers' block of a cardholder detail, or the 'assignments' block of a locker or locker
-            bank detail.  The message in the results document will tell you more about the problem.
-        4xx: { description: "You do not have privileges for the operation." }
-
-  /api/cardholders/{id}/elevator_groups/{assignment_id}:
-    delete:
-      tags:
-        - Cardholders
-
-      summary: Remove an elevator group from a cardholder
-      description: |
-        This call removes a default floor assignment and passenger types from a cardholder for one elevator group.
-
-        You will find this URL in the `elevatorGroups` block of a [cardholder
-        object](#definition-Cardholder-detail).
-
-      responses:
-        204:
-          description:  Success.
-        403:
-          description: |
-            Your operator does not have the necessary privilege to change this cardholder's elevator
-            groups.
-        404:
-          description: |
-            That is not the URL of a cardholder's elevator group.  You can take an href
-            from the 'elevatorGroups' block of a cardholder detail.  The message in the results
-            document will tell you more about the problem.
 
   /api/cardholders/{id}/update_location:
     post:
