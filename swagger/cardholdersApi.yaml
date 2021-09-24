@@ -58,6 +58,11 @@ info:
     * A future version will sort its search results differently and may increase the number it
     returns per page, if your query does not include parameters to override the defaults.
 
+    #### Cardholder API changes in 8.70
+
+    * A cardholder's operator group memberships (added in 8.50) now contain an href that you can use
+      in an HTTP DELETE as another way of removing a cardholder from an operator group.
+
     #### Cardholder API changes in 8.60
 
     * You can search for cardholders by division or description.
@@ -4252,6 +4257,7 @@ definitions:
       Each item contains the
       cardholder's name and (if your operator has the privilege to view that cardholder) an href to
       the cardholder record.
+      8.70 added an href that you can use to delete the operator group membership.
 
       [PATCH](#operation--api-cardholders--id--patch) the href in the cardholder block if you want
       to change anything about that cardholder.  The operator groups they are in, for example.
@@ -5071,7 +5077,7 @@ paths:
           in: path
           required: true
           type: string
-          description: "The identifier of the access group."
+          description: "The identifier of the cardholder."
         - name: "membership_id"
           in: path
           required: true
@@ -5150,6 +5156,41 @@ paths:
         204: { description: "Success." }
         403: { description: "The operator does not have a privilege that allows editing that cardholder." }
         404: { description: "The parameters are invalid." }
+
+  /api/cardholders/{id}/operator_groups/{membership_id}:
+    delete:
+      tags:
+        - Cardholders
+      summary: Remove an operator group membership
+
+      description: |
+        This call removes a cardholder's membership in an operator group.  Operator group
+        memberships do not have start and end dates, so a cardholder can only have one membership in
+        a given operator group.
+
+        You can find this URL in the [cardholder object](#definition-Cardholder-detail).
+
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "The identifier of the cardholder."
+        - name: "membership_id"
+          in: path
+          required: true
+          type: string
+          description: "The identifier of the cardholder's membership in the operator group."
+      responses: 
+        204: 
+          description: "Success."
+        403:
+          description: |
+            The operator does not have a privilege that allows editing that cardholder's operator
+            group memberships ('Modify operator group membership').
+        404: { description: "That is not the href of an operator group membership." }
+        409:
+          <<: *409CH
 
   /api/cardholders/{id}/roles/{relationship_id}:
     delete:

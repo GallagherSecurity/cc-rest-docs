@@ -56,6 +56,9 @@
                 <a href="#operation--api-cardholders--id--competencies--link_id--credit-post"> Change competency credit </a>
               </li>
               <li>
+                <a href="#operation--api-cardholders--id--operator_groups--membership_id--delete"> Remove an operator group membership </a>
+              </li>
+              <li>
                 <a href="#operation--api-cardholders--id--roles--relationship_id--delete"> Remove a relationship </a>
               </li>
               <li>
@@ -282,6 +285,10 @@
                   <li>
                     <p>A future version will sort its search results differently and may increase the number it returns per page, if your query does not include parameters to override the defaults.</p>
                   </li>
+                </ul>
+                <h4 id="cardholder-api-changes-in-870">Cardholder API changes in 8.70</h4>
+                <ul>
+                  <li>A cardholder&#39;s operator group memberships (added in 8.50) now contain an href that you can use in an HTTP DELETE as another way of removing a cardholder from an operator group.</li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-860">Cardholder API changes in 8.60</h4>
                 <ul>
@@ -2115,7 +2122,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The identifier of the access group.</p>
+                      <p>The identifier of the cardholder.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2382,6 +2389,110 @@
                     </div>
                     <div class="prop-value">
                       <p>The parameters are invalid.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-cardholders--id--operator_groups--membership_id--delete" class="operation panel" data-traverse-target="operation--api-cardholders--id--operator_groups--membership_id--delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Cardholders">Cardholders</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Remove an operator group membership</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/cardholders/{id}/operator_groups/{membership_id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This call removes a cardholder&#39;s membership in an operator group. Operator group memberships do not have start and end dates, so a cardholder can only have one membership in a given operator group.</p>
+                  <p>You can find this URL in the
+                    <a href="#definition-Cardholder-detail">cardholder object</a>.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The identifier of the cardholder.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">membership_id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The identifier of the cardholder&#39;s membership in the operator group.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege that allows editing that cardholder&#39;s operator group memberships (&#39;Modify operator group membership&#39;).</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the href of an operator group membership.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The cardholder is locked for editing by another operator. The body of the response will tell you which operator is holding the lock.</p>
                     </div>
                   </div>
                 </section>
@@ -13045,7 +13156,7 @@
                 <section class="json-schema-description">
                   <p>Returned in an array by
                     <a href="#operation--api-operator_groups--id--cardholders-get">/api/operator_groups/{id}/cardholders</a>, containing cardholders who are members of a particular operator group.</p>
-                  <p>Each item contains the cardholder&#39;s name and (if your operator has the privilege to view that cardholder) an href to the cardholder record.</p>
+                  <p>Each item contains the cardholder&#39;s name and (if your operator has the privilege to view that cardholder) an href to the cardholder record. 8.70 added an href that you can use to delete the operator group membership.</p>
                   <p>
                     <a href="#operation--api-cardholders--id--patch">PATCH</a> the href in the cardholder block if you want to change anything about that cardholder. The operator groups they are in, for example.</p>
                 </section>
