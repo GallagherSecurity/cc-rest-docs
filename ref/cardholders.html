@@ -788,12 +788,21 @@
                 <li>Send an HTTP DELETE to the cardholder&#39;s href.</li>
               </ol>
               <h4 id="updating-a-cardholders-location">Updating a cardholder&#39;s location</h4>
-              <ol start="2">
+              <ol>
                 <li>Find the href of your target access zone using the link at <code>features.cardholders.updateLocationAccessZones</code> in the results of <code>GET /api</code>.</li>
                 <li>Find your cardholder using one of the processes above. If you are using
                   <a href="#operation--api-cardholders-get">search</a>, add <code>updateLocation</code> to the <code>fields</code> parameter to save you having to GET their details page later.</li>
                 <li>Send an
                   <a href="#operation--api-cardholders--id--update_location-post">HTTP POST</a> to that cardholder&#39;s <code>updateLocation.href</code> link.</li>
+              </ol>
+              <h4 id="finding-which-access-zones-and-doors-a-cardholder-can-access">Finding which access zones and doors a cardholder can access</h4>
+              <ol>
+                <li>GET your cardholder&#39;s details page, or search cardholders with <code>accessGroups</code> in the field list. Either way, you will receive all their access group memberships.</li>
+                <li>Iterate through all the access groups looking into their <code>access</code> blocks for access zones and schedules. Recurse up the access group hierarchy by following each group&#39;s <code>parent.href</code>.</li>
+              </ol>
+              <p>Now you have the cardholder&#39;s access zones. If you want doors:</p>
+              <ol start="3">
+                <li>For each access zone, GET its href and look in its <code>doors</code> block.</li>
               </ol>
               <h4 id="downloading-all-cardholders">Downloading all cardholders</h4>
               <ol>
@@ -9258,7 +9267,7 @@
                 <section class="json-schema-description">
                   <p>An
                     <em>access group</em> is an object in Command Centre. The connection between an access group and a cardholder is a
-                    <em>membership</em>. A cardholder can be a member of many groups, and groups usually have more than one member.</p>
+                    <em>membership</em>. A cardholder can be a member of many groups, and groups can have any number of members.</p>
                   <p>Less obvious is that a cardholder can have many memberships to the same group. This is useful because a membership has a validity period, expressed with <code>from</code> and <code>until</code> date-times. Outside those moments Command Centre does not regard the cardholder as being a member of the group. If there exists one membership with <code>from</code> in the past or unset and <code>until</code> in the future or unset, the cardholder is a member.</p>
                   <p>Presence in an access group affects physical access rights and possession of PDFs, among other things.</p>
                 </section>
@@ -9282,6 +9291,7 @@
                     </dt>
                     <dd>
                       <p>An object containing a link to this group&#39;s detail page and its name. It is read-only because you cannot change a group membership&#39;s group.</p>
+                      <p>If your operator does not have permissions to view the access group, following it will return a 404.</p>
                     </dd>
                     <dt data-property-name="status" class="has-description">
                       <span class="json-property-name">status:</span>

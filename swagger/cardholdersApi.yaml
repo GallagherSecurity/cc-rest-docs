@@ -642,13 +642,23 @@ tags:
     2. Send an HTTP DELETE to the cardholder's href.
 
     #### Updating a cardholder's location
-    2. Find the href of your target access zone using the link at
+    1. Find the href of your target access zone using the link at
        `features.cardholders.updateLocationAccessZones` in the results of `GET /api`.
     1. Find your cardholder using one of the processes above.  If you are using
        [search](#operation--api-cardholders-get), add `updateLocation` to the `fields` parameter to
        save you having to GET their details page later.
     2. Send an [HTTP POST](#operation--api-cardholders--id--update_location-post) to that
        cardholder's `updateLocation.href` link.
+
+    #### Finding which access zones and doors a cardholder can access
+    1. GET your cardholder's details page, or search cardholders with `accessGroups` in the field
+    list.  Either way, you will receive all their access group memberships.
+    2. Iterate through all the access groups looking into their `access` blocks for access zones and
+    schedules.  Recurse up the access group hierarchy by following each group's `parent.href`.
+
+    Now you have the cardholder's access zones.  If you want doors:
+
+    3. For each access zone, GET its href and look in its `doors` block.
 
     #### Downloading all cardholders 
     1. `GET /api`
@@ -2149,7 +2159,7 @@ definitions:
     description: |
       An _access group_ is an object in Command Centre.  The connection between an access group and
       a cardholder is a _membership_.  A cardholder can be a member of many groups, and groups
-      usually have more than one member.
+      can have any number of members.
 
       Less obvious is that a cardholder can have many memberships to the same group.  This is useful
       because a membership has a validity period, expressed with `from` and `until` date-times.
@@ -2177,6 +2187,9 @@ definitions:
         description: |
           An object containing a link to this group's detail page and its name.  It is read-only
           because you cannot change a group membership's group.
+
+          If your operator does not have permissions to view the access group, following it will
+          return a 404.
         readOnly: true
         example: { name: "R&D special projects group", href: "https://localhost:8904/api/access_groups/352" }
       status:
