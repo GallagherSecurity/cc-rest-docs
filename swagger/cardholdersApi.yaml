@@ -53,8 +53,6 @@ info:
 
     #### Cardholder API changes on the roadmap
 
-    * You will be able to search for cardholders by division or description.
-
     * A future version will sort its search results differently and may increase the number it
     returns per page, if your query does not include parameters to override the defaults.
 
@@ -442,7 +440,7 @@ x-common-blocks:
       division's visitor management configuration, in other words).
 
       When you send a visitor access group block to the server in a POST, just send an array of
-      access group hrefs.  Unfortunately 8.50 does not accept the same kind of visitor access group
+      access group hrefs.  8.50 does not accept the same kind of visitor access group
       hrefs here that it sends, so this is one reason why you cannot copy a visit by POSTing back
       the JSON from a GET.
 
@@ -472,7 +470,7 @@ x-common-blocks:
       application.  Why clutter the screen if you're not expecting anybody, after all.
 
       When you send a visitor block to the server in a POST to create a visit, just send an array of
-      hrefs to cardholders.  Unfortunately 8.50 does not accept the same kind of visitor hrefs here
+      hrefs to cardholders.  8.50 does not accept the same kind of visitor hrefs here
       that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON
       from a GET.
 
@@ -539,7 +537,7 @@ tags:
 
     2. v8.10 or later:  follow the link at `features.personalDataFields.personalDataFields.href`,
        appending the query `?name="employee_id"`.  This will return every PDF in the system with
-       that name (there should only be one, since PDFs must have different names).
+       that name (there should only be one since PDFs must have different names).
 
     3. Note the ID of the item.  It will be a short alphanumeric.
 
@@ -1341,7 +1339,8 @@ definitions:
             description: |
               The last zone the cardholder entered.  If the cardholder is a visitor and their last
               movement was to leave the site, this will be their visit's reception, not an access
-              zone, and 8.50 will present only the name of the reception and withhold the href.
+              zone.  8.50 and later will present only the name of the reception and withhold the
+              href.
             example:
               href: "https://localhost:8904/api/access_zones/333"
               name: "Twilight zone"
@@ -1445,7 +1444,7 @@ definitions:
             type: array
             description: |
               All the personal data definitions and values for this cardholder.  It is an array of
-              objects, each with one one key/value pair.  The key is the name of the PDF preceded by
+              objects, each with one key/value pair.  The key is the name of the PDF preceded by
               an '@'; the value is an object containing the definition of the PDF (common for all
               cardholders) and the value for this cardholder.  The value block of an image PDF will
               contain an href to the image.
@@ -2188,8 +2187,8 @@ definitions:
           An object containing a link to this group's detail page and its name.  It is read-only
           because you cannot change a group membership's group.
 
-          If your operator does not have permissions to view the access group, following it will
-          return a 404.
+          8.70 and later will not return the link if your operator does not have the privilege to
+          view the access group (given by 'View access groups', for example).
         readOnly: true
         example: { name: "R&D special projects group", href: "https://localhost:8904/api/access_groups/352" }
       status:
@@ -2201,14 +2200,14 @@ definitions:
         properties:
           value:
             description: |
-              The state of this cardholder's access group memberhip, in the site's language.  In an
+              The state of this cardholder's access group membership, in the site's language.  In an
               English locale, the value is the same as the type, but capitalised.
             type: string
             example: "Pending"
             readOnly: true
           type:
             description: |
-              The state of this cardholder's access group memberhip.
+              The state of this cardholder's access group membership.
 
               This will be 'pending' if the activation date is set and in the future,
               'expired' if its deactivation date is set and in the past, or 'active'.
@@ -2258,6 +2257,9 @@ definitions:
         description:  |
           An object containing a link to this operator group's detail page and its name.  It is
           read-only because you cannot change a group membership's group.
+
+          The link will be absent if your operator does not have the privilege to view the operator
+          group ('View operators' or 'Edit operators', for example).
         readOnly: true
         example: { name: "Locker admins", href: "https://localhost:8904/api/operator_groups/532" }
 
@@ -3296,7 +3298,7 @@ definitions:
 
           visitor:
             description: |
-              If true, members of an access group group with the 'escortVisitors' privilege can
+              If true, members of an access group with the 'escortVisitors' privilege can
               escort members of this group through a door, provided both groups have access to the
               entry zone.
 
@@ -4513,8 +4515,8 @@ definitions:
   Role:
     description: |
       `/api/roles` returns an array of these.  Each element gives you enough about a role to
-      identify it and use it in a cardholer PATCH:  its href, name, description, and (if you ask for
-      them using the `fields` parameter) notes.
+      identify it and use it in a cardholder PATCH:  its href, name, description, and (if you ask
+      for them using the `fields` parameter) notes.
     properties:
       name:
         type: string
@@ -4807,6 +4809,9 @@ paths:
           The search parameters form a logical conjunction.  They are ANDed
           together.  Therefore the search `pdf_1315=nanny&pdf_1315=paratrooper` will only return
           cardholders whose PDF 1315 contains the strings 'nanny' and 'paratrooper'.
+
+      - $ref: "#/parameters/division"
+      - $ref: "#/parameters/description"
 
       - name: "fields"
         in: query
@@ -5265,7 +5270,7 @@ paths:
 
         You can find the URL in the `relationships` block in the [cardholder
         object](#definition-Cardholder-detail) of the cardholder who has the relationship, not the
-        cardholder who holds the role.  For example iif you have a 'supervisor' role you would find
+        cardholder who holds the role.  For example if you have a 'supervisor' role you would find
         the URL to delete by looking up the supervised cardholder, not the supervisor.
 
       parameters:
@@ -5533,6 +5538,7 @@ paths:
         description: The maximum number of access groups to return per page.
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/description"
       - name: "fields"
         in: query
         required: false
@@ -5693,6 +5699,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/description"
       - name: "fields"
         in: query
         required: false
@@ -5797,6 +5804,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/description"
       - name: "fields"
         in: query
         type: array
@@ -5860,6 +5868,7 @@ paths:
           you have in each bank, you may find that 100 banks is too many for one page.
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/description"
       - name: "fields"
         in: query
         required: false
@@ -6059,6 +6068,7 @@ paths:
         description: The maximum number of operator groups to return per page.
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/description"
       - name: "fields"
         in: query
         required: false
@@ -6201,6 +6211,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/description"
       - $ref: "#/parameters/pdf_fields"
 
       responses:
@@ -6260,6 +6271,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/description"
       - $ref: "#/parameters/reception_fields"
 
       responses:
@@ -6318,6 +6330,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/description"
 
       responses:
         200:
@@ -6348,6 +6361,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/description"
       - $ref: "#/parameters/visit_fields"
 
       responses:
