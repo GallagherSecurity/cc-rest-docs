@@ -2666,20 +2666,21 @@ in your application.
 
 === Create a certificate and record the thumbprint in CC
 
-These commands create a client certificate, so you need to run them on
-the system that will be running your REST client. That is probably not
-your Command Centre server.
+These commands create a client certificate.  You need to run them on the
+system that will be running your REST client (which may not be your Command
+Centre server).
 
 ==== Using OpenSSL tools
 
-This works equally well on any system with OpenSSL installed, including
-Windows, but the later sections might serve Windows people better
-because they show how to put the certificate directly into the
-certificate store. These OpenSSL commands put the private key on disk,
-which should make you a bit nervous if you are doing it in production.
-On a Unix-like system you could do it in a mode-0700 folder on a
-filesystem that is not backed up and is cleared during a reboot, such as
-`/tmp`.
+This method works equally well on Unix-like or Windows systems with OpenSSL
+installed, but the later sections might serve Windows people better because
+they show how to put the certificate directly into the Windows certificate
+store.
+
+WARNING:  The OpenSSL commands in this section put the private key on disk,
+which should make you a bit nervous if you are doing it in production.  On
+a Unix-like system you could do it in a mode-0700 folder on a filesystem
+that is not backed up and is cleared during a reboot, such as `/tmp`.
 
 [subs="quotes"]
 ----
@@ -2693,14 +2694,14 @@ openssl req -x509      \
   -days 3650
 ----
 
-Notice the `rsa:4096`: a four-kilobit key might be overkill for
-development, but the option is there.
+Notice the `rsa:4096`: it produces a four-kilobit key, which might be
+overkill for development, but it's nice to have the option.
 
-Again, the bold means that option reduces your security. In this case,
+Again, the bold part is  reducing your security. In this case,
 the `-nodes` option (footnote: it means 'no DES'. It is not the plural
 of 'node') means there is no password on the private key. Anyone could
-read it from `rest.pem`, so in a production environment you should omit
-that option and type in a password (a really good one) when
+read it from the `rest.pem` file, so in a production environment you should omit
+the `-nodes` option and type in a password (a really good one) when
 `openssl req` prompts you.
 
 To get the thumbprint for Command Centre:
@@ -2713,9 +2714,10 @@ openssl x509 -fingerprint -in rest.pem -noout
 If you protected the PEM with a password, `openssl x509` will ask you
 for it.
 
-NOTE:  Those are the 20 bytes that you paste into the REST Client item in Command Centre.
+NOTE:  The 20 bytes that come out are what you paste into the REST Client
+item in Command Centre.
 
-Now you need to add it to the clients that need it. If you use Postman,
+Now you need to add the certificate to the clients that need it. If you use Postman,
 see <<_use_the_certificate_in_your_client>>. If you use
 Chrome on Windows, you need to add it to the certificate store with
 these two commands:
@@ -2730,13 +2732,14 @@ The first command converts the PEM file into a file format that Windows
 prefers. The `-passout pass:` option means it will not put a password on
 it, so it is just as dangerous as the PEM file.
 
-The second line will open `rest.pfx` in Explorer (like double-clicking
-it) to import it into the certificate store. The default options are
-good: current user, determine the certificate store automatically, and
-mark the private key as not exportable.
+The second line will open `rest.pfx` in Explorer (the same as
+double-clicking it) to import it into the certificate store. The default
+options are good so you can click Next to let it use the current user,
+determine the certificate store automatically, and mark the private key as
+not exportable).
 
 Finally, for goodness’ sake, protect the `rest.pem` and `rest.pfx`
-files. Preferably delete them, using an eraser utility.
+files.  Preferably delete them.  Even better, use an eraser utility.
 
 ==== Using Windows tools
 
@@ -2787,12 +2790,12 @@ You do not need to keep the file `ignoreme.der`, but the easiest way to
 get the thumbprint of your new certificate is to open `ignoreme.der` by
 double-clicking on it in Explorer, go to the Details tab, scroll to the
 bottom, and click the thumbprint. You could then skip the next three
-steps, but when starting out it is a good idea to carry on and verify
+steps, but when starting out it is a good idea to perform these steps to assure yourself
 that `makecert` put your new certificate where it should have.
 
 [arabic, start=3]
 . Run `mmc`, add the Certificates snap-in to manage "My user account,"
-open it and then your "Personal" certificates.
+open it and then expand your "Personal" certificates.
 . Ensure you can see a certificate called 'RESTClientCert' in there.
 This is the cert you will pick for your browser later.
 . Double-click it, go to the Details tab, scroll to the bottom, and
@@ -2821,18 +2824,19 @@ just the SHA1 hash of the certificate when it is stored in a DER file.
 The `-pe` option to your `makecert` command above marked your private
 key as exportable.
 
-You can mark it as not exportable, so that the standard utilities will
-not be able to get it out of the certificate store. While there are
-programs out there that can export non-exportable certificates, anything
-you can do to make the black-hat’s job harder is a win.
-
-The trouble is that in order to use your client certificate in Postman,
-you have to export the key.
+You can mark it as not exportable so that the standard utilities will not
+be able to get it out of the certificate store. That sounds like a good
+idea, because (while there are programs out there that export
+non-exportable certificates) anything you can do to make the black-hat’s
+job harder is a win.
 
 If you used the command `New-SelfSignedCertificate` in Windows
 Powershell (using the instructions in the Configuration Client’s user
 guide), you can mark the certificate not exportable by adding
 `-KeyExportPolicy NonExportable` to the command line.
+
+The trouble is that in order to use your client certificate in Postman,
+you have to export the key.
 
 If you used `makecert`, remove the `-pe` and your new key will not be
 exportable.
@@ -2840,12 +2844,12 @@ exportable.
 ==== Extract the certificate and private key from the Windows store to disk
 
 If you are going to use Postman you need to give it files containing
-your private key and certificate, but if you used one of the Windows
-utilities to create a certificate and put it in the certificate store,
+your private key and certificate, but if you are on Windows and used one of the Windows
+utilities to create a new certificate in the certificate store,
 you will not have the private key on disk. You will need to extract it.
 
 [arabic]
-. Run mmc. Certificates -> Current User -> Personal -> Certificates
+. Run mmc. Certificates -> Current User -> Personal -> Certificates.
 . Right-click your certificate -> All tasks -> Export… +
 Select the option to export the private key. Give it a password,
 otherwise openssl cannot decrypt it. +
@@ -2853,10 +2857,10 @@ It does not matter what you do with the other certificates, so leave the
 defaults set. +
 Export it to a `.pfx` file on disk.
 +
-That PFX is partly secure because you put a password on it, but I expect
+That PFX file is partly secure because you put a password on it, but I expect
 that password was very short so, again, be careful what you do with that
 file.
-. For old versions of Postman, you may have to convert that PFX into a
+. For old versions of Postman you may have to convert that PFX into a
 file it understands. The current version of Postman does not need this:
 +
 [subs="quotes"]
@@ -2875,7 +2879,7 @@ Create a client certificate using one of the methods above and use it in
 an API call. The server should raise an alarm, complaining that 'a REST
 connection was attempted with an invalid client certificate'. The rest
 of that message will tell you which REST Client Item you need to put the
-thumbprint on, and the details string will contain the thumbprint
+thumbprint on, and the alarm's details string will contain the thumbprint
 itself.
 
 If the thumbprint is `(null)`, your client is not sending a certificate
@@ -2885,23 +2889,24 @@ Otherwise, copy the thumbprint straight out of there and paste it into
 the item. The next time you try your call the server should not complain
 about the certificate.
 
-The reason this method is not so secure is that you cannot be sure that
-alarm was yours. Someone else may have hit the API before you did.
+The reason this method is not so secure is that you might not be sure that
+the alarm was yours. Someone else may have hit the API before you did.
 
 === Use the certificate in your client
 
 ==== Postman
 
 The standalone version of Postman cannot read certificates out of the
-certificate store (footnote: the Chrome extension can, but it is no
-longer under development).
+certificate store (footnote: the Chrome extension can, but that version of
+Postman is no longer under development).
 
-Go to the cog -> Settings -> Certificates.  Add a certificate that
-Postman will use when talking to your server and port, using the file
-containing the certificate where Postman asks for the CRT file and the
-file containing the private key where Postman asks for the key file.
-They will both be in the same file if you followed the example above. If
-you protected your private key with a password (a good idea, but turned
+Go to the cog -> Settings -> Certificates.  Add the certificate that
+Postman should use when talking to your server and port.  Where Postman
+asks for the CRT file, give it the file containing the certificate.  Where
+Postman asks for the key file, give it the file containing the private key.
+They will both be the same file if you followed the example above.
+
+If you protected your private key with a password (a good idea, but turned
 off by `-nodes`), give it to Postman.
 
 image::postman_client_cert.png[Tell Postman which client cert to use,title="Tell Postman which client cert to use"]
@@ -2952,7 +2957,7 @@ curl                                                                          \
 The `--insecure` turns off client-side checking of the server
 certificate.
 
-I found `--verbose` necessary to see any error codes.
+I found `--verbose` necessary to see error codes.
 
 == Server-side certificates
 
