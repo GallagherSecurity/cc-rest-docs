@@ -1,4 +1,4 @@
-# Command Centre REST API
+# Gallagher Command Centre REST API
 
 In 2020 this Github repository became the authoritative source of the reference documentation for
 Command Centre's REST API.
@@ -15,7 +15,5 @@ To download the HTML and YAML in a zip file use the Code button on
 [Github.com](https://github.com/GallagherSecurity/cc-rest-docs).  However, to benefit from our
 regular improvements to that documentation we suggest you browse [the HTML][github.io] whenever
 possible.
-
-(WIP)
 
 [github.io]: https://gallaghersecurity.github.io/cc-rest-docs/ref
