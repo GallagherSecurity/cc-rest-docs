@@ -164,7 +164,7 @@ tags:
     #### Downloading the most recent events
     1. `Get /api`
     2. Take the link at `features.events.events.href` and append `previous=true&top=20`.  Add the
-       appropriate query separator '?' or '&' first, depending on whether there is a query parameter
+       appropriate query separator `?` or `&` first, depending on whether there is a query parameter
        in the URL already, and change the 20 as appropriate.  The default is 1000, which is probably
        more than you want.
     3. Process the events you receive in that call.
@@ -172,21 +172,40 @@ tags:
        for later events.  The latter is a long poll, which means that if no events are ready when
        you make the call it will block until new events arrive.
 
-    #### Receiving new events as they occur
+    #### Reporting on events over a period.
     1. `GET /api`
-    2. Follow the link at `features.events.updates.href`.  That will block until an event occurs.
-    3. Process the events you receive in that call.  Often there is only one - the first that
-    arrived after you made the call.
+    2. Follow the link at `features.events.events.href` appending
+       `after=2017-01-01Z&before=2017-02-01Z` or whatever timestamps are appropriate.
 
-    4. Keep following the link at `updates.href` in the results.  It will return immediately if
-    there are new events waiting, or it will block until new events arrive.  Sleep a little between
-    each call to reduce chatter.
+    Remember that some remote systems take their time sending events to Command Centre, so
+    do not be too hasty running your reports.  If you fire them off at the stroke of
+    midnight, you may miss events that occurred before midnight but have not yet arrived
+    at Command Centre.
+
+    #### Receiving new events as they occur, starting from now
+    1. `GET /api`
+    2. Follow the link at `features.events.updates.href`.  That will block until at least one event
+       arrives at the server.
+    3. Process the events you receive in that call.  Often there is only one:  the first that
+       arrived after you made the call.
+    4. Loop, following the link at `updates.href` after processing each batch of events.  It will
+       return immediately if there are new events waiting, or it will block until new events arrive.
+       Sleep a little between each call to reduce chatter.
+
+    #### Receiving new events as they occur, starting in the past
+    1. `GET /api`
+    2. Follow the link at `features.events.events.href` appending `after=2021-05-08Z` or whatever
+       timestamp is appropriate.
+    3. Process the events you receive in that call.
+    4. Loop, following the link at `updates.href` after processing each batch of events.  It will
+       return immediately if there are new events waiting, or it will block until new events arrive.
+       Sleep a little between each call to reduce chatter.
 
     #### Searching for events related to particular cardholders
     1. `GET /api`
 
     2. Follow the link at `features.items.items.href`, adding `name="your_cardholder_name"&type=1`
-       to the query after the appropriate separator ('?' or '&').
+       to the query after the appropriate separator (`?` or `&`).
 
        The 'items' controller necessary for that step is available with the RESTEvents licence.  If
        you also have the RESTCardholders licence you could use the link at
@@ -213,18 +232,6 @@ tags:
     use [that API](rest.html) to search for access zones, alarm zones, fence zones, macros, outputs,
     doors, and (in 8.10) inputs.  If you do not, or if your source is not one of those types, use
     the [items API](#tag-Items) with a suitable `type` filter.
-
-    #### Reporting on events over a period.
-
-    1. `GET /api`
-
-    2. Follow the link at `features.events.updates.href` appending
-       `after=2017-01-01Z&before=2017-02-01Z`, or whatever timestamps are appropriate.
-
-    Remember that some remote systems take their time sending events to Command Centre, so
-    do not be too hasty running your reports.  If you fire them off at the stroke of
-    midnight, you may miss events that occurred before midnight but have not yet arrived
-    at Command Centre.
 
     #### Creating a new event
 
@@ -1046,18 +1053,24 @@ paths:
         type: string
         format: date-time
         description: |
-          An ISO-8601 date or date-time string.  Restricts events to those that occurred at or after
-          this time.  Because 'updates' links carry their own bookmark, it is unusual to use this
-          parameter in an 'updates' call.
+          An ISO-8601 date or date-time string.  Removes events that occurred before this time from
+          the result set.  Because 'updates' links carry their own bookmark, it is unusual to use
+          this parameter in an 'updates' call.
+
+          Because the purpose of this API call is to keep the caller up to date with events as they
+          arrive, it would be very unusual to put a start-date on it.
       - name: "before"
         in: query
         required: false
         type: string
         format: date-time
         description: |
-          An ISO-8601 date or date-time string.  Restricts events to those that occurred before this
-          time.  If no events arrive with an occurrence time earlier than this parameter, the call
-          will time out.
+          An ISO-8601 date or date-time string.  Removes events that occurred after this time from
+          the result set.  If no events arrive with an occurrence time earlier than this parameter,
+          the call will time out.
+
+          Because the purpose of this API call is to keep the caller up to date with events as they
+          arrive, it would be very unusual to put an end-date on it.
       - name: "source"
         in: query
         required: false
