@@ -2222,7 +2222,7 @@
                     </div>
                     <div class="prop-value">
                       <p>Restricts events to those with event IDs greater than this parameter (or less than and including, if you set <code>previous=true</code>).</p>
-                      <p>DEPRECATED. Retain the <code>next</code> link in your application instead.</p>
+                      <p>INTERNAL USE ONLY. Retain the &#39;next&#39; or &#39;updates&#39; link in your application. This is how Command Centre tracks the events you have seen already. Do not set it yourself.</p>
                     </div>
                   </div>
                 </section>
@@ -2379,7 +2379,17 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Poll this link to receive events that match the specified filters. If there are none ready, the call will block until one arrives or a deadline passes.</p>
-                  <p>Each response will contain a <code>next</code> and an <code>updates</code> link, already described.</p>
+                  <p>The way this call picks events is very different from <code>/api/events</code>:</p>
+                  <ul>
+                    <li>
+                      <p>If you follow the link at <code>events.updates.href</code> in the results of <code>GET /api</code>, you will recieve the first events that arrive after you make the call and that meet your other search criteria.</p>
+                    </li>
+                    <li>
+                      <p>If you follow the <code>updates</code> link from the results of <code>GET /api/events</code> or <code>GET
+                  /api/events/updates</code>, the link will contain a bookmark that causes the server to return the first events that arrive or arrived after that bookmark (and that meet your search criteria, of course). Regardless of how long you wait between calls, following an <code>updates</code> link will always return the first events that arrived after the previous call.</p>
+                    </li>
+                  </ul>
+                  <p>Each response will contain also contain a <code>next</code> link, if you wish to switch to a non-blocking version of the call.</p>
                   <p>Do not code this URL into your application. Take it from <code>events.updates.href</code> in the results of <code>GET /api</code>, or from <code>updates</code> in the results of <code>GET /api/events</code>.</p>
                 </section>
               </div>
@@ -2424,8 +2434,11 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>An ISO-8601 date or date-time string. Removes events that occurred before this time from the result set. Because &#39;updates&#39; links carry their own bookmark, it is unusual to use this parameter in an &#39;updates&#39; call.</p>
-                      <p>Because the purpose of this API call is to keep the caller up to date with events as they arrive, it would be very unusual to put a start-date on it.</p>
+                      <p>An ISO-8601 date or date-time string. Removes events that occurred before this time from the result set.</p>
+                      <p>This does not change the start time of the search. As described above, the start time will be the time of the call or the time of the last event in a previous result set.</p>
+                      <p>Because the purpose of this API call is to keep the caller up to date with events as they arrive, it would be very unusual for a client to explicitly add <code>after</code> to <code>GET
+                                    /api/events/updates</code>. However it is a very useful parameter to
+                        <a href="#operation--api-events-get">/api/events</a>, and will pass into the <code>updates</code> URL that that call returns. In that case it has no effect; you can leave it there.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2439,8 +2452,10 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>An ISO-8601 date or date-time string. Removes events that occurred after this time from the result set. If no events arrive with an occurrence time earlier than this parameter, the call will time out.</p>
-                      <p>Because the purpose of this API call is to keep the caller up to date with events as they arrive, it would be very unusual to put an end-date on it.</p>
+                      <p>An ISO-8601 date or date-time string. Removes events that occurred at or after this time from the result set. If no events arrive with an occurrence time earlier than this parameter, the call will time out.</p>
+                      <p>It is unlikely you will want this parameter in a call to <code>GET /api/events/updates</code>. It puts an end-date on the search, which is a very odd thing to do on a call intended to keep the caller up to date with events as they arrive. If you find yourself using it, you may wish to reconsider your approach.</p>
+                      <p>If you only wish to receive events up to a point in history, use the <code>before</code> parameter on
+                        <a href="#operation--api-events-get">/api/events</a> in a loop until you get an empty result. If you only wish to receive events up to a point in the future, use <code>/api/events</code> again but loop until you receive an event with a date beyond your stopping point.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2561,7 +2576,8 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Restricts events to those with event IDs greater than this parameter. DEPRECATED. This is how Command Centre tracks the events you have seen already, but you should not set it yourself.</p>
+                      <p>Restricts events to those with event IDs greater than this parameter.</p>
+                      <p>INTERNAL USE ONLY. Retain the &#39;next&#39; or &#39;updates&#39; link in your application. This is how Command Centre tracks the events you have seen already. Do not set it yourself.</p>
                     </div>
                   </div>
                 </section>
