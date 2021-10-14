@@ -111,7 +111,7 @@ tags:
 
     Use these methods to download, monitor, and manage Command Centre alarms.
 
-    ### Use cases
+    ### Alarm use cases
 
     #### Downloading and managing unprocessed alarms
     1. `GET /api`
@@ -150,7 +150,7 @@ tags:
     it carries some changeable state and a log of activity and comments, but the underlying event
     never changes.
 
-    ### Use cases
+    ### Event use cases
 
     #### Downloading the entire event database
     1. `GET /api`
@@ -916,6 +916,8 @@ paths:
         at the beginning of the database, or at the time specified by the
         `after` parameter.
 
+        For its correct use in various scenarios, see the [use cases](#event-use-cases).
+
         By default the result will contain no more than 1000 events; for
         efficient transfer of large numbers of events you should increase this
         with the `top` parameter in the request URL.
@@ -1006,8 +1008,8 @@ paths:
           Restricts events to those with event IDs greater than this parameter (or less than and
           including, if you set `previous=true`).
 
-          INTERNAL USE ONLY.  Retain the 'next' or 'updates' link in your application.  This is how
-          Command Centre tracks the events you have seen already.  Do not set it yourself.
+          INTERNAL USE ONLY.  Retain the 'next' or 'updates' link in your application instead.  This
+          is how Command Centre tracks the events you have seen already.  Do not set it yourself.
 
       responses:
         200:
@@ -1022,23 +1024,30 @@ paths:
       - Events
       summary: Get new events (or wait)
       description: |
-        Poll this link to receive events that match the specified filters.  If there are none ready,
-        the call will block until one arrives or a deadline passes.
+        Poll this link to receive new events that match the specified filters.  If there are none
+        ready, the call will block until one arrives or a deadline passes.
+
+        For its correct use in various scenarios, see the [use cases](#event-use-cases).
 
         The way this call picks events is very different from `/api/events`:
 
         - If you follow the link at `events.updates.href` in the results of `GET /api`, you will
-          recieve the first events that arrive after you make the call and that meet your other
+          receive the first events that arrive after you make the call and that meet your other
           search criteria.
 
         - If you follow the `updates` link from the results of `GET /api/events` or `GET
-          /api/events/updates`, the link will contain a bookmark that causes the server to return
-          the first events that arrive or arrived after that bookmark (and that meet your search
-          criteria, of course).  Regardless of how long you wait between calls, following an
-          `updates` link will always return the first events that arrived after the previous call.
+          /api/events/updates`, the link will contain a bookmark in the `pos` parameter that causes
+          the server to return the first events that arrive or arrived after that bookmark (and that
+          meet your search criteria, of course).
 
-        Each response will contain also contain a `next` link, if you wish to switch to a
+        The response will contain an `updates` link back to the same API call with a new bookmark
+        that will cause it to return you the next page of results.
+
+        Each response will also contain a `next` link, if you wish to switch to a
         non-blocking version of the call.
+
+        However long the delay between calls, following a `next` or `updates` link will always
+        return the first events that arrived after the previous call.
 
         Do not code this URL into your application.  Take it from `events.updates.href` in the
         results of `GET /api`, or from `updates` in the results of `GET /api/events`.
@@ -1070,14 +1079,17 @@ paths:
           An ISO-8601 date or date-time string.  Removes events that occurred before this time from
           the result set.
 
-          This does not change the start time of the search.  As described above, the start time
-          will be the time of the call or the time of the last event in a previous result set.
+          It is unlikely you will add this parameter to `GET /api/events/updates`.  However it is a
+          very useful parameter to [/api/events](#operation--api-events-get), and it will pass from
+          there into the `updates` URL that that call returns.  In that case it has no effect; you
+          can leave it there.
 
-          Because the purpose of this API call is to keep the caller up to date with events as they
-          arrive, it would be very unusual for a client to explicitly add `after` to `GET
-          /api/events/updates`.  However it is a very useful parameter to
-          [/api/events](#operation--api-events-get), and will pass into the `updates` URL that that
-          call returns.  In that case it has no effect; you can leave it there.
+          This will not push the start time of the search into the past.  As described above, the
+          search will start at the time of the call or after the last event in a previous result set
+          depending on the `pos` parameter.  The `after` parameter reduces the results to those
+          events that _arrived_ after the start time of the search and _occurred_ after the `after`
+          timestamp.  An event's arrival time can be different from its occurrence time.
+
       - name: "before"
         in: query
         required: false
@@ -1088,15 +1100,16 @@ paths:
           from the result set.  If no events arrive with an occurrence time earlier than this
           parameter, the call will time out.
 
-          It is unlikely you will want this parameter in a call to `GET /api/events/updates`. It
+          It is unlikely you will want this parameter in a call to `GET /api/events/updates`.  It
           puts an end-date on the search, which is a very odd thing to do on a call intended to keep
           the caller up to date with events as they arrive.  If you find yourself using it, you may
           wish to reconsider your approach.
 
           If you only wish to receive events up to a point in history, use the `before` parameter on
-          [/api/events](#operation--api-events-get) in a loop until you get an empty result.  If you
-          only wish to receive events up to a point in the future, use `/api/events` again but loop
-          until you receive an event with a date beyond your stopping point.
+          [/api/events](#operation--api-events-get), following its `next` block in a loop until you
+          get an empty result.  If you only wish to receive events up to a point in the future, use
+          `/api/events` again but loop until you receive an event with a date beyond your stopping
+          point.
 
       - name: "source"
         in: query
@@ -1132,8 +1145,8 @@ paths:
         description: |
           Restricts events to those with event IDs greater than this parameter.
 
-          INTERNAL USE ONLY.  Retain the 'next' or 'updates' link in your application.  This is how
-          Command Centre tracks the events you have seen already.  Do not set it yourself.
+          INTERNAL USE ONLY.  Retain the 'next' or 'updates' link in your application instead.  This
+          is how Command Centre tracks the events you have seen already.  Do not set it yourself.
       responses:
         200:
           description: Success

@@ -455,7 +455,7 @@
           <div class="tag-description doc-row">
             <div class="doc-copy">
               <p>Use these methods to download, monitor, and manage Command Centre alarms.</p>
-              <h3 id="use-cases">Use cases</h3>
+              <h3 id="alarm-use-cases">Alarm use cases</h3>
               <h4 id="downloading-and-managing-unprocessed-alarms">Downloading and managing unprocessed alarms</h4>
               <ol>
                 <li><code>GET /api</code></li>
@@ -1722,7 +1722,7 @@
             <div class="doc-copy">
               <p>Use the GET methods in this API for historical searches or to stay up to date with new events as they occur. Use the POST method (added in version 8.10) to create events of your own.</p>
               <p>There are no PATCH actions on events, because they are immutable. If an event is also an alarm it carries some changeable state and a log of activity and comments, but the underlying event never changes.</p>
-              <h3 id="use-cases">Use cases</h3>
+              <h3 id="event-use-cases">Event use cases</h3>
               <h4 id="downloading-the-entire-event-database">Downloading the entire event database</h4>
               <ol>
                 <li><code>GET /api</code></li>
@@ -2033,6 +2033,8 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns the next batch of events matching the supplied filters starting at the beginning of the database, or at the time specified by the <code>after</code> parameter.</p>
+                  <p>For its correct use in various scenarios, see the
+                    <a href="#event-use-cases">use cases</a>.</p>
                   <p>By default the result will contain no more than 1000 events; for efficient transfer of large numbers of events you should increase this with the <code>top</code> parameter in the request URL.</p>
                   <p>Each response will contain a <code>next</code> and an <code>updates</code> link. Following the <code>next</code> link will return the next batch of events, or an empty list if there are no more available. Following the <code>updates</code> link will also return immediately if more events are available, but if there are none, it becomes a long poll. It will will block until an event is available that matches the specified filters, or a timeout passes.</p>
                   <p>Do not code this URL into your application. Take it from <code>events.events.href</code> in the results of <code>GET /api</code>.</p>
@@ -2222,7 +2224,7 @@
                     </div>
                     <div class="prop-value">
                       <p>Restricts events to those with event IDs greater than this parameter (or less than and including, if you set <code>previous=true</code>).</p>
-                      <p>INTERNAL USE ONLY. Retain the &#39;next&#39; or &#39;updates&#39; link in your application. This is how Command Centre tracks the events you have seen already. Do not set it yourself.</p>
+                      <p>INTERNAL USE ONLY. Retain the &#39;next&#39; or &#39;updates&#39; link in your application instead. This is how Command Centre tracks the events you have seen already. Do not set it yourself.</p>
                     </div>
                   </div>
                 </section>
@@ -2378,18 +2380,22 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>Poll this link to receive events that match the specified filters. If there are none ready, the call will block until one arrives or a deadline passes.</p>
+                  <p>Poll this link to receive new events that match the specified filters. If there are none ready, the call will block until one arrives or a deadline passes.</p>
+                  <p>For its correct use in various scenarios, see the
+                    <a href="#event-use-cases">use cases</a>.</p>
                   <p>The way this call picks events is very different from <code>/api/events</code>:</p>
                   <ul>
                     <li>
-                      <p>If you follow the link at <code>events.updates.href</code> in the results of <code>GET /api</code>, you will recieve the first events that arrive after you make the call and that meet your other search criteria.</p>
+                      <p>If you follow the link at <code>events.updates.href</code> in the results of <code>GET /api</code>, you will receive the first events that arrive after you make the call and that meet your other search criteria.</p>
                     </li>
                     <li>
                       <p>If you follow the <code>updates</code> link from the results of <code>GET /api/events</code> or <code>GET
-                  /api/events/updates</code>, the link will contain a bookmark that causes the server to return the first events that arrive or arrived after that bookmark (and that meet your search criteria, of course). Regardless of how long you wait between calls, following an <code>updates</code> link will always return the first events that arrived after the previous call.</p>
+                  /api/events/updates</code>, the link will contain a bookmark in the <code>pos</code> parameter that causes the server to return the first events that arrive or arrived after that bookmark (and that meet your search criteria, of course).</p>
                     </li>
                   </ul>
-                  <p>Each response will contain also contain a <code>next</code> link, if you wish to switch to a non-blocking version of the call.</p>
+                  <p>The response will contain an <code>updates</code> link back to the same API call with a new bookmark that will cause it to return you the next page of results.</p>
+                  <p>Each response will also contain a <code>next</code> link, if you wish to switch to a non-blocking version of the call.</p>
+                  <p>However long the delay between calls, following a <code>next</code> or <code>updates</code> link will always return the first events that arrived after the previous call.</p>
                   <p>Do not code this URL into your application. Take it from <code>events.updates.href</code> in the results of <code>GET /api</code>, or from <code>updates</code> in the results of <code>GET /api/events</code>.</p>
                 </section>
               </div>
@@ -2435,10 +2441,11 @@
                     </div>
                     <div class="prop-value">
                       <p>An ISO-8601 date or date-time string. Removes events that occurred before this time from the result set.</p>
-                      <p>This does not change the start time of the search. As described above, the start time will be the time of the call or the time of the last event in a previous result set.</p>
-                      <p>Because the purpose of this API call is to keep the caller up to date with events as they arrive, it would be very unusual for a client to explicitly add <code>after</code> to <code>GET
-                                    /api/events/updates</code>. However it is a very useful parameter to
-                        <a href="#operation--api-events-get">/api/events</a>, and will pass into the <code>updates</code> URL that that call returns. In that case it has no effect; you can leave it there.</p>
+                      <p>It is unlikely you will add this parameter to <code>GET /api/events/updates</code>. However it is a very useful parameter to
+                        <a href="#operation--api-events-get">/api/events</a>, and it will pass from there into the <code>updates</code> URL that that call returns. In that case it has no effect; you can leave it there.</p>
+                      <p>This will not push the start time of the search into the past. As described above, the search will start at the time of the call or after the last event in a previous result set depending on the <code>pos</code> parameter. The <code>after</code> parameter reduces the results to those events that
+                        <em>arrived</em> after the start time of the search and
+                        <em>occurred</em> after the <code>after</code> timestamp. An event&#39;s arrival time can be different from its occurrence time.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2455,7 +2462,7 @@
                       <p>An ISO-8601 date or date-time string. Removes events that occurred at or after this time from the result set. If no events arrive with an occurrence time earlier than this parameter, the call will time out.</p>
                       <p>It is unlikely you will want this parameter in a call to <code>GET /api/events/updates</code>. It puts an end-date on the search, which is a very odd thing to do on a call intended to keep the caller up to date with events as they arrive. If you find yourself using it, you may wish to reconsider your approach.</p>
                       <p>If you only wish to receive events up to a point in history, use the <code>before</code> parameter on
-                        <a href="#operation--api-events-get">/api/events</a> in a loop until you get an empty result. If you only wish to receive events up to a point in the future, use <code>/api/events</code> again but loop until you receive an event with a date beyond your stopping point.</p>
+                        <a href="#operation--api-events-get">/api/events</a>, following its <code>next</code> block in a loop until you get an empty result. If you only wish to receive events up to a point in the future, use <code>/api/events</code> again but loop until you receive an event with a date beyond your stopping point.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2577,7 +2584,7 @@
                     </div>
                     <div class="prop-value">
                       <p>Restricts events to those with event IDs greater than this parameter.</p>
-                      <p>INTERNAL USE ONLY. Retain the &#39;next&#39; or &#39;updates&#39; link in your application. This is how Command Centre tracks the events you have seen already. Do not set it yourself.</p>
+                      <p>INTERNAL USE ONLY. Retain the &#39;next&#39; or &#39;updates&#39; link in your application instead. This is how Command Centre tracks the events you have seen already. Do not set it yourself.</p>
                     </div>
                   </div>
                 </section>
