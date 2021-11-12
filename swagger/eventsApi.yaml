@@ -175,7 +175,8 @@ tags:
     #### Reporting on events over a period.
     1. `GET /api`
     2. Follow the link at `features.events.events.href` appending
-       `after=2017-01-01Z&before=2017-02-01Z` or whatever timestamps are appropriate.
+       `after=2017-01-01Z&before=2017-02-01Z` or whatever timestamps are appropriate (after the
+       correct query separator, `?` or `&`).
 
     Remember that some remote systems take their time sending events to Command Centre, so
     do not be too hasty running your reports.  If you fire them off at the stroke of
@@ -194,8 +195,8 @@ tags:
 
     #### Receiving new events as they occur, starting in the past
     1. `GET /api`
-    2. Follow the link at `features.events.events.href` appending `after=2021-05-08Z` or whatever
-       timestamp is appropriate.
+    2. Follow the link at `features.events.events.href` appending the query parameter
+       `after=2021-05-08Z` (or whatever timestamp is appropriate).
     3. Process the events you receive in that call.
     4. Loop, following the link at `updates.href` after processing each batch of events.  It will
        return immediately if there are new events waiting, or it will block until new events arrive.
@@ -1041,10 +1042,10 @@ paths:
           meet your search criteria, of course).
 
         The response will contain an `updates` link back to the same API call with a new bookmark
-        that will cause it to return you the next page of results.
+        that will cause it to return the next page of results.
 
-        Each response will also contain a `next` link, if you wish to switch to a
-        non-blocking version of the call.
+        Each response will also contain a `next` link that will take you to the non-blocking version
+        of the call at [/api/events](#operation--api-events-get).
 
         However long the delay between calls, following a `next` or `updates` link will always
         return the first events that arrived after the previous call.
@@ -1088,7 +1089,7 @@ paths:
           search will start at the time of the call or after the last event in a previous result set
           depending on the `pos` parameter.  The `after` parameter reduces the results to those
           events that _arrived_ after the start time of the search and _occurred_ after the `after`
-          timestamp.  An event's arrival time can be different from its occurrence time.
+          timestamp.  Note that an event's arrival time can be different from its occurrence time.
 
       - name: "before"
         in: query

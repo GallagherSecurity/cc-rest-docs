@@ -1741,7 +1741,7 @@
               <h4 id="reporting-on-events-over-a-period">Reporting on events over a period.</h4>
               <ol>
                 <li><code>GET /api</code></li>
-                <li>Follow the link at <code>features.events.events.href</code> appending <code>after=2017-01-01Z&amp;before=2017-02-01Z</code> or whatever timestamps are appropriate.</li>
+                <li>Follow the link at <code>features.events.events.href</code> appending <code>after=2017-01-01Z&amp;before=2017-02-01Z</code> or whatever timestamps are appropriate (after the correct query separator, <code>?</code> or <code>&amp;</code>).</li>
               </ol>
               <p>Remember that some remote systems take their time sending events to Command Centre, so do not be too hasty running your reports. If you fire them off at the stroke of midnight, you may miss events that occurred before midnight but have not yet arrived at Command Centre.</p>
               <h4 id="receiving-new-events-as-they-occur-starting-from-now">Receiving new events as they occur, starting from now</h4>
@@ -1754,7 +1754,7 @@
               <h4 id="receiving-new-events-as-they-occur-starting-in-the-past">Receiving new events as they occur, starting in the past</h4>
               <ol>
                 <li><code>GET /api</code></li>
-                <li>Follow the link at <code>features.events.events.href</code> appending <code>after=2021-05-08Z</code> or whatever timestamp is appropriate.</li>
+                <li>Follow the link at <code>features.events.events.href</code> appending the query parameter <code>after=2021-05-08Z</code> (or whatever timestamp is appropriate).</li>
                 <li>Process the events you receive in that call.</li>
                 <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive. Sleep a little between each call to reduce chatter.</li>
               </ol>
@@ -2393,8 +2393,9 @@
                   /api/events/updates</code>, the link will contain a bookmark in the <code>pos</code> parameter that causes the server to return the first events that arrive or arrived after that bookmark (and that meet your search criteria, of course).</p>
                     </li>
                   </ul>
-                  <p>The response will contain an <code>updates</code> link back to the same API call with a new bookmark that will cause it to return you the next page of results.</p>
-                  <p>Each response will also contain a <code>next</code> link, if you wish to switch to a non-blocking version of the call.</p>
+                  <p>The response will contain an <code>updates</code> link back to the same API call with a new bookmark that will cause it to return the next page of results.</p>
+                  <p>Each response will also contain a <code>next</code> link that will take you to the non-blocking version of the call at
+                    <a href="#operation--api-events-get">/api/events</a>.</p>
                   <p>However long the delay between calls, following a <code>next</code> or <code>updates</code> link will always return the first events that arrived after the previous call.</p>
                   <p>Do not code this URL into your application. Take it from <code>events.updates.href</code> in the results of <code>GET /api</code>, or from <code>updates</code> in the results of <code>GET /api/events</code>.</p>
                 </section>
@@ -2445,7 +2446,7 @@
                         <a href="#operation--api-events-get">/api/events</a>, and it will pass from there into the <code>updates</code> URL that that call returns. In that case it has no effect; you can leave it there.</p>
                       <p>This will not push the start time of the search into the past. As described above, the search will start at the time of the call or after the last event in a previous result set depending on the <code>pos</code> parameter. The <code>after</code> parameter reduces the results to those events that
                         <em>arrived</em> after the start time of the search and
-                        <em>occurred</em> after the <code>after</code> timestamp. An event&#39;s arrival time can be different from its occurrence time.</p>
+                        <em>occurred</em> after the <code>after</code> timestamp. Note that an event&#39;s arrival time can be different from its occurrence time.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">

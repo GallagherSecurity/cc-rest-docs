@@ -1801,8 +1801,12 @@ definitions:
         format: url
         readonly: true
         description: |
-          GET this link to receive this cardholder's value for this PDF.  It is read-only:  do not
-          send it in a PATCH or POST.
+          GET this link to receive this cardholder's value for this PDF.  If it is an image you will
+          receive the raw image data with an appropriate content-type.  A browser will render it
+          correctly.  If the PDF is not an image the content type will be text/plain, encoded (like
+          everything else in this API) as UTF-8.
+
+          It is read-only:  do not send it in a PATCH or POST.
 
       definition:
         type: object
