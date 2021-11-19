@@ -1942,8 +1942,9 @@ definitions:
           sufficient.  See the online help for the Command Centre client if you wish to create your
           own.
 
-          The second field, `type`, comes from a fixed enumeration, and so is better suited for
-          integrations.  Command Centre derives it from the card's state and activation dates.
+          The second field, `type`, comes from a fixed enumeration, and so is better suited than
+          `value` for integrations.  Command Centre derives it from the card's state and activation
+          dates.
 
         type: object
         properties:
@@ -2007,10 +2008,10 @@ definitions:
           If there was something wrong with it you should delete it and start afresh.
 
           If you specify either `mobile` or `mail` you must also supply the other so that Command
-          Centre can send both an invitation and a confirmation SMS.  It is an error to only specify
-          one.  If you give neither, Command Centre will not send an invitation to the cardholder,
-          and it will be up to another application to complete the creation of this credential using
-          the Mobile Connect SDK.
+          Centre can send both an email invitation and a confirmation SMS.  It is an error to only
+          specify one.  If you give neither, Command Centre will not send an invitation to the
+          cardholder, and it will be up to another application to complete the creation of this
+          credential using the Mobile Connect SDK.
 
         properties:
           email:
@@ -2035,7 +2036,8 @@ definitions:
               zones in modes that require a PIN and readers that always require a second factor will
               not grant access to the cardholder.
 
-              `singleFactorOnly` will only be in the result of a GET if it is true.
+              `singleFactorOnly` will only be in the result of a GET if it is true.  If it is false,
+              the field will be missing.
 
           status:
             type: string
@@ -2107,7 +2109,7 @@ definitions:
     description: |
       This is an example of what you would send to create a new mobile credential.  The [card
       detail](#definition-Cardholder-card) contains everything in a card, and is a bit daunting, so
-      this example shows only the fields you are mostly likely to need.
+      this example shows only the fields you need for a mobile credential.
 
       You can submit it as part of a larger document in a [POST](#definition-Cardholder-detail) to
       create a cardholder with cards, or as part of a [PATCH](#definition-Cardholder-PATCH-example) to
@@ -2117,10 +2119,10 @@ definitions:
       number:
         example: "Nick's mobile"
         type: string
-        description: "This does not need to be numeric for mobile credentials."
+        description: "The so-called card 'number' on a mobile credential does not need to be numeric."
       status:
         description: |
-          Optional.  Provide a field "value" set to one of the valid starting states for the mobile
+          Optional.  Provide a field `value` set to one of the valid starting states for the mobile
           credential.  If you omit it, the credential will start in the default state.
         example: {value: "active"}
       type:
@@ -2132,10 +2134,13 @@ definitions:
       until: {type: string, format: date-time, example: "2018-01-01T00:00:00Z"}
       invitation:
         description: |
-          If you specify 'mobile' when creating a new mobile credential, you must also supply 'email'.
-          If you give neither, Command Centre will not send an invitation to the cardholder.
+          This is a block containing fields that describe how Command Centre should set about
+          registring the mobile device.
 
-          'singleFactorOnly' defaults to false, which is the recommended setting.  See the [card
+          If you specify `mobile` you must also supply `email`.  If you give neither, Command Centre
+          will not send an invitation to the cardholder.
+
+          `singleFactorOnly` defaults to false, which is the recommended setting.  See the [card
           detail](#definition-Cardholder-card) for more.
         properties:
           email: {type: string, example: "nick@example.com"}

@@ -9018,7 +9018,7 @@
                       <p>Each card has two status codes: <code>value</code>, and <code>type</code>, covered in separate sections below.</p>
                       <p><code>value</code> is human-readable. It comes from the
                         <em>Card State Set</em> configured by the site, and could be adjusted according to the card&#39;s activation dates. The REST API and this document do not cover card state sets because in most cases, the default set is sufficient. See the online help for the Command Centre client if you wish to create your own.</p>
-                      <p>The second field, <code>type</code>, comes from a fixed enumeration, and so is better suited for integrations. Command Centre derives it from the card&#39;s state and activation dates.</p>
+                      <p>The second field, <code>type</code>, comes from a fixed enumeration, and so is better suited than <code>value</code> for integrations. Command Centre derives it from the card&#39;s state and activation dates.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -9088,7 +9088,7 @@
                     </dt>
                     <dd>
                       <p>Command Centre will only return this object for a mobile credential, and you should send it only when creating one. In the interests of security you cannot modify the invitation block of an existing credential. Someone&#39;s thumb might be poised to accept it, after all. If there was something wrong with it you should delete it and start afresh.</p>
-                      <p>If you specify either <code>mobile</code> or <code>mail</code> you must also supply the other so that Command Centre can send both an invitation and a confirmation SMS. It is an error to only specify one. If you give neither, Command Centre will not send an invitation to the cardholder, and it will be up to another application to complete the creation of this credential using the Mobile Connect SDK.</p>
+                      <p>If you specify either <code>mobile</code> or <code>mail</code> you must also supply the other so that Command Centre can send both an email invitation and a confirmation SMS. It is an error to only specify one. If you give neither, Command Centre will not send an invitation to the cardholder, and it will be up to another application to complete the creation of this credential using the Mobile Connect SDK.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -9117,7 +9117,7 @@
                           </dt>
                           <dd>
                             <p>If you set this true Command Centre will not require a PIN or fingerprint from the cardholder when they enrol. Be aware that without that second authentication factor, zones in modes that require a PIN and readers that always require a second factor will not grant access to the cardholder.</p>
-                            <p><code>singleFactorOnly</code> will only be in the result of a GET if it is true.</p>
+                            <p><code>singleFactorOnly</code> will only be in the result of a GET if it is true. If it is false, the field will be missing.</p>
                           </dd>
                           <dt data-property-name="status" class="has-description">
                             <span class="json-property-name">status:</span>
@@ -9261,7 +9261,7 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>This is an example of what you would send to create a new mobile credential. The
-                    <a href="#definition-Cardholder-card">card detail</a> contains everything in a card, and is a bit daunting, so this example shows only the fields you are mostly likely to need.</p>
+                    <a href="#definition-Cardholder-card">card detail</a> contains everything in a card, and is a bit daunting, so this example shows only the fields you need for a mobile credential.</p>
                   <p>You can submit it as part of a larger document in a
                     <a href="#definition-Cardholder-detail">POST</a> to create a cardholder with cards, or as part of a
                     <a href="#definition-Cardholder-PATCH-example">PATCH</a> to create a mobile credential on an existing cardholder.</p>
@@ -9274,7 +9274,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This does not need to be numeric for mobile credentials.</p>
+                      <p>The so-called card &#39;number&#39; on a mobile credential does not need to be numeric.</p>
                     </dd>
                     <dt data-property-name="status" class="has-description">
                       <span class="json-property-name">status:</span>
@@ -9282,7 +9282,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Optional. Provide a field &quot;value&quot; set to one of the valid starting states for the mobile credential. If you omit it, the credential will start in the default state.</p>
+                      <p>Optional. Provide a field <code>value</code> set to one of the valid starting states for the mobile credential. If you omit it, the credential will start in the default state.</p>
                     </dd>
                     <dt data-property-name="type" class="has-description">
                       <span class="json-property-name">type:</span>
@@ -9310,8 +9310,9 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>If you specify &#39;mobile&#39; when creating a new mobile credential, you must also supply &#39;email&#39;. If you give neither, Command Centre will not send an invitation to the cardholder.</p>
-                      <p>&#39;singleFactorOnly&#39; defaults to false, which is the recommended setting. See the
+                      <p>This is a block containing fields that describe how Command Centre should set about registring the mobile device.</p>
+                      <p>If you specify <code>mobile</code> you must also supply <code>email</code>. If you give neither, Command Centre will not send an invitation to the cardholder.</p>
+                      <p><code>singleFactorOnly</code> defaults to false, which is the recommended setting. See the
                         <a href="#definition-Cardholder-card">card detail</a> for more.</p>
                     </dd>
                     <dt class="json-inner-schema">
