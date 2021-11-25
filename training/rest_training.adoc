@@ -2962,16 +2962,17 @@ I found `--verbose` necessary to see error codes.
 
 == Server-side certificates
 
-In production environments, clients should refuse to talk to a server that offers a certificate that
-is not carrying a signature from one of the internet’s signing authorities. One that has not been
-paid for, in other words.
+Clients in production environments should refuse to talk to a server that offers a certificate that
+is not carrying a signature from one of the internet’s signing authorities. A certificate that has
+not been paid for, in other words.
 
 WARNING:  *Production clients should check server certificates.* If not, an attacker could
 masquerade as the server.  The client would send it its API key which -- if the server was not
 checking client certificates -- the attacker could then use for calls of its own.
 
 But if you are working in a development rig and your server does not have a signed certificate, you
-might like to stop the client from checking it as you told Chrome and Postman to do earlier.
+might like to tell your client to skip the server certificate check, as you told Chrome and Postman
+to do earlier.
 
 If you will pardon a very brief dive into source code, here is one way to do it in a C# client:
 
@@ -3038,8 +3039,8 @@ www.itsabritishthing.com, for example, you:
 . decide which signing authority to use,
 . send the CSR to that signing authority, with your credit card details and proof that you own
   itsabritishthing.com,
-. wait, then
-. use the signed certificate on your web server.
+. wait for them to send you your new certificate, then
+. install it on your web server.
 
 That is exactly what you will need to do for Command Centre. Start with
 the DNS alias for your server instead of www.itsabritishthing.com. The
@@ -3048,7 +3049,7 @@ depend on which authority you choose. Finish with a simple process
 covered in the section called "Replacing the web service certificate"
 of the Configuration Client’s user guide. Briefly, it is:
 
-. Go to Server properties, Web Services, REST API section Manage Certificates,
+. Go to Server properties -> Web Services -> Manage Certificates in the REST API section,
 . change the radio box to Custom Certificate,
 . click Import, and
 . browse to your certificate file.
