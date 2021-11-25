@@ -27,7 +27,8 @@ It's Ruby, so installing it is simply:
 1. `gem install asciidoctor`
 2. I also had to gem `install rouge` to get syntax highlighting in the output HTML.
 
-Now `asciidoctor training.adoc` will generate `training.html` that you can preview in a browser.
+Now `asciidoctor rest_training.adoc` will generate `rest_training.html` that you can preview in a
+browser.
 
 Do not commit that HTML to github!  There is a .gitignore in there to help revent that.
 

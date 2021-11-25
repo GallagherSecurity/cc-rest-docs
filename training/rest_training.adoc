@@ -2563,19 +2563,19 @@ private key. That may be acceptable in a development environment but for
 proper security in a production environment you should omit the bold
 parts.
 
-=== What the feature does
+=== What client certificate checking does
 
-When not disabled by
-link:#_the_mysterious_client_certificate_checkbox[the checkbox] in the
-server properties, Command Centre requests proof from the client that it
-has the private key that matches a public key that the server has
-configured into it (pinned). A public key is hundreds of bytes so you
-don’t want to paste the whole thing into Command Centre’s configuration,
-and we do not want to compare all those bytes for each request, so you
-enter a signature instead. It is known as the certificate’s thumbprint
-or fingerprint, and is a cryptographic hash of the whole certificate. It
-is impossible for a client to send a fake certificate with a thumbprint
-that looks real.
+// You cannot have _emphasis_ in a paragraph following a link.  Asciidoctor turns the first
+// underscore in the link into an <em>.  So, use __emphasis__ instead.
+
+When not disabled by link:#_the_mysterious_client_certificate_checkbox[the checkbox] in the server
+properties, Command Centre requests proof from the client that it has the private key that matches a
+public key that the server has configured into it (pinned). A public key is hundreds of bytes so you
+don’t want to paste the whole thing into Command Centre’s configuration, and we do not want to
+compare all those bytes for each request, so you enter a shorter form instead. It is known as the
+certificate’s __thumbprint__ or __fingerprint__ and is a cryptographic hash of the whole
+certificate. It is impossible for a client to send a fake certificate with a thumbprint that looks
+real.
 
 Certificates can also contain a chain of trust linking the certificate
 back to a trusted authority. A client uses a server certificate’s chain
@@ -2962,9 +2962,13 @@ I found `--verbose` necessary to see error codes.
 
 == Server-side certificates
 
-Clients in production environments should refuse to talk to a server that offers a certificate that
-is not carrying a signature from one of the internet’s signing authorities. A certificate that has
-not been paid for, in other words.
+A client in a production environment should refuse to talk to a server that it does not recognise.
+"Recognising" a server means either
+
+- having a copy of its certificate on the client already (which is the same as the client
+  certificate pinning covered in the previous section, only it is the client doing it to the server
+  instead of the server doing it to the client), or
+- having a trusted Internet authority's signature on the certificate.
 
 WARNING:  *Production clients should check server certificates.* If not, an attacker could
 masquerade as the server.  The client would send it its API key which -- if the server was not
