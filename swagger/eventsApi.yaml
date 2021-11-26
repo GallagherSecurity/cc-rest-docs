@@ -353,8 +353,8 @@ securityDefinitions:
 
       Depending on Command Centre's site configuration, its REST API may also require a client
       certificate with each request.  In versions up to and including 8.40 this was controlled by a
-      boolean labelled 'Do not require pinned client certficates' on the 'Web Services' tab of the
-      server properties.  In 8.50 that control's label changed to 'Enable REST Clients with no
+      flag labelled 'Do not require pinned client certficates' on the 'Web Services' tab of the
+      server properties.  In 8.50 that flag's label changed to 'Enable REST Clients with no
       client certificate', and its behaviour changed slightly when turned on.
 
       If off, for all versions of CC, an incoming request's certificate has to match the thumbprint
@@ -363,7 +363,7 @@ securityDefinitions:
       server.
 
       If 'Do not require pinned client certificates' was turned on in versions up to and including
-      8.40, the server did not check any client certificates.  If the same control is turned on in
+      8.40, the server did not check any client certificates.  If that flag is turned on in
       8.50, now relabelled 'Enable REST Clients with no client certificate', it still does not check
       the client certificate if the thumbprint field of the matching REST Client item is blank, but
       if the Client item has a thumbprint, the server will reject connections with the wrong
@@ -380,6 +380,12 @@ securityDefinitions:
       alarm tell you how many failed attempts there have been since the start of the flood.  The
       server will stay in this mode of reduced reporting until several minutes pass without a failed
       connection attempt.
+
+      The most common queries we receive from our integrators relate to their certificate handling.
+      If your client's HTTP client library complains about certificates the first thing to check is
+      Command Centre's alarm list.  If there are 'invalid client certificate' alarms there, your
+      client is not sending the certificate CC is expecting.  If there are no alarms then the client
+      is most likely rejecting the server's certificate.
 
 x-spectacle-topics:
   Documentation suite:
