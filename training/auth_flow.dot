@@ -1,0 +1,59 @@
+digraph
+{
+        start[label=Start]
+        end[label="Success" style=filled fillcolor="#04ff04"]
+
+        node [shape=ellipse, style=filled, fillcolor="#ff9090"]
+        o_noapikey[label="Raise 'invalid API key' alarm,\nreturn 401"]
+        o_badprint[label="Raise 'incorrect fingerprint' alarm,\nreturn 401"]
+        o_badip[label="Raise 'bad source IP' alarm,\nreturn 401"]
+        o_nolicence[label="Return 401"]
+        clientquit[label="Client throws error"]
+        o_nopriv[label="Return 403"]
+
+        node [shape=box, style=""]
+        op1[label="Client connects, server sends cert"]
+        o_reqclientcert[label="Server requests client cert.\n(TLS step one)"]
+        o_clientsendscert[label="Client sends cert"]
+        o_clientreq[label="Client sends request\nincluding API key"]
+
+        node [shape=diamond]
+        cond[label="Client likes server cert?\nImplementation-\ndependent"]
+        c_apikeycheck[label="REST Client exists\nwith that API key?"]
+        c_clientcertcheck1[label="Fingerprint on that\nREST Client?"]
+        c_clientcertcheck2[label="Server allows clients\nwith no key?"]
+        c_correctcert[label="Client cert has\nmatching fingerprint?" shape=diamond]
+        c_sourceip1[label="Client item has\nIP restrictions?"]
+        c_sourceip2[label="Source IP is\nin that range?"]
+        c_licence[label="Server has licence\nfor requested operation?"]
+        c_privcheck[label="Operator has privilege\nfor requested operation?"]
+
+        start->op1
+        op1->cond
+        cond->clientquit [label = "no"]
+        cond->o_reqclientcert [label = "yes"]
+        o_reqclientcert -> o_clientsendscert
+        o_clientsendscert -> o_clientreq
+        o_clientreq->c_apikeycheck [label = "yes"]
+
+        c_apikeycheck->o_noapikey [label = "no"]
+        c_apikeycheck->c_clientcertcheck1 [label = "yes"]
+        c_clientcertcheck1->c_clientcertcheck2 [label = "no"]
+        c_clientcertcheck2->o_badprint [label = "no"]
+        c_clientcertcheck2->c_sourceip1 [label = "yes"]
+
+        c_clientcertcheck1->c_correctcert [label = "yes"]
+        c_correctcert->o_badprint [label = "no"]
+
+        c_correctcert->c_sourceip1 [label = "yes"]
+        c_sourceip1->c_licence [label = "no"]
+        c_sourceip1->c_sourceip2 [label = "yes"]
+        
+        c_sourceip2->c_licence [label = "yes"]
+        c_sourceip2->o_badip [label = "no"]
+
+        c_licence->o_nolicence [label="no"]
+        c_licence->c_privcheck [label="yes"]
+        c_privcheck->o_nopriv [label="no"]
+        c_privcheck->end [label="yes"]
+}
