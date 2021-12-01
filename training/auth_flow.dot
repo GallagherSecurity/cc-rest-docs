@@ -1,7 +1,8 @@
+# Turn this into auth_flow.dot.pdf using Graphviz:
+# dot auth_flow.dot -Tpdf -O
 digraph
 {
         start[label=Start]
-        end[label="Success" style=filled fillcolor="#04ff04"]
 
         node [shape=ellipse, style=filled, fillcolor="#ff9090"]
         o_noapikey[label="Raise 'invalid API key' alarm,\nreturn 401"]
@@ -16,12 +17,17 @@ digraph
         o_reqclientcert[label="Server requests client cert.\n(TLS step one)"]
         o_clientsendscert[label="Client sends cert"]
         o_clientreq[label="Client sends request\nincluding API key"]
+        o_argcheck[label="Proceed to argument checks\nand execution" style=filled fillcolor="#04ff04"]
 
         node [shape=diamond]
         cond[label="Client likes server cert?\nImplementation-\ndependent"]
         c_apikeycheck[label="REST Client exists\nwith that API key?"]
+        c_versioncheck [label="Server version" ]
         c_clientcertcheck1[label="Fingerprint on that\nREST Client?"]
         c_clientcertcheck2[label="Server allows clients\nwith no key?"]
+
+        c_clientcertcheck840[label="Server ignores client certs?"]
+
         c_correctcert[label="Client cert has\nmatching fingerprint?" shape=diamond]
         c_sourceip1[label="Client item has\nIP restrictions?"]
         c_sourceip2[label="Source IP is\nin that range?"]
@@ -37,8 +43,16 @@ digraph
         o_clientreq->c_apikeycheck [label = "yes"]
 
         c_apikeycheck->o_noapikey [label = "no"]
-        c_apikeycheck->c_clientcertcheck1 [label = "yes"]
-        c_clientcertcheck1->c_clientcertcheck2 [label = "no"]
+        c_apikeycheck->c_versioncheck [label = "yes"]
+
+        c_versioncheck -> c_clientcertcheck1 [label = ">= 8.50"]
+        c_versioncheck -> c_clientcertcheck840 [label = "< 8.50"]
+
+        c_clientcertcheck1->c_clientcertcheck2 [label= "no"]
+
+        c_clientcertcheck840->c_sourceip1 [label = "yes"]
+        c_clientcertcheck840->c_correctcert [label = "no"]
+
         c_clientcertcheck2->o_badprint [label = "no"]
         c_clientcertcheck2->c_sourceip1 [label = "yes"]
 
@@ -55,5 +69,5 @@ digraph
         c_licence->o_nolicence [label="no"]
         c_licence->c_privcheck [label="yes"]
         c_privcheck->o_nopriv [label="no"]
-        c_privcheck->end [label="yes"]
+        c_privcheck->o_argcheck [label="yes"]
 }
