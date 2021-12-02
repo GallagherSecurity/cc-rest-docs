@@ -521,10 +521,30 @@ tags:
       parameter to add the fields you need.
     3. Process the results, following the `next` link until there isn't one.
 
+    #### Synchronising a user directory
+
+    This is the fastest way of synchronising a large body of users on a source system with Command
+    Centre:
+
+    1. Get all cardholders from CC, taking note of the efficiency tips elsewhere on this page.  That
+       should take only a few minutes per 100,000 cardholders.
+    2. Compare them with your upstream user directory and compute a set of deltas:  cardholders to
+       create, modify, and delete.
+    3. Apply those changes to Command Centre.
+
+    That is how Gallagher's cardholder-synchronising integrations work.
+
     #### Searching for cardholders by Personal Data Field value
 
     Say you want to find a cardholder with a particular employee ID, and Command Centre is
     holding that in a personal data field called "employee_ID".
+
+    First, reconsider, and look at the 'Synchronising cardholders' use case above.  If you are going
+    to be doing this for many cardholders, GETting cardholders in bulk and filtering out the
+    interesting ones client-side is more efficient than a large number of unique PDF searches.  You
+    don't have to get all cardholders; you could get all cardholders in one division, or all
+    cardholders with a non-blank value for your PDF (shown below), or a combination.  It will be
+    quicker than a sequence of searches that return one cardholder each.
 
     Before you can start a cardholder search, you must find the PDF's identifier.
 
@@ -553,8 +573,8 @@ tags:
 
     The results will only include cardholders who have *\<your_pdf_value>* as a substring of
     the Personal Data Field with ID *\<your_pdf_id>*.  Again, the search is
-    case-insensitive and quotes anchor it at each end.  In our example we would `GET
-    /api/cardholders?pdf_345="EID8888"`.
+    case-insensitive and you should bookend *\<your_pdf_value>* with quotes if you want to anchor it at
+    each end.  In our example we would `GET /api/cardholders?pdf_345="EID8888"`.
 
     Use a percent sign `%` for *\<your_pdf_value>* if you want to see all cardholders who have a
     non-blank value for that PDF.
@@ -5336,8 +5356,8 @@ paths:
           schema: {$ref: '#/definitions/Cardholder Update Location POST example'}
           example: {"accessZone":{"href": "https://localhost:8904/items/412"}}
           description: |
-            This should contain the href of the target access zone.  The example here came from the
-            items controller.
+            This should contain the href of the target access zone.  The example here is a different
+            style because it came from the items controller.
       responses: 
         204: 
           description: "Success."

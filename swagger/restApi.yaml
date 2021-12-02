@@ -2828,18 +2828,18 @@ paths:
       summary: Search targetable access zones
       description: |
         This returns a list of the access zones to which your operator is allowed to move
-        cardholders, and a special zone you can use as a target to move a cardholder from all access
+        cardholders, and a special zone you can use as a target to remove a cardholder from all access
         zones.
 
         Like all other paginated queries in this API, the result will contain no more than 100
         or 1000 access zones (depending on your version), or as many as you asked for more in your
         request; you should follow the `next` link, if it is present, to collect the next batch.
 
-        If your result set is empty it means there are no access zones in the divisions in which
-        your operator has the privilege to move cardholders, 'Manage Cardholder Location', or your
-        operator does not have it at all.
-
         When you have loaded them all there will be no `next` link.
+
+        If your result set is empty it means there are no access zones in the divisions in which
+        your operator has the privilege to move cardholders ('Manage Cardholder Location'), or your
+        operator does not have the privilege at all.
 
         Take this URL from the 'href' field in the `features.cardholders.updateLocationAccessZones`
         section of `/api`.
