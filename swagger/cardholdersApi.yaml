@@ -178,6 +178,9 @@ info:
       It adds to the payload size, though, so only do this if you are certain that the search will
       not return too many cardholders you are not interested in.
 
+    * If you are writing an integration that synchronises users from a source of truth to Command
+      Centre, see the 'Synchronising a user directory' use case in the Cardholders section.
+
     * If you must get an object's details page, and you are on v8.00 or later, using the [`fields`
       parameter](#topic-Field-specifiers) will still save work.  Be explicit with what you want:  do
       not use `fields=defaults` unless you need every field that 'defaults' gives you and you
@@ -526,7 +529,7 @@ tags:
     This is the fastest way of synchronising a large body of users on a source system with Command
     Centre:
 
-    1. Get all cardholders from CC, taking note of the efficiency tips elsewhere on this page.  That
+    1. Get all cardholders from CC, taking note of the efficiency tips in this document.  That
        should take only a few minutes per 100,000 cardholders.
     2. Compare them with your upstream user directory and compute a set of deltas:  cardholders to
        create, modify, and delete.
@@ -5416,7 +5419,7 @@ paths:
 
         Take this URL from the href field in the `features.cardholders.changes` section of `/api`.
 
-        ### Efficiency tips
+        ### Efficiency tips when collecting cardholder changes
 
         - Filter for the kinds of changes you are after using the `filter` parameter.  If you are
           only interested in people's access group memberships, for example, add

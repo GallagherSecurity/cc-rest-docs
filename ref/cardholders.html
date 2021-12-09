@@ -454,6 +454,9 @@
                     <p>It adds to the payload size, though, so only do this if you are certain that the search will not return too many cardholders you are not interested in.</p>
                   </li>
                   <li>
+                    <p>If you are writing an integration that synchronises users from a source of truth to Command Centre, see the &#39;Synchronising a user directory&#39; use case in the Cardholders section.</p>
+                  </li>
+                  <li>
                     <p>If you must get an object&#39;s details page, and you are on v8.00 or later, using the
                       <a href="#topic-Field-specifiers"><code>fields</code> parameter</a> will still save work. Be explicit with what you want: do not use <code>fields=defaults</code> unless you need every field that &#39;defaults&#39; gives you and you accept that we may add fields to the defaults in future.</p>
                   </li>
@@ -674,7 +677,7 @@
               <h4 id="synchronising-a-user-directory">Synchronising a user directory</h4>
               <p>This is the fastest way of synchronising a large body of users on a source system with Command Centre:</p>
               <ol>
-                <li>Get all cardholders from CC, taking note of the efficiency tips elsewhere on this page. That should take only a few minutes per 100,000 cardholders.</li>
+                <li>Get all cardholders from CC, taking note of the efficiency tips in this document. That should take only a few minutes per 100,000 cardholders.</li>
                 <li>Compare them with your upstream user directory and compute a set of deltas: cardholders to create, modify, and delete.</li>
                 <li>Apply those changes to Command Centre.</li>
               </ol>
@@ -3033,7 +3036,7 @@
                   <p>When you are up to date with all the cardholder changes, the <code>results</code> array will be empty. When it comes time to check again, don&#39;t just re-use the same URL: get a new one from the <code>next</code> block. It can change even when there are no results.</p>
                   <p>This is a polled interface: it will return immediately, whether or not there are results. Therefore you should wait for a time between calls if the <code>results</code> array was empty.</p>
                   <p>Take this URL from the href field in the <code>features.cardholders.changes</code> section of <code>/api</code>.</p>
-                  <h3 id="efficiency-tips">Efficiency tips</h3>
+                  <h3 id="efficiency-tips-when-collecting-cardholder-changes">Efficiency tips when collecting cardholder changes</h3>
                   <ul>
                     <li>
                       <p>Filter for the kinds of changes you are after using the <code>filter</code> parameter. If you are only interested in people&#39;s access group memberships, for example, add <code>filter=accessGroups</code> to your GET, and you will not be troubled with all the other kinds of changes that cardholders go through.</p>
