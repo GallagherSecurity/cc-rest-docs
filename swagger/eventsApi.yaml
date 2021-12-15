@@ -805,7 +805,7 @@ paths:
         real trouble, so have a good look at the documentation below and the example [POST
         body](#definition-Event-POST-body).
 
-        Events are immutable:  you cannot PATCH them after you create them.
+        Events are immutable:  you cannot PATCH or DELETE them after you create them.
 
         #### Usable event types
 
@@ -1395,6 +1395,8 @@ paths:
 
         Because this call returns the status of items, this call requires the RESTStatus licence.
 
+        Added in 8.30.
+
       parameters:
         - name: "name not rendered for body params"
           in: body
@@ -1456,6 +1458,8 @@ paths:
         6. Go to 2.
 
         ...plus the necessary exception handling, of course.
+
+        Added in 8.30.
 
       parameters:
         - name: "bookmark"
@@ -2204,7 +2208,10 @@ definitions:
     properties:
       type:
         description: |
-          This is the only mandatory field in an event.  Without it, the POST will fail.
+          This is a mandatory field in an event.  Without it, the POST will fail.
+
+          It is mandatory because the server cannot assume a reasonable default.  It can for the
+          others.
         type: object
         properties:
           href:

@@ -1843,7 +1843,7 @@
                   <p>Do not code this URL into your application. Take it from <code>events.events.href</code> in the results of <code>GET /api</code>.</p>
                   <p>Each field has particular rules and has its own effects on the event and subsequent reports, and misconfiguration (such as inadvertently causing a macro to run itself) can land you in real trouble, so have a good look at the documentation below and the example
                     <a href="#definition-Event-POST-body">POST body</a>.</p>
-                  <p>Events are immutable: you cannot PATCH them after you create them.</p>
+                  <p>Events are immutable: you cannot PATCH or DELETE them after you create them.</p>
                   <h4 id="usable-event-types">Usable event types</h4>
                   <p>You must supply an
                     <a href="#operation--api-events-groups-get">event type</a>. 8.10 ships with 30 external event types you can use, each in its own event type group.</p>
@@ -3523,6 +3523,7 @@
                   <p>If you do not GET the link within thirty seconds of the POST returning, the server will drop your subscription and free up the resources it had allocated to servicing it.</p>
                   <p>Your operator must have view privileges on every item in the subscription.</p>
                   <p>Because this call returns the status of items, this call requires the RESTStatus licence.</p>
+                  <p>Added in 8.30.</p>
                 </section>
               </div>
             </div>
@@ -3682,6 +3683,7 @@
                     <li>Go to 2.</li>
                   </ol>
                   <p>...plus the necessary exception handling, of course.</p>
+                  <p>Added in 8.30.</p>
                 </section>
               </div>
             </div>
@@ -5712,7 +5714,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This is the only mandatory field in an event. Without it, the POST will fail.</p>
+                      <p>This is a mandatory field in an event. Without it, the POST will fail.</p>
+                      <p>It is mandatory because the server cannot assume a reasonable default. It can for the others.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
