@@ -10113,7 +10113,7 @@
                     </dt>
                     <dd>
                       <p>Like the cards and accessGroups objects, this can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;. Every element should be in the
-                        <a href="#definition-Cardholder-competency">competency schema</a>.</p>
+                        <a href="#definition-Cardholder-competency">cardholder competency schema</a>.</p>
                       <p>This operation does not modify Command Centre&#39;s competencies: it works on a cardholder&#39;s holdings of those competencies.</p>
                       <p>Each element of the &#39;add&#39; array will need a &#39;competency&#39; block containing an href member identifying the competency you wish to grant the cardholder. All other fields are optional.</p>
                       <p>Each element of the &#39;update&#39; array will need an href identifying the cardholder&#39;s competency to update, and one or more of the &#39;expiry&#39;, &#39;enabled&#39;, &#39;enablement&#39;, &#39;comment&#39;, &#39;limitedCredit&#39;, and &#39;credit&#39; fields.</p>
@@ -10142,7 +10142,7 @@
                     </dt>
                     <dd>
                       <p>With you well in the habit by now, each element of your three arrays should be in the
-                        <a href="#definition-Cardholder-locker">locker schema</a>. They will allocate lockers to cardholders, de-allocate them, and adjust validity periods.</p>
+                        <a href="#definition-Cardholder-locker">cardholder locker schema</a>. They will allocate lockers to cardholders, de-allocate them, and adjust validity periods.</p>
                       <p>Each member of the &#39;add&#39; array will need a &#39;locker&#39; member containing an href identifying the locker to allocate. The cardholder you will allocate it to is identified by the request URL, remember.</p>
                       <p>Each member of the &#39;update&#39; array will need an href identifying the allocation to update, and one or both of the &#39;from&#39; and &#39;until&#39; date-times.</p>
                       <p>The validity period is all you can change about a locker allocation. If you want to change the locker, delete the old one and add a new. You can do that in the same PATCH, with one element in each of the &#39;add&#39; and &#39;remove&#39; arrays.</p>
@@ -10155,7 +10155,7 @@
                     </dt>
                     <dd>
                       <p>This can contain two arrays named &#39;add&#39; and &#39;remove&#39;. Every element you send in those arrays should be in the
-                        <a href="#definition-Cardholder-operator-group">operator group schema</a>.</p>
+                        <a href="#definition-Cardholder-operator-group">cardholder operator group schema</a>.</p>
                       <p>Each element of the &#39;add&#39; array will need an &#39;operatorGroup&#39; member containing an href identifying the operator group to which you wish to add the cardholder.</p>
                       <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href. Make sure it is the href of the membership, not of the operator group.</p>
                       <p>There is nothing about an operator group membership that you can change so there is no point to an &#39;update&#39; array. Operator group memberships are, or are not - there is no update.</p>
@@ -10168,7 +10168,7 @@
                     </dt>
                     <dd>
                       <p>This can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;, each containing an element in the
-                        <a href="#definition-Cardholder-elevator-group">elevator group schema</a>.</p>
+                        <a href="#definition-Cardholder-elevator-group">cardholder elevator group schema</a>.</p>
                       <p>The &#39;elevatorGroup&#39; block only makes sense in the &#39;add&#39; array. The &#39;update&#39; array is for changing the cardholder&#39;s default floor and passenger types on an existing elevator group assignment.</p>
                       <p>The server will ignore all fields in the elevatorGroup and accessZone objects except &#39;href&#39; if you place them in the body of your PATCH.</p>
                       <p>Remove the default floor in an update by supplying an accessZone block with the href set to null or &quot;&quot;.</p>
