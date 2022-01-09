@@ -189,18 +189,18 @@ tags:
        arrives at the server.
     3. Process the events you receive in that call.  Often there is only one:  the first that
        arrived after you made the call.
-    4. Loop, following the link at `updates.href` after processing each batch of events.  It will
+    4. Sleep to reduce load on the server.
+    5. Loop, following the link at `updates.href` after processing each batch of events.  It will
        return immediately if there are new events waiting, or it will block until new events arrive.
-       Sleep a little between each call to reduce chatter.
 
     #### Receiving new events as they occur, starting in the past
     1. `GET /api`
     2. Follow the link at `features.events.events.href` appending the query parameter
        `after=2021-05-08Z` (or whatever timestamp is appropriate).
     3. Process the events you receive in that call.
-    4. Loop, following the link at `updates.href` after processing each batch of events.  It will
+    4. Sleep to reduce load on the server.
+    5. Loop, following the link at `updates.href` after processing each batch of events.  It will
        return immediately if there are new events waiting, or it will block until new events arrive.
-       Sleep a little between each call to reduce chatter.
 
     #### Searching for events related to particular cardholders
     1. `GET /api`
@@ -263,14 +263,12 @@ tags:
       sends to you.  Not only will it save bandwidth, but it will save the server looking up all
       those values and serialising them for you.
 
-    * If you have reached the head of the event queue and are using the `updates` link to keep up to
-      date, set `deadline` high and sleep between calls for as long as your requirements allow.
-      Doing the first will reduce unnecessary chatter between you and Command Centre when nothing is
-      happening, and the second will improve the likelihood of your collecting more than one event
-      when it is busy.<br>For example, if Command Centre is generating two events per second and you
-      do not sleep between REST calls, you will be calling `updates` twice per second for one event
-      each time.  However if you sleep for ten seconds after each call you will receive 20 events at
-      a time, saving CPU and I/O.
+    * If you are using the `updates` link to keep up to date with events, sleep between calls for as
+      long as your requirements allow.  Doing that will improve the likelihood of your collecting
+      more than one event when it is busy.<br>For example, if Command Centre is generating ten
+      events per second and you do not sleep between REST calls, you will be calling `updates` ten
+      times per second for one event each time.  However if you sleep for two seconds after each
+      call you will receive 20 events at a time, saving CPU and I/O.
 
 - name: Items
   description: |
@@ -1034,7 +1032,8 @@ paths:
         Poll this link to receive new events that match the specified filters.  If there are none
         ready, the call will block until one arrives or a deadline passes.
 
-        For its correct use in various scenarios, see the [use cases](#event-use-cases).
+        For its correct use in various scenarios, see the [use cases](#event-use-cases).  In
+        particular, sleep between calls to reduce load on the server.
 
         The way this call picks events is very different from `/api/events`:
 
@@ -1053,8 +1052,8 @@ paths:
         Each response will also contain a `next` link that will take you to the non-blocking version
         of the call at [/api/events](#operation--api-events-get).
 
-        However long the delay between calls, following a `next` or `updates` link will always
-        return the first events that arrived after the previous call.
+        However long you wait between calls, following a `next` or `updates` link will always return
+        the first events that arrived after your previous call.
 
         Do not code this URL into your application.  Take it from `events.updates.href` in the
         results of `GET /api`, or from `updates` in the results of `GET /api/events`.

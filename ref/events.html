@@ -1748,14 +1748,16 @@
                 <li><code>GET /api</code></li>
                 <li>Follow the link at <code>features.events.updates.href</code>. That will block until at least one event arrives at the server.</li>
                 <li>Process the events you receive in that call. Often there is only one: the first that arrived after you made the call.</li>
-                <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive. Sleep a little between each call to reduce chatter.</li>
+                <li>Sleep to reduce load on the server.</li>
+                <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive.</li>
               </ol>
               <h4 id="receiving-new-events-as-they-occur-starting-in-the-past">Receiving new events as they occur, starting in the past</h4>
               <ol>
                 <li><code>GET /api</code></li>
                 <li>Follow the link at <code>features.events.events.href</code> appending the query parameter <code>after=2021-05-08Z</code> (or whatever timestamp is appropriate).</li>
                 <li>Process the events you receive in that call.</li>
-                <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive. Sleep a little between each call to reduce chatter.</li>
+                <li>Sleep to reduce load on the server.</li>
+                <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive.</li>
               </ol>
               <h4 id="searching-for-events-related-to-particular-cardholders">Searching for events related to particular cardholders</h4>
               <ol>
@@ -1810,8 +1812,8 @@
                   <p>If using 8.40 or later, use its <code>field</code> query parameter to cut back on the fields the server sends to you. Not only will it save bandwidth, but it will save the server looking up all those values and serialising them for you.</p>
                 </li>
                 <li>
-                  <p>If you have reached the head of the event queue and are using the <code>updates</code> link to keep up to date, set <code>deadline</code> high and sleep between calls for as long as your requirements allow. Doing the first will reduce unnecessary chatter between you and Command Centre when nothing is happening, and the second will improve the likelihood of your collecting more than one event when it is busy.
-                    <br>For example, if Command Centre is generating two events per second and you do not sleep between REST calls, you will be calling <code>updates</code> twice per second for one event each time. However if you sleep for ten seconds after each call you will receive 20 events at a time, saving CPU and I/O.</p>
+                  <p>If you are using the <code>updates</code> link to keep up to date with events, sleep between calls for as long as your requirements allow. Doing that will improve the likelihood of your collecting more than one event when it is busy.
+                    <br>For example, if Command Centre is generating ten events per second and you do not sleep between REST calls, you will be calling <code>updates</code> ten times per second for one event each time. However if you sleep for two seconds after each call you will receive 20 events at a time, saving CPU and I/O.</p>
                 </li>
               </ul>
             </div>
@@ -2381,7 +2383,7 @@
                 <section class="swagger-operation-description">
                   <p>Poll this link to receive new events that match the specified filters. If there are none ready, the call will block until one arrives or a deadline passes.</p>
                   <p>For its correct use in various scenarios, see the
-                    <a href="#event-use-cases">use cases</a>.</p>
+                    <a href="#event-use-cases">use cases</a>. In particular, sleep between calls to reduce load on the server.</p>
                   <p>The way this call picks events is very different from <code>/api/events</code>:</p>
                   <ul>
                     <li>
@@ -2395,7 +2397,7 @@
                   <p>The response will contain an <code>updates</code> link back to the same API call with a new bookmark that will cause it to return the next page of results.</p>
                   <p>Each response will also contain a <code>next</code> link that will take you to the non-blocking version of the call at
                     <a href="#operation--api-events-get">/api/events</a>.</p>
-                  <p>However long the delay between calls, following a <code>next</code> or <code>updates</code> link will always return the first events that arrived after the previous call.</p>
+                  <p>However long you wait between calls, following a <code>next</code> or <code>updates</code> link will always return the first events that arrived after your previous call.</p>
                   <p>Do not code this URL into your application. Take it from <code>events.updates.href</code> in the results of <code>GET /api</code>, or from <code>updates</code> in the results of <code>GET /api/events</code>.</p>
                 </section>
               </div>
