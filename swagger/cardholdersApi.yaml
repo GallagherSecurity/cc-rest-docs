@@ -509,11 +509,13 @@ tags:
     clients.
 
     The first use case below introduces the main entry point.  It is a paginated search interface
-    that gives you very basic data for any number of cardholders.  Most important is a field called
-    'href', which serves both as a unique identifier for the cardholder and the location of what we
-    call his or her _details_ page.  You can submit an HTTP GET to that href to retrieve the entire
-    cardholder record, or an HTTP PATCH to update it, or an HTTP DELETE to remove it.  Be careful:
-    there is no coming back from deleting a cardholder.
+    that gives you basic data for any number of cardholders.  You won't receive many fields by
+    default, but you can ask for more using the `fields` query parameter.
+
+    A field called 'href' serves both as a unique identifier for the cardholder and the location of
+    what we call his or her _details_ page.  You can submit an HTTP GET to that href to retrieve the
+    entire cardholder record, or an HTTP PATCH to update it, or an HTTP DELETE to remove it.  Be
+    careful:  there is no coming back from deleting a cardholder.
 
     ### Use cases
 
@@ -1144,7 +1146,7 @@ parameters:
          enumerating them.  Sorting by ID does not carry that risk.
       2. Following a `next` link is _dramatically_ quicker when sorting by ID.
 
-      We _strongly_ recommend sorting by ID and, in case you were in doubt, we will do that by
+      We _strongly_ recommend sorting by ID.  In case you were still in doubt, we will do that by
       default in a future version of Command Centre.
 
   top:

@@ -353,8 +353,8 @@ x-common-blocks-this-is-made-up:
       Treat the string matches as case-sensitive.
 
       In v8.00 you will receive the href and internal ID even if you did not ask for them.  In 8.10
-      and later you will only get what you asked for.  If you are going to send the fields parameter
-      and need the href or ID, be explicit.
+      and later you will only get what you asked for.  If you are going to send the `fields`
+      parameter and need the href or ID, be explicit.
 
   fds_ignored2: &FIELDSDESC_SUM_810
     description: |
@@ -376,8 +376,8 @@ x-common-blocks-this-is-made-up:
       Treat the string matches as case-sensitive.
 
       In v8.00 you will receive the href and internal ID even if you did not ask for them.  In 8.10
-      and later you will only get what you asked for.  If you are going to send the fields parameter
-      and need the href or ID, be explicit.
+      and later you will only get what you asked for.  If you are going to send the `fields`
+      parameter and need the href or ID, be explicit.
 
   fdd_ignored2: &FIELDSDESC_DET_810
     description: |
@@ -2200,10 +2200,8 @@ tags:
     These methods give you read access to Access Zones in the Command Centre database, and
     let you change their modes, lock them down, and send other overrides.
 
-    The first use case below introduces the main entry point.  It is a paginated search
-    interface that gives you very basic data for any number of access zones.  Most
-    important is a field called 'href', which gives location of one alarm zone's details
-    page.
+    The first use case below introduces the main entry point.  It is a paginated search interface
+    that gives any number of access zones, each containing the fields you ask for in the query.
 
     ### Overrides
 
@@ -2308,9 +2306,8 @@ tags:
     natural state.  That in turn means that you cannot override them for a duration --
     they have no state to return to.
 
-    The first use case below introduces the main entry point.  It is a paginated search
-    interface that gives you very basic data for any number of alarm zones.  The href
-    field gives location of an alarm zone's details page.
+    The first use case below introduces the main entry point.  It is a paginated search interface
+    that gives you any number of alarm zones, each containing the fields you ask for in the query.
 
     ### Overrides
     Note:
@@ -2402,10 +2399,9 @@ tags:
     These methods give you read access to basic data about Doors in the Command Centre
     database, and let you open them.
 
-    The first use case below introduces the main entry point.  It is a paginated search
-    interface that gives you very basic data for any number of doors.  The href field for
-    each door gives the location of another page which gives more details, including the
-    URL you need to open the door.
+    The first use case below introduces the main entry point.  It is a paginated search interface
+    that gives you any number of doors, each containing the fields you ask for in the query
+    (including, for example, the URLs to open them).
 
     ### Status flags
 
@@ -2469,18 +2465,21 @@ tags:
     area the elevator system can arrange a car to take them to their favourite floor.
 
     Each elevator group only goes to certain floors, so to give a cardholder a default floor you
-    need to pick an elevator group see which floors it services.
+    need to see which floors each elevator group services.
 
     Command Centre represents floors with access zones.  If an elevator car has two doors, front and
     rear, it may service two access zones on the same physical floor.  A cardholder could pick
     either of those access zones as their default for that elevator group.
 
-    The main entry point is a paginated search that returns what you need to pick defaults for a
-    cardholder, limited by the privilege that enables that operation on a cardholder.  That is the
+    The main entry point is a paginated search that returns what you need to pick default floors for
+    a cardholder, limited by the privilege that enables that operation on a cardholder.  That is the
     call that you are most likely to need, but there is another that gives you all elevator groups
-    that your operator can view, rather than the ones your operator can use in a cardholder edit.
+    that your operator can view, rather than the smaller set of groups your operator can use in a
+    cardholder edit.
 
-    ### Use case: choosing and setting a cardholder's default floor
+    ### Use cases
+
+    ### Choosing and setting a cardholder's default floor
 
     Your client will first need to list all elevator groups, and the floors and access zones on
     those elevator groups, so that it can pick from them (if knows them by name already) or present
@@ -2494,7 +2493,8 @@ tags:
     1. `GET /api`.
     2. Follow the link at `features.cardholders.modifyPassengerDetails.href`, appending a search term
        such as `name=substring` to filter the selection if you have a lot of elevator groups.
-    3. Find the elevator group you are after, following the `next` link if necessary.
+    3. Find the elevator group you are after, following the `next` link if you have lots of elevator
+       groups.
     4. Look in the `floorAccess` array for the floor names and access zone names you can use for
        picking the floor, and the access zone hrefs to use in the
        [PATCH](cardholders.html#operation--api-cardholders--id--patch) coming up.
@@ -2507,14 +2507,13 @@ tags:
        elevator groups and access zones you wish to set as that cardholder's defaults.
 
 - name: "Fence Zones"
+
   description: |
     These methods give you read access to Fence Zones in the Command Centre database, and
     let you turn them on and off, change their modes, and shunt them.
 
-    The first use case below introduces the main entry point.  It is a paginated search
-    interface that gives you very basic data for any number of fence zones.  Most
-    important is a field called 'href', which gives location of one fence zone's details
-    page.
+    The first use case below introduces the main entry point.  It is a paginated search interface
+    that gives you any number of fence zones, each containing the fields you ask for in the query.
 
     ### Status flags
 
@@ -2577,9 +2576,9 @@ tags:
 
     #### Finding a fence zone's status
     1. Find the href for the fence zone using the process above, and GET it.
-    3. Take the `updates` href from that page.  For a version 8.00 server append
-       `?fields=defaults,voltage` if you are after the fence's voltage.  It is included by default
-       in 8.10 and later.
+    3. Take the `updates` href from that page.  If you are after the fence's voltage and are using
+       version 8.00, append `?fields=defaults,voltage`.  You do not need that for later versions as
+       `voltage` became a default field in 8.10.
     4. GET it.
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
@@ -2589,9 +2588,8 @@ tags:
     These methods, introduced in v8.10, give you read and override access to Input items.
 
     The first use case below introduces the main entry point.  It is a paginated search interface
-    that gives you basic data for any number of inputs.  The href field for each input gives the
-    location of another page which gives more details, including the URLs you need to shunt or
-    isolate it.
+    that gives you any number of inputs, each containing the fields you ask for in the query.  You
+    can, for instance, ask for the URLs you need to shunt or isolate an input.
 
     ### Status flags
 
@@ -2659,10 +2657,9 @@ tags:
     Reading the section 'Understanding Macros' in the Configuration client help is an
     excellent way to do exactly that.
 
-    The first use case below introduces the main entry point.  It is a paginated search
-    interface that gives you very basic data for any number of macros.  The href field for
-    each macro gives the location of another page which gives more details, including the
-    URL you need to run the macro.
+    The first use case below introduces the main entry point.  It is a paginated search interface
+    that gives you any number of macros, each containing the fields you ask for in the query,
+    including (for example) the URL you need to run the macro.
 
     ### Overrides
 
@@ -2689,10 +2686,9 @@ tags:
     These methods give you read access to Outputs in the Command Centre
     database, and let you override them.
 
-    The first use case below introduces the main entry point.  It is a paginated search
-    interface that gives you very basic data for any number of outputs.  The href field for
-    each output gives the location of another page which gives more details, including the
-    URL you need to switch the output.
+    The first use case below introduces the main entry point.  It is a paginated search interface
+    that gives you any number of outputs, each containing the fields you ask for in the query,
+    including (for example) the URLs you need to switch the outputs on and off.
 
     ### Override times
 
@@ -2750,8 +2746,7 @@ tags:
 
     #### Finding an output's status
     1. Find the href for the output using the process above, and GET it.
-    3. Take the `updates` href from that page.  Append '?' or '&' (whichever is appropriate) then
-       `fields=defaults,voltage` if you are after the fence's voltage.
+    3. Take the `updates` href from that page.
     4. GET it.
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
@@ -3724,7 +3719,7 @@ paths:
         as many as you asked for more in your request; you should follow the `next` link, if it is
         present, to collect the next batch.
 
-        If your result set is empty it means your operator does not have the privilege to view any
+        If your result set is empty it means your operator does not have a privilege that allows viewing
         fence zones, such as 'View Site', 'Edit Site', or 'Maintenance Override'.  Perhaps there are
         no fence zones in the divisions in which your operator has privileges, or your operator has
         no privileges at all.
