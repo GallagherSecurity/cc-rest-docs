@@ -4396,7 +4396,7 @@ definitions:
       required:
         type: boolean
         example: false
-        description:  If true, every cardholder with this PDF must have a value for it.
+        description:  If true, every cardholder with this PDF must have a value for it.  No blanks allowed.
       unique:
         type: boolean
         example: false
@@ -5368,11 +5368,13 @@ paths:
       responses: 
         204: 
           description: "Success."
-        4xx:
+        400:
           description: |
-            The parameters are invalid, or other errors prevented the update, such as the cardholder
-            being locked for editing by an interactive client, or the operator does not have a
-            privilege that allows moving this cardholder to the target zone.
+            The cardholder ID or access zone href is invalid.
+        403:
+          description: |
+            The operator does not have a privilege ('Manage Cardholder Location') that allows moving
+            this cardholder to the target zone.
 
   /api/cardholders/{id}/edit:
     get:
