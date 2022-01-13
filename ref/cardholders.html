@@ -2973,16 +2973,16 @@
                   <p>First, get a bookmark at the end of Command Centre&#39;s list of changes as follows:</p>
                   <p> 1a. <code>GET /api</code></p>
                   <p> 1b. Follow the link at <code>features.cardholders.changes</code>.</p>
-                  <p> 1c. Take note of the href that was in the <code>next</code> block.</p>
+                  <p> 1c. Take note of the href in the <code>next</code> block. This is your bookmark. Later on you will ask for all the changes that happen after this point.</p>
                 </li>
                 <li>
-                  <p>Download all cardholders out of Command Centre using
+                  <p>If you are filling a user directory from Command Centre, download all cardholders using
                     <a href="#downloading-all-cardholders">this advice</a>. Here is a reminder:</p>
                   <p> 2a. Using the results of <code>GET /api</code> again, follow the link at <code>features.cardholders.cardholders</code>, adding query parameters <code>top=1000</code> and <code>sort=id</code>.</p>
                   <p> 2b. Process those cardholders (probably 1000) and follow the <code>next.href</code> link in a loop until you have extracted all of them.</p>
                 </li>
                 <li>
-                  <p>This is the start of your update loop. The first time through, to catch the changes that came in during the big download you were doing in step two, use the href that you got in step one. Simply GET it.</p>
+                  <p>This is the start of your update loop. The first time through, to catch the changes that came in during the big download you did in step two, use the href that you got in step one. Simply GET it.</p>
                 </li>
                 <li>
                   <p>If the <code>results</code> array you get back is empty you are up to date and you have nothing to do. Sleep for a time before your next poll, to avoid a tight loop and ease the load on your database. When it comes time to poll again, do not be tempted to resubmit the same request: the URL to use sometimes changes even when there are no results, so always get it from <code>next.href</code>.</p>

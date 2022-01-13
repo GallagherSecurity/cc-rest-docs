@@ -758,10 +758,11 @@ tags:
 
         1b. Follow the link at `features.cardholders.changes`.
 
-        1c. Take note of the href that was in the `next` block.
+        1c. Take note of the href in the `next` block.  This is your bookmark.  Later on you will
+        ask for all the changes that happen after this point.
 
-    1. Download all cardholders out of Command Centre using [this
-       advice](#downloading-all-cardholders).  Here is a reminder:
+    1. If you are filling a user directory from Command Centre, download all cardholders using [this
+    advice](#downloading-all-cardholders).  Here is a reminder:
 
         2a. Using the results of `GET /api` again, follow the link at
           `features.cardholders.cardholders`, adding query parameters `top=1000` and `sort=id`.
@@ -770,8 +771,8 @@ tags:
           a loop until you have extracted all of them.
 
     1. This is the start of your update loop.  The first time through, to catch the changes that
-       came in during the big download you were doing in step two, use the href that you got in step
-       one.  Simply GET it.
+       came in during the big download you did in step two, use the href that you got in step one.
+       Simply GET it.
 
     1. If the `results` array you get back is empty you are up to date and you have nothing to do.
        Sleep for a time before your next poll, to avoid a tight loop and ease the load on your
