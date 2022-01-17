@@ -1,7 +1,4 @@
 = Work in progress: Command Centre REST API training material
-
-// Editors, please stick to a maximum line length of 100.
-
 :toc: left
 :source-highlighter: rouge
 // highlighters are coderay highlight.js Pygments rouge.  Asciidoctor ships with highlight.js, but
@@ -20,6 +17,10 @@
 // Need anchors or links, but not both, and links are less visually distracting (IMO).
 // :sectanchors:
 :sectlinks:
+
+
+// Editors, please stick to a maximum line length of 100.
+
 
 This document is an AsciiDoc port of a document used internally at Gallagher Group to train
 developers in the use of Command Centre’s REST API. This version is not yet suitable for
@@ -472,9 +473,11 @@ a cardholder or event returns 201 ("created").
 
 A response in the 400-499 range generally means there was something
 wrong with the request. One exception is 409: it could mean that your
-timing was bad and trying again later may succeed. Along with 404, 409
+timing was bad and trying again later may succeed. Along with 403 and 404, 409
 could also mean you have attempted to do something beyond your
-privilege. The body of the response that comes back from the server will
+privilege. 401 means you did not sent a good Authorization header and
+the server does not trust you at all.
+The body of the response that comes back from the server will
 tell you the problem.
 
 500-level responses mean the server has met with trouble. Waiting for
