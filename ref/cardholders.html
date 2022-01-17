@@ -279,11 +279,12 @@
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
                 <h4 id="cardholder-api-changes-on-the-roadmap">Cardholder API changes on the roadmap</h4>
                 <ul>
-                  <li>A future version will sort its search results differently and may increase the number it returns per page, if your query does not include parameters to override the defaults.</li>
+                  <li>A future version will sort its search results differently if your query does not include a parameter to override the default.</li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-870">Cardholder API changes in 8.70</h4>
                 <ul>
                   <li>A cardholder&#39;s operator group memberships (added in 8.50) now contain an href that you can use in an HTTP DELETE as another way of removing a cardholder from an operator group.</li>
+                  <li>The server will return 1000 items by default, instead of 100.</li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-860">Cardholder API changes in 8.60</h4>
                 <ul>
@@ -409,7 +410,7 @@
                     <p>When downloading a significant number of items, sort by ID.</p>
                   </li>
                   <li>
-                    <p>Set your page size as large as your client can handle. The default used to be 100; using the <code>top</code> parameter to take it to 1000 or more gives
+                    <p>Set your page size as large as your client can handle. The default was 100 before 8.70; using the <code>top</code> parameter to take it to 1000 or more gives
                       <em>much</em> better throughput.</p>
                   </li>
                 </ul>
@@ -863,7 +864,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This call returns cardholders matching your search criteria.</p>
-                  <p>The result will contain no more than 100 cardholders, or as many as you asked for in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>The result will contain no more than 100 or 1000 cardholders depending on your version; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
                   <p>When you have loaded all the cardholders there will be no <code>next</code> link.</p>
                   <p>If your result set is empty it means your operator does not have the privilege to view any cardholders. Perhaps there are none in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
                   <p>Adding or modifying cardholders between calls to this API will not affect the pagination of its results if you sort by ID.</p>
@@ -914,7 +915,7 @@
                     <div class="prop-value">
                       <p>The maximum number of cardholders to return per page.</p>
                       <p>Older versions of Command Centre returned 100. That is acceptable for a GUI application that will only display the first page of cardholders, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Version 8.50 will return 1000 items per request by default. 1000 is about where a graph of performance versus page size begins to level out. You may see some improvement by taking it even higher.</p>
+                      <p>Version 8.70 will return 1000 items per request by default. 1000 is about where a graph of performance versus page size begins to level out. You may see some improvement by taking it even higher.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -3353,7 +3354,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns access groups matching your search criteria.</p>
-                  <p>The result will contain no more than 100 groups, unless you ask for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>The result will contain no more than 100 or 1000 groups depending on your version; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
                   <p>When you have loaded all the access groups there will be no <code>next</code> link.</p>
                   <p>If your result set is empty it means your operator does not have the privilege to view any access groups. Perhaps there are none in the divisions in which your operator has &#39;View access groups&#39; or &#39;Edit access groups&#39;, or your operator has no privileges at all.</p>
                   <p>This request does not return the group&#39;s cardholders. That would make the results unwieldy. Instead, it provides a separate link.</p>
@@ -3400,11 +3401,10 @@
                       <div class="prop-subtitle">
                         <span class="json-property-type">integer</span>
                         <span class="json-property-range" title="Value limits">x ≥ 1</span>
-                        <span class="json-property-default-value" title="Default value">100</span>
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of access groups to return per page.</p>
+                      <p>The maximum number of access groups to return per page. The default depends on your server version; you should set it appropriately for your application.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -3964,7 +3964,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns competencies matching your search criteria.</p>
-                  <p>The result will contain no more than 100 competencies, unless you ask for more in your request; you should follow the <code>next</code> link (if present) for the next batch.</p>
+                  <p>The result will contain no more than 100 or 1000 competencies depending on your version; you should follow the <code>next</code> link (if present) for the next batch.</p>
                   <p>If your result set is empty it means your operator does not have the privilege to view any competencies. Perhaps there are none in the divisions in which your operator has &#39;View site&#39; or &#39;Edit site&#39;, or your operator has no privileges at all.</p>
                   <p>A bug in 7.90 meant that this call did not provide <code>next</code> links for sites that had more than 100 competencies. If this is you, set the &#39;top&#39; parameter as high as you can (as recommended in the efficiency tips). Command Centre clamps that to a maximum of ten thousand. If that is not enough competencies for you, you are probably already in contact with Gallagher technical support.</p>
                   <p>Get this URL from <code>features.competencies.competencies.href</code> in <code>/api</code>.</p>
@@ -4014,7 +4014,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4146,7 +4146,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/competencies?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/competencies?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -4425,7 +4425,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4566,7 +4566,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/assign?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/assign?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -4680,7 +4680,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns locker banks matching your search criteria.</p>
-                  <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more.</p>
+                  <p>The result will contain no more than 100 or 100 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more.</p>
                   <p>If the result set is empty it means there are no locker banks in the divisions in which the operator has a privilege that allows listing them, such as &#39;View lockers and assignments&#39;.</p>
                   <p>When you have loaded all the locker banks there will no <code>next</code> link.</p>
                   <p>Take this URL from the &#39;href&#39; field in the <code>features.lockerBanks.lockerBanks</code> section of <code>/api</code>.</p>
@@ -4725,11 +4725,10 @@
                       <div class="prop-subtitle">
                         <span class="json-property-type">integer</span>
                         <span class="json-property-range" title="Value limits">x ≥ 1</span>
-                        <span class="json-property-default-value" title="Default value">100</span>
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of locker banks to return per page. Depending on the number of lockers you have in each bank, you may find that 100 banks is too many for one page.</p>
+                      <p>The maximum number of locker banks to return per page. The default depends on your server version; you should set it appropriately for your application.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -5398,7 +5397,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns operator groups matching your search criteria.</p>
-                  <p>The result will contain no more than 100 groups, unless you ask for more in your request; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
+                  <p>The result will contain a batch of groups; you should follow the <code>next</code> link, if it is present, to collect the next batch.</p>
                   <p>When you have loaded all the operator groups there will be no <code>next</code> link.</p>
                   <p>If your result set is empty it means either your search terms were too tight or your operator does not have the privilege to view any operator groups. Perhaps there are none in the divisions in which your operator has &#39;View operators&#39; or &#39;Edit operators&#39;, or your operator does not have those privileges at all.</p>
                   <p>This request does not return the group&#39;s cardholders. That would make the results unwieldy. Instead, it provides a separate link.</p>
@@ -5446,11 +5445,10 @@
                       <div class="prop-subtitle">
                         <span class="json-property-type">integer</span>
                         <span class="json-property-range" title="Value limits">x ≥ 1</span>
-                        <span class="json-property-default-value" title="Default value">100</span>
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of operator groups to return per page.</p>
+                      <p>The maximum number of operator groups to return per page. The default depends on your server version; you should set it appropriately for your application.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -5914,8 +5912,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns the PDF definitions you are privileged to view. You will need the &#39;View Personal Data Definitions&#39; privilege, or its &#39;Edit&#39; equivalent, on a PDF&#39;s division in order to see it.</p>
-                  <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more. When you have loaded all the PDF definitions there will no <code>next</code> link.</p>
-                  <p>If your site has more than 100 PDFs and it is likely that someone will rename them between API calls you should either set your page size (<code>top</code>) higher or sort by ID so that the pagination is not affected.</p>
+                  <p>The result will contain no more than 100 or 1000 objects, depending on your version; you should follow the <code>next</code> link, if it is present, to collect more. When you have loaded all the PDF definitions there will no <code>next</code> link.</p>
                   <p>Take this URL from the href in the <code>features.personalDataFields.personalDataFields</code> section of <code>/api</code>.</p>
                 </section>
               </div>
@@ -5963,7 +5960,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -6307,7 +6304,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns the receptions you are privileged to view.</p>
-                  <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Receptions are small, so setting a limit of 1000 is sensible.</p>
+                  <p>The result will contain no more than 100 or 1000 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Receptions are small, so setting a limit of 1000 is sensible.</p>
                   <p>When you have loaded all the receptions there will no <code>next</code> link.</p>
                   <p>Take this URL from the href in the <code>features.receptions.receptions</code> section of <code>/api</code>.</p>
                 </section>
@@ -6356,7 +6353,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -6482,7 +6479,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions?pos=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions?pos=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -6677,7 +6674,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns the roles you are privileged to view.</p>
-                  <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Roles are small, so a limit of 1000 is sensible.</p>
+                  <p>The result will contain no more than 100 or 1000 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Roles are small, so a limit of 1000 is sensible.</p>
                   <p>When you have loaded all the roles there will no <code>next</code> link.</p>
                   <p>Take this URL from the href in the <code>features.roles.roles</code> section of <code>/api</code>.</p>
                 </section>
@@ -6726,7 +6723,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -6830,7 +6827,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles?pos=100&amp;sort=id&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles?pos=1000&amp;sort=id&quot;</span>
   }
 }
 </code></pre> </body>
@@ -6888,7 +6885,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns the visits you are privileged to view.</p>
-                  <p>The result will contain no more than 100 objects; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page.</p>
+                  <p>The result will contain no more than 100 or 1000 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page.</p>
                   <p>When you have loaded all the visits there will no <code>next</code> link.</p>
                   <p>Take this URL from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
                   <p>Visits are new to 8.50.</p>
@@ -6938,7 +6935,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -7075,7 +7072,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits?pos=100&amp;sort=id&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits?pos=1000&amp;sort=id&quot;</span>
   }
 }
 </code></pre> </body>
@@ -12548,7 +12545,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/competencies?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/competencies?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -12923,7 +12920,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/assign?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/assign?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -13783,7 +13780,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions?pos=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/receptions?pos=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -13980,7 +13977,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles?pos=100&amp;sort=id&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles?pos=1000&amp;sort=id&quot;</span>
   }
 }
 </code></pre> </body>
@@ -14159,7 +14156,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits?pos=100&amp;sort=id&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits?pos=1000&amp;sort=id&quot;</span>
   }
 }
 </code></pre> </body>

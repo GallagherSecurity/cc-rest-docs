@@ -53,13 +53,14 @@ info:
 
     #### Cardholder API changes on the roadmap
 
-    * A future version will sort its search results differently and may increase the number it
-    returns per page, if your query does not include parameters to override the defaults.
+    * A future version will sort its search results differently if your query does not include a
+      parameter to override the default.
 
     #### Cardholder API changes in 8.70
 
     * A cardholder's operator group memberships (added in 8.50) now contain an href that you can use
       in an HTTP DELETE as another way of removing a cardholder from an operator group.
+    * The server will return 1000 items by default, instead of 100.
 
     #### Cardholder API changes in 8.60
 
@@ -155,8 +156,8 @@ info:
 
     * When downloading a significant number of items, sort by ID.
 
-    * Set your page size as large as your client can handle.  The default used to be 100; using the
-      `top` parameter to take it to 1000 or more gives _much_ better throughput.
+    * Set your page size as large as your client can handle.  The default was 100 before 8.70; using
+      the `top` parameter to take it to 1000 or more gives _much_ better throughput.
 
     To give you an idea of the effect of setting `sort` and `top`, here are some timings for a
     download of 200,000 cardholders from CC 8.40:
@@ -1163,8 +1164,8 @@ parameters:
       applications that will only display the first page, but for integrations that intend to
       proceed through the entire database it causes a lot of chatter.
 
-      Later versions will return 1000 items per request.  This is about where a graph of performance
-      versus page size begins to level out.
+      8.70 and later versions will return 1000 items per request.  This is about where a graph of
+      performance versus page size begins to level out.
 
   name:
     name: "name"
@@ -4032,7 +4033,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/competencies?skip=100"
+          href: "https://localhost:8904/api/competencies?skip=1000"
 
   Competency summary:
     description: |
@@ -4148,7 +4149,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/card_types/assign?skip=100"
+          href: "https://localhost:8904/api/card_types/assign?skip=1000"
 
   Card type:
     description: |
@@ -4478,7 +4479,7 @@ definitions:
           href:
             type: string
             format: url
-            example: "https://localhost:8904/api/receptions?pos=100"
+            example: "https://localhost:8904/api/receptions?pos=1000"
 
   Reception:
     description: |
@@ -4551,7 +4552,7 @@ definitions:
           href:
             type: string
             format: url
-            example: "https://localhost:8904/api/roles?pos=100&sort=id"
+            example: "https://localhost:8904/api/roles?pos=1000&sort=id"
 
   Role:
     description: |
@@ -4610,7 +4611,7 @@ definitions:
           href:
             type: string
             format: url
-            example: "https://localhost:8904/api/visits?pos=100&sort=id"
+            example: "https://localhost:8904/api/visits?pos=1000&sort=id"
 
   Visit:
     description: |
@@ -4775,8 +4776,8 @@ paths:
       description: |
         This call returns cardholders matching your search criteria.
 
-        The result will contain no more than 100 cardholders, or as many as you asked for in your
-        request; you should follow the `next` link, if it is present, to collect the next batch.
+        The result will contain no more than 100 or 1000 cardholders depending on your version; you
+        should follow the `next` link, if it is present, to collect the next batch.
 
         When you have loaded all the cardholders there will be no `next` link.
 
@@ -4804,7 +4805,7 @@ paths:
           that will only display the first page of cardholders, but for integrations that intend to
           proceed through the entire database it causes a lot of chatter.
 
-          Version 8.50 will return 1000 items per request by default.  1000 is about where a graph
+          Version 8.70 will return 1000 items per request by default.  1000 is about where a graph
           of performance versus page size begins to level out.  You may see some improvement by
           taking it even higher.
 
@@ -5552,7 +5553,7 @@ paths:
 
         This returns access groups matching your search criteria.
 
-        The result will contain no more than 100 groups, unless you ask for more in your request; you
+        The result will contain no more than 100 or 1000 groups depending on your version; you
         should follow the `next` link, if it is present, to collect the next batch.
 
         When you have loaded all the access groups there will be no `next` link.
@@ -5577,8 +5578,9 @@ paths:
         required: false
         type: integer
         minimum: 1
-        default: 100
-        description: The maximum number of access groups to return per page.
+        description: |
+          The maximum number of access groups to return per page.  The default depends on your
+          server version;  you should set it appropriately for your application.
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
       - $ref: "#/parameters/description"
@@ -5722,8 +5724,8 @@ paths:
       description: |-
         This returns competencies matching your search criteria.
 
-        The result will contain no more than 100 competencies, unless you ask for more in your
-        request;  you should follow the `next` link (if present) for the next batch.
+        The result will contain no more than 100 or 1000 competencies depending on your version; you
+        should follow the `next` link (if present) for the next batch.
 
         If your result set is empty it means your operator does not have the privilege to view any
         competencies.  Perhaps there are none in the divisions in which your operator has 'View
@@ -5887,8 +5889,8 @@ paths:
       description: |
         This returns locker banks matching your search criteria.
 
-        The result will contain no more than 100 objects; you should follow the `next` link, if it
-        is present, to collect more.
+        The result will contain no more than 100 or 100 objects depending on your version; you
+        should follow the `next` link, if it is present, to collect more.
 
         If the result set is empty it means there are no locker banks in the divisions in which the
         operator has a privilege that allows listing them, such as 'View lockers and assignments'.
@@ -5905,10 +5907,9 @@ paths:
         required: false
         type: integer
         minimum: 1
-        default: 100
         description: |
-          The maximum number of locker banks to return per page.  Depending on the number of lockers
-          you have in each bank, you may find that 100 banks is too many for one page.
+          The maximum number of locker banks to return per page.  The default depends on your
+          server version;  you should set it appropriately for your application.
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
       - $ref: "#/parameters/description"
@@ -6079,8 +6080,8 @@ paths:
 
         This returns operator groups matching your search criteria.
 
-        The result will contain no more than 100 groups, unless you ask for more in your request; you
-        should follow the `next` link, if it is present, to collect the next batch.
+        The result will contain a batch of groups; you should follow the `next` link, if it is
+        present, to collect the next batch.
 
         When you have loaded all the operator groups there will be no `next` link.
 
@@ -6107,8 +6108,9 @@ paths:
         required: false
         type: integer
         minimum: 1
-        default: 100
-        description: The maximum number of operator groups to return per page.
+        description: |
+          The maximum number of operator groups to return per page.  The default depends on your
+          server version; you should set it appropriately for your application.
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
       - $ref: "#/parameters/description"
@@ -6238,13 +6240,9 @@ paths:
         Personal Data Definitions' privilege, or its 'Edit' equivalent, on a PDF's division in order
         to see it.
 
-        The result will contain no more than 100 objects; you should follow the `next` link, if it
-        is present, to collect more.  When you have loaded all the PDF definitions there will no
-        `next` link.
-
-        If your site has more than 100 PDFs and it is likely that someone will rename them between
-        API calls you should either set your page size (`top`) higher or sort by ID so that the
-        pagination is not affected.
+        The result will contain no more than 100 or 1000 objects, depending on your version; you
+        should follow the `next` link, if it is present, to collect more.  When you have loaded all
+        the PDF definitions there will no `next` link.
 
         Take this URL from the href in the `features.personalDataFields.personalDataFields`
         section of `/api`.
@@ -6301,9 +6299,9 @@ paths:
       description: |
         This returns the receptions you are privileged to view.
 
-        The result will contain no more than 100 objects; you should follow the `next` link, if it
-        is present, to collect more, or use the `top` parameter to get more per page.  Receptions
-        are small, so setting a limit of 1000 is sensible.
+        The result will contain no more than 100 or 1000 objects depending on your version; you
+        should follow the `next` link, if it is present, to collect more, or use the `top` parameter
+        to get more per page.  Receptions are small, so setting a limit of 1000 is sensible.
 
         When you have loaded all the receptions there will no `next` link.
 
@@ -6360,9 +6358,9 @@ paths:
       description: |
         This returns the roles you are privileged to view.
 
-        The result will contain no more than 100 objects; you should follow the `next` link, if it
-        is present, to collect more, or use the `top` parameter to get more per page.  Roles are
-        small, so a limit of 1000 is sensible.
+        The result will contain no more than 100 or 1000 objects depending on your version; you
+        should follow the `next` link, if it is present, to collect more, or use the `top` parameter
+        to get more per page.  Roles are small, so a limit of 1000 is sensible.
 
         When you have loaded all the roles there will no `next` link.
 
@@ -6390,8 +6388,9 @@ paths:
       description: |
         This returns the visits you are privileged to view.
 
-        The result will contain no more than 100 objects; you should follow the `next` link, if it
-        is present, to collect more, or use the `top` parameter to get more per page.
+        The result will contain no more than 100 or 1000 objects depending on your version; you
+        should follow the `next` link, if it is present, to collect more, or use the `top` parameter
+        to get more per page.
 
         When you have loaded all the visits there will no `next` link.
 

@@ -331,7 +331,11 @@
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
                 <h4 id="api-changes-on-the-roadmap">API changes on the roadmap</h4>
                 <ul>
-                  <li>A future version will increase the number of items in its search results and sort them differently, if you did not use query parameters to override the defaults.</li>
+                  <li>A future version sort its search results differently, if you did not use a query parameter to override the default.</li>
+                </ul>
+                <h4 id="changes-in-870">Changes in 8.70</h4>
+                <ul>
+                  <li>The server will return 1000 items by default, instead of 100.</li>
                 </ul>
                 <h4 id="changes-in-860">Changes in 8.60</h4>
                 <ul>
@@ -389,7 +393,7 @@
                     <p>When downloading more than one page of items, sort by ID.</p>
                   </li>
                   <li>
-                    <p>Set your page size as large as your client can handle. The defualt used to be 100; using the <code>top</code> parameter to take it to 1000 or more gives
+                    <p>Set your page size as large as your client can handle. The default was 100 before 8.70; using the <code>top</code> parameter to take it to 1000 or more gives
                       <em>much</em> better throughput.</p>
                   </li>
                   <li>
@@ -837,7 +841,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -967,7 +971,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -1052,7 +1056,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -1185,7 +1189,7 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/0&quot;</span>
   },
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -2553,7 +2557,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2681,7 +2685,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -3839,7 +3843,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -3927,7 +3931,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -4059,7 +4063,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4189,7 +4193,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -4673,7 +4677,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4896,7 +4900,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -5019,7 +5023,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -5302,7 +5306,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -5431,7 +5435,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/fence_zones?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/fence_zones?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -6391,7 +6395,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -6518,7 +6522,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -7209,7 +7213,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -7333,7 +7337,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/macros?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/macros?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -7694,7 +7698,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -7822,7 +7826,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -8603,7 +8607,7 @@
                     <div class="prop-value">
                       <p>The maximum number of items to return per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>Later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -9403,7 +9407,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -9513,7 +9517,7 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/0&quot;</span>
   },
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -10459,7 +10463,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarm_zones?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -11111,7 +11115,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/day_categories?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -11266,7 +11270,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -12044,7 +12048,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/fence_zones?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/fence_zones?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -12568,7 +12572,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/inputs?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -13005,7 +13009,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/macros?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/macros?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -13271,7 +13275,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>
@@ -13733,7 +13737,7 @@
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules?skip=100&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/schedules?skip=1000&quot;</span>
   }
 }
 </code></pre> </body>

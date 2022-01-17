@@ -52,8 +52,12 @@ info:
 
     #### API changes on the roadmap
 
-    * A future version will increase the number of items in its search results and sort them
-    differently, if you did not use query parameters to override the defaults.
+    * A future version sort its search results differently, if you did not use a query parameter to
+      override the default.
+
+    #### Changes in 8.70
+
+    * The server will return 1000 items by default, instead of 100.
 
     #### Changes in 8.60
 
@@ -102,8 +106,8 @@ info:
 
     * When downloading more than one page of items, sort by ID.
 
-    * Set your page size as large as your client can handle.  The defualt used to be 100; using the
-      `top` parameter to take it to 1000 or more gives _much_ better throughput.
+    * Set your page size as large as your client can handle.  The default was 100 before 8.70; using
+      the `top` parameter to take it to 1000 or more gives _much_ better throughput.
 
     * (In v8.00 or later) avoid the details page by adding detail fields to the summary page with
       the [`fields` parameter](#topic-Field-specifiers).  One summary page of 1,000 items, while
@@ -520,7 +524,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/access_zones?skip=100"
+          href: "https://localhost:8904/api/access_zones?skip=1000"
 
   Access Zones as move targets:
     tags:
@@ -549,7 +553,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/access_zones?skip=100"
+          href: "https://localhost:8904/api/access_zones?skip=1000"
 
   Access Zone summary:
     description: |
@@ -897,7 +901,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/alarm_zones?skip=100"
+          href: "https://localhost:8904/api/alarm_zones?skip=1000"
 
   Alarm Zone summary:
     description: |
@@ -1142,7 +1146,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/day_categories?skip=100"
+          href: "https://localhost:8904/api/day_categories?skip=1000"
 
   Day category:
     description: |
@@ -1186,7 +1190,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/doors?skip=100"
+          href: "https://localhost:8904/api/doors?skip=1000"
 
   Door summary:
     description: |
@@ -1461,7 +1465,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/fence_zones?skip=100"
+          href: "https://localhost:8904/api/fence_zones?skip=1000"
 
   Fence Zone summary:
     description: |
@@ -1633,7 +1637,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/inputs?skip=100"
+          href: "https://localhost:8904/api/inputs?skip=1000"
 
   Input summary:
     description: |
@@ -1754,7 +1758,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/macros?skip=100"
+          href: "https://localhost:8904/api/macros?skip=1000"
 
   Macro summary:
     description: |
@@ -1833,7 +1837,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/outputs?skip=100"
+          href: "https://localhost:8904/api/outputs?skip=1000"
 
   Output summary:
     description: |
@@ -1963,7 +1967,7 @@ definitions:
         properties:
           href: { type: string, format: url }
         example:
-          href: "https://localhost:8904/api/schedules?skip=100"
+          href: "https://localhost:8904/api/schedules?skip=1000"
 
   Schedule summary:
     description: |
@@ -3667,7 +3671,7 @@ paths:
                   href:
                     type: string
                     format: url
-                    example: "https://localhost:8904/api/elevator_groups?skip=100"
+                    example: "https://localhost:8904/api/elevator_groups?skip=1000"
         403:
           description: |
             The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
