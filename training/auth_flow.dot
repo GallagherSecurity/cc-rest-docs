@@ -8,7 +8,7 @@ digraph
         o_noapikey[label="Raise 'invalid API key' alarm,\nreturn 401"]
         o_badprint[label="Raise 'incorrect fingerprint' alarm,\nreturn 401"]
         o_badip[label="Raise 'bad source IP' alarm,\nreturn 401"]
-        o_nolicence[label="Return 401"]
+        o_nolicence[label="Return 403"]
         clientquit[label="Client throws error"]
         o_nopriv[label="Return 403"]
 
@@ -40,7 +40,7 @@ digraph
         cond->o_reqclientcert [label = "yes"]
         o_reqclientcert -> o_clientsendscert
         o_clientsendscert -> o_clientreq
-        o_clientreq->c_apikeycheck [label = "yes"]
+        o_clientreq->c_apikeycheck
 
         c_apikeycheck->o_noapikey [label = "no"]
         c_apikeycheck->c_versioncheck [label = "yes"]
