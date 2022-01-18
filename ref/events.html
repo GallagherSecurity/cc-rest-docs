@@ -1778,9 +1778,10 @@
               </ol>
               <p>To further improve the efficiency of your search, filter by event types and a time range.</p>
               <h4 id="searching-for-events-coming-from-other-items">Searching for events coming from other items</h4>
-              <p>Events such as &#39;access granted&#39; and &#39;zone count maximum&#39; come from doors and access zones. To search for them, follow the same process as the previous use case but use the <code>source</code> filter parameter instead of <code>cardholder</code>. If you have the RESTStatus licence (added in v8.00), you can use
+              <p>Events such as &#39;access granted&#39; and &#39;zone count maximum&#39; come from doors and access zones. To search for them, follow the same process as the previous use case (getting cardholder events) but use the <code>source</code> filter parameter instead of <code>cardholder</code>. It will limit the results to just those events that came from the items you gave in the query. If you have the RESTStatus licence (added in v8.00), you can use
                 <a href="rest.html">that API</a> to search for access zones, alarm zones, fence zones, macros, outputs, doors, and (in 8.10) inputs. If you do not, or if your source is not one of those types, use the
                 <a href="#tag-Items">items API</a> with a suitable <code>type</code> filter.</p>
+              <p>You can also use the <code>type</code> parameter to limit the events to particular event types. By doing this you can (for example) subscribe to &#39;access granted&#39; events from a collection of doors.</p>
               <h4 id="creating-a-new-event">Creating a new event</h4>
               <ol>
                 <li><code>GET /api</code></li>

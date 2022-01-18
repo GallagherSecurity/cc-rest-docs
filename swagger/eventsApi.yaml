@@ -228,11 +228,15 @@ tags:
     #### Searching for events coming from other items
 
     Events such as 'access granted' and 'zone count maximum' come from doors and access zones.  To
-    search for them, follow the same process as the previous use case but use the `source` filter
-    parameter instead of `cardholder`.  If you have the RESTStatus licence (added in v8.00), you can
-    use [that API](rest.html) to search for access zones, alarm zones, fence zones, macros, outputs,
-    doors, and (in 8.10) inputs.  If you do not, or if your source is not one of those types, use
-    the [items API](#tag-Items) with a suitable `type` filter.
+    search for them, follow the same process as the previous use case (getting cardholder events)
+    but use the `source` filter parameter instead of `cardholder`.  It will limit the results to
+    just those events that came from the items you gave in the query.  If you have the RESTStatus
+    licence (added in v8.00), you can use [that API](rest.html) to search for access zones, alarm
+    zones, fence zones, macros, outputs, doors, and (in 8.10) inputs.  If you do not, or if your
+    source is not one of those types, use the [items API](#tag-Items) with a suitable `type` filter.
+
+    You can also use the `type` parameter to limit the events to particular event types.  By doing
+    this you can (for example) subscribe to 'access granted' events from a collection of doors.
 
     #### Creating a new event
 
