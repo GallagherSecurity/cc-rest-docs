@@ -1464,6 +1464,12 @@ paths:
 
         Added in 8.30.
 
+        Note that the first time you make this GET request it will return all the activity that came
+        back from the POST.  There are other cases where the GET might return data you have seen
+        already (when some aspect of an item changes that your operator does not have the privilege
+        to view, for example).  These two behaviours are not harmful, but also not particularly
+        helpful, so future versions may differ.
+
       parameters:
         - name: "bookmark"
           in: query
