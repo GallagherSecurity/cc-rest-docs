@@ -1264,12 +1264,13 @@ parameters:
     type: string
     default: [ none ]
     description: |
-          Attribute this override to the cardholder with this ID, rather than the REST operator.
-          Event monitors and reports will show the attributed cardholder as being responsible for
-          the override, rather than the REST operator.  The REST operator will appear in a special
-          mention in the event's details.
+          Attribute this override to the cardholder with this ID rather than the REST operator.
+          Privilege checks will use the operator, as normal, but event monitors and reports will
+          state that the person responsible for the override was the attributed cardholder, not the
+          REST operator.  The REST operator will appear in a special mention in the event's details.
 
-          Available in 8.70.
+          First available in 8.70.  Versions older than 8.70 will ignore the parameter, leaving the
+          override attributed to the REST operator.
 
   visit_fields:
     name: "fields"
