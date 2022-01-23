@@ -620,7 +620,7 @@ parameters:
     history, instruction, cardholder ]
 
     description: |
-      Allows you to specify which fields you want in your results.  Separate fields with commas.
+      Sets the fields you want in your results.  Separate fields with commas.
 
       New to 8.40.
 
@@ -634,7 +634,7 @@ parameters:
     entryAccessZone, exitAccessZone, door, accessGroup, card, modifiedItem, lastOccurrenceTime]
 
     description: |
-      Allows you to specify which fields you want in your results.
+      Sets the fields you want in your results.
 
       This is the list of valid fields for 8.40, but it is different for older server versions, so
       check with the topic [on event field specifiers](#topic-Event-field-specifiers).
@@ -949,25 +949,26 @@ paths:
         minimum: 1
         maximum: 10000
         default: 1000
-        description: The maximum number of events to return per page.
+        description: Sets the maximum number of events to return per page.
       - name: "after"
         in: query
         required: false
         type: string
         format: date-time
         description: |
-          An ISO-8601 date or date-time string that restricts events to those that occurred at or
-          after this time.
+          Restricts events to those that occurred at or after this time.  It must an ISO-8601
+          date or date-time with a timezone specifier.
       - name: "before"
         in: query
         required: false
         type: string
         format: date-time
         description: |
-          An ISO-8601 date or date-time string that restricts events to those that occurred before
-          this time.  Events that occurred at this exact time (to the second) will not appear in the
-          results.  For example, to collect all events that occurred on 1 January 2017, use
-          `after=2017-01-01Z,before=2017-01-02Z`.  You will not receive any events from 2 January.
+          Restricts events to those that occurred before this time.  It must be an ISO-8601 date or
+          date-time with a timezone specifier.  Events that occurred at this exact time (to the
+          second) will not appear in the results.  For example, to collect all events that occurred
+          on 1 January 2017, use `after=2017-01-01Z,before=2017-01-02Z`.  You will not receive any
+          events from 2 January.
       - name: "source"
         in: query
         required: false
@@ -1002,9 +1003,9 @@ paths:
         type: boolean
         default: false
         description: |
-          Without this option, the API will return events starting from the epoch.  If you set this
-          to `true`, it will return the most recent events, the last of which will be the latest to
-          arrive at the server.
+          Returns the newest events rather than the oldest.  Without this option the API will return
+          events starting from the epoch, but if you set it to `true` the server will return the
+          most recent events, the last of which will be the latest to arrive at the server.
 
           In both cases you can move backward and forward in arrival time with the 'next' and
           'previous' links.
@@ -1017,8 +1018,8 @@ paths:
           Restricts events to those with event IDs greater than this parameter (or less than and
           including, if you set `previous=true`).
 
-          INTERNAL USE ONLY.  Retain the 'next' or 'updates' link in your application instead.  This
-          is how Command Centre tracks the events you have seen already.  Do not set it yourself.
+          INTERNAL USE ONLY.  This is how Command Centre tracks the events you have seen already.
+          Do not set it yourself.  Retain the 'next' or 'updates' link in your application instead.
 
       responses:
         200:
@@ -1069,7 +1070,7 @@ paths:
         type: integer
         minimum: 1
         maximum: 10000
-        description: The maximum number of events to return per page.
+        description: Sets the maximum number of events to return per page.
       - name: "deadline"
         in: query
         required: false
@@ -1077,17 +1078,17 @@ paths:
         minimum: 1
         maximum: 86400
         description: |
-          The number of seconds to wait for an event, if none are ready when you make the call.  If
-          none arrive during that time, the result set will be empty. If not specified, a default
-          will apply.
+          Sets the number of seconds to wait for an event, if none are ready when you make the call.
+          If none arrive before this number of seconds pass the result set will be empty. If not
+          specified, a default will apply.
       - name: "after"
         in: query
         required: false
         type: string
         format: date-time
         description: |
-          An ISO-8601 date or date-time string.  Removes events that occurred before this time from
-          the result set.
+          Removes events that occurred before this time from the result set.  It must be an ISO-8601
+          date or date-time with a timezone.
 
           It is unlikely you will add this parameter to `GET /api/events/updates`.  However it is a
           very useful parameter to [/api/events](#operation--api-events-get), and it will pass from
@@ -1106,9 +1107,11 @@ paths:
         type: string
         format: date-time
         description: |
-          An ISO-8601 date or date-time string.  Removes events that occurred at or after this time
-          from the result set.  If no events arrive with an occurrence time earlier than this
-          parameter, the call will time out.
+          Removes events that occurred at or after this time from the result set.  It must be an
+          ISO-8601 date or date-time string with a timezone.
+
+          If no events arrive with an occurrence time earlier than this parameter, the call will
+          eventually time out.
 
           It is unlikely you will want this parameter in a call to `GET /api/events/updates`.  It
           puts an end-date on the search, which is a very odd thing to do on a call intended to keep
@@ -1238,7 +1241,7 @@ paths:
       - name: "top"
         in: query
         required: false
-        description: The maximum number of divisions to return per page.
+        description: Sets the maximum number of divisions to return per page.
         type: integer
         minimum: 1
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -1305,19 +1308,19 @@ paths:
         required: false
         type: string
         description: |
-          Only return items that are in these divisions or their subdivisions.  Use the divisions'
+          Only returns items that are in these divisions or their subdivisions.  Use the divisions'
           short alphanumeric IDs, separateed by commas.
       - name: "type"
         in: query
         required: false
         type: string
         description: |
-          Only return items that are of a type with this ID.  In versions up to 8.30 you could only
+          Only returns items that are of a type with this ID.  In versions up to 8.30 you could only
           specify one, but in 8.40 and later this can be a comma-separated list.
       - name: "top"
         in: query
         required: false
-        description: The maximum number of items to return per page.
+        description: Sets the maximum number of items to return per page.
         type: integer
         minimum: 1
         default: 100
@@ -1476,7 +1479,7 @@ paths:
           required: true
           type: string
           description: |
-            The identifier of your subscription plus a marker for your progress though it.  You do
+            Identifies your subscription and your position in the change list.  You do
             not need to set this parameter:  it will be in the link that the server sends back to
             you.
 

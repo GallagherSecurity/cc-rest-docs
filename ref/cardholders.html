@@ -891,7 +891,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>Changes the sort field between database ID and name.</p>
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
@@ -913,7 +913,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of cardholders to return per page.</p>
+                      <p>Sets maximum number of cardholders to return per page.</p>
                       <p>Older versions of Command Centre returned 100. That is acceptable for a GUI application that will only display the first page of cardholders, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
                       <p>Version 8.70 will return 1000 items per request by default. 1000 is about where a graph of performance versus page size begins to level out. You may see some improvement by taking it even higher.</p>
                     </div>
@@ -928,7 +928,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return cardholders with a name that matches this string. By default, it is a substring search against the first name or the last name or the concatenation &#39;lastName, firstName&#39;; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact search.</p>
+                      <p>Limits results to cardholders with a name that matches this string. By default, it is a substring search against the first name or the last name or the concatenation &#39;lastName, firstName&#39;; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact search.</p>
                       <p>Without quotes, a percent sign <code>%</code> inside your search string will anchor the search at both ends (so it will no longer be a substring search) and the <code>%</code> will match any substring. For example, <code>boothroyd,%</code> will only match cardholders whose last name is Boothroyd.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no cardholders if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>The search parameters form a logical conjunction. They are ANDed together. Therefore if you search for <code>name=Mary&amp;pdf_1315=nanny</code> you will only get back cardholders with &#39;Mary&#39; in their name and &#39;nanny&#39; in the PDF with ID 1315.</p>
@@ -944,7 +944,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return cardholders with a value for the Personal Data Field with this ID that matches the parameter.</p>
+                      <p>Limits results to cardholders with a value for the Personal Data Field with this ID that matches the parameter.</p>
                       <p>By default, it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring. A lone <code>%</code> will return any cardholder with this PDF set to a non-null value.</p>
                       <p>The search is always case-insensitive.</p>
                       <p>The search parameters form a logical conjunction. They are ANDed together. Therefore the search <code>pdf_1315=nanny&amp;pdf_1315=paratrooper</code> will only return cardholders whose PDF 1315 contains the strings &#39;nanny&#39; and &#39;paratrooper&#39;.</p>
@@ -960,7 +960,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items in these divisions.</p>
+                      <p>Limits returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -977,7 +977,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -993,7 +993,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as you can for the details page,
+                      <p>Specifies the fields you want in the search results. The values you can use here are the same as you can for the details page,
                         <a href="#field-names-in-query-parameters">listed here</a>. Using it you can return everything on the search page that you would find on the details page with the exception of the <code>edit</code> and <code>updates</code> links. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
                       <p>Use the special value <code>personalDataFields</code> to return the &#39;personalDataDefinitions&#39; block as well as the PDF values at the root level of the cardholder object.</p>
@@ -1346,7 +1346,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields. The values you can list are the same as the field names in the
+                      <p>Specifies the fields you want in the results. The values you can list are the same as the field names in the
                         <a href="#definition-Cardholder-detail">detail results</a>. Use it to return fewer fields than normal. Separate values with commas.</p>
                       <p>Treat the string matches as case sensitive: use &#39;lastName&#39; rather than &#39;lastname&#39;.</p>
                       <p>Added to the cardholders controller in 8.00. In that version you will receive the href, internal ID, and updates link even if you do not ask for them. In 8.10 you will not. If you are going to send the fields parameter and need those fields, include them.</p>
@@ -3078,7 +3078,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of changes to return per page.</p>
+                      <p>Sets the maximum number of changes to return per page.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -3132,7 +3132,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limit the search results to the changes that affected these fields, and limit the <code>oldValues</code> and <code>newValues</code> blocks to these fields. You can specify practically any of the fields in the
+                      <p>Limits the search results to the changes that affected these fields, and limits the <code>oldValues</code> and <code>newValues</code> blocks to these fields. You can specify practically any of the fields in the
                         <a href="#definition-Cardholder-detail">cardholder detail</a>. You can also go into more detail; for example you can monitor a cardholder&#39;s cards&#39; validity dates using <code>filter=cards.from,cards.until</code>.</p>
                       <p><code>filter</code> reduces the number of results; if you want to change the blocks in each result, use <code>fields</code>.</p>
                       <p>If you do not supply a filter parameter it will use the same fields you get in a cardholder details page. That is nearly everything the API has for a cardholder, but omits some seldom-used or expensive features such as card tracing and the large PIV fields. If you want to monitor them you must list them here. For example, <code>filter=defaults,cards.trace</code> will add the card trace flag to the usual results.</p>
@@ -3165,7 +3165,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return these blocks in the results.</p>
+                      <p>Limits the blocks in the results.</p>
                       <p><code>fields</code> affects the blocks in each result; if you want to reduce the number of results, use <code>filter</code>.</p>
                       <p>You can have finer-grained control of fields inside those blocks by listing their JSON paths. For example, to see what the operator and affected cardholder&#39;s names are now, you could use <code>fields=operator.name,cardholder.firstName,cardholder.lastName</code>.</p>
                       <p>The values you can list for the cardholder block are very similar to
@@ -3382,7 +3382,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>Changes the sort field between database ID and name.</p>
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
@@ -3404,7 +3404,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of access groups to return per page. The default depends on your server version; you should set it appropriately for your application.</p>
+                      <p>Sets the maximum number of access groups to return per page. The default depends on your server version; you should set it appropriately for your application.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -3417,7 +3417,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -3432,7 +3432,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items in these divisions.</p>
+                      <p>Limits returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -3449,7 +3449,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -3481,7 +3481,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the
+                      <p>Sets the list of fields to return in the search results. The values you can list are the same as the field names in the
                         <a href="#definition-Access-group-detail">details page</a>. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
                       <p>Treat the string matches as case sensitive.</p>
@@ -3632,7 +3632,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields. The values you can list are the same as the field names in the
+                      <p>Sets the list of fields to return. The values you can list are the same as the field names in the
                         <a href="#definition-Access-group-detail">detail results</a>. Use it to return less data than normal. Separate values with commas.</p>
                       <p>Treat the string matches as case sensitive.</p>
                       <p>In v8.00 you will receive the href and internal ID even if you didn&#39;t ask for them. In 8.10 you will not. If you are going to send the fields parameter and need the href or ID, include them.</p>
@@ -3990,7 +3990,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>Changes the sort field between database ID and name.</p>
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
@@ -4012,7 +4012,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of items to return per page.</p>
+                      <p>Limits the results to no more than this many items per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
                       <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
@@ -4027,7 +4027,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4042,7 +4042,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items in these divisions.</p>
+                      <p>Limits returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -4059,7 +4059,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4088,7 +4088,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the
+                      <p>Specifies which fields to return in the search results. The values you can list are the same as the field names in the
                         <a href="#definition-Competency-detail">details page</a>. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
                       <p>Treat the string matches as case sensitive.</p>
@@ -4225,7 +4225,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields. The values you can list are the same as the field names in the
+                      <p>Specifies which fields to return. The values you can list are the same as the field names in the
                         <a href="#definition-Competency-detail">details page</a>. Use it to reduce the size of the result document. Separate values with commas.</p>
                       <p>Treat the string matches as case sensitive.</p>
                     </div>
@@ -4401,7 +4401,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>Changes the sort field between database ID and name.</p>
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
@@ -4423,7 +4423,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of items to return per page.</p>
+                      <p>Limits the results to no more than this many items per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
                       <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
@@ -4438,7 +4438,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4453,7 +4453,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items in these divisions.</p>
+                      <p>Limits returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -4470,7 +4470,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4497,7 +4497,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results, instead of the default set (which contains nearly every field). Separate values with commas.</p>
+                      <p>Specifies which fields to return instead of the default set (which contains nearly every field). Separate values with commas.</p>
                       <p>Treat the string matches as case sensitive: use &#39;facilityCode&#39; rather than &#39;facilitycode&#39;.</p>
                     </div>
                   </div>
@@ -4706,7 +4706,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>Changes the sort field between database ID and name.</p>
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
@@ -4728,7 +4728,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of locker banks to return per page. The default depends on your server version; you should set it appropriately for your application.</p>
+                      <p>Sets the maximum number of locker banks to return per page. The default depends on your server version; you should set it appropriately for your application.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4741,7 +4741,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4756,7 +4756,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items in these divisions.</p>
+                      <p>Limits returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -4773,7 +4773,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4809,7 +4809,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the
+                      <p>Sets which fields to return. The values you can list are the same as the field names in the
                         <a href="#definition-Locker-bank-detail">details page</a>. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
                       <p>If you specify any value for this parameter, the default no longer applies and you will only receive the fields you asked for.</p>
                       <p>Use the special value <code>defaults</code> to return the locker bank fields you would have received had you not given the parameter at all. Then you can add a comma and more fields.</p>
@@ -4959,7 +4959,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields. The values you can list are the same as the field names you would get in the
+                      <p>Sets which fields to return. The values you can list are the same as the field names you would get in the
                         <a href="#definition-Locker-bank-detail">details page</a>. Use it to cut back on the size of the response for large locker banks. Separate values with commas.</p>
                       <p>Treat the string matches as case sensitive.</p>
                       <p>In v8.00 you will receive the href and internal ID even if you did not ask for them. In 8.10 you will not. If you are going to send the fields parameter and need the href or ID, be explicit.</p>
@@ -5142,7 +5142,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields. Use it to cut back on the size of the response for a locker with many assignments. Separate values with commas.</p>
+                      <p>Sets which fields to return. Use it to cut back on the size of the response for a locker with many assignments. Separate values with commas.</p>
                       <p>Treat the string matches as case sensitive.</p>
                     </div>
                   </div>
@@ -5426,7 +5426,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>Changes the sort field between database ID and name.</p>
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
@@ -5448,7 +5448,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of operator groups to return per page. The default depends on your server version; you should set it appropriately for your application.</p>
+                      <p>Sets the maximum number of operator groups to return per page. The default depends on your server version; you should set it appropriately for your application.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -5461,7 +5461,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -5476,7 +5476,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items in these divisions.</p>
+                      <p>Limits returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -5493,7 +5493,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -5519,7 +5519,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same as the field names in the
+                      <p>Sets which fields to return. The values you can list are the same as the field names in the
                         <a href="#definition-Operator-group-detail">details page</a>. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
                       <p>Treat the string matches as case sensitive.</p>
@@ -5653,7 +5653,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields. The values you can list are the same as the field names in the
+                      <p>Sets which fields to return. The values you can list are the same as the field names in the
                         <a href="#definition-Operator-group-detail">detail results</a>. Use it to return the notes, which don&#39;t appear by default. Separate values with commas.</p>
                       <p>Treat the string matches as case sensitive.</p>
                     </div>
@@ -5936,7 +5936,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>Changes the sort field between database ID and name.</p>
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
@@ -5958,7 +5958,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of items to return per page.</p>
+                      <p>Limits the results to no more than this many items per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
                       <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
@@ -5973,7 +5973,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -5988,7 +5988,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items in these divisions.</p>
+                      <p>Limits returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -6005,7 +6005,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6037,7 +6037,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
+                      <p>Specifies the fields in the search results. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
                       <p>Treat the string matches as case sensitive.</p>
                     </div>
@@ -6178,7 +6178,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields in the search results. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
+                      <p>Specifies the fields in the search results. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
                       <p>Treat the string matches as case sensitive.</p>
                     </div>
@@ -6329,7 +6329,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>Changes the sort field between database ID and name.</p>
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
@@ -6351,7 +6351,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of items to return per page.</p>
+                      <p>Limits the results to no more than this many items per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
                       <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
@@ -6366,7 +6366,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6381,7 +6381,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items in these divisions.</p>
+                      <p>Limits returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -6398,7 +6398,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6423,7 +6423,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the reception&#39;s notes. Separate values with commas.</p>
+                      <p>Specifies the fields in the response. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the reception&#39;s notes. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
                       <p>Treat the string matches as case sensitive.</p>
                     </div>
@@ -6554,7 +6554,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the reception&#39;s notes. Separate values with commas.</p>
+                      <p>Specifies the fields in the response. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the reception&#39;s notes. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
                       <p>Treat the string matches as case sensitive.</p>
                     </div>
@@ -6699,7 +6699,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>Changes the sort field between database ID and name.</p>
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
@@ -6721,7 +6721,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of items to return per page.</p>
+                      <p>Limits the results to no more than this many items per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
                       <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
@@ -6736,7 +6736,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6751,7 +6751,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items in these divisions.</p>
+                      <p>Limits returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -6768,7 +6768,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6911,7 +6911,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Before paginating your results the server can sort them by name or database ID.</p>
+                      <p>Changes the sort field between database ID and name.</p>
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
@@ -6933,7 +6933,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The maximum number of items to return per page.</p>
+                      <p>Limits the results to no more than this many items per page.</p>
                       <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
                       <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
                     </div>
@@ -6948,7 +6948,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6963,7 +6963,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items in these divisions.</p>
+                      <p>Limits returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -6980,7 +6980,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only return items with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -7013,7 +7013,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the visit&#39;s notes. Separate values with commas.</p>
+                      <p>Specifies the fields in the response. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the visit&#39;s notes. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
                       <p>Treat the string matches as case sensitive.</p>
                     </div>
@@ -7321,7 +7321,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Return these fields. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the visit&#39;s notes. Separate values with commas.</p>
+                      <p>Specifies the fields in the response. The values you can list are the same in the search and details pages. Using it you can return everything on the search page that you would find on the details page, plus the visit&#39;s notes. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Add more after a comma.</p>
                       <p>Treat the string matches as case sensitive.</p>
                     </div>
