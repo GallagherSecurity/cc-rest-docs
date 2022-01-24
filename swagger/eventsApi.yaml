@@ -411,7 +411,7 @@ x-spectacle-topics:
       First, some background on operators, operator groups, and divisions.
 
       To determine your REST client's privileges, the server starts by searching the list of REST
-      Client items in its configuration for the one with the API key in the Authorization header of
+      Client items in its configuration for the one with the API key in the `Authorization` header of
       your request.  Assuming it finds one, it takes the cardholder from that REST Client item.
 
       To be any use at all that cardholder must be a member of at least one operator group.  Being
@@ -424,15 +424,15 @@ x-spectacle-topics:
       _division_.  Divisions are hierarchical, with all divisions (but the root) being a child of
       another.  Multi-server installations have one division tree per server.
 
-      Events are not items, but they also have a division.  It is usually the division of their
-      source item.  Card events, for example, typically use a door as a source item; when an
+      Every event and alarm has a division.  It is usually the division of the source item.  Card
+      events or 'door forced' alarms, for example, typically use a door as a source item; when an
       operator modifies an item, the event recording that change uses that operator's workstation as
-      the source item.  'Card activated' events, however, have the server as a source item but they
-      take on the cardholder's division.
+      the source item; the alarm that the server generates when you send a bad API key uses the
+      server item as the source.
 
-      Alarms also have a division:  a 'door forced' alarm, for example, has the door as the source,
-      and an alarm that the server generates when you send a bad API key uses the server itself as
-      the source.
+      An event's division is not always its source's division.  'Card activated' events have the
+      server as a source item, but take on the cardholder's division so that operators who can see
+      the cardholder can also see when the server activates their cards.
 
       To link privileges to items and events, an operator group contains a list of privileges and a
       list of divisions.  Its operators enjoy those privileges on all the items, events, and alarms
@@ -2244,7 +2244,7 @@ definitions:
         description: |
           This should be the href of the item you wish to use as the source of your event.  If you
           do not supply it, Command Centre will use the REST Client item identified by the API key
-          in the Authorization header.
+          in the `Authorization` header.
 
           The API will use the source's division as the event's division.
         type: object

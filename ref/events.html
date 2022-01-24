@@ -342,14 +342,14 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <p>First, some background on operators, operator groups, and divisions.</p>
-                <p>To determine your REST client&#39;s privileges, the server starts by searching the list of REST Client items in its configuration for the one with the API key in the Authorization header of your request. Assuming it finds one, it takes the cardholder from that REST Client item.</p>
+                <p>To determine your REST client&#39;s privileges, the server starts by searching the list of REST Client items in its configuration for the one with the API key in the <code>Authorization</code> header of your request. Assuming it finds one, it takes the cardholder from that REST Client item.</p>
                 <p>To be any use at all that cardholder must be a member of at least one operator group. Being in an operator group makes a cardholder an
                   <em>operator</em>.</p>
                 <p>After the server has your operator, it needs to check whether that operator has access to the items or events in the request. To explain that, it is necessary to cover divisions.</p>
                 <p>Aside from some special items such as day categories, every item in Command Centre is in a
                   <em>division</em>. Divisions are hierarchical, with all divisions (but the root) being a child of another. Multi-server installations have one division tree per server.</p>
-                <p>Events are not items, but they also have a division. It is usually the division of their source item. Card events, for example, typically use a door as a source item; when an operator modifies an item, the event recording that change uses that operator&#39;s workstation as the source item. &#39;Card activated&#39; events, however, have the server as a source item but they take on the cardholder&#39;s division.</p>
-                <p>Alarms also have a division: a &#39;door forced&#39; alarm, for example, has the door as the source, and an alarm that the server generates when you send a bad API key uses the server itself as the source.</p>
+                <p>Every event and alarm has a division. It is usually the division of the source item. Card events or &#39;door forced&#39; alarms, for example, typically use a door as a source item; when an operator modifies an item, the event recording that change uses that operator&#39;s workstation as the source item; the alarm that the server generates when you send a bad API key uses the server item as the source.</p>
+                <p>An event&#39;s division is not always its source&#39;s division. &#39;Card activated&#39; events have the server as a source item, but take on the cardholder&#39;s division so that operators who can see the cardholder can also see when the server activates their cards.</p>
                 <p>To link privileges to items and events, an operator group contains a list of privileges and a list of divisions. Its operators enjoy those privileges on all the items, events, and alarms that are in those divisions.</p>
                 <p>Having a privilege on a division also grants an operator that privilege on that division&#39;s descendants. Therefore an operator with a privilege on the root division has that privilege on all that server&#39;s items and events.</p>
                 <p>A common misconception is that the division an operator is in, or the division an operator group is in, have a bearing on the operator&#39;s privileges. They do not. It is all about the divisions in the operator group&#39;s &#39;Operator privileges&#39; list.</p>
@@ -5746,7 +5746,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This should be the href of the item you wish to use as the source of your event. If you do not supply it, Command Centre will use the REST Client item identified by the API key in the Authorization header.</p>
+                      <p>This should be the href of the item you wish to use as the source of your event. If you do not supply it, Command Centre will use the REST Client item identified by the API key in the <code>Authorization</code> header.</p>
                       <p>The API will use the source&#39;s division as the event&#39;s division.</p>
                     </dd>
                     <dt class="json-inner-schema">
