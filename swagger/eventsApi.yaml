@@ -38,6 +38,13 @@ info:
     The body of this document clearly indicates when recent features arrived in the API so that
     readers with older versions of Command Centre know not to expect them.
 
+    #### Alarms and events API changes in 8.70
+
+    * A new privilege 'View Cardholder Events' grants visibility of an event if the operator has the
+      privilege in both the event's division and the event's cardholder's division.  This allows a
+      site to create a REST client that can monitor selected cardholders' movements through selected
+      areas, but cannot see any other activity in those areas.
+
     #### Alarms and events API changes in 8.60
 
     * Card numbers on Bluetooth (mobile) and PIV card events are now full-length.  Mobile numbers
@@ -1878,7 +1885,7 @@ definitions:
       alarm:
         type: object
         description: |
-          If an event is of a high enough priority to consider it an alarm, this object will contain
+          If an event is also an alarm, this object will contain
           its state and a link to its details page in the alarms controller.
 
           Only the first event in a group (see the `occurrences` field) can become an alarm.

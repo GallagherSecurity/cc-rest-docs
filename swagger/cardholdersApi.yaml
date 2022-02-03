@@ -53,6 +53,11 @@ info:
 
     #### Cardholder API changes on the roadmap
 
+    * Current versions of the API only show a PDF on a cardholder if he or she has a value for that
+      PDF.  That makes it difficult to find out which PDFs a cardholder _could_ have, so a future
+      version will show blank PDFs.  This may break integrations that expect them all to contain a
+      value.
+
     * A future version will sort its search results differently if your query does not include a
       parameter to override the default.
 
@@ -1265,7 +1270,7 @@ parameters:
     default: [ none ]
     description: |
       Attributes this override to the cardholder with this ID rather than the REST operator.
-      Privilege checks will use the operator, as normal, but event monitors and reports will state
+      Privilege checks will use the operator as normal, but event monitors and reports will state
       that the person responsible for the override was the attributed cardholder, not the REST
       operator.  The REST operator will appear in a special mention in the event's details.
 

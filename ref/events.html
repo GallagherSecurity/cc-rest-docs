@@ -154,6 +154,10 @@
                 <p>All of the GETs in this document and the POSTs that manage alarms require the RESTEvents licence. The POST to create a new event requires RESTCreateEvents.</p>
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
+                <h4 id="alarms-and-events-api-changes-in-870">Alarms and events API changes in 8.70</h4>
+                <ul>
+                  <li>A new privilege &#39;View Cardholder Events&#39; grants visibility of an event if the operator has the privilege in both the event&#39;s division and the event&#39;s cardholder&#39;s division. This allows a site to create a REST client that can monitor selected cardholders&#39; movements through selected areas, but cannot see any other activity in those areas.</li>
+                </ul>
                 <h4 id="alarms-and-events-api-changes-in-860">Alarms and events API changes in 8.60</h4>
                 <ul>
                   <li>
@@ -4988,7 +4992,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>If an event is of a high enough priority to consider it an alarm, this object will contain its state and a link to its details page in the alarms controller.</p>
+                      <p>If an event is also an alarm, this object will contain its state and a link to its details page in the alarms controller.</p>
                       <p>Only the first event in a group (see the <code>occurrences</code> field) can become an alarm.</p>
                     </dd>
                     <dt class="json-inner-schema">
