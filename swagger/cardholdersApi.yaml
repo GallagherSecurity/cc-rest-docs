@@ -1134,6 +1134,7 @@ security:
 
 ###########################################################################################
 ###########################################################################################
+
 parameters:
   sort:
     name: sort
@@ -1644,6 +1645,14 @@ definitions:
 
               Added in 8.40.
 
+          updates:
+            type: object
+            description: |
+              Cardholders include an `updates` block, as other items do, that allows monitoring one
+              cardholder per TCP session in a long poll.  However the [Cardholder
+              Changes](#tag-Cardholder-changes) methods are a far more efficient way of monitoring
+              your cardholders.
+
       - $ref: "#/definitions/Cardholder summary"
 
   Cardholder POST example:
@@ -1890,8 +1899,8 @@ definitions:
           value, but for image PDFs it will be an object containing a copy of the `href` field
           above.
 
-          In a POST or PATCH send text and numeric PDF data raw, and image data Base64-encoded
-          into a string.
+          In a POST or PATCH send text PDFs (including dates) as strings, numeric PDFs as numbers or
+          strings that parse to numbers, and image data Base64-encoded into a string.
 
       notifications:
         type: boolean
