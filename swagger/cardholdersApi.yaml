@@ -53,13 +53,18 @@ info:
 
     #### Cardholder API changes on the roadmap
 
+    * BREAKING CHANGE:  a future version will sort its search results differently if your query does
+      not include a parameter to override the default.
+
     * Current versions of the API only show a PDF on a cardholder if he or she has a value for that
       PDF.  That makes it difficult to find out which PDFs a cardholder _could_ have, so a future
-      version will show blank PDFs.  This may break integrations that expect them all to contain a
-      value.
+      version will show blank PDFs if you ask for them.
 
-    * A future version will sort its search results differently if your query does not include a
-      parameter to override the default.
+    * You will be able to request the competencies that your operator has the permission to assign.
+      That is determined by privileges, a competency setting, and an operator group setting.
+      Current versions let you request the competencies that your operator has the permission to
+      view, which is a larger set determined by privileges alone, and not suitable for interactive
+      REST clients.
 
     #### Cardholder API changes in 8.70
 
@@ -1178,7 +1183,7 @@ parameters:
     in: query
     type: string
     description: |
-      Limits returned items to those with a name that matches this string.  Without surrounding
+      Limits the returned items to those with a name that matches this string.  Without surrounding
       quotes or a percent sign or underscore, it is a substring match; surround the parameter with
       double quotes `"..."` for an exact match.  Without quotes, a percent sign `%` will match any
       substring and an underscore will match any single character.
@@ -1216,7 +1221,7 @@ parameters:
     items:
       type: string
     description: |
-      Limits returned items to those that are in these divisions.
+      Limits the returned items to those that are in these divisions.
 
       That includes all the items in those divisions' child divisions, because Command Centre treats
       items as though they are also in their division's parent, and its parent, and so on up to the
@@ -1235,10 +1240,10 @@ parameters:
     required: false
     type: string
     description: |
-      Limits returned items to those with a description that matches this string.  By default it is a
-      substring match; surround it with double quotes `"..."` for an exact match.  Without quotes,
-      adding a percent sign `%` or underscore `_` will anchor the string at both ends.  A `_` will
-      match any single character, and a `%` will match any substring.
+      Limits the returned items to those with a description that matches this string.  By default it
+      is a substring match; surround it with double quotes `"..."` for an exact match.  Without
+      quotes, adding a percent sign `%` or underscore `_` will anchor the string at both ends.  A
+      `_` will match any single character, and a `%` will match any substring.
 
       The search is always case-insensitive.  Results are undefined if you search for the empty
       string (`description=` or `description=""`).
@@ -4844,7 +4849,7 @@ paths:
         type: string
 
         description: |
-          Limits results to cardholders with a name that matches this string.  By default, it is
+          Limits the results to cardholders with a name that matches this string.  By default, it is
           a substring search against the first name or the last name or the concatenation
           'lastName, firstName'; surround the parameter with double quotes `"..."` for an
           exact search.
@@ -4867,7 +4872,7 @@ paths:
         required: false
         type: string
         description: |
-          Limits results to cardholders with a value for the Personal Data Field with this ID
+          Limits the results to cardholders with a value for the Personal Data Field with this ID
           that matches the parameter.
 
           By default, it is a substring match; surround it with double quotes `"..."` for an exact

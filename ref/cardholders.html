@@ -280,11 +280,14 @@
                 <h4 id="cardholder-api-changes-on-the-roadmap">Cardholder API changes on the roadmap</h4>
                 <ul>
                   <li>
-                    <p>Current versions of the API only show a PDF on a cardholder if he or she has a value for that PDF. That makes it difficult to find out which PDFs a cardholder
-                      <em>could</em> have, so a future version will show blank PDFs. This may break integrations that expect them all to contain a value.</p>
+                    <p>BREAKING CHANGE: a future version will sort its search results differently if your query does not include a parameter to override the default.</p>
                   </li>
                   <li>
-                    <p>A future version will sort its search results differently if your query does not include a parameter to override the default.</p>
+                    <p>Current versions of the API only show a PDF on a cardholder if he or she has a value for that PDF. That makes it difficult to find out which PDFs a cardholder
+                      <em>could</em> have, so a future version will show blank PDFs if you ask for them.</p>
+                  </li>
+                  <li>
+                    <p>You will be able to request the competencies that your operator has the permission to assign. That is determined by privileges, a competency setting, and an operator group setting. Current versions let you request the competencies that your operator has the permission to view, which is a larger set determined by privileges alone, and not suitable for interactive REST clients.</p>
                   </li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-870">Cardholder API changes in 8.70</h4>
@@ -936,7 +939,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits results to cardholders with a name that matches this string. By default, it is a substring search against the first name or the last name or the concatenation &#39;lastName, firstName&#39;; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact search.</p>
+                      <p>Limits the results to cardholders with a name that matches this string. By default, it is a substring search against the first name or the last name or the concatenation &#39;lastName, firstName&#39;; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact search.</p>
                       <p>Without quotes, a percent sign <code>%</code> inside your search string will anchor the search at both ends (so it will no longer be a substring search) and the <code>%</code> will match any substring. For example, <code>boothroyd,%</code> will only match cardholders whose last name is Boothroyd.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no cardholders if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>The search parameters form a logical conjunction. They are ANDed together. Therefore if you search for <code>name=Mary&amp;pdf_1315=nanny</code> you will only get back cardholders with &#39;Mary&#39; in their name and &#39;nanny&#39; in the PDF with ID 1315.</p>
@@ -952,7 +955,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits results to cardholders with a value for the Personal Data Field with this ID that matches the parameter.</p>
+                      <p>Limits the results to cardholders with a value for the Personal Data Field with this ID that matches the parameter.</p>
                       <p>By default, it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring. A lone <code>%</code> will return any cardholder with this PDF set to a non-null value.</p>
                       <p>The search is always case-insensitive.</p>
                       <p>The search parameters form a logical conjunction. They are ANDed together. Therefore the search <code>pdf_1315=nanny&amp;pdf_1315=paratrooper</code> will only return cardholders whose PDF 1315 contains the strings &#39;nanny&#39; and &#39;paratrooper&#39;.</p>
@@ -968,7 +971,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those that are in these divisions.</p>
+                      <p>Limits the returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -985,7 +988,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -3426,7 +3429,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits the returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -3441,7 +3444,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those that are in these divisions.</p>
+                      <p>Limits the returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -3458,7 +3461,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4036,7 +4039,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits the returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4051,7 +4054,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those that are in these divisions.</p>
+                      <p>Limits the returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -4068,7 +4071,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4447,7 +4450,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits the returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4462,7 +4465,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those that are in these divisions.</p>
+                      <p>Limits the returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -4479,7 +4482,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4750,7 +4753,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits the returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -4765,7 +4768,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those that are in these divisions.</p>
+                      <p>Limits the returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -4782,7 +4785,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -5470,7 +5473,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits the returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -5485,7 +5488,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those that are in these divisions.</p>
+                      <p>Limits the returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -5502,7 +5505,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -5982,7 +5985,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits the returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -5997,7 +6000,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those that are in these divisions.</p>
+                      <p>Limits the returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -6014,7 +6017,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6375,7 +6378,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits the returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6390,7 +6393,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those that are in these divisions.</p>
+                      <p>Limits the returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -6407,7 +6410,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6745,7 +6748,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits the returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6760,7 +6763,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those that are in these divisions.</p>
+                      <p>Limits the returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -6777,7 +6780,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6957,7 +6960,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>Limits the returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>
@@ -6972,7 +6975,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those that are in these divisions.</p>
+                      <p>Limits the returned items to those that are in these divisions.</p>
                       <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root.</p>
                       <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
                       <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
@@ -6989,7 +6992,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Limits returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
+                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring.</p>
                       <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
                       <p>Search parameters are ANDed together.</p>
                     </div>

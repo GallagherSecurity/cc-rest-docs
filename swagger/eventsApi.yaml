@@ -604,6 +604,16 @@ x-common-blocks-this-is-made-up:
 
       `?fields=defaults,notes,...`
 
+  notes_this_keyword_can_be_anything: &TYPE_NAME
+    type: string
+    example: "Cardholder"
+    description: |
+      A human-readable name of the item's type, suitable for display.
+
+      This string is translated using the installation's language pack, and Gallagher
+      reserves the right to change item type names in new versions, so you should not do
+      anything with this string except show it to a person.
+
 security:
   - "API key": []
 
@@ -2708,7 +2718,8 @@ definitions:
               Use this ID in the `type` filter when requesting items if you wish to restrict the
               results to items of a certain type.
             example: "1"
-          name: { type: string, example: "Cardholder" }
+          name:
+            <<: *TYPE_NAME
       serverDisplayName:
         $ref: "cardholdersApi.yaml#/x-common-blocks/server"
       notes:
