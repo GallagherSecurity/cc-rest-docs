@@ -859,6 +859,13 @@ paths:
         Response' tab in its Configuration Client window (which is most of them).  Our existing
         integrations use items like doors, external system items, and cameras.
 
+        Cardholders do not have an 'Event Response' tab so cannot be event sources, but...
+
+        #### Related items
+
+        Along with a source, you can link other items to the events you create.  If you link a
+        cardholder, for example, they will show up on an activity report.
+
         #### Action plans
 
         An event can fire an action plan, which will
@@ -2265,9 +2272,14 @@ definitions:
               Configuration utility.
       source:
         description: |
-          This should be the href of the item you wish to use as the source of your event.  If you
-          do not supply it, Command Centre will use the REST Client item identified by the API key
-          in the `Authorization` header.
+          This block should contain the href of the item you wish to use as the source of your
+          event.  It can be any site item to which your operator has view access including all
+          hardware, access zones, fence zones, doors, lockers, car parks, servers, external systems,
+          and many other item types.  If you do not supply one Command Centre will use the REST
+          Client item identified by the API key in the `Authorization` header.
+
+          Cardholders cannot be event sources.  To relate a cardholder to your event, use the
+          `cardholder` block.
 
           The API will use the source's division as the event's division.
         type: object
@@ -2277,10 +2289,8 @@ definitions:
             format: url
             example: https://localhost:8904/api/doors/745
             description: |
-              This can be the href of any site item to which your operator has view access including
-              all hardware items, access zones, fence zones, doors, lockers, car parks, servers,
-              external systems, and many other item types.  Get the href using the API controller
-              for that item type (such as [doors](rest.html#tag-Doors)) or from `/items`.
+              Get the href using the API controller for that item type (such as
+              [doors](rest.html#tag-Doors)) or from `/items`.
       priority:
         type: integer
         minimum: 1

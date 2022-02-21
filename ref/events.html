@@ -1864,6 +1864,9 @@
                   <p>1000 event types sounds like a lot, but be aware that you cannot delete event types, and the only thing you can modify on an existing event type is its name. Their event type group and item types are permanent once you save them from the utility. Please plan carefully, and take backups!</p>
                   <h4 id="usable-source-items">Usable source items</h4>
                   <p>Every event needs a source item. You can let the server pick one for you (it will use the REST Client item identified by your API key) or you can use any item that has an &#39;Event Response&#39; tab in its Configuration Client window (which is most of them). Our existing integrations use items like doors, external system items, and cameras.</p>
+                  <p>Cardholders do not have an &#39;Event Response&#39; tab so cannot be event sources, but...</p>
+                  <h4 id="related-items">Related items</h4>
+                  <p>Along with a source, you can link other items to the events you create. If you link a cardholder, for example, they will show up on an activity report.</p>
                   <h4 id="action-plans">Action plans</h4>
                   <p>An event can fire an action plan, which will</p>
                   <ul>
@@ -5754,7 +5757,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This should be the href of the item you wish to use as the source of your event. If you do not supply it, Command Centre will use the REST Client item identified by the API key in the <code>Authorization</code> header.</p>
+                      <p>This block should contain the href of the item you wish to use as the source of your event. It can be any site item to which your operator has view access including all hardware, access zones, fence zones, doors, lockers, car parks, servers, external systems, and many other item types. If you do not supply one Command Centre will use the REST Client item identified by the API key in the <code>Authorization</code> header.</p>
+                      <p>Cardholders cannot be event sources. To relate a cardholder to your event, use the <code>cardholder</code> block.</p>
                       <p>The API will use the source&#39;s division as the event&#39;s division.</p>
                     </dd>
                     <dt class="json-inner-schema">
@@ -5767,7 +5771,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>This can be the href of any site item to which your operator has view access including all hardware items, access zones, fence zones, doors, lockers, car parks, servers, external systems, and many other item types. Get the href using the API controller for that item type (such as
+                            <p>Get the href using the API controller for that item type (such as
                               <a href="rest.html#tag-Doors">doors</a>) or from <code>/items</code>.</p>
                           </dd>
                         </dl>
