@@ -154,13 +154,14 @@
                 <p>All of the GETs in this document and the POSTs that manage alarms require the RESTEvents licence. The POST to create a new event requires RESTCreateEvents.</p>
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
-                <h4 id="cardholder-api-changes-on-the-roadmap">Cardholder API changes on the roadmap</h4>
-                <ul>
-                  <li>Each event in a page of search results will contain URLs to continue the search after that event, to benefit integrations that extract large pages of events and may want to resume half way through a page.</li>
-                </ul>
                 <h4 id="alarms-and-events-api-changes-in-870">Alarms and events API changes in 8.70</h4>
                 <ul>
-                  <li>A new privilege &#39;View Cardholder Events&#39; grants visibility of an event if the operator has the privilege in both the event&#39;s division and the event&#39;s cardholder&#39;s division. This allows a site to create a REST client that can monitor selected cardholders&#39; movements through selected areas, but cannot see any other activity in those areas.</li>
+                  <li>
+                    <p>Each event in a page of search results will contain URLs to continue the search after that event. This is a significant benefit to integrations that extract large pages of events and may encounter a problem mid-page, and have to resume without loss or duplication later.</p>
+                  </li>
+                  <li>
+                    <p>A new privilege &#39;View Cardholder Events&#39; grants visibility of an event if the operator has the privilege in both the event&#39;s division and the event&#39;s cardholder&#39;s division. This allows a site to create a REST client that can monitor selected cardholders&#39; movements through selected areas, but cannot see any other activity in those areas.</p>
+                  </li>
                 </ul>
                 <h4 id="alarms-and-events-api-changes-in-860">Alarms and events API changes in 8.60</h4>
                 <ul>
@@ -1735,11 +1736,11 @@
               <h4 id="downloading-the-entire-event-database">Downloading the entire event database</h4>
               <ol>
                 <li><code>GET /api</code></li>
-                <li>Follow the link at <code>features.events.events.href</code>.</li>
-                <li>Process the events you receive in that call.</li>
+                <li>Follow the link at <code>features.events.events.href</code>. You can add query parameters to alter the search, but if you are running 8.70 or later and there is a danger that you might encounter a problem while processing a batch of events you should also use <code>fields</code> to get the <code>next</code> link for each event. Note that this is different from the <code>next</code> link you receive at the end of each result set.</li>
+                <li>Process the events you receive in that call. If you asked for the <code>next</code> field, write the link for each event you successfully process to disk before attempting the next one. Then, if the worst happens, your client can read that link from disk and pick up where it left off.</li>
                 <li>If there were results, follow the link at <code>next.href</code> and repeat.</li>
               </ol>
-              <p>If you then wish to stay up to date, switch to following the link at <code>updates.href</code> in the results.</p>
+              <p>If you then wish to stay up to date, switch to following the link at <code>updates.href</code> in the results. That call will block until more events arrive, or a minute passes (approximately).</p>
               <h4 id="downloading-the-most-recent-events">Downloading the most recent events</h4>
               <ol>
                 <li><code>Get /api</code></li>
@@ -1759,7 +1760,8 @@
                 <li>Follow the link at <code>features.events.updates.href</code>. That will block until at least one event arrives at the server.</li>
                 <li>Process the events you receive in that call. Often there is only one: the first that arrived after you made the call.</li>
                 <li>Sleep to reduce load on the server.</li>
-                <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive.</li>
+                <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive. Follow the advice in
+                  <a href="#downloading-the-entire-event-database">downloading the entire event database</a>.</li>
               </ol>
               <h4 id="receiving-new-events-as-they-occur-starting-in-the-past">Receiving new events as they occur, starting in the past</h4>
               <ol>
@@ -1767,7 +1769,8 @@
                 <li>Follow the link at <code>features.events.events.href</code> appending the query parameter <code>after=2021-05-08Z</code> (or whatever timestamp is appropriate).</li>
                 <li>Process the events you receive in that call.</li>
                 <li>Sleep to reduce load on the server.</li>
-                <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive.</li>
+                <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive. Follow the advice in
+                  <a href="#downloading-the-entire-event-database">downloading the entire event database</a>.</li>
               </ol>
               <h4 id="searching-for-events-related-to-particular-cardholders">Searching for events related to particular cardholders</h4>
               <ol>
@@ -2202,7 +2205,10 @@
                           <span class="json-property-enum-item">accessGroup</span>,
                           <span class="json-property-enum-item">card</span>,
                           <span class="json-property-enum-item">modifiedItem</span>,
-                          <span class="json-property-enum-item">lastOccurrenceTime</span>
+                          <span class="json-property-enum-item">lastOccurrenceTime</span>,
+                          <span class="json-property-enum-item">previous</span>,
+                          <span class="json-property-enum-item">next</span>,
+                          <span class="json-property-enum-item">updates</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                       </div>
@@ -2352,6 +2358,15 @@
           <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
           <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
         }
+      },
+      <span class="hljs-attr">&quot;next&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&quot;</span>
+      },
+      <span class="hljs-attr">&quot;previous&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&amp;previous=True&quot;</span>
+      },
+      <span class="hljs-attr">&quot;updates&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/updates?pos=61320&quot;</span>
       }
     }
   ],
@@ -2579,7 +2594,10 @@
                           <span class="json-property-enum-item">accessGroup</span>,
                           <span class="json-property-enum-item">card</span>,
                           <span class="json-property-enum-item">modifiedItem</span>,
-                          <span class="json-property-enum-item">lastOccurrenceTime</span>
+                          <span class="json-property-enum-item">lastOccurrenceTime</span>,
+                          <span class="json-property-enum-item">previous</span>,
+                          <span class="json-property-enum-item">next</span>,
+                          <span class="json-property-enum-item">updates</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                       </div>
@@ -2714,6 +2732,15 @@
           <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
           <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
         }
+      },
+      <span class="hljs-attr">&quot;next&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&quot;</span>
+      },
+      <span class="hljs-attr">&quot;previous&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&amp;previous=True&quot;</span>
+      },
+      <span class="hljs-attr">&quot;updates&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/updates?pos=61320&quot;</span>
       }
     }
   ],
@@ -2808,7 +2835,10 @@
                           <span class="json-property-enum-item">accessGroup</span>,
                           <span class="json-property-enum-item">card</span>,
                           <span class="json-property-enum-item">modifiedItem</span>,
-                          <span class="json-property-enum-item">lastOccurrenceTime</span>
+                          <span class="json-property-enum-item">lastOccurrenceTime</span>,
+                          <span class="json-property-enum-item">previous</span>,
+                          <span class="json-property-enum-item">next</span>,
+                          <span class="json-property-enum-item">updates</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                       </div>
@@ -2935,6 +2965,15 @@
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
     }
+  },
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&quot;</span>
+  },
+  <span class="hljs-attr">&quot;previous&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&amp;previous=True&quot;</span>
+  },
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/updates?pos=61320&quot;</span>
   },
   <span class="hljs-attr">&quot;lastOccurrenceTime&quot;</span>: <span class="hljs-string">&quot;2016-02-18T19:21:59Z&quot;</span>,
   <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;Originating IP address: 192.168.2.3&quot;</span>
@@ -4894,6 +4933,15 @@
           <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
           <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
         }
+      },
+      <span class="hljs-attr">&quot;next&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&quot;</span>
+      },
+      <span class="hljs-attr">&quot;previous&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&amp;previous=True&quot;</span>
+      },
+      <span class="hljs-attr">&quot;updates&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/updates?pos=61320&quot;</span>
       }
     }
   ],
@@ -5490,6 +5538,74 @@
                         </dl>
                       </section>
                     </dt>
+                    <dt data-property-name="next" class="has-description">
+                      <span class="json-property-name">next:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The URL to the search that will return the page of events following this one. It will include your search filters and pagination parameters.</p>
+                      <p>This link is intended for integrations that take great gulps of events and send them to a downstream system. If it suffers a problem in the middle of a result set, it needs to record where in the event trail it got up to so that when it restarts it will not miss or duplicate events.</p>
+                      <p>The <code>next</code> link on the last event in a result set will be the same as the <code>next</code> link outside the results.</p>
+                      <p>New to 8.70.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                    <dt data-property-name="previous" class="has-description">
+                      <span class="json-property-name">previous:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The URL to the search that will return the page of events preceding this one. It will include your search filters and pagination parameters.</p>
+                      <p>The <code>previous</code> link on the first event in a result set will be the same as the <code>previous</code> link outside the results.</p>
+                      <p>New to 8.70.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                    <dt data-property-name="updates" class="has-description">
+                      <span class="json-property-name">updates:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The URL to the
+                        <a href="#operation--api-events-updates-get">updates</a> call that will return the page of events following this one, or wait for one to arrive if there are none. It will include your search filters and pagination parameters.</p>
+                      <p>The <code>updates</code> link on the last event in a result set will be the same as the <code>updates</code> link outside the results.</p>
+                      <p>New to 8.70.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
                   </dl>
                 </section>
               </div>
@@ -5568,6 +5684,15 @@
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
     }
+  },
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&quot;</span>
+  },
+  <span class="hljs-attr">&quot;previous&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&amp;previous=True&quot;</span>
+  },
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/updates?pos=61320&quot;</span>
   }
 }
 </code></pre> </body>
@@ -5702,6 +5827,15 @@
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
     }
+  },
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&quot;</span>
+  },
+  <span class="hljs-attr">&quot;previous&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events?pos=61320&amp;previous=True&quot;</span>
+  },
+  <span class="hljs-attr">&quot;updates&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/updates?pos=61320&quot;</span>
   },
   <span class="hljs-attr">&quot;lastOccurrenceTime&quot;</span>: <span class="hljs-string">&quot;2016-02-18T19:21:59Z&quot;</span>,
   <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;Originating IP address: 192.168.2.3&quot;</span>

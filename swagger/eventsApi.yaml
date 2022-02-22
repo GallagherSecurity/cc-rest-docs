@@ -38,13 +38,11 @@ info:
     The body of this document clearly indicates when recent features arrived in the API so that
     readers with older versions of Command Centre know not to expect them.
 
-    #### Cardholder API changes on the roadmap
+    #### Alarms and events API changes in 8.70
 
     * Each event in a page of search results will contain URLs to continue the search after that
-      event, to benefit integrations that extract large pages of events and may want to resume half
-      way through a page.
-
-    #### Alarms and events API changes in 8.70
+      event.  This is a significant benefit to integrations that extract large pages of events and
+      may encounter a problem mid-page, and have to resume without loss or duplication later.
 
     * A new privilege 'View Cardholder Events' grants visibility of an event if the operator has the
       privilege in both the event's division and the event's cardholder's division.  This allows a
@@ -167,12 +165,18 @@ tags:
 
     #### Downloading the entire event database
     1. `GET /api`
-    2. Follow the link at `features.events.events.href`.
-    3. Process the events you receive in that call.
+    2. Follow the link at `features.events.events.href`.  You can add query parameters to alter the
+       search, but if you are running 8.70 or later and there is a danger that you might encounter a
+       problem while processing a batch of events you should also use `fields` to get the `next`
+       link for each event.  Note that this is different from the `next` link you receive at the end
+       of each result set.
+    3. Process the events you receive in that call.  If you asked for the `next` field, write the
+       link for each event you successfully process to disk before attempting the next one.  Then,
+       if the worst happens, your client can read that link from disk and pick up where it left off.
     4. If there were results, follow the link at `next.href` and repeat.
 
-    If you then wish to stay up to date, switch to following the link at `updates.href` in
-    the results.
+    If you then wish to stay up to date, switch to following the link at `updates.href` in the
+    results.  That call will block until more events arrive, or a minute passes (approximately).
 
     #### Downloading the most recent events
     1. `Get /api`
@@ -205,6 +209,8 @@ tags:
     4. Sleep to reduce load on the server.
     5. Loop, following the link at `updates.href` after processing each batch of events.  It will
        return immediately if there are new events waiting, or it will block until new events arrive.
+       Follow the advice in [downloading the entire event
+       database](#downloading-the-entire-event-database).
 
     #### Receiving new events as they occur, starting in the past
     1. `GET /api`
@@ -214,6 +220,8 @@ tags:
     4. Sleep to reduce load on the server.
     5. Loop, following the link at `updates.href` after processing each batch of events.  It will
        return immediately if there are new events waiting, or it will block until new events arrive.
+       Follow the advice in [downloading the entire event
+       database](#downloading-the-entire-event-database).
 
     #### Searching for events related to particular cardholders
     1. `GET /api`
@@ -658,7 +666,8 @@ parameters:
     required: false
     enum: [ defaults, details, cardholder.pdf_*, href, id, serverDisplayName, time, message,
     occurrences, priority, alarm, operator, source, group, type, division, cardholder,
-    entryAccessZone, exitAccessZone, door, accessGroup, card, modifiedItem, lastOccurrenceTime]
+    entryAccessZone, exitAccessZone, door, accessGroup, card, modifiedItem, lastOccurrenceTime,
+    previous, next, updates]
 
     description: |
       Sets the fields you want in your results.
@@ -2221,6 +2230,58 @@ definitions:
                   This string is translated using the installation's language pack, and Gallagher
                   reserves the right to change item type names in new versions, so you should not do
                   anything with this string except show it to a person.
+
+      next:
+        description: |
+          The URL to the search that will return the page of events following this one.  It will
+          include your search filters and pagination parameters.
+
+          This link is intended for integrations that take great gulps of events and send them to a
+          downstream system.  If it suffers a problem in the middle of a result set, it needs to
+          record where in the event trail it got up to so that when it restarts it will not miss or
+          duplicate events.
+
+          The `next` link on the last event in a result set will be the same as the `next` link
+          outside the results.
+
+          New to 8.70.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/events?pos=61320"
+      previous:
+        description: |
+          The URL to the search that will return the page of events preceding this one.  It will
+          include your search filters and pagination parameters.
+
+          The `previous` link on the first event in a result set will be the same as the `previous`
+          link outside the results.
+
+          New to 8.70.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/events?pos=61320&previous=True"
+      updates:
+        description: |
+          The URL to the [updates](#operation--api-events-updates-get) call that will return the
+          page of events following this one, or wait for one to arrive if there are none.  It will
+          include your search filters and pagination parameters.
+
+          The `updates` link on the last event in a result set will be the same as the `updates`
+          link outside the results.
+
+          New to 8.70.
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/events/updates?pos=61320"
 
   Event detail:
     description: |
