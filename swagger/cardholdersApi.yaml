@@ -56,6 +56,8 @@ info:
     * BREAKING CHANGE:  a future version will sort its search results differently if your query does
       not include a parameter to override the default.
 
+    * Image PDFs will tell you whether they are the cardholder's profile picture.
+
     * Current versions of the API only show a PDF on a cardholder if he or she has a value for that
       PDF.  That makes it difficult to find out which PDFs a cardholder _could_ have, so a future
       version will show blank PDFs if you ask for them.
@@ -5471,9 +5473,9 @@ paths:
         - Ease the load on the server, the network, and your client by reducing the fields in the
           response.  For example if you are only interested in the current state of a cardholder's
           group memberships and do not care who made the change, or when, or what state the
-          cardholder was in before use `fields=item,cardholder.accessGroups`.  You need 'item' so
+          cardholder was in before use `fields=item,cardholder.accessGroups`.  You need `item` so
           you can tell which cardholder changed.  If you store your own identifier in a PDF you
-          could drop 'item' and add 'pdf_XXX', where 'XXX' is the ID of your PDF.
+          could drop `item` and add `cardholder.pdf_XXX`, where 'XXX' is the ID of your PDF.
 
         - Sleep for as long as you can between calls.
 

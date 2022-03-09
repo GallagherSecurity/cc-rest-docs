@@ -283,6 +283,9 @@
                     <p>BREAKING CHANGE: a future version will sort its search results differently if your query does not include a parameter to override the default.</p>
                   </li>
                   <li>
+                    <p>Image PDFs will tell you whether they are the cardholder&#39;s profile picture.</p>
+                  </li>
+                  <li>
                     <p>Current versions of the API only show a PDF on a cardholder if he or she has a value for that PDF. That makes it difficult to find out which PDFs a cardholder
                       <em>could</em> have, so a future version will show blank PDFs if you ask for them.</p>
                   </li>
@@ -3064,7 +3067,7 @@
                       <p>Filter for the kinds of changes you are after using the <code>filter</code> parameter. If you are only interested in people&#39;s access group memberships, for example, add <code>filter=accessGroups</code> to your GET, and you will not be troubled with all the other kinds of changes that cardholders go through.</p>
                     </li>
                     <li>
-                      <p>Ease the load on the server, the network, and your client by reducing the fields in the response. For example if you are only interested in the current state of a cardholder&#39;s group memberships and do not care who made the change, or when, or what state the cardholder was in before use <code>fields=item,cardholder.accessGroups</code>. You need &#39;item&#39; so you can tell which cardholder changed. If you store your own identifier in a PDF you could drop &#39;item&#39; and add &#39;pdf_XXX&#39;, where &#39;XXX&#39; is the ID of your PDF.</p>
+                      <p>Ease the load on the server, the network, and your client by reducing the fields in the response. For example if you are only interested in the current state of a cardholder&#39;s group memberships and do not care who made the change, or when, or what state the cardholder was in before use <code>fields=item,cardholder.accessGroups</code>. You need <code>item</code> so you can tell which cardholder changed. If you store your own identifier in a PDF you could drop <code>item</code> and add <code>cardholder.pdf_XXX</code>, where &#39;XXX&#39; is the ID of your PDF.</p>
                     </li>
                     <li>
                       <p>Sleep for as long as you can between calls.</p>
