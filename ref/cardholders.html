@@ -3055,7 +3055,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns cardholder changes matching your search criteria and a link for the next batch.</p>
                   <p>The first time you call this it will return a link back to this call with a parameter marking the head of the change list at the time of the call. There will not be any changes in the result set for that first call. When you GET that link later the server will return the changes that occurred since, if there were any, and a new link.</p>
-                  <p>There will be no more than 1000 changes, or as many as you asked for using the <code>top</code> query parameter.</p>
+                  <p>There will be no more than 200 changes (1000 prior to 8.70), or as many as you asked for using the <code>top</code> query parameter.</p>
                   <p>When you are up to date with all the cardholder changes, the <code>results</code> array will be empty. When it comes time to check again, don&#39;t just re-use the same URL: get a new one from the <code>next</code> block. It can change even when there are no results.</p>
                   <p>This is a polled interface: it will return immediately, whether or not there are results. Therefore you should wait for a time between calls if the <code>results</code> array was empty.</p>
                   <p>Take this URL from the href field in the <code>features.cardholders.changes</code> section of <code>/api</code>.</p>
@@ -3086,8 +3086,7 @@
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
                         <span class="json-property-type">integer</span>
-                        <span class="json-property-range" title="Value limits">1 ≤ x ≤ 10000</span>
-                        <span class="json-property-default-value" title="Default value">1000</span>
+                        <span class="json-property-range" title="Value limits">1 ≤ x ≤ 1000</span>
                       </div>
                     </div>
                     <div class="prop-value">

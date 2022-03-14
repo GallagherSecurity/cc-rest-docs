@@ -5450,8 +5450,8 @@ paths:
         in the result set for that first call.  When you GET that link later the server will return
         the changes that occurred since, if there were any, and a new link.
 
-        There will be no more than 1000 changes, or as many as you asked for using the `top` query
-        parameter.
+        There will be no more than 200 changes (1000 prior to 8.70), or as many as you asked for
+        using the `top` query parameter.
 
         When you are up to date with all the cardholder changes, the `results` array will be empty.
         When it comes time to check again, don't just re-use the same URL:  get a new one from the
@@ -5487,8 +5487,7 @@ paths:
         required: false
         type: integer
         minimum: 1
-        maximum: 10000
-        default: 1000
+        maximum: 1000
         description: Sets the maximum number of changes to return per page.
 
       - name: "pos"
