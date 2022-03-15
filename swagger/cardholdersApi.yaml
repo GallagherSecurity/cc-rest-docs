@@ -70,10 +70,10 @@ info:
 
     * A cardholder's operator group memberships (added in 8.50) now contain an href that you can use
       in an HTTP DELETE as another way of removing a cardholder from an operator group.
-    * The server will return 1000 items by default, instead of 100.
-    * Image PDFs will tell you whether they are the cardholder's profile picture.
+    * The server returns 1000 items by default instead of 100.
+    * Image PDFs tell you whether they are the cardholder's profile picture.
     * Image PDFs have a new optional field `contentType` that returns their MIME type.  This
-      deprecates the old `imageType` field, which is non-standard.
+      deprecates the old `imageFormat` field, which is non-standard.
     * Asking for a particular PDF on a cardholder will cause it to appear even if the cardholder has
       no value for that PDF.  Previous versions only showed if it had a non-blank value.
 
@@ -4507,6 +4507,13 @@ definitions:
         type: string
         enum: [image/bmp, image/jpeg, image/png]
         example: "image/jpeg"
+      isProfileImage:
+        description: |
+          True if and only if this PDF holds images and it is set as a profile image.
+
+          New in 8.70.
+        type: boolean
+        example: false
 
 ######################################################################
 
