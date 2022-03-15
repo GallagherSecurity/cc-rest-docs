@@ -58,7 +58,7 @@ info:
 
     * Current versions of the API only show a PDF on a cardholder if he or she has a value for that
       PDF.  That makes it difficult to find out which PDFs a cardholder _could_ have, so a future
-      version will show blank PDFs if you ask for them.
+      version will allow you to ask for all of them.
 
     * You will be able to request the competencies that your operator has the permission to assign.
       That is determined by privileges, a competency setting, and an operator group setting.
@@ -72,6 +72,10 @@ info:
       in an HTTP DELETE as another way of removing a cardholder from an operator group.
     * The server will return 1000 items by default, instead of 100.
     * Image PDFs will tell you whether they are the cardholder's profile picture.
+    * Image PDFs have a new optional field `contentType` that returns their MIME type.  This
+      deprecates the old `imageType` field, which is non-standard.
+    * Asking for a particular PDF on a cardholder will cause it to appear even if the cardholder has
+      no value for that PDF.  Previous versions only showed if it had a non-blank value.
 
     #### Cardholder API changes in 8.60
 
@@ -4436,7 +4440,11 @@ definitions:
       unique:
         type: boolean
         example: false
-        description:  If true, every cardholder with a value for this PDF must have a different value.
+        description: |
+          If true, every cardholder with a value for this PDF must have a different value.
+
+          After 8.70 this will not show for date and image PDFs, because it can never be true for
+          them.
       privilege:
         description: Reserved for future use.  Do not use.
       sortPriority:
@@ -4486,10 +4494,19 @@ definitions:
           Whether this image PDF stores BMPs, JPEGs, or PNGs.  You will only get this field if you
           ask for it with the `fields` parameter.
 
-          New in 8.50.
+          New in 8.50.  Deprecated in 8.70 by `contentType`, which is more standard.
         type: string
         enum: [bmp, jpg, png]
         example: "jpg"
+      contentType:
+        description: |
+          Whether this image PDF stores BMPs, JPEGs, or PNGs.  You will only get this field if you
+          ask for it with the `fields` parameter.
+
+          New in 8.70.
+        type: string
+        enum: [image/bmp, image/jpeg, image/png]
+        example: "image/jpeg"
 
 ######################################################################
 
@@ -5450,8 +5467,8 @@ paths:
         in the result set for that first call.  When you GET that link later the server will return
         the changes that occurred since, if there were any, and a new link.
 
-        There will be no more than 200 changes (1000 prior to 8.70), or as many as you asked for
-        using the `top` query parameter.
+        There will be no more than 1000 changes, or as many as you asked for using the `top` query
+        parameter.
 
         When you are up to date with all the cardholder changes, the `results` array will be empty.
         When it comes time to check again, don't just re-use the same URL:  get a new one from the

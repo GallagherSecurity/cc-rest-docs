@@ -284,7 +284,7 @@
                   </li>
                   <li>
                     <p>Current versions of the API only show a PDF on a cardholder if he or she has a value for that PDF. That makes it difficult to find out which PDFs a cardholder
-                      <em>could</em> have, so a future version will show blank PDFs if you ask for them.</p>
+                      <em>could</em> have, so a future version will allow you to ask for all of them.</p>
                   </li>
                   <li>
                     <p>You will be able to request the competencies that your operator has the permission to assign. That is determined by privileges, a competency setting, and an operator group setting. Current versions let you request the competencies that your operator has the permission to view, which is a larger set determined by privileges alone, and not suitable for interactive REST clients.</p>
@@ -295,6 +295,8 @@
                   <li>A cardholder&#39;s operator group memberships (added in 8.50) now contain an href that you can use in an HTTP DELETE as another way of removing a cardholder from an operator group.</li>
                   <li>The server will return 1000 items by default, instead of 100.</li>
                   <li>Image PDFs will tell you whether they are the cardholder&#39;s profile picture.</li>
+                  <li>Image PDFs have a new optional field <code>contentType</code> that returns their MIME type. This deprecates the old <code>imageType</code> field, which is non-standard.</li>
+                  <li>Asking for a particular PDF on a cardholder will cause it to appear even if the cardholder has no value for that PDF. Previous versions only showed if it had a non-blank value.</li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-860">Cardholder API changes in 8.60</h4>
                 <ul>
@@ -3055,7 +3057,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns cardholder changes matching your search criteria and a link for the next batch.</p>
                   <p>The first time you call this it will return a link back to this call with a parameter marking the head of the change list at the time of the call. There will not be any changes in the result set for that first call. When you GET that link later the server will return the changes that occurred since, if there were any, and a new link.</p>
-                  <p>There will be no more than 200 changes (1000 prior to 8.70), or as many as you asked for using the <code>top</code> query parameter.</p>
+                  <p>There will be no more than 1000 changes, or as many as you asked for using the <code>top</code> query parameter.</p>
                   <p>When you are up to date with all the cardholder changes, the <code>results</code> array will be empty. When it comes time to check again, don&#39;t just re-use the same URL: get a new one from the <code>next</code> block. It can change even when there are no results.</p>
                   <p>This is a polled interface: it will return immediately, whether or not there are results. Therefore you should wait for a time between calls if the <code>results</code> array was empty.</p>
                   <p>Take this URL from the href field in the <code>features.cardholders.changes</code> section of <code>/api</code>.</p>
@@ -6269,7 +6271,8 @@
   <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;@ least&quot;</span>,
   <span class="hljs-attr">&quot;imageWidth&quot;</span>: <span class="hljs-number">600</span>,
   <span class="hljs-attr">&quot;imageHeight&quot;</span>: <span class="hljs-number">800</span>,
-  <span class="hljs-attr">&quot;imageFormat&quot;</span>: <span class="hljs-string">&quot;jpg&quot;</span>
+  <span class="hljs-attr">&quot;imageFormat&quot;</span>: <span class="hljs-string">&quot;jpg&quot;</span>,
+  <span class="hljs-attr">&quot;contentType&quot;</span>: <span class="hljs-string">&quot;image/jpeg&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -13604,6 +13607,7 @@
                     </dt>
                     <dd>
                       <p>If true, every cardholder with a value for this PDF must have a different value.</p>
+                      <p>After 8.70 this will not show for date and image PDFs, because it can never be true for them.</p>
                     </dd>
                     <dt data-property-name="privilege" class="has-description">
                       <span class="json-property-name">privilege:</span>
@@ -13675,7 +13679,21 @@
                     </dt>
                     <dd>
                       <p>Whether this image PDF stores BMPs, JPEGs, or PNGs. You will only get this field if you ask for it with the <code>fields</code> parameter.</p>
-                      <p>New in 8.50.</p>
+                      <p>New in 8.50. Deprecated in 8.70 by <code>contentType</code>, which is more standard.</p>
+                    </dd>
+                    <dt data-property-name="contentType" class="has-description">
+                      <span class="json-property-name">contentType:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-enum" title="Possible values">
+                        <span class="json-property-enum-item">image/bmp</span>,
+                        <span class="json-property-enum-item">image/jpeg</span>,
+                        <span class="json-property-enum-item">image/png</span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Whether this image PDF stores BMPs, JPEGs, or PNGs. You will only get this field if you ask for it with the <code>fields</code> parameter.</p>
+                      <p>New in 8.70.</p>
                     </dd>
                   </dl>
                 </section>
@@ -13713,7 +13731,8 @@
   <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;@ least&quot;</span>,
   <span class="hljs-attr">&quot;imageWidth&quot;</span>: <span class="hljs-number">600</span>,
   <span class="hljs-attr">&quot;imageHeight&quot;</span>: <span class="hljs-number">800</span>,
-  <span class="hljs-attr">&quot;imageFormat&quot;</span>: <span class="hljs-string">&quot;jpg&quot;</span>
+  <span class="hljs-attr">&quot;imageFormat&quot;</span>: <span class="hljs-string">&quot;jpg&quot;</span>,
+  <span class="hljs-attr">&quot;contentType&quot;</span>: <span class="hljs-string">&quot;image/jpeg&quot;</span>
 }
 </code></pre> </body>
                   </html>
