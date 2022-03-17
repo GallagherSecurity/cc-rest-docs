@@ -1757,7 +1757,7 @@
               <h4 id="receiving-new-events-as-they-occur-starting-from-now">Receiving new events as they occur, starting from now</h4>
               <ol>
                 <li><code>GET /api</code></li>
-                <li>Follow the link at <code>features.events.updates.href</code>. That will block until at least one event arrives at the server.</li>
+                <li>Follow the link at <code>features.events.updates.href</code>, adding query parameters containing your search terms. The call will block until at least one matching event arrives at the server.</li>
                 <li>Process the events you receive in that call. Often there is only one: the first that arrived after you made the call.</li>
                 <li>Sleep to reduce load on the server.</li>
                 <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive. Follow the advice in
