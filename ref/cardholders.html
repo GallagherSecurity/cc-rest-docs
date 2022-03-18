@@ -686,8 +686,8 @@
               <h4 id="searching-for-cardholders-by-name">Searching for cardholders by name</h4>
               <ol>
                 <li><code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.cardholders.cardholders.href</code>, appending a search term (described
-                  <a href="#operation--api-cardholders-get">below</a>) to narrow the results and the &#39;fields&#39; parameter to add the fields you need.</li>
+                <li>Follow the link at <code>features.cardholders.cardholders.href</code>
+                  <a href="#operation--api-cardholders-get">↪</a>, appending a search term to narrow the results and the &#39;fields&#39; parameter to add the fields you need.</li>
                 <li>Process the results, following the <code>next</code> link until there isn&#39;t one.</li>
               </ol>
               <h4 id="synchronising-a-user-directory">Synchronising a user directory</h4>
@@ -707,10 +707,12 @@
                   <p><code>GET /api</code>.</p>
                 </li>
                 <li>
-                  <p>v8.00 or earlier: follow the link at <code>features.items.items.href</code>, appending the query <code>?name=&quot;employee_id&quot;</code>. This will return every item in the system with that name. Pick the one with a type name of &#39;Personal Data Field&#39;. Or you could append <code>&amp;type=33</code> to the item search: you will only be shown PDFs.</p>
+                  <p>v8.00 or earlier: follow the link at <code>features.items.items.href</code>
+                    <a href="events.html#operation--api-items-get">↪</a>, appending the query <code>?name=&quot;employee_id&quot;</code>. This will return every item in the system with that name. Pick the one with a type name of &#39;Personal Data Field&#39;. Or you could append <code>&amp;type=33</code> to the item search: you will only be shown PDFs.</p>
                 </li>
                 <li>
-                  <p>v8.10 or later: follow the link at <code>features.personalDataFields.personalDataFields.href</code>, appending the query <code>?name=&quot;employee_id&quot;</code>. This will return every PDF in the system with that name (there should only be one since PDFs must have different names).</p>
+                  <p>v8.10 or later: follow the link at <code>features.personalDataFields.personalDataFields.href</code>
+                    <a href="#operation--api-personal_data_fields-get">↪</a>, appending the query <code>?name=&quot;employee_id&quot;</code>. This will return every PDF in the system with that name (there should only be one since PDFs must have different names).</p>
                 </li>
                 <li>
                   <p>Note the ID of the item. It will be a short alphanumeric.</p>
@@ -720,7 +722,8 @@
               <p>Now you can use that PDF ID in a cardholder search.</p>
               <ol>
                 <li>Recall the JSON object you received from <code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.cardholders.cardholders.href</code>, adding a query separator and <code>pdf_&lt;your_pdf_id&gt;=&lt;your_pdf_value&gt;</code>, without the angle brackets.</li>
+                <li>Follow the link at <code>features.cardholders.cardholders.href</code>
+                  <a href="#operation--api-cardholders-get">↪</a>, adding a query separator and <code>pdf_&lt;your_pdf_id&gt;=&lt;your_pdf_value&gt;</code>, without the angle brackets.</li>
               </ol>
               <p>The results will only include cardholders who have
                 <em>&lt;your_pdf_value&gt;</em> as a substring of the Personal Data Field with ID
@@ -740,13 +743,15 @@
                   <p>Use the link at <code>features.accessGroups.accessGroups.href</code> to find the hrefs of access groups you wish to add your new cardholder to.</p>
                 </li>
                 <li>
-                  <p>Do the same for the competencies, relationships (<code>roles</code>), lockers, PDF definitions, and cards/credentials (<code>cardTypes</code>) that your new cardholder needs, using other URLs in the &#39;features&#39; section of <code>/api</code>. In v8.10, the card types that your operator has the privilege to assign are at a new URL given in the field <code>features.cardTypes.assign.href</code>.</p>
+                  <p>Do the same for the competencies, relationships (<code>roles</code>), lockers, PDF definitions, and cards/credentials (<code>cardTypes</code>) that your new cardholder needs, using other URLs in the &#39;features&#39; section of <code>/api</code>. In v8.10, the card types that your operator has the privilege to assign are at a new URL given in the field <code>features.cardTypes.assign.href</code>
+                    <a href="#operation--api-card_types-assign-get">↪</a>.</p>
                 </li>
                 <li>
                   <p>Compose a JSON body using
                     <a href="#definition-Cardholder-POST-example">this example</a> and
                     <a href="#definition-Cardholder-detail">this detail</a>, then
-                    <a href="#operation--api-cardholders-post">POST</a> it to the href at <code>features.cardholders.cardholders.href</code> on the <code>/api</code> page.</p>
+                    <a href="#operation--api-cardholders-post">POST</a> it to the href at <code>features.cardholders.cardholders.href</code>
+                    <a href="#operation--api-cardholders-post">↪</a> on the <code>/api</code> page.</p>
                 </li>
               </ol>
               <h4 id="modifying-a-cardholder">Modifying a cardholder</h4>
@@ -791,7 +796,8 @@
               <h4 id="assigning-a-new-card-to-a-cardholder">Assigning a new card to a cardholder</h4>
               <ol>
                 <li><code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.cardTypes.cardTypes.href</code> to find the href for the new card&#39;s type.</li>
+                <li>Follow the link at <code>features.cardTypes.cardTypes.href</code>
+                  <a href="#operation--api-card_types-get">↪</a> to find the href for the new card&#39;s type.</li>
                 <li>If you want to create a card in a state other than the default, get the state from the same page.</li>
                 <li>Find the href for the cardholder using one of the search methods above.</li>
                 <li>Optional: follow the link at <code>edit.href</code> on the cardholder page. If there is a link at <code>update.href</code>, your REST client has permission to modify the cardholder.</li>
@@ -811,7 +817,8 @@
               </ol>
               <h4 id="updating-a-cardholders-location">Updating a cardholder&#39;s location</h4>
               <ol>
-                <li>Find the href of your target access zone using the link at <code>features.cardholders.updateLocationAccessZones</code> in the results of <code>GET /api</code>.</li>
+                <li>Find the href of your target access zone using the link at <code>features.cardholders.updateLocationAccessZones</code>
+                  <a href="rest.html#operation--api-access_zones--update_cardholder_location-get">↪</a> in the results of <code>GET /api</code>.</li>
                 <li>Find your cardholder using one of the processes above. If you are using
                   <a href="#operation--api-cardholders-get">search</a>, add <code>updateLocation</code> to the <code>fields</code> parameter to save you having to GET their details page later.</li>
                 <li>Send an
@@ -832,7 +839,8 @@
                   <p><code>GET /api</code></p>
                 </li>
                 <li>
-                  <p>Follow the link at <code>features.cardholders.cardholders.href</code>. This is effectively a cardholder search with no filters. You should add <code>sort</code> and <code>top</code> query parameters to sort by ID and increase the number of cardholders per page: see the efficiency tips!</p>
+                  <p>Follow the link at <code>features.cardholders.cardholders.href</code>
+                    <a href="#operation--api-cardholders-get">↪</a>. This is effectively a cardholder search with no filters. You should add <code>sort</code> and <code>top</code> query parameters to sort by ID and increase the number of cardholders per page: see the efficiency tips!</p>
                 </li>
                 <li>
                   <p>Process the bundle of cardholders in the result.</p>
@@ -2996,13 +3004,15 @@
                 <li>
                   <p>First, get a bookmark at the end of Command Centre&#39;s list of changes as follows:</p>
                   <p> 1a. <code>GET /api</code></p>
-                  <p> 1b. Follow the link at <code>features.cardholders.changes</code>.</p>
+                  <p> 1b. Follow the link at <code>features.cardholders.changes</code>
+                    <a href="#operation--api-cardholders-changes-get">↪</a>.</p>
                   <p> 1c. Take note of the href in the <code>next</code> block. This is your bookmark. Later on you will ask for all the changes that happen after this point.</p>
                 </li>
                 <li>
                   <p>If you are filling a user directory from Command Centre, download all cardholders using
                     <a href="#downloading-all-cardholders">this advice</a>. Here is a reminder:</p>
-                  <p> 2a. Using the results of <code>GET /api</code> again, follow the link at <code>features.cardholders.cardholders</code>, adding query parameters <code>top=1000</code> and <code>sort=id</code>.</p>
+                  <p> 2a. Using the results of <code>GET /api</code> again, follow the link at <code>features.cardholders.cardholders</code>
+                    <a href="#operation--api-cardholders-get">↪</a>, adding query parameters <code>top=1000</code> and <code>sort=id</code>.</p>
                   <p> 2b. Process those cardholders (probably 1000) and follow the <code>next.href</code> link in a loop until you have extracted all of them.</p>
                 </li>
                 <li>
@@ -3320,13 +3330,15 @@
                   <p><code>GET /api</code>.</p>
                 </li>
                 <li>
-                  <p>Follow the link at <code>features.accessGroups.accessGroups.href</code> (adding search terms, and setting <code>top</code> high to save pagination).</p>
+                  <p>Follow the link at <code>features.accessGroups.accessGroups.href</code>
+                    <a href="#operation--api-access_groups-get">↪</a> (adding search terms, and setting <code>top</code> high to save pagination).</p>
                 </li>
                 <li>
-                  <p>Find your access group.</p>
+                  <p>Find your access group in the results.</p>
                 </li>
                 <li>
-                  <p>The link at <code>cardholders</code> returns the cardholders who have
+                  <p>The link at <code>cardholders</code>
+                    <a href="#operation--api-access_groups--id--cardholders-get">↪</a> returns the cardholders who have
                     <em>direct</em> membership of your group. This is only a subset of the cardholders who are affected by that group, as the groups that list this group as their parent inherit its effects recursively. If you are after every cardholder who has
                     <em>effective</em> membership of your group, follow the group&#39;s href to get its detail page, which includes its child groups in an array called <code>children</code>. In a depth-first traversal you would recurse down through the hrefs in that array before proceeding.</p>
                 </li>
@@ -3337,7 +3349,8 @@
               <h4 id="building-the-group-hierarchy">Building the group hierarchy.</h4>
               <ol>
                 <li><code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.accessGroups.accessGroups.href</code>. If you follow the efficiency tips in the cardholder section you will add <code>top</code> and <code>sort</code> parameters.</li>
+                <li>Follow the link at <code>features.accessGroups.accessGroups.href</code>
+                  <a href="#operation--api-access_groups-get">↪</a>. If you follow the efficiency tips in the cardholder section you will add <code>top</code> and <code>sort</code> parameters.</li>
                 <li>Record each group&#39;s href, name (if you intend to display the results), and <code>parent.href</code>, if it is there. An access group may have no parents or one parent, never more.</li>
                 <li>Follow the link at <code>next.href</code>, if there is one, and repeat.</li>
               </ol>
@@ -4641,7 +4654,8 @@
               <h4 id="displaying-all-banks-and-lockers-and-the-cardholders-assigned-to-them">Displaying all banks and lockers, and the cardholders assigned to them</h4>
               <ol>
                 <li><code>GET /api</code></li>
-                <li>Follow the link at <code>features.lockerBanks.lockerBanks.href</code>, adding a search term to the query to thin out the results.</li>
+                <li>Follow the link at <code>features.lockerBanks.lockerBanks.href</code>
+                  <a href="#operation--api-locker_banks-get">↪</a>, adding a search term to the query to thin out the results.</li>
                 <li>Follow the href of the locker bank you are after.</li>
               </ol>
               <p>The results of that query are the
@@ -4664,8 +4678,9 @@
               <p>Command Centre version 8.10.1112 lets you use the &#39;fields&#39; parameter on the locker bank search to request the &#39;open&#39; override URLs for lockers, which in prior versions was only available on their details pages.</p>
               <ol>
                 <li><code>GET /api</code></li>
-                <li>Follow the link at <code>features.lockerBanks.lockerBanks.href</code>, adding <code>?</code> or <code>&amp;</code> as appropriate then <code>fields=name,lockers.name,lockers.shortName,lockers.commands</code>. Also add a search term to thin out the results, if you have a lot of locker banks.</li>
-                <li>Dig through the &#39;results&#39; array for your locker bank, then through the &#39;lockers&#39; array for your locker, then into the &#39;commands&#39; block for another block called &#39;open&#39;. If your operator is able to override that locker it will contain a field called &#39;href&#39;, giving the URL you need to
+                <li>Follow the link at <code>features.lockerBanks.lockerBanks.href</code>
+                  <a href="#operation--api-locker_banks-get">↪</a>, adding <code>?</code> or <code>&amp;</code> as appropriate then <code>fields=name,lockers.name,lockers.shortName,lockers.commands</code>. Also add a search term to thin out the results, if you have a lot of locker banks.</li>
+                <li>Dig through the results for your locker bank, then through the <code>lockers</code> array of that locker bank for your locker, then into the <code>commands</code> block of that locker for another block called <code>open</code>. If your operator is able to override that locker it will contain a field called <code>href</code>, giving the URL you need to
                   <a href="#operation--api-lockers--id--open-post">POST</a> to open the locker.</li>
               </ol>
             </div>
@@ -5373,7 +5388,8 @@
                   <p><code>GET /api</code>.</p>
                 </li>
                 <li>
-                  <p>Follow the link at <code>features.operatorGroups.operatorGroups.href</code> (adding search terms, and setting <code>top</code> high to save pagination).</p>
+                  <p>Follow the link at <code>features.operatorGroups.operatorGroups.href</code>
+                    <a href="#operation--api-operator_groups-get">↪</a> (adding search terms, and setting <code>top</code> high to save pagination).</p>
                 </li>
                 <li>
                   <p>Find your operator group.</p>
@@ -5895,7 +5911,8 @@
               <h4 id="finding-a-pdfs-regular-expression">Finding a PDF&#39;s regular expression</h4>
               <ol>
                 <li><code>GET /api</code></li>
-                <li>Follow the link at <code>features.personalDataFields.personalDataFields.href</code>, adding a search term to the query to thin out the results. For example, add <code>name=&quot;PDF name&quot;</code> to only return the PDF definitions with that name.</li>
+                <li>Follow the link at <code>features.personalDataFields.personalDataFields.href</code>
+                  <a href="#operation--api-personal_data_fields-get">↪</a>, adding a search term to the query to thin out the results. For example, add <code>name=&quot;PDF name&quot;</code> to only return the PDF definitions with that name.</li>
               </ol>
               <h4 id="setting-a-cardholders-pdf-value">Setting a cardholder&#39;s PDF value</h4>
               <p>You do that by
@@ -6291,7 +6308,8 @@
               <h3 id="use-case--finding-a-reception-by-name">Use case: finding a reception by name</h3>
               <ol>
                 <li><code>GET /api</code></li>
-                <li>Follow the link at <code>features.receptions.receptions.href</code> after adding search terms such as <code>name=&quot;Front lobby&quot;</code>. A site typically has very few receptions, so if you add <code>top=1000</code> you&#39;re very unlikely to need to follow a <code>next</code> link.</li>
+                <li>Follow the link at <code>features.receptions.receptions.href</code>
+                  <a href="#operation--api-receptions-get">↪</a> after adding search terms such as <code>name=&quot;Front lobby&quot;</code>. A site typically has very few receptions, so if you add <code>top=1000</code> you&#39;re very unlikely to need to follow a <code>next</code> link.</li>
                 <li>Find the reception you&#39;re after and use its href in a visit.</li>
               </ol>
             </div>
@@ -6656,7 +6674,8 @@
               <h3 id="use-case--searching-for-a-role-by-name-and-assigning-a-relationship">Use case: searching for a role by name and assigning a relationship</h3>
               <ol>
                 <li><code>GET /api</code></li>
-                <li>Follow the link at <code>features.roles.roles.href</code> after adding search terms such as <code>name=&quot;supervisor&quot;</code>.</li>
+                <li>Follow the link at <code>features.roles.roles.href</code>
+                  <a href="#operation--api-roles-get">↪</a> after adding search terms such as <code>name=&quot;supervisor&quot;</code>.</li>
                 <li>Find the href of the role with which you want to link your two cardholders.</li>
                 <li>Find the href of the cardholder who will perform this role (the supervisor).</li>
                 <li>Find the href of the cardholder for whom he or she will perform this role (the supervised).</li>
@@ -6860,7 +6879,8 @@
               <h3 id="use-case--finding-a-visit-by-name">Use case: finding a visit by name</h3>
               <ol>
                 <li><code>GET /api</code></li>
-                <li>Follow the link at <code>features.visits.visits.href</code> after adding search terms such as <code>name=Ginger Greeter</code>. A site typically has many visits, so add <code>top=1000</code> for efficiency&#39;s sake.</li>
+                <li>Follow the link at <code>features.visits.visits.href</code>
+                  <a href="#operation--api-visits-get">↪</a> after adding search terms such as <code>name=Ginger Greeter</code>. A site typically has many visits, so add <code>top=1000</code> for efficiency&#39;s sake.</li>
                 <li>Find the visit you&#39;re after. You can then modify it by PATCHing its href.</li>
               </ol>
               <h3 id="use-case--creating-a-visit">Use case: creating a visit</h3>
@@ -6873,7 +6893,8 @@
                 <li>Pick (or create) at least one cardholder for your visitor or visitors.</li>
                 <li>Build a
                   <a href="#definition-Visit">JSON payload</a> containing all that.</li>
-                <li>POST to the link at <code>features.visits.visits.href</code> (in the payload of the <code>GET /api</code> you did for the first step).</li>
+                <li>POST to the link at <code>features.visits.visits.href</code>
+                  <a href="#operation--api-visits-post">↪</a> (in the payload of the <code>GET /api</code> you did for the first step).</li>
               </ol>
             </div>
           </div>

@@ -537,9 +537,9 @@ tags:
 
     #### Searching for cardholders by name
     1. `GET /api`.
-    2. Follow the link at `features.cardholders.cardholders.href`, appending a search term
-       (described [below](#operation--api-cardholders-get)) to narrow the results and the 'fields'
-      parameter to add the fields you need.
+    2. Follow the link at `features.cardholders.cardholders.href`
+       [↪](#operation--api-cardholders-get), appending a search term to narrow the results and the
+       'fields' parameter to add the fields you need.
     3. Process the results, following the `next` link until there isn't one.
 
     #### Synchronising a user directory
@@ -571,14 +571,16 @@ tags:
 
     1. `GET /api`.
 
-    2. v8.00 or earlier:  follow the link at `features.items.items.href`, appending the query
-       `?name="employee_id"`.  This will return every item in the system with that name.  Pick the
-       one with a type name of 'Personal Data Field'.  Or you could append `&type=33` to the item
-       search:  you will only be shown PDFs.
+    2. v8.00 or earlier:  follow the link at `features.items.items.href`
+       [↪](events.html#operation--api-items-get), appending the query `?name="employee_id"`.  This
+       will return every item in the system with that name.  Pick the one with a type name of
+       'Personal Data Field'.  Or you could append `&type=33` to the item search:  you will only be
+       shown PDFs.
 
-    2. v8.10 or later:  follow the link at `features.personalDataFields.personalDataFields.href`,
-       appending the query `?name="employee_id"`.  This will return every PDF in the system with
-       that name (there should only be one since PDFs must have different names).
+    2. v8.10 or later:  follow the link at `features.personalDataFields.personalDataFields.href`
+       [↪](#operation--api-personal_data_fields-get), appending the query `?name="employee_id"`.
+       This will return every PDF in the system with that name (there should only be one since PDFs
+       must have different names).
 
     3. Note the ID of the item.  It will be a short alphanumeric.
 
@@ -589,8 +591,9 @@ tags:
     Now you can use that PDF ID in a cardholder search.
 
     1. Recall the JSON object you received from `GET /api`.
-    2. Follow the link at `features.cardholders.cardholders.href`, adding a query
-    separator and `pdf_<your_pdf_id>=<your_pdf_value>`, without the angle brackets.
+    2. Follow the link at `features.cardholders.cardholders.href`
+       [↪](#operation--api-cardholders-get), adding a query separator and
+       `pdf_<your_pdf_id>=<your_pdf_value>`, without the angle brackets.
 
     The results will only include cardholders who have *\<your_pdf_value>* as a substring of
     the Personal Data Field with ID *\<your_pdf_id>*.  Again, the search is
@@ -613,12 +616,13 @@ tags:
     3. Do the same for the competencies, relationships (`roles`), lockers, PDF definitions, and
     cards/credentials (`cardTypes`) that your new cardholder needs, using other URLs in the
     'features' section of `/api`.  In v8.10, the card types that your operator has the privilege to
-    assign are at a new URL given in the field `features.cardTypes.assign.href`.
+    assign are at a new URL given in the field `features.cardTypes.assign.href`
+    [↪](#operation--api-card_types-assign-get).
 
     4. Compose a JSON body using [this example](#definition-Cardholder-POST-example) and
     [this detail](#definition-Cardholder-detail), then
     [POST](#operation--api-cardholders-post) it to the href at
-    `features.cardholders.cardholders.href` on the `/api` page.
+    `features.cardholders.cardholders.href` [↪](#operation--api-cardholders-post) on the `/api` page.
 
     #### Modifying a cardholder
     1. Find your cardholder using one of the processes above.
@@ -663,7 +667,8 @@ tags:
     #### Assigning a new card to a cardholder
 
     1. `GET /api`.
-    2. Follow the link at `features.cardTypes.cardTypes.href` to find the href for the new card's type.
+    2. Follow the link at `features.cardTypes.cardTypes.href` [↪](#operation--api-card_types-get) to
+       find the href for the new card's type.
     3. If you want to create a card in a state other than the default, get the state from the same page.
     4. Find the href for the cardholder using one of the search methods above.
     5. Optional:  follow the link at `edit.href` on the cardholder page.  If there is a link at
@@ -682,7 +687,9 @@ tags:
 
     #### Updating a cardholder's location
     1. Find the href of your target access zone using the link at
-       `features.cardholders.updateLocationAccessZones` in the results of `GET /api`.
+       `features.cardholders.updateLocationAccessZones`
+       [↪](rest.html#operation--api-access_zones--update_cardholder_location-get) in the results of
+       `GET /api`.
     1. Find your cardholder using one of the processes above.  If you are using
        [search](#operation--api-cardholders-get), add `updateLocation` to the `fields` parameter to
        save you having to GET their details page later.
@@ -702,9 +709,10 @@ tags:
     #### Downloading all cardholders 
     1. `GET /api`
 
-    2. Follow the link at `features.cardholders.cardholders.href`.  This is effectively a cardholder
-    search with no filters.  You should add `sort` and `top` query parameters to sort by ID and
-    increase the number of cardholders per page:  see the efficiency tips!
+    2. Follow the link at `features.cardholders.cardholders.href`
+       [↪](#operation--api-cardholders-get).  This is effectively a cardholder search with no
+       filters.  You should add `sort` and `top` query parameters to sort by ID and increase the
+       number of cardholders per page:  see the efficiency tips!
 
     3. Process the bundle of cardholders in the result.
     4. Follow the link at `next.href` if there is one, and repeat.
@@ -772,7 +780,7 @@ tags:
 
         1a. `GET /api`
 
-        1b. Follow the link at `features.cardholders.changes`.
+        1b. Follow the link at `features.cardholders.changes` [↪](#operation--api-cardholders-changes-get).
 
         1c. Take note of the href in the `next` block.  This is your bookmark.  Later on you will
         ask for all the changes that happen after this point.
@@ -781,7 +789,8 @@ tags:
     advice](#downloading-all-cardholders).  Here is a reminder:
 
         2a. Using the results of `GET /api` again, follow the link at
-          `features.cardholders.cardholders`, adding query parameters `top=1000` and `sort=id`.
+          `features.cardholders.cardholders` [↪](#operation--api-cardholders-get), adding query
+          parameters `top=1000` and `sort=id`.
 
         2b. Process those cardholders (probably 1000) and follow the `next.href` link in
           a loop until you have extracted all of them.
@@ -835,16 +844,18 @@ tags:
     #### Finding members of an access group, and managing memberships.
 
     1. `GET /api`.
-    2. Follow the link at `features.accessGroups.accessGroups.href` (adding search terms, and
-       setting `top` high to save pagination).
-    3. Find your access group.
+    2. Follow the link at `features.accessGroups.accessGroups.href`
+       [↪](#operation--api-access_groups-get) (adding search terms, and setting `top` high to save
+       pagination).
+    3. Find your access group in the results.
 
-    4. The link at `cardholders` returns the cardholders who have *direct* membership of your group.
-    This is only a subset of the cardholders who are affected by that group, as the groups that list
-    this group as their parent inherit its effects recursively.  If you are after every cardholder
-    who has *effective* membership of your group, follow the group's href to get its detail page,
-    which includes its child groups in an array called `children`.  In a depth-first traversal you
-    would recurse down through the hrefs in that array before proceeding.
+    4. The link at `cardholders` [↪](#operation--api-access_groups--id--cardholders-get) returns the
+    cardholders who have *direct* membership of your group.  This is only a subset of the
+    cardholders who are affected by that group, as the groups that list this group as their parent
+    inherit its effects recursively.  If you are after every cardholder who has *effective*
+    membership of your group, follow the group's href to get its detail page, which includes its
+    child groups in an array called `children`.  In a depth-first traversal you would recurse down
+    through the hrefs in that array before proceeding.
 
     5. Get the link at `cardholders` (which is the same on the search results and the details page),
     look in that cardholder's `accessGroups` array, and manage each membership as you require.  Send
@@ -854,8 +865,9 @@ tags:
     #### Building the group hierarchy.
 
     1. `GET /api`.
-    2. Follow the link at `features.accessGroups.accessGroups.href`.  If you follow the efficiency
-       tips in the cardholder section you will add `top` and `sort` parameters.
+    2. Follow the link at `features.accessGroups.accessGroups.href`
+       [↪](#operation--api-access_groups-get).  If you follow the efficiency tips in the cardholder
+       section you will add `top` and `sort` parameters.
     3. Record each group's href, name (if you intend to display the results), and `parent.href`,
        if it is there.  An access group may have no parents or one parent, never more.
     4. Follow the link at `next.href`, if there is one, and repeat.
@@ -930,8 +942,9 @@ tags:
     #### Displaying all banks and lockers, and the cardholders assigned to them
 
     1. `GET /api`
-    2. Follow the link at `features.lockerBanks.lockerBanks.href`, adding a search term to the query
-       to thin out the results.
+    2. Follow the link at `features.lockerBanks.lockerBanks.href`
+       [↪](#operation--api-locker_banks-get), adding a search term to the query to thin out the
+       results.
     3. Follow the href of the locker bank you are after.
 
     The results of that query are the [locker bank detail](#definition-Locker-bank-detail).
@@ -954,13 +967,15 @@ tags:
     their details pages.
 
     1. `GET /api`
-    2. Follow the link at `features.lockerBanks.lockerBanks.href`, adding `?` or `&` as appropriate
-       then `fields=name,lockers.name,lockers.shortName,lockers.commands`.  Also add a search term
-       to thin out the results, if you have a lot of locker banks.
-    3. Dig through the 'results' array for your locker bank, then through the 'lockers' array for
-       your locker, then into the 'commands' block for another block called 'open'.  If your
-       operator is able to override that locker it will contain a field called 'href', giving the
-       URL you need to [POST](#operation--api-lockers--id--open-post) to open the locker.
+    2. Follow the link at `features.lockerBanks.lockerBanks.href`
+       [↪](#operation--api-locker_banks-get), adding `?` or `&` as appropriate then
+       `fields=name,lockers.name,lockers.shortName,lockers.commands`.  Also add a search term to
+       thin out the results, if you have a lot of locker banks.
+    3. Dig through the results for your locker bank, then through the `lockers` array of that locker
+       bank for your locker, then into the `commands` block of that locker for another block called
+       `open`.  If your operator is able to override that locker it will contain a field called
+       `href`, giving the URL you need to [POST](#operation--api-lockers--id--open-post) to open the
+       locker.
 
 - name: Operator groups
 
@@ -1000,8 +1015,9 @@ tags:
     #### Finding members of an operator group, and managing memberships.
 
     1. `GET /api`.
-    2. Follow the link at `features.operatorGroups.operatorGroups.href` (adding search terms, and
-       setting `top` high to save pagination).
+    2. Follow the link at `features.operatorGroups.operatorGroups.href`
+       [↪](#operation--api-operator_groups-get) (adding search terms, and setting `top` high to save
+       pagination).
     3. Find your operator group.
 
     4. The link at `cardholders` returns the cardholders who have membership of your group.
@@ -1058,9 +1074,10 @@ tags:
     #### Finding a PDF's regular expression
 
     1. `GET /api`
-    2. Follow the link at `features.personalDataFields.personalDataFields.href`, adding a search
-       term to the query to thin out the results.  For example, add `name="PDF name"` to only return
-       the PDF definitions with that name.
+    2. Follow the link at `features.personalDataFields.personalDataFields.href`
+       [↪](#operation--api-personal_data_fields-get), adding a search term to the query to thin out
+       the results.  For example, add `name="PDF name"` to only return the PDF definitions with that
+       name.
 
     #### Setting a cardholder's PDF value
 
@@ -1080,9 +1097,9 @@ tags:
 
     ### Use case:  finding a reception by name
     1. `GET /api`
-    1. Follow the link at `features.receptions.receptions.href` after adding search terms such as
-       `name="Front lobby"`.  A site typically has very few receptions, so if you add `top=1000`
-       you're very unlikely to need to follow a `next` link.
+    1. Follow the link at `features.receptions.receptions.href` [↪](#operation--api-receptions-get)
+       after adding search terms such as `name="Front lobby"`.  A site typically has very few
+       receptions, so if you add `top=1000` you're very unlikely to need to follow a `next` link.
     1. Find the reception you're after and use its href in a visit.
 
 - name: Roles
@@ -1102,8 +1119,8 @@ tags:
     ### Use case:  searching for a role by name and assigning a relationship
 
     1. `GET /api`
-    1. Follow the link at `features.roles.roles.href` after adding search terms such as
-       `name="supervisor"`.
+    1. Follow the link at `features.roles.roles.href` [↪](#operation--api-roles-get) after adding
+       search terms such as `name="supervisor"`.
     1. Find the href of the role with which you want to link your two cardholders.
     1. Find the href of the cardholder who will perform this role (the supervisor).
     1. Find the href of the cardholder for whom he or she will perform this role (the supervised).
@@ -1118,9 +1135,9 @@ tags:
 
     ### Use case:  finding a visit by name
     1. `GET /api`
-    1. Follow the link at `features.visits.visits.href` after adding search terms such as
-       `name=Ginger Greeter`.  A site typically has many visits, so add `top=1000` for efficiency's
-       sake.
+    1. Follow the link at `features.visits.visits.href` [↪](#operation--api-visits-get) after adding
+       search terms such as `name=Ginger Greeter`.  A site typically has many visits, so add
+       `top=1000` for efficiency's sake.
     1. Find the visit you're after.  You can then modify it by PATCHing its href.
 
     ### Use case:  creating a visit
@@ -1132,8 +1149,8 @@ tags:
        groups.
     1. Pick (or create) at least one cardholder for your visitor or visitors.
     1. Build a [JSON payload](#definition-Visit) containing all that.
-    1. POST to the link at `features.visits.visits.href` (in the payload of the `GET /api` you did
-       for the first step).
+    1. POST to the link at `features.visits.visits.href` [↪](#operation--api-visits-post) (in the
+       payload of the `GET /api` you did for the first step).
 
 securityDefinitions:
   "API key":
