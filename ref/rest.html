@@ -756,7 +756,8 @@
               <h4 id="searching-for-access-zones-by-name">Searching for access zones by name</h4>
               <ol>
                 <li><code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.accessZones.accessZones.href</code>, appending a search term such as <code>name=substring</code> to filter the access zones, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
+                <li>Follow the link at <code>features.accessZones.accessZones.href</code>
+                  <a href="#operation--api-access_zones-get">↪</a>, appending a search term such as <code>name=substring</code> to filter the access zones, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
                 <li>Process the results, following the <code>next</code> link until there isn&#39;t one.</li>
               </ol>
               <h4 id="changing-an-access-zones-access-mode">Changing an access zone&#39;s access mode</h4>
@@ -770,9 +771,10 @@
               <h4 id="finding-an-access-zones-status">Finding an access zone&#39;s status</h4>
               <ol>
                 <li>Find the href for the access zone using the process above, and GET it.</li>
-                <li>Take the <code>updates</code> href from that page. For a version 8.00 server append the query parameter separator (&#39;?&#39; or &#39;&amp;&#39;) then <code>fields=defaults,zoneCount</code> if you need the zone count as well as the default status fields. The zone count is included by default in 8.10 and later.</li>
+                <li>Take the <code>updates</code>
+                  <a href="#operation--api-access_zones--id--updates-get">↪</a> href from that page. For a version 8.00 server append the query parameter separator (<code>?</code> or <code>&amp;</code>) then <code>fields=defaults,zoneCount</code> if you need the zone count as well as the default status fields. The zone count is included by default in 8.10 and later.</li>
                 <li>GET it.</li>
-                <li>Use the flag rules above to interpret the statusFlags you receive.</li>
+                <li>Use the flag rules above to interpret the status flags you receive.</li>
                 <li>Follow the <code>next</code> link to stay up to date.</li>
               </ol>
             </div>
@@ -2608,21 +2610,25 @@
               <h4 id="searching-for-alarm-zones-by-name">Searching for alarm zones by name</h4>
               <ol>
                 <li><code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.alarmZones.alarmZones.href</code>, appending a search term such as <code>name=substring</code> to filter the access zones, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
+                <li>Follow the link at <code>features.alarmZones.alarmZones.href</code>
+                  <a href="#operation--api-alarm_zones-get">↪</a>, appending a search term such as <code>name=substring</code> to filter the access zones, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
                 <li>Process the results, following the <code>next</code> link until there isn&#39;t one.</li>
               </ol>
               <h4 id="changing-an-alarm-zones-state">Changing an alarm zone&#39;s state</h4>
               <ol>
                 <li>Find the href for the alarm zone using the process above.</li>
                 <li>GET it.</li>
-                <li>Find the API URL you require in the <code>commands</code> structure of the results, such as <code>arm</code> or <code>disarm</code>, using
+                <li>Find the API URL you require in the <code>commands</code> structure of the results, such as <code>arm</code>
+                  <a href="#operation--api-alarm_zones--id--arm-post">↪</a> or <code>disarm</code>
+                  <a href="#operation--api-alarm_zones--id--disarm-post">↪</a>, using
                   <a href="#definition-Alarm-Zone-detail">the detail</a>. Use the calls with <code>Until</code> on the ends of their names if you are specifying an end time.</li>
                 <li>POST to that URL. All those with <code>Until</code> in their names require a JSON object in the body giving the time at which the override should end; the others do not.</li>
               </ol>
               <h4 id="finding-an-alarm-zones-status">Finding an alarm zone&#39;s status</h4>
               <ol>
                 <li>Find the href for the alarm zone using the process above, and GET it.</li>
-                <li>Follow the <code>updates</code> href from that page.</li>
+                <li>Follow the <code>updates</code>
+                  <a href="#operation--api-alarm_zones--id--updates-get">↪</a> href from that page.</li>
                 <li>Use the flag rules above to interpret the status flags you receive.</li>
                 <li>Follow the <code>next</code> link to stay up to date.</li>
               </ol>
@@ -4227,7 +4233,8 @@
               <ol>
                 <li>Find the href for the door using the process above.</li>
                 <li>GET it.</li>
-                <li>POST to the &#39;open&#39; URL in the <code>commands</code> structure of the
+                <li>POST to the <code>open</code>
+                  <a href="#operation--api-doors--id--open-post">↪</a> URL in the <code>commands</code> structure of the
                   <a href="#definition-Door-detail">results</a>.</li>
               </ol>
               <h4 id="finding-a-doors-status">Finding a door&#39;s status</h4>
@@ -5476,7 +5483,8 @@
               <h4 id="searching-for-fence-zones-by-name">Searching for fence zones by name</h4>
               <ol>
                 <li><code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.fenceZones.fenceZones.href</code>, appending a search term such as <code>name=substring</code> to filter the fence zones, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
+                <li>Follow the link at <code>features.fenceZones.fenceZones.href</code>
+                  <a href="#operation--api-fence_zones-get">↪</a>, appending a search term such as <code>name=substring</code> to filter the fence zones, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
                 <li>Process the results, following the <code>next</code> link until there isn&#39;t one.</li>
               </ol>
               <h4 id="overriding-a-fence-zone">Overriding a fence zone</h4>
@@ -5490,7 +5498,8 @@
               <h4 id="finding-a-fence-zones-status">Finding a fence zone&#39;s status</h4>
               <ol>
                 <li>Find the href for the fence zone using the process above, and GET it.</li>
-                <li>Take the <code>updates</code> href from that page. If you are after the fence&#39;s voltage and are using version 8.00, append <code>?fields=defaults,voltage</code>. You do not need that for later versions as <code>voltage</code> became a default field in 8.10.</li>
+                <li>Take the <code>updates</code>
+                  <a href="#operation--api-fence_zones--id--updates-get">↪</a> href from that page. If you are after the fence&#39;s voltage and are using version 8.00, append <code>fields=defaults,voltage</code> (after a <code>?</code> or <code>&amp;</code>). You do not need that for later versions as <code>voltage</code> became a default field in 8.10.</li>
                 <li>GET it.</li>
                 <li>Use the flag rules above to interpret the status flags you receive.</li>
                 <li>Follow the <code>next</code> link to stay up to date.</li>
@@ -6684,7 +6693,8 @@
               <h4 id="finding-an-inputs-status">Finding an input&#39;s status</h4>
               <ol>
                 <li>Find the href for the input using the process above, and GET it.</li>
-                <li>Take the <code>updates</code> href from that page.</li>
+                <li>Take the <code>updates</code>
+                  <a href="#operation--api-inputs--id--updates-get">↪</a> href from that page.</li>
                 <li>GET it.</li>
                 <li>Use the flag rules above to interpret the status flags you receive.</li>
                 <li>Follow the <code>next</code> link to stay up to date.</li>
@@ -7558,14 +7568,16 @@
               <h4 id="listing-macros">Listing Macros</h4>
               <ol>
                 <li><code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.macros.macros.href</code>, appending a search term (described below) to narrow the results if your installation has a lot of macros.</li>
+                <li>Follow the link at <code>features.macros.macros.href</code>
+                  <a href="#operation--api-macros-get">↪</a>, appending a search term (described below) to narrow the results if your installation has a lot of macros.</li>
                 <li>Process the results, following the <code>next</code> link until there isn&#39;t one.</li>
               </ol>
               <h4 id="running-a-macro">Running a Macro</h4>
               <ol>
                 <li>Find the href for the macro using the process above.</li>
                 <li>GET it.</li>
-                <li>If your operator is able to run the macro, the results will contain a URL at <code>commands.run.href</code>. POST to that to run the macro - no body required.</li>
+                <li>If your operator is able to run the macro, the results will contain a URL at <code>commands.run.href</code>.
+                  <a href="#operation--api-macros--id--run-post">POST</a> to that to run the macro - no body required.</li>
               </ol>
             </div>
           </div>
@@ -8048,21 +8060,23 @@
               <h4 id="listing-outputs">Listing Outputs</h4>
               <ol>
                 <li><code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.outputs.outputs.href</code>, appending a search term such as <code>name=substring</code> to select the outputs, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
+                <li>Follow the link at <code>features.outputs.outputs.href</code>
+                  <a href="#operation--api-outputs-get">↪</a>, appending a search term such as <code>name=substring</code> to select the outputs, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
                 <li>Process the results, following the <code>next</code> link until there isn&#39;t one.</li>
               </ol>
               <h4 id="switching-an-output">Switching an Output</h4>
               <ol>
                 <li>Find the href for the output using the process above.</li>
                 <li>GET it.</li>
-                <li>Find the API URL to turn the output on, off, or cancel a previous override in the <code>commands</code> structure of the
-                  <a href="#definition-Output-detail">results</a>. Use the <code>until</code> variants if you are specifying an end time.</li>
+                <li>Look in the <code>commands</code> structure of the
+                  <a href="#definition-Output-detail">results</a> to find the API URLs that turn the output on, off, or cancel a previous override. Use the <code>until</code> variants if you want to specify an end time.</li>
                 <li>POST to that URL. Those with <code>until</code> in their command block keys require a JSON object in the body; the others expect it empty.</li>
               </ol>
               <h4 id="finding-an-outputs-status">Finding an output&#39;s status</h4>
               <ol>
                 <li>Find the href for the output using the process above, and GET it.</li>
-                <li>Take the <code>updates</code> href from that page.</li>
+                <li>Take the <code>updates</code>
+                  <a href="#operation--api-outputs--id--updates-get">↪</a> href from that page.</li>
                 <li>GET it.</li>
                 <li>Use the flag rules above to interpret the status flags you receive.</li>
                 <li>Follow the <code>next</code> link to stay up to date.</li>

@@ -2282,9 +2282,10 @@ tags:
 
     #### Searching for access zones by name
     1. `GET /api`.
-    2. Follow the link at `features.accessZones.accessZones.href`, appending a search term such as
-       `name=substring` to filter the access zones, and `fields` to tell the server what to return
-       about each.  The next section covers those query parameters.
+    2. Follow the link at `features.accessZones.accessZones.href`
+       [↪](#operation--api-access_zones-get), appending a search term such as `name=substring` to
+       filter the access zones, and `fields` to tell the server what to return about each.  The next
+       section covers those query parameters.
     3. Process the results, following the `next` link until there isn't one.
 
     #### Changing an access zone's access mode
@@ -2298,11 +2299,12 @@ tags:
 
     #### Finding an access zone's status
     1. Find the href for the access zone using the process above, and GET it.
-    3. Take the `updates` href from that page.  For a version 8.00 server append the query parameter
-       separator ('?' or '&') then `fields=defaults,zoneCount` if you need the zone count as well as
-       the default status fields.  The zone count is included by default in 8.10 and later.
+    3. Take the `updates` [↪](#operation--api-access_zones--id--updates-get) href from that page.  For a
+       version 8.00 server append the query parameter separator (`?` or `&`) then
+       `fields=defaults,zoneCount` if you need the zone count as well as the default status fields.
+       The zone count is included by default in 8.10 and later.
     4. GET it.
-    5. Use the flag rules above to interpret the statusFlags you receive.
+    5. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
 
 - name: "Alarm Zones"
@@ -2365,23 +2367,26 @@ tags:
 
     #### Searching for alarm zones by name
     1. `GET /api`.
-    2. Follow the link at `features.alarmZones.alarmZones.href`, appending a search term such as
-       `name=substring` to filter the access zones, and `fields` to tell the server what to return
-       about each.  The next section covers those query parameters.
+    2. Follow the link at `features.alarmZones.alarmZones.href`
+       [↪](#operation--api-alarm_zones-get), appending a search term such as `name=substring` to
+       filter the access zones, and `fields` to tell the server what to return about each.  The next
+       section covers those query parameters.
     3. Process the results, following the `next` link until there isn't one.
 
     #### Changing an alarm zone's state
     1. Find the href for the alarm zone using the process above.
     2. GET it.
-    3. Find the API URL you require in the `commands` structure of the results, such as
-    `arm` or `disarm`, using [the detail](#definition-Alarm-Zone-detail).  Use the calls
-    with `Until` on the ends of their names if you are specifying an end time.
+    3. Find the API URL you require in the `commands` structure of the results, such as `arm`
+       [↪](#operation--api-alarm_zones--id--arm-post) or `disarm`
+       [↪](#operation--api-alarm_zones--id--disarm-post), using [the
+       detail](#definition-Alarm-Zone-detail).  Use the calls with `Until` on the ends of their
+       names if you are specifying an end time.
     4. POST to that URL.  All those with `Until` in their names require a JSON object in
     the body giving the time at which the override should end; the others do not.
 
     #### Finding an alarm zone's status
     1. Find the href for the alarm zone using the process above, and GET it.
-    3. Follow the `updates` href from that page.
+    3. Follow the `updates` [↪](#operation--api-alarm_zones--id--updates-get) href from that page.
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
 
@@ -2458,8 +2463,8 @@ tags:
     #### Opening a Door
     1. Find the href for the door using the process above.
     2. GET it.
-    3. POST to the 'open' URL in the `commands` structure of the
-       [results](#definition-Door-detail).
+    3. POST to the `open` [↪](#operation--api-doors--id--open-post) URL in the `commands` structure
+       of the [results](#definition-Door-detail).
 
     #### Finding a door's status
     1. Find the href for the door  using the process above, and GET it.
@@ -2573,9 +2578,10 @@ tags:
 
     #### Searching for fence zones by name
     1. `GET /api`.
-    2. Follow the link at `features.fenceZones.fenceZones.href`, appending a search term such as
-       `name=substring` to filter the fence zones, and `fields` to tell the server what to return
-       about each.  The next section covers those query parameters.
+    2. Follow the link at `features.fenceZones.fenceZones.href`
+       [↪](#operation--api-fence_zones-get), appending a search term such as `name=substring` to
+       filter the fence zones, and `fields` to tell the server what to return about each.  The next
+       section covers those query parameters.
     3. Process the results, following the `next` link until there isn't one.
 
     #### Overriding a fence zone
@@ -2587,8 +2593,9 @@ tags:
 
     #### Finding a fence zone's status
     1. Find the href for the fence zone using the process above, and GET it.
-    3. Take the `updates` href from that page.  If you are after the fence's voltage and are using
-       version 8.00, append `?fields=defaults,voltage`.  You do not need that for later versions as
+    3. Take the `updates` [↪](#operation--api-fence_zones--id--updates-get) href from that page.  If
+       you are after the fence's voltage and are using version 8.00, append
+       `fields=defaults,voltage` (after a `?` or `&`).  You do not need that for later versions as
        `voltage` became a default field in 8.10.
     4. GET it.
     4. Use the flag rules above to interpret the status flags you receive.
@@ -2655,7 +2662,7 @@ tags:
 
     #### Finding an input's status
     1. Find the href for the input using the process above, and GET it.
-    3. Take the `updates` href from that page.
+    3. Take the `updates` [↪](#operation--api-inputs--id--updates-get) href from that page.
     4. GET it.
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
@@ -2681,16 +2688,17 @@ tags:
 
     #### Listing Macros
     1. `GET /api`.
-    2. Follow the link at `features.macros.macros.href`, appending a search term
-       (described below) to narrow the results if your
-       installation has a lot of macros.
+    2. Follow the link at `features.macros.macros.href`
+       [↪](#operation--api-macros-get), appending a search term (described below) to
+       narrow the results if your installation has a lot of macros.
     3. Process the results, following the `next` link until there isn't one.
 
     #### Running a Macro
     1. Find the href for the macro using the process above.
     2. GET it.
     4. If your operator is able to run the macro, the results will contain a URL at
-       `commands.run.href`.  POST to that to run the macro - no body required.
+       `commands.run.href`.  [POST](#operation--api-macros--id--run-post) to that to run the macro -
+       no body required.
 
 - name: "Outputs"
   description: |-
@@ -2741,23 +2749,23 @@ tags:
 
     #### Listing Outputs
     1. `GET /api`.
-    2. Follow the link at `features.outputs.outputs.href`, appending a search term such as
-       `name=substring` to select the outputs, and `fields` to tell the server what to return about
-       each.  The next section covers those query parameters.
+    2. Follow the link at `features.outputs.outputs.href` [↪](#operation--api-outputs-get),
+       appending a search term such as `name=substring` to select the outputs, and `fields` to tell
+       the server what to return about each.  The next section covers those query parameters.
     3. Process the results, following the `next` link until there isn't one.
 
     #### Switching an Output
     1. Find the href for the output using the process above.
     2. GET it.
-    3. Find the API URL to turn the output on, off, or cancel a previous override in the
-       `commands` structure of the [results](#definition-Output-detail).  Use the
-       `until` variants if you are specifying an end time.
+    3. Look in the `commands` structure of the [results](#definition-Output-detail) to find the API
+       URLs that turn the output on, off, or cancel a previous override.  Use the `until` variants
+       if you want to specify an end time.
     4. POST to that URL.  Those with `until` in their command block keys require a JSON
        object in the body; the others expect it empty.
 
     #### Finding an output's status
     1. Find the href for the output using the process above, and GET it.
-    3. Take the `updates` href from that page.
+    3. Take the `updates` [↪](#operation--api-outputs--id--updates-get) href from that page.
     4. GET it.
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
