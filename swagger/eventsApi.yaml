@@ -126,8 +126,8 @@ tags:
 
     #### Downloading and managing unprocessed alarms
     1. `GET /api`
-    2. Follow the link at `features.alarms.alarms`.  You will receive up to 100 alarms,
-       each containing links to its management functions.
+    2. Follow the link at `features.alarms.alarms` [↪](#operation--api-alarms-get).  You will
+       receive up to 100 alarms, each containing links to its management functions.
     3. If step 2 returned results and there is a link at `next.href`, follow it and
        repeat.
 
@@ -165,33 +165,34 @@ tags:
 
     #### Downloading the entire event database
     1. `GET /api`
-    2. Follow the link at `features.events.events.href`.  You can add query parameters to alter the
-       search, but if you are running 8.70 or later and there is a danger that you might encounter a
-       problem while processing a batch of events you should also use `fields` to get the `next`
-       link for each event.  Note that this is different from the `next` link you receive at the end
-       of each result set.
+    2. Follow the link at `features.events.events.href` [↪](#operation--api-events-get).  You
+       can add query parameters to alter the search, but if you are running 8.70 or later and there
+       is a danger that you might encounter a problem while processing a batch of events you should
+       also use `fields` to get the `next` link for each event.  Note that this is different from
+       the `next` link you receive at the end of each result set.
     3. Process the events you receive in that call.  If you asked for the `next` field, write the
        link for each event you successfully process to disk before attempting the next one.  Then,
        if the worst happens, your client can read that link from disk and pick up where it left off.
     4. If there were results, follow the link at `next.href` and repeat.
 
-    If you then wish to stay up to date, switch to following the link at `updates.href` in the
-    results.  That call will block until more events arrive, or a minute passes (approximately).
+    If you then wish to stay up to date, switch to following the link at `updates.href`
+    [↪](#operation--api-events-updates-get) in the results.  That call will block until more
+    events arrive, or a minute passes (approximately).
 
     #### Downloading the most recent events
     1. `Get /api`
-    2. Take the link at `features.events.events.href` and append `previous=true&top=20`.  Add the
-       appropriate query separator `?` or `&` first, depending on whether there is a query parameter
-       in the URL already, and change the 20 as appropriate.  The default is 1000, which is probably
-       more than you want.
+    2. Take the link at `features.events.events.href` [↪](#operation--api-events-get) and
+       append `previous=true&top=20`.  Add the appropriate query separator `?` or `&` first,
+       depending on whether there is a query parameter in the URL already, and change the 20 as
+       appropriate.  The default is 1000, which is probably more than you want.
     3. Process the events you receive in that call.
     4. Follow the link at `previous.href` to get earlier events, or `next.href` or `updates.href`
-       for later events.  The latter is a long poll, which means that if no events are ready when
+       for later events.  The last is a long poll, which means that if no events are ready when
        you make the call it will block until new events arrive.
 
     #### Reporting on events over a period.
     1. `GET /api`
-    2. Follow the link at `features.events.events.href` appending
+    2. Follow the link at `features.events.events.href` [↪](#operation--api-events-get) appending
        `after=2017-01-01Z&before=2017-02-01Z` or whatever timestamps are appropriate (after the
        correct query separator, `?` or `&`).
 
@@ -202,8 +203,9 @@ tags:
 
     #### Receiving new events as they occur, starting from now
     1. `GET /api`
-    2. Follow the link at `features.events.updates.href`, adding query parameters containing your
-       search terms.  The call will block until at least one matching event arrives at the server.
+    2. Follow the link at `features.events.updates.href`
+       [↪](#operation--api-events-updates-get) adding query parameters containing your search
+       terms.  The call will block until at least one matching event arrives at the server.
     3. Process the events you receive in that call.  Often there is only one:  the first that
        arrived after you made the call.
     4. Sleep to reduce load on the server.
@@ -214,8 +216,8 @@ tags:
 
     #### Receiving new events as they occur, starting in the past
     1. `GET /api`
-    2. Follow the link at `features.events.events.href` appending the query parameter
-       `after=2021-05-08Z` (or whatever timestamp is appropriate).
+    2. Follow the link at `features.events.events.href` [↪](#operation--api-events-get) appending
+       the query parameter `after=2021-05-08Z` (or whatever timestamp is appropriate).
     3. Process the events you receive in that call.
     4. Sleep to reduce load on the server.
     5. Loop, following the link at `updates.href` after processing each batch of events.  It will
@@ -226,13 +228,14 @@ tags:
     #### Searching for events related to particular cardholders
     1. `GET /api`
 
-    2. Follow the link at `features.items.items.href`, adding `name="your_cardholder_name"&type=1`
-       to the query after the appropriate separator (`?` or `&`).
+    2. Follow the link at `features.items.items.href` [↪](#operation--api-items-get), adding
+       `name="your_cardholder_name"&type=1` to the query after the appropriate separator (`?` or
+       `&`).
 
        The 'items' controller necessary for that step is available with the RESTEvents licence.  If
        you also have the RESTCardholders licence you could use the link at
-       `features.cardholders.cardholders.href` instead, adding a separator and
-       `name="your_cardholder_name"`.
+       `features.cardholders.cardholders.href` [↪](cardholders.html#operation--api-cardholders-get)
+       instead, adding a separator and `name="your_cardholder_name"`.
 
        In either case, remove the quotes if you want a substring search and can handle more than
        one cardholder in the results.
@@ -240,8 +243,9 @@ tags:
     1. Extract the item ID of your cardholder or cardholders from that page, repeating as
        necessary for additional cardholders.
 
-    1. Follow the link on the `/api` page at `features.events.events.href` appending the separator
-       and `cardholder=XX` or `cardholder=XX,YY,ZZ` with the cardholders' IDs.
+    1. Follow the link on the `/api` page at `features.events.events.href`
+       [↪](#operation--api-events-get) appending the separator and `cardholder=XX` or
+       `cardholder=XX,YY,ZZ` with the cardholders' IDs.
 
     To further improve the efficiency of your search, filter by event types and a time
     range.
@@ -262,7 +266,7 @@ tags:
     #### Creating a new event
 
     1. `GET /api`
-    2. POST to the link at `features.events.events.href`.
+    2. POST to the link at `features.events.events.href` [↪](#operation--api-events-post).
 
     There are some rules around creating events, so you should first have a careful read of the
     [POST documentation](#operation--api-events-post).
