@@ -38,6 +38,12 @@ info:
     The body of this document clearly indicates when recent features arrived in the API so that
     readers with older versions of Command Centre know not to expect them.
 
+    #### Alarms and events API changes on the roadmap
+
+    * BREAKING CHANGE:  a future version will require that the operator has the 'Create Events and
+      Alarms' privilege in the division of the source item, if your request specifies a source item.
+      Current versions only require that the operator has that privilege on at least one division.
+
     #### Alarms and events API changes in 8.70
 
     * Each event in a page of search results will contain URLs to continue the search after that
@@ -877,7 +883,9 @@ paths:
         #### Related items
 
         Along with a source, you can link other items to the events you create.  If you link a
-        cardholder, for example, they will show up on an activity report.
+        cardholder, for example, your events will show on an activity report generated for that
+        cardholder.  To link an item your operator must have a privilege that allows viewing it
+        (such as 'View cardholders' or 'View site').
 
         #### Action plans
 
@@ -963,6 +971,10 @@ paths:
             response will say so) or operator does not have the 'Create Events and Alarms'
             privilege.
 
+            A future version of Command Centre will reject the POST with a 403 if your event
+            specifies a source item and the operator does not have 'Create Events and Alarms' on
+            that item's division.
+
     get:
       tags:
       - Events
@@ -1027,12 +1039,26 @@ paths:
         in: query
         required: false
         type: string
-        description: Restricts events to those whose type has this ID.  Separate multiple IDs with commas.  Use the [event groups call](#operation--api-events-groups-get) to see all event types and groups.
+        description: |
+          Restricts events to those whose type has this ID.  Separate multiple IDs with commas.
+
+          The results may include other event types if you also use the `group` parameter, below.
+
+          Use the [event groups call](#operation--api-events-groups-get) to see all event types and
+          groups.
       - name: "group"
         in: query
         required: false
         type: string
-        description: Restricts events to those with this event group ID.  Separate multiple IDs with commas.  Use the [event groups call](#operation--api-events-groups-get) to see all event types and groups.
+        description: |
+          Restricts events to those with this event group ID.  Separate multiple IDs with commas.
+
+          `group` is ORed with `type`.  In fact it is shorthand for `type=` followed by the IDs of
+          all the event types in the event type groups you list, and the search uses the union of
+          the two lists.
+
+          Use the [event groups call](#operation--api-events-groups-get) to see all event types and
+          groups.
       - name: "cardholder"
         in: query
         required: false
@@ -2345,6 +2371,9 @@ definitions:
 
           Cardholders cannot be event sources.  To relate a cardholder to your event, use the
           `cardholder` block.
+
+          Make sure that your operator has the 'Create Events and Alarms' privilege on this item's
+          division.  Future versions of Command Centre will require it.
 
           The API will use the source's division as the event's division.
         type: object

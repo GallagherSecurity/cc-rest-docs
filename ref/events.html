@@ -154,6 +154,10 @@
                 <p>All of the GETs in this document and the POSTs that manage alarms require the RESTEvents licence. The POST to create a new event requires RESTCreateEvents.</p>
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
+                <h4 id="alarms-and-events-api-changes-on-the-roadmap">Alarms and events API changes on the roadmap</h4>
+                <ul>
+                  <li>BREAKING CHANGE: a future version will require that the operator has the &#39;Create Events and Alarms&#39; privilege in the division of the source item, if your request specifies a source item. Current versions only require that the operator has that privilege on at least one division.</li>
+                </ul>
                 <h4 id="alarms-and-events-api-changes-in-870">Alarms and events API changes in 8.70</h4>
                 <ul>
                   <li>
@@ -1880,7 +1884,7 @@
                   <p>Every event needs a source item. You can let the server pick one for you (it will use the REST Client item identified by your API key) or you can use any item that has an &#39;Event Response&#39; tab in its Configuration Client window (which is most of them). Our existing integrations use items like doors, external system items, and cameras.</p>
                   <p>Cardholders do not have an &#39;Event Response&#39; tab so cannot be event sources, but...</p>
                   <h4 id="related-items">Related items</h4>
-                  <p>Along with a source, you can link other items to the events you create. If you link a cardholder, for example, they will show up on an activity report.</p>
+                  <p>Along with a source, you can link other items to the events you create. If you link a cardholder, for example, your events will show on an activity report generated for that cardholder. To link an item your operator must have a privilege that allows viewing it (such as &#39;View cardholders&#39; or &#39;View site&#39;).</p>
                   <h4 id="action-plans">Action plans</h4>
                   <p>An event can fire an action plan, which will</p>
                   <ul>
@@ -2001,6 +2005,7 @@
                     </div>
                     <div class="prop-value">
                       <p>The site does not have the RESTCreateEvents licence (in which case the body of the response will say so) or operator does not have the &#39;Create Events and Alarms&#39; privilege.</p>
+                      <p>A future version of Command Centre will reject the POST with a 403 if your event specifies a source item and the operator does not have &#39;Create Events and Alarms&#39; on that item&#39;s division.</p>
                     </div>
                   </div>
                 </section>
@@ -2139,7 +2144,9 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Restricts events to those whose type has this ID. Separate multiple IDs with commas. Use the
+                      <p>Restricts events to those whose type has this ID. Separate multiple IDs with commas.</p>
+                      <p>The results may include other event types if you also use the <code>group</code> parameter, below.</p>
+                      <p>Use the
                         <a href="#operation--api-events-groups-get">event groups call</a> to see all event types and groups.</p>
                     </div>
                   </div>
@@ -2153,7 +2160,9 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Restricts events to those with this event group ID. Separate multiple IDs with commas. Use the
+                      <p>Restricts events to those with this event group ID. Separate multiple IDs with commas.</p>
+                      <p><code>group</code> is ORed with <code>type</code>. In fact it is shorthand for <code>type=</code> followed by the IDs of all the event types in the event type groups you list, and the search uses the union of the two lists.</p>
+                      <p>Use the
                         <a href="#operation--api-events-groups-get">event groups call</a> to see all event types and groups.</p>
                     </div>
                   </div>
@@ -5904,6 +5913,7 @@
                     <dd>
                       <p>This block should contain the href of the item you wish to use as the source of your event. It can be any site item to which your operator has view access including all hardware, access zones, fence zones, doors, lockers, car parks, servers, external systems, and many other item types. If you do not supply one Command Centre will use the REST Client item identified by the API key in the <code>Authorization</code> header.</p>
                       <p>Cardholders cannot be event sources. To relate a cardholder to your event, use the <code>cardholder</code> block.</p>
+                      <p>Make sure that your operator has the &#39;Create Events and Alarms&#39; privilege on this item&#39;s division. Future versions of Command Centre will require it.</p>
                       <p>The API will use the source&#39;s division as the event&#39;s division.</p>
                     </dd>
                     <dt class="json-inner-schema">
