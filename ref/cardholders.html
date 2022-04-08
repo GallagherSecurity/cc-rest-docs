@@ -216,7 +216,6 @@
           <a href="#definition-Cardholder-competency-update"> Cardholder competency update </a>
           <a href="#definition-Cardholder-relationship"> Cardholder relationship </a>
           <a href="#definition-Cardholder-PATCH-example"> Cardholder PATCH example </a>
-          <a href="#definition-Cardholder-edit"> Cardholder edit </a>
           <a href="#definition-Cardholder-locker"> Cardholder locker </a>
           <a href="#definition-Cardholder-elevator-group"> Cardholder elevator group </a>
           <a href="#definition-Cardholder-changes"> Cardholder changes </a>
@@ -2923,8 +2922,9 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>You get here from the cardholder detail page. It tells you which fields you have the privileges to edit.</p>
-                  <p>This method returns 400 if there are two PDFs in the system with the same name. CC insists on unique names for items when you create them but you can end up with duplicates when you form a multiserver cluster out of standalone installations. You should move on that, because having two PDFs with the same name will bewilder your operational staff.</p>
+                  <p>This tells you which fields your REST operator can edit based on its privileges.</p>
+                  <p>Gallagher uses this call for rapidly-evolving internal applications. As such, its results are tuned to those applications and are subject to change. Rather than relying on this call, we suggest that you simply give your REST operator the privileges it needs to access to everything it needs.</p>
+                  <p>Note that this method returns 400 if there are two PDFs in the system with the same name. CC insists on unique names for items when you create them but you can end up with duplicates when you form a multiserver cluster out of standalone installations. You should move on that, because having two PDFs with the same name will bewilder your operational staff.</p>
                 </section>
               </div>
             </div>
@@ -2938,12 +2938,6 @@
                   <div class="prop-row prop-group">
                     <div class="prop-name">
                       <div class="prop-title">200 OK</div>
-                      <div class="prop-ref">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Cardholder edit">Cardholder edit</a>
-                        </span>
-                      </div>
-                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
                       <p>Success.</p>
@@ -2959,36 +2953,7 @@
                   </div>
                 </section>
               </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Response Example
-                    <span>(200 OK)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;editable&quot;</span>: {
-    <span class="hljs-attr">&quot;firstName&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;lastName&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;authorised&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;division&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;accessGroups&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;competencies&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;useExtendedAccessTime&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;relationships&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;lockers&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;notifications&quot;</span>: <span class="hljs-literal">true</span>
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
+              <div class="doc-examples"> </div>
             </div>
           </div>
           <h1 id="tag-Cardholder-changes" class="swagger-summary-tag" data-traverse-target="tag-Cardholder-changes">Cardholder changes</h1>
@@ -8080,8 +8045,8 @@
                           <span class="json-property-read-only"></span>
                         </dt>
                         <dd>
-                          <p>This is a link to a
-                            <a href="#definition-Cardholder-edit">cardholder edit</a> page. Do not send it when creating or editing a cardholder.</p>
+                          <p>Reserved for internal use. It is a link to
+                            <a href="#operation--api-cardholders--id--edit-get">another call</a> that helps interactive administrative clients. Do not send it when creating or editing a cardholder.</p>
                         </dd>
                         <dt data-property-name="updateLocation" class="has-description">
                           <span class="json-property-name">updateLocation:</span>
@@ -10415,63 +10380,6 @@
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/elevator_groups/3498734&quot;</span>
       }
     ]
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="definition-Cardholder-edit" class="definition panel" data-traverse-target="definition-Cardholder-edit">
-            <h2 class="panel-title">
-              <a name="/definitions/Cardholder edit"></a>Cardholder edit:
-              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
-              <span class="json-property-range" title="Value limits"></span>
-              
-              
-              </span> -->
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="json-schema-description">
-                  <p>Returned from the <code>edit</code> href in the cardholder detail object. It gives the fields the operator can edit, based on privileges.</p>
-                  <p>If you only see &#39;authorised: true&#39; then your operator has &#39;De-authorise Cardholder&#39; (which lets you clear the &#39;authorised&#39; flag) but not &#39;edit cardholder&#39;.</p>
-                  <p>If you see &#39;accessGroups: true&#39; then your operator has &#39;Modify Access Control&#39;.</p>
-                  <p>And so on.</p>
-                </section>
-                <section class="json-schema-properties">
-                  <dl>
-                    <dt data-property-name="editable">
-                      <span class="json-property-name">editable:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                  </dl>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;editable&quot;</span>: {
-    <span class="hljs-attr">&quot;firstName&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;lastName&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;authorised&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;division&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;accessGroups&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;competencies&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;useExtendedAccessTime&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;relationships&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;lockers&quot;</span>: <span class="hljs-literal">true</span>,
-    <span class="hljs-attr">&quot;notifications&quot;</span>: <span class="hljs-literal">true</span>
   }
 }
 </code></pre> </body>

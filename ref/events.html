@@ -166,6 +166,9 @@
                   <li>
                     <p>A new privilege &#39;View Cardholder Events&#39; grants visibility of an event if the operator has the privilege in both the event&#39;s division and the event&#39;s cardholder&#39;s division. This allows a site to create a REST client that can monitor selected cardholders&#39; movements through selected areas, but cannot see any other activity in those areas.</p>
                   </li>
+                  <li>
+                    <p>You may now use the <code>relatedItem</code> query parameter to find events that are associated with any item.</p>
+                  </li>
                 </ul>
                 <h4 id="alarms-and-events-api-changes-in-860">Alarms and events API changes in 8.60</h4>
                 <ul>
@@ -1809,6 +1812,7 @@
                 <a href="rest.html">that API</a> to search for access zones, alarm zones, fence zones, macros, outputs, doors, and (in 8.10) inputs. If you do not, or if your source is not one of those types, use the
                 <a href="#tag-Items">items API</a> with a suitable <code>type</code> filter.</p>
               <p>You can also use the <code>type</code> parameter to limit the events to particular event types. By doing this you can (for example) subscribe to &#39;access granted&#39; events from a collection of doors.</p>
+              <p>New in v8.70, you can also filter by <code>relatedItem</code>. Use this to find events related to item or items regardless of the type.</p>
               <h4 id="creating-a-new-event">Creating a new event</h4>
               <ol>
                 <li><code>GET /api</code></li>
@@ -2193,6 +2197,20 @@
                       <p>Restricts events to those in this division (including its child divisions). Separate multiple IDs with commas.</p>
                       <p>Example: <code>division=2,101</code></p>
                       <p>A more secure option is to set the operator&#39;s privileges so that it only has access to those divisions.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">relatedItem</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Restrict events to those associated with the item that has this Command Centre ID. Separate multiple IDs with commas.</p>
+                      <p>Example: <code>relatedItem=3,102</code></p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">

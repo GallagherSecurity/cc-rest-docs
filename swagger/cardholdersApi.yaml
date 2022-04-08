@@ -1581,8 +1581,9 @@ definitions:
             format: url
             readOnly: true
             description:  |
-              This is a link to a [cardholder edit](#definition-Cardholder-edit) page.  Do not send
-              it when creating or editing a cardholder.
+              Reserved for internal use.  It is a link to [another
+              call](#operation--api-cardholders--id--edit-get) that helps interactive administrative
+              clients.  Do not send it when creating or editing a cardholder.
             example:
               href: "https://localhost:8904/cardholders/325/edit"
           updateLocation:
@@ -2941,37 +2942,6 @@ definitions:
               enableVipFeatures: false
           remove:
             - href: "https://localhost:8904/api/cardholders/325/elevator_groups/3498734"
-
-  Cardholder edit:
-    description: |
-      Returned from the `edit` href in the cardholder detail object.  It gives the fields the
-      operator can edit, based on privileges.
-
-      If you only see 'authorised: true' then your operator has 'De-authorise Cardholder' (which
-      lets you clear the 'authorised' flag) but not 'edit cardholder'.
-
-      If you see 'accessGroups: true' then your operator has 'Modify Access Control'.
-
-      And so on.
-
-    properties:
-
-      editable:
-        type: object
-        example:
-          firstName: true
-          lastName: true
-          shortName: true
-          description: true
-          authorised: true
-          division: true
-          accessGroups: true
-          competencies: true
-          notes: true
-          useExtendedAccessTime: true
-          relationships: true
-          lockers: true
-          notifications: true
 
   Cardholder locker:
     description: |
@@ -5462,10 +5432,14 @@ paths:
       summary:  Find out which fields you can edit
 
       description: |
-        You get here from the cardholder detail page.  It tells you which fields you have the
-        privileges to edit.
+        This tells you which fields your REST operator can edit based on its privileges.
 
-        This method returns 400 if there are two
+        Gallagher uses this call for rapidly-evolving internal applications.  As such, its results
+        are tuned to those applications and are subject to change.  Rather than relying on this
+        call, we suggest that you simply give your REST operator the privileges it needs to access
+        to everything it needs.
+
+        Note that this method returns 400 if there are two
         PDFs in the system with the same name.  CC insists on unique names for items when you create
         them but you can end up with duplicates when you form a multiserver cluster out of
         standalone installations.  You should move on that, because having two PDFs with the same
@@ -5474,7 +5448,6 @@ paths:
       responses:
         200:
           description:  Success.
-          schema: {$ref: '#/definitions/Cardholder edit'}
         4xx: { description: "The parameter is invalid or you do not have privileges for the operation." }
 
 ######################################################################

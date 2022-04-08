@@ -55,6 +55,9 @@ info:
       site to create a REST client that can monitor selected cardholders' movements through selected
       areas, but cannot see any other activity in those areas.
 
+    * You may now use the `relatedItem` query parameter to find events that are associated with
+      any item.
+
     #### Alarms and events API changes in 8.60
 
     * Card numbers on Bluetooth (mobile) and PIV card events are now full-length.  Mobile numbers
@@ -268,6 +271,9 @@ tags:
 
     You can also use the `type` parameter to limit the events to particular event types.  By doing
     this you can (for example) subscribe to 'access granted' events from a collection of doors.
+
+    New in v8.70, you can also filter by `relatedItem`. Use this to find events related
+    to item or items regardless of the type.
 
     #### Creating a new event
 
@@ -1069,6 +1075,11 @@ paths:
         required: false
         type: string
         description: "Restricts events to those in this division (including its child divisions).  Separate multiple IDs with commas.\n\nExample:  `division=2,101`\n\nA more secure option is to set the operator's privileges so that it only has access to those divisions."
+      - name: "relatedItem"
+        in: query
+        required: false
+        type: string
+        description: "Restrict events to those associated with the item that has this Command Centre ID. Separate multiple IDs with commas.\n\nExample: `relatedItem=3,102`"
       - $ref: "#/parameters/eventfields"
       - name: "previous"
         in: query
