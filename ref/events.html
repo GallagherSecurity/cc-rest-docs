@@ -1745,7 +1745,7 @@
               <ol>
                 <li><code>GET /api</code></li>
                 <li>Follow the link at <code>features.events.events.href</code>
-                  <a href="#operation--api-events-get">↪</a>. You can add query parameters to alter the search, but if you are running 8.70 or later and there is a danger that you might encounter a problem while processing a batch of events you should also use <code>fields</code> to get the <code>next</code> link for each event. Note that this is different from the <code>next</code> link you receive at the end of each result set.</li>
+                  <a href="#operation--api-events-get">↪</a>. You can add query parameters to alter the search. If you are running 8.70 or later and there is a danger that you might encounter a problem while processing a batch of events you should also use <code>fields</code> to get the <code>next</code> link for each event. Note that this is different from the <code>next</code> link you receive at the end of each result set.</li>
                 <li>Process the events you receive in that call. If you asked for the <code>next</code> field, write the link for each event you successfully process to disk before attempting the next one. Then, if the worst happens, your client can read that link from disk and pick up where it left off.</li>
                 <li>If there were results, follow the link at <code>next.href</code> and repeat.</li>
               </ol>
@@ -1784,7 +1784,7 @@
                 <li>Process the events you receive in that call.</li>
                 <li>Sleep to reduce load on the server.</li>
                 <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive. Follow the advice in
-                  <a href="#downloading-the-entire-event-database">downloading the entire event database</a>.</li>
+                  <a href="#downloading-the-entire-event-database">downloading the entire event database</a> about keeping track of your position if you might encounter a problem writing events mid-batch. Note that that advises using the <code>next</code> field, but you will be using the <code>updates</code> field, which is the same thing in long-poll form.</li>
               </ol>
               <h4 id="searching-for-events-related-to-particular-cardholders">Searching for events related to particular cardholders</h4>
               <ol>
@@ -5606,7 +5606,7 @@
                     </dt>
                     <dd>
                       <p>The URL to the search that will return the page of events preceding this one. It will include your search filters and pagination parameters.</p>
-                      <p>The <code>previous</code> link on the first event in a result set will be the same as the <code>previous</code> link outside the results.</p>
+                      <p>The <code>previous</code> link on the first event in a result set will be the same as the <code>previous</code> link outside the results, since they both indicate the latest event that preceded the result set.</p>
                       <p>New to 8.70.</p>
                     </dd>
                     <dt class="json-inner-schema">
@@ -5629,7 +5629,7 @@
                     <dd>
                       <p>The URL to the
                         <a href="#operation--api-events-updates-get">updates</a> call that will return the page of events following this one, or wait for one to arrive if there are none. It will include your search filters and pagination parameters.</p>
-                      <p>The <code>updates</code> link on the last event in a result set will be the same as the <code>updates</code> link outside the results.</p>
+                      <p>The <code>updates</code> link on the last event in a result set will be the same as the <code>updates</code> link outside the results, since they both indicate the event that will be at the top of the next result set.</p>
                       <p>New to 8.70.</p>
                     </dd>
                     <dt class="json-inner-schema">

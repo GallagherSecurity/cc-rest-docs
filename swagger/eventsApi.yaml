@@ -175,7 +175,7 @@ tags:
     #### Downloading the entire event database
     1. `GET /api`
     2. Follow the link at `features.events.events.href` [↪](#operation--api-events-get).  You
-       can add query parameters to alter the search, but if you are running 8.70 or later and there
+       can add query parameters to alter the search.  If you are running 8.70 or later and there
        is a danger that you might encounter a problem while processing a batch of events you should
        also use `fields` to get the `next` link for each event.  Note that this is different from
        the `next` link you receive at the end of each result set.
@@ -232,7 +232,9 @@ tags:
     5. Loop, following the link at `updates.href` after processing each batch of events.  It will
        return immediately if there are new events waiting, or it will block until new events arrive.
        Follow the advice in [downloading the entire event
-       database](#downloading-the-entire-event-database).
+       database](#downloading-the-entire-event-database) about keeping track of your position if you
+       might encounter a problem writing events mid-batch.  Note that that advises using the `next`
+       field, but you will be using the `updates` field, which is the same thing in long-poll form.
 
     #### Searching for events related to particular cardholders
     1. `GET /api`
@@ -2298,7 +2300,8 @@ definitions:
           include your search filters and pagination parameters.
 
           The `previous` link on the first event in a result set will be the same as the `previous`
-          link outside the results.
+          link outside the results, since they both indicate the latest event that preceded the
+          result set.
 
           New to 8.70.
         type: object
@@ -2314,7 +2317,8 @@ definitions:
           include your search filters and pagination parameters.
 
           The `updates` link on the last event in a result set will be the same as the `updates`
-          link outside the results.
+          link outside the results, since they both indicate the event that will be at the top of
+          the next result set.
 
           New to 8.70.
         type: object
