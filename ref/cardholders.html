@@ -296,6 +296,7 @@
                   <li>Image PDFs tell you whether they are the cardholder&#39;s profile picture.</li>
                   <li>Image PDFs have a new optional field <code>contentType</code> that returns their MIME type. This deprecates the old <code>imageFormat</code> field, which is non-standard.</li>
                   <li>Asking for a particular PDF on a cardholder will cause it to appear even if the cardholder has no value for that PDF. Previous versions only showed if it had a non-blank value.</li>
+                  <li>Attempting to give a cardholder a competency they already have will fail instead of allowing it and raising an alarm. Note that a cardholder having two links to the same competency leads to undefined behaviour.</li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-860">Cardholder API changes in 8.60</h4>
                 <ul>
@@ -3928,6 +3929,7 @@
               <p>Competencies are items to which cardholders can be linked, and which access zones may require on a cardholder before allowing them in.</p>
               <p>They have their own access privileges, so operators can see or edit a cardholder&#39;s competencies based on the competency&#39;s settings as well as the cardholder&#39;s division and the privileges the operator has in that division.</p>
               <p>Notification settings on the competency cause advance warnings to go to the cardholder and his or her related cardholders (line managers, for example) before the competency expires.</p>
+              <p>Competencies differ from access groups in that a cardholder can have only one link to a given competency. Attempting to create another will either fail or raise a stateful alarm depending on your version of Command Centre.</p>
               <p>The REST API gives you read access to competencies through the same two functions as other objects: search and details, described below.</p>
               <p>The Configuration Client online help describes competencies fully.</p>
             </div>
@@ -9845,6 +9847,7 @@
                 <section class="json-schema-description">
                   <p>This is a description of the fields you would supply when updating a cardholder&#39;s holding of a competency. It is slightly different from what you receive in a cardholder GET: you do not send read-only blocks such the status and the competency, and there is a write-only field &#39;enabled&#39; that you can supply to change the status.</p>
                   <p>You cannot change the competency to which the status, times, comment, and credit applies. If you need to do that, delete the cardholder&#39;s existing competency and give them a new one. You can do that in one PATCH.</p>
+                  <p>A cardholder can have only one link to a given competency. Attempting to give a cardholder a competency a second time will either fail or raise a stateful alarm depending on your version of Command Centre.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -10133,9 +10136,9 @@
                       <p>Like the cards and accessGroups objects, this can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;. Every element should be in the
                         <a href="#definition-Cardholder-competency">cardholder competency schema</a>.</p>
                       <p>This operation does not modify Command Centre&#39;s competencies: it works on a cardholder&#39;s holdings of those competencies.</p>
-                      <p>Each element of the &#39;add&#39; array will need a &#39;competency&#39; block containing an href member identifying the competency you wish to grant the cardholder. All other fields are optional.</p>
-                      <p>Each element of the &#39;update&#39; array will need an href identifying the cardholder&#39;s competency to update, and one or more of the &#39;expiry&#39;, &#39;enabled&#39;, &#39;enablement&#39;, &#39;comment&#39;, &#39;limitedCredit&#39;, and &#39;credit&#39; fields.</p>
-                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href.</p>
+                      <p>Each element of the &#39;add&#39; array will need a &#39;competency&#39; block containing an href member identifying the competency you wish to grant the cardholder. All other fields are optional. Note that attempting to give a cardholder a competency he or she already has will result in an error or an alarm depending on the server version.</p>
+                      <p>Each element of the &#39;update&#39; array will need an href identifying the cardholder/competency link to update, and one or more of the &#39;expiry&#39;, &#39;enabled&#39;, &#39;enablement&#39;, &#39;comment&#39;, &#39;limitedCredit&#39;, and &#39;credit&#39; fields.</p>
+                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href of the link between the cardholder and the competency.</p>
                       <p>Do not put the same href in both the &#39;update&#39; and &#39;remove&#39; arrays.</p>
                       <p>In this example we are giving the cardholder a disabled competency which will enable in 2021, and activating another competency.</p>
                     </dd>

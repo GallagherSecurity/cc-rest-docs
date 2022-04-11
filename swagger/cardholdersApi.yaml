@@ -76,6 +76,9 @@ info:
       deprecates the old `imageFormat` field, which is non-standard.
     * Asking for a particular PDF on a cardholder will cause it to appear even if the cardholder has
       no value for that PDF.  Previous versions only showed if it had a non-blank value.
+    * Attempting to give a cardholder a competency they already have will fail instead of allowing
+      it and raising an alarm.  Note that a cardholder having two links to the same competency leads
+      to undefined behaviour.
 
     #### Cardholder API changes in 8.60
 
@@ -885,6 +888,10 @@ tags:
 
     Notification settings on the competency cause advance warnings to go to the cardholder and his
     or her related cardholders (line managers, for example) before the competency expires.
+
+    Competencies differ from access groups in that a cardholder can have only one link to a given
+    competency.  Attempting to create another will either fail or raise a stateful alarm depending
+    on your version of Command Centre.
 
     The REST API gives you read access to competencies through the same two functions as other
     objects:  search and details, described below.
@@ -2512,6 +2519,10 @@ definitions:
       you need to do that, delete the cardholder's existing competency and give them a new one.  You
       can do that in one PATCH.
 
+      A cardholder can have only one link to a given competency.  Attempting to give a cardholder a
+      competency a second time will either fail or raise a stateful alarm depending on your version
+      of Command Centre.
+
     properties:
       href:
         type: string
@@ -2784,12 +2795,15 @@ definitions:
 
           Each element of the 'add' array will need a 'competency' block containing an href member
           identifying the competency you wish to grant the cardholder.  All other fields are optional.
+          Note that attempting to give a cardholder a competency he or she already has
+          will result in an error or an alarm depending on the server version.
 
           Each element of the 'update' array will need an href identifying the
-          cardholder's competency to update, and one or more of the 'expiry', 'enabled',
+          cardholder/competency link to update, and one or more of the 'expiry', 'enabled',
           'enablement', 'comment', 'limitedCredit', and 'credit' fields.
 
-          The only field that makes sense in an element of the 'remove' array is the href.
+          The only field that makes sense in an element of the 'remove' array is the href
+          of the link between the cardholder and the competency.
 
           Do not put the same href in both the 'update' and 'remove' arrays.
 
