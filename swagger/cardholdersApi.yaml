@@ -86,6 +86,9 @@ info:
     * 8.60 rejects unsupported HTTP verbs instead of treating them like a GET.  For example, if you
     send a POST to `/api/competencies` 8.50 will return a list of competencies but 8.60 will return
     a 400-level error.
+    * In build 8.60.1684 or later, attempting to give a cardholder a competency they already have
+      will fail instead of allowing it and raising an alarm.  Note that a cardholder having two
+      links to the same competency leads to undefined behaviour.
 
     #### API changes in 8.50
 
@@ -4365,7 +4368,8 @@ definitions:
         type: string
         format: url
         description: |
-          DELETE this URL to remove the cardholder from this operator group.
+          [DELETE](#operation--api-cardholders--id--operator_groups--membership_id--delete) this URL
+          to remove the cardholder from this operator group.
 
           DELETE is the only verb you can use on this URL.  GET will always return a 404.
 
@@ -6271,6 +6275,14 @@ paths:
         You can find this call's URL in the `cardholders` block of an operator group.
 
         Added in 8.50.
+
+        There are two hrefs per cardholder.  The lower-level href is the identifier for the
+        cardholder, found throughout this API.  The higher-level `href` field only appears if you
+        ask for it using the `fields` query parameter, and only if the server is 8.70 or later.  It
+        refers to the cardholder's membership in the operator group.  If you DELETE it, you will
+        remove the cardholder from this operator group (which will demote them from an operator to a
+        regular cardholder if this was their last remaining operator group).
+
       parameters:
         - name: "id"
           in: path
@@ -6283,10 +6295,12 @@ paths:
           schema: { type: array, items: {$ref: '#/definitions/Operator group membership' }}
           example:
             cardholders:
-              - cardholder:
+              - href: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
+                cardholder:
                   name: "Boothroyd, Algernon"
                   href: "https://localhost:8904/api/cardholders/325"
-              - cardholder:
+              - href: "https://localhost:8904/api/cardholders/329/operator_groups/AFADEMED"
+                cardholder:
                   name: "Miles Messervy"
 
         4xx:

@@ -302,6 +302,7 @@
                 <ul>
                   <li>You can search for cardholders by division or description.</li>
                   <li>8.60 rejects unsupported HTTP verbs instead of treating them like a GET. For example, if you send a POST to <code>/api/competencies</code> 8.50 will return a list of competencies but 8.60 will return a 400-level error.</li>
+                  <li>In build 8.60.1684 or later, attempting to give a cardholder a competency they already have will fail instead of allowing it and raising an alarm. Note that a cardholder having two links to the same competency leads to undefined behaviour.</li>
                 </ul>
                 <h4 id="api-changes-in-850">API changes in 8.50</h4>
                 <ul>
@@ -5764,6 +5765,7 @@
                   <p>If your operator does not have the privilege to view a cardholder item you will receive its name but not its href (since following the href would 404).</p>
                   <p>You can find this call&#39;s URL in the <code>cardholders</code> block of an operator group.</p>
                   <p>Added in 8.50.</p>
+                  <p>There are two hrefs per cardholder. The lower-level href is the identifier for the cardholder, found throughout this API. The higher-level <code>href</code> field only appears if you ask for it using the <code>fields</code> query parameter, and only if the server is 8.70 or later. It refers to the cardholder&#39;s membership in the operator group. If you DELETE it, you will remove the cardholder from this operator group (which will demote them from an operator to a regular cardholder if this was their last remaining operator group).</p>
                 </section>
               </div>
             </div>
@@ -5837,12 +5839,14 @@
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;cardholders&quot;</span>: [
     {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD&quot;</span>,
       <span class="hljs-attr">&quot;cardholder&quot;</span>: {
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Boothroyd, Algernon&quot;</span>,
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>
       }
     },
     {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/329/operator_groups/AFADEMED&quot;</span>,
       <span class="hljs-attr">&quot;cardholder&quot;</span>: {
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Miles Messervy&quot;</span>
       }
@@ -13321,7 +13325,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>DELETE this URL to remove the cardholder from this operator group.</p>
+                      <p>
+                        <a href="#operation--api-cardholders--id--operator_groups--membership_id--delete">DELETE</a> this URL to remove the cardholder from this operator group.</p>
                       <p>DELETE is the only verb you can use on this URL. GET will always return a 404.</p>
                     </dd>
                     <dt data-property-name="cardholder" class="has-description">
