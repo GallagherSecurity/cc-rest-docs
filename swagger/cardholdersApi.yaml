@@ -6289,11 +6289,25 @@ paths:
         regular cardholder if this was their last remaining operator group).
 
       parameters:
-        - name: "id"
-          in: path
-          required: true
-          type: string
-          description: "The identifier of the operator group."
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "The identifier of the operator group."
+      - name: "fields"
+        in: query
+        required: false
+        type: array
+        items: { type: string }
+        default: ['defaults']
+
+        enum: [ defaults, cardholder, href ]
+
+        description: |
+          Specifies the fields you want in the search results.  The only two candidates are
+          `cardholder` and `href`.  The default is `fields=defaults`, which is the same as
+          `fields=cardholder`.  Separate values with commas.
+
       responses: 
         200: 
           description: "Success."
