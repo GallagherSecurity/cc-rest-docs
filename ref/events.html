@@ -1774,7 +1774,7 @@
                 <li>Process the events you receive in that call. Often there is only one: the first that arrived after you made the call.</li>
                 <li>Sleep to reduce load on the server.</li>
                 <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive. Follow the advice in
-                  <a href="#downloading-the-entire-event-database">downloading the entire event database</a>.</li>
+                  <a href="#downloading-the-entire-event-database">downloading the entire event database</a> about keeping track of your position if you might encounter a problem writing events mid-batch. Note that that advises using the <code>next</code> field, but you will be using the <code>updates</code> field, which is the same thing in long-poll form.</li>
               </ol>
               <h4 id="receiving-new-events-as-they-occur-starting-in-the-past">Receiving new events as they occur, starting in the past</h4>
               <ol>

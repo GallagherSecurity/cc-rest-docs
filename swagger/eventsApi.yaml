@@ -221,7 +221,9 @@ tags:
     5. Loop, following the link at `updates.href` after processing each batch of events.  It will
        return immediately if there are new events waiting, or it will block until new events arrive.
        Follow the advice in [downloading the entire event
-       database](#downloading-the-entire-event-database).
+       database](#downloading-the-entire-event-database) about keeping track of your position if you
+       might encounter a problem writing events mid-batch.  Note that that advises using the `next`
+       field, but you will be using the `updates` field, which is the same thing in long-poll form.
 
     #### Receiving new events as they occur, starting in the past
     1. `GET /api`
