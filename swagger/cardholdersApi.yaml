@@ -2671,7 +2671,7 @@ definitions:
         - clears the until date on another access group membership,
         - removes a third access group membership,
         - adds a competency, inactive, with a future enablement date,
-        - makes another competency active,
+        - activates a competency that the cardholder already had,
         - adds one relationship,
         - changes the cardholder on another,
         - adds one locker assignment with a from date,
@@ -2821,8 +2821,7 @@ definitions:
               enablement: "2021-01-01T08:00+13"
           update:
             - href: "https://localhost:8904/api/cardholders/325/competencies/2dc3"
-              status:
-                type: "active"
+              enabled: true
 
       relationships:
         type: object
@@ -5606,6 +5605,19 @@ paths:
 
           Use `personalDataFields` to monitor changes to PDF values on a cardholder.
 
+      - name: "deadline"
+        in: query
+        required: false
+        type: integer
+        minimum: 0
+        default: 50
+        description: |
+          Sets the number of seconds after which the server will abort the query and return a 500.
+          If that happens, you should try again later when the server (particularly the database
+          server) is not so busy.
+
+          Added in 8.80.
+
       responses:
         200:
           description: Success.
@@ -5613,6 +5625,9 @@ paths:
         4xx:
           description: |
             The site does not have the RESTCardholders licence.
+        500:
+          description: |
+            The server was too busy to complete the request before the deadline.
 
 ######################################################################
 

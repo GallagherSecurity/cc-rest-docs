@@ -1814,9 +1814,7 @@
     <span class="hljs-attr">&quot;update&quot;</span>: [
       {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/competencies/2dc3&quot;</span>,
-        <span class="hljs-attr">&quot;status&quot;</span>: {
-          <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;active&quot;</span>
-        }
+        <span class="hljs-attr">&quot;enabled&quot;</span>: <span class="hljs-literal">true</span>
       }
     ]
   },
@@ -3166,6 +3164,21 @@
                       <p>Use <code>personalDataFields</code> to monitor changes to PDF values on a cardholder.</p>
                     </div>
                   </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">deadline</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">integer</span>
+                        <span class="json-property-range" title="Value limits">x ≥ 0</span>
+                        <span class="json-property-default-value" title="Default value">50</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Sets the number of seconds after which the server will abort the query and return a 500. If that happens, you should try again later when the server (particularly the database server) is not so busy.</p>
+                      <p>Added in 8.80.</p>
+                    </div>
+                  </div>
                 </section>
               </div>
               <div class="doc-examples"></div>
@@ -3185,6 +3198,14 @@
                     </div>
                     <div class="prop-value">
                       <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">500 Internal Server Error</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The server was too busy to complete the request before the deadline.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -10069,7 +10090,7 @@
                     <li>clears the until date on another access group membership,</li>
                     <li>removes a third access group membership,</li>
                     <li>adds a competency, inactive, with a future enablement date,</li>
-                    <li>makes another competency active,</li>
+                    <li>activates a competency that the cardholder already had,</li>
                     <li>adds one relationship,</li>
                     <li>changes the cardholder on another,</li>
                     <li>adds one locker assignment with a from date,</li>
@@ -10317,9 +10338,7 @@
     <span class="hljs-attr">&quot;update&quot;</span>: [
       {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/competencies/2dc3&quot;</span>,
-        <span class="hljs-attr">&quot;status&quot;</span>: {
-          <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;active&quot;</span>
-        }
+        <span class="hljs-attr">&quot;enabled&quot;</span>: <span class="hljs-literal">true</span>
       }
     ]
   },
