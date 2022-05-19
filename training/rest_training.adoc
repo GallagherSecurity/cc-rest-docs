@@ -2216,6 +2216,10 @@ You can filter by the occurrence date/time, the source item, the event’s divis
 always the source's division), the event’s type, the type’s group (all event types are grouped, and
 picking a group is synonymous with picking a few types), or the event’s cardholder.
 
+In 8.70 and later you can limit the events to those related to a particular item.  For example, by
+specifying a cardholder's ID you will receive the same events that would appear in Command Centre's
+activity report for that cardholder.
+
 // BUG doesn't want to use fixed-width for the right column
 [cols=",",options="header",]
 |===
@@ -2226,6 +2230,7 @@ picking a group is synonymous with picking a few types), or the event’s cardho
 |Source |`source`
 |Division |`division`
 |Date |`after` and / or `before`
+|Related item | `relatedItem`, and be running 8.70 or later.
 |===
 
 For example, to find all card events ('access granted', 'access denied',
@@ -3284,7 +3289,8 @@ TCP connection per monitored item. Why use this?
 
 * You’re not running 8.30 yet, or
 * you’re monitoring only one item and want a slightly simpler call, or
-* your client wants to wait longer than 30s between GETs.
+* your client wants to wait longer than 30s between GETs (but it is hard
+  to imagine a client needing that).
 
 === Subscribing to updates (many items, 8.30+) TODO
 
@@ -3316,9 +3322,13 @@ redundant, but that is just the way it is. Just keep looping.
 This is a far better way of monitoring multiple items that the previous
 because it only uses one server connection per client.
 
+At time of writing (8.80) this is the only API call that maintains state
+between calls.  All the others require their context to arrive with the
+query.
+
 === Schedules and day categories TODO
 
-Schedules arrived in 8.40. The API lets you create and delete them, and
+Schedules arrived in 8.40. The API lets you view, create, and delete them, and
 modify how they affect their items. It does not let you change the items
 they affect.
 
@@ -3373,7 +3383,7 @@ visitors.
 It does not let you change visitor management configuration. You do
 that on divisions in the Configuration Client.
 
-It does not let you sign visitors in or out, or mark them on or off
+It does not let you sign visitors in or out, nor mark them on or off
 site. Please contact your account manager if you need these features.
 
 === Setting up Command Centre to use Visitor Management via the API
@@ -3402,7 +3412,7 @@ except a 200-level response code please look in the body.
 
 When you add a visitor to a visit, Command Centre will add that
 cardholder to the visit’s visitor type access group. Then you can add
-PDFs to the cardholder (such as an image). When the cardholder signs in,
+PDFs to the cardholder (such as an image). When the cardholder signs in
 using a Gallagher Visitor Management Kiosk, or when a greeter signs them
 in using the Visitor Management Client, Command Centre will add the
 visitor to the visit’s visitor access groups.
@@ -3415,7 +3425,8 @@ you require' in the Configuration Client’s online help for more.
 
 Remember that privileges lie on divisions, not on items, so when this
 table says you need a privilege on some item, take it to mean that you
-need that privilege on the division containing that item, or one of that
+need that privilege on the division containing that item, or (because
+every division inherits the privileges of its parent) one of that
 division’s ancestors.
 
 [cols="30%,70%",stripes=even]
