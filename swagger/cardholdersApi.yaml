@@ -66,6 +66,12 @@ info:
       view, which is a larger set determined by privileges alone, and not suitable for interactive
       REST clients.
 
+    #### Cardholder API changes in 8.80
+
+    * BREAKING CHANGE:  Date PDFs no longer come out of the API with a time component or time zone
+      designator, because date PDFs don't hold a time or time zone.  Previously they came out as
+      midnight UTC, which implied more accuracy than date PDFs hold.
+
     #### Cardholder API changes in 8.70
 
     * A cardholder's operator group memberships (added in 8.50) now contain an href that you can use
@@ -1399,6 +1405,10 @@ definitions:
 
           'authorised' is false by default.  If you want a new cardholder to open doors, be sure to
           set it to true in your POST.
+
+          You need the 'Edit cardholders' privilege to set this true.  In versions prior to 8.80
+          your operator also needed that privilege to set it false, but in 8.80 and later
+          'De-authorise cardholder' is enough on its own.
 
         type: boolean
         example: true
@@ -5141,7 +5151,9 @@ paths:
           description: |
             The operator does not have the privilege to modify that cardholder, or you attempted to
             set a field for which you have no privilege (such as 'notes' or 'operatorPassword', both
-            of which require special privileges).
+            of which require special privileges).  In versions prior to 8.80 your operator needed
+            'Edit cardholders' to de-authorise a cardholder.  In 8.80 and later, 'De-authorise
+            cardholder' on its own is enough.
 
     delete:
       tags: [ Cardholders ]

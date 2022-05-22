@@ -289,6 +289,10 @@
                     <p>You will be able to request the competencies that your operator has the permission to assign. That is determined by privileges, a competency setting, and an operator group setting. Current versions let you request the competencies that your operator has the permission to view, which is a larger set determined by privileges alone, and not suitable for interactive REST clients.</p>
                   </li>
                 </ul>
+                <h4 id="cardholder-api-changes-in-880">Cardholder API changes in 8.80</h4>
+                <ul>
+                  <li>BREAKING CHANGE: Date PDFs no longer come out of the API with a time component or time zone designator, because date PDFs don&#39;t hold a time or time zone. Previously they came out as midnight UTC, which implied more accuracy than date PDFs hold.</li>
+                </ul>
                 <h4 id="cardholder-api-changes-in-870">Cardholder API changes in 8.70</h4>
                 <ul>
                   <li>A cardholder&#39;s operator group memberships (added in 8.50) now contain an href that you can use in an HTTP DELETE as another way of removing a cardholder from an operator group.</li>
@@ -1950,7 +1954,7 @@
                       <div class="prop-title">4xx </div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have the privilege to modify that cardholder, or you attempted to set a field for which you have no privilege (such as &#39;notes&#39; or &#39;operatorPassword&#39;, both of which require special privileges).</p>
+                      <p>The operator does not have the privilege to modify that cardholder, or you attempted to set a field for which you have no privilege (such as &#39;notes&#39; or &#39;operatorPassword&#39;, both of which require special privileges). In versions prior to 8.80 your operator needed &#39;Edit cardholders&#39; to de-authorise a cardholder. In 8.80 and later, &#39;De-authorise cardholder&#39; on its own is enough.</p>
                     </div>
                   </div>
                 </section>
@@ -7794,6 +7798,7 @@
                     <dd>
                       <p>This is called &#39;Cardholder Authorised&#39; in the administrative clients. If false, Command Centre will deny card access decisions for this cardholder.</p>
                       <p>&#39;authorised&#39; is false by default. If you want a new cardholder to open doors, be sure to set it to true in your POST.</p>
+                      <p>You need the &#39;Edit cardholders&#39; privilege to set this true. In versions prior to 8.80 your operator also needed that privilege to set it false, but in 8.80 and later &#39;De-authorise cardholder&#39; is enough on its own.</p>
                     </dd>
                   </dl>
                 </section>
