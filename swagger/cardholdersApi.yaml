@@ -1950,6 +1950,11 @@ definitions:
           value, but for image PDFs it will be an object containing a copy of the `href` field
           above.
 
+          In versions up to and including 8.60, if a cardholder did not have an image PDF captured
+          (in other words they were a member of an access group that included an image PDF, but they
+          did not have a value for it) the API returned the string 'Not captured' in the `value`
+          field.  Versions 8.70 and later will not return the `value` field at all.
+
           In a POST or PATCH send text PDFs (including dates) as strings, numeric PDFs as numbers or
           strings that parse to numbers, and image data Base64-encoded into a string.
 
