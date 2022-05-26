@@ -44,6 +44,12 @@ info:
       Alarms' privilege in the division of the source item, if your request specifies a source item.
       Current versions only require that the operator has that privilege on at least one division.
 
+    * An alarm will carry a new field called `eventType` containing the event type's ID and name.
+      The existing `type` field will remain, but will be obsolete.
+
+    * An alarm will contain a new field called `event` containing a link to its corresponding event,
+      mirroring the existing `alarm` field coming the other way from an event.
+
     #### Alarms and events API changes in 8.70
 
     * Each event in a page of search results will contain URLs to continue the search after that
@@ -466,7 +472,7 @@ x-spectacle-topics:
       another.  Multi-server installations have one division tree per server.
 
       Every event and alarm has a division.  It is usually the division of the source item.  Card
-      events or 'door forced' alarms, for example, typically use a door as a source item; when an
+      events or 'forced door' alarms, for example, typically use a door as a source item; when an
       operator modifies an item, the event recording that change uses that operator's workstation as
       the source item; the alarm that the server generates when you send a bad API key uses the
       server item as the source.
@@ -1687,7 +1693,7 @@ definitions:
         description: |
           The name of this alarm's event type.
 
-        example: "Door forced"
+        example: "Forced door"
       priority:
         type: integer
         description: Numeric priority.  9 is critical and 0 is not an event.
@@ -1790,7 +1796,7 @@ definitions:
             description: |
               The full alarm details text.  This may be up to 2048 UTF-8 characters, each of which
               could (theoretically) be four bytes long.
-            example: "Door forced"
+            example: "Forced door"
           history:
             type: array
             description: An array of alarm history entries.  Missing if there is no history.

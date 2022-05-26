@@ -156,7 +156,15 @@
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
                 <h4 id="alarms-and-events-api-changes-on-the-roadmap">Alarms and events API changes on the roadmap</h4>
                 <ul>
-                  <li>BREAKING CHANGE: a future version will require that the operator has the &#39;Create Events and Alarms&#39; privilege in the division of the source item, if your request specifies a source item. Current versions only require that the operator has that privilege on at least one division.</li>
+                  <li>
+                    <p>BREAKING CHANGE: a future version will require that the operator has the &#39;Create Events and Alarms&#39; privilege in the division of the source item, if your request specifies a source item. Current versions only require that the operator has that privilege on at least one division.</p>
+                  </li>
+                  <li>
+                    <p>An alarm will carry a new field called <code>eventType</code> containing the event type&#39;s ID and name. The existing <code>type</code> field will remain, but will be obsolete.</p>
+                  </li>
+                  <li>
+                    <p>An alarm will contain a new field called <code>event</code> containing a link to its corresponding event, mirroring the existing <code>alarm</code> field coming the other way from an event.</p>
+                  </li>
                 </ul>
                 <h4 id="alarms-and-events-api-changes-in-870">Alarms and events API changes in 8.70</h4>
                 <ul>
@@ -364,7 +372,7 @@
                 <p>After the server has your operator, it needs to check whether that operator has access to the items or events in the request. To explain that, it is necessary to cover divisions.</p>
                 <p>Aside from some special items such as day categories, every item in Command Centre is in a
                   <em>division</em>. Divisions are hierarchical, with all divisions (but the root) being a child of another. Multi-server installations have one division tree per server.</p>
-                <p>Every event and alarm has a division. It is usually the division of the source item. Card events or &#39;door forced&#39; alarms, for example, typically use a door as a source item; when an operator modifies an item, the event recording that change uses that operator&#39;s workstation as the source item; the alarm that the server generates when you send a bad API key uses the server item as the source.</p>
+                <p>Every event and alarm has a division. It is usually the division of the source item. Card events or &#39;forced door&#39; alarms, for example, typically use a door as a source item; when an operator modifies an item, the event recording that change uses that operator&#39;s workstation as the source item; the alarm that the server generates when you send a bad API key uses the server item as the source.</p>
                 <p>An event&#39;s division is not always its source&#39;s division. &#39;Card activated&#39; events have the server as a source item, but take on the cardholder&#39;s division so that operators who can see the cardholder can also see when the server activates their cards.</p>
                 <p>To link privileges to items and events, an operator group contains a list of privileges and a list of divisions. Its operators enjoy those privileges on all the items, events, and alarms that are in those divisions.</p>
                 <p>Having a privilege on a division also grants an operator that privilege on that division&#39;s descendants. Therefore an operator with a privilege on the root division has that privilege on all that server&#39;s items and events.</p>
@@ -606,7 +614,7 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;External bulk loading bay door&quot;</span>,
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
       },
-      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Door forced&quot;</span>,
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
       <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
       <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
       <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
@@ -774,7 +782,7 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;External bulk loading bay door&quot;</span>,
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
       },
-      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Door forced&quot;</span>,
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
       <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
       <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
       <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
@@ -946,7 +954,7 @@
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;External bulk loading bay door&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
   },
-  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Door forced&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
   <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
   <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
   <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
@@ -975,7 +983,7 @@
   <span class="hljs-attr">&quot;process&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarms/92210/process&quot;</span>
   },
-  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;Door forced&quot;</span>,
+  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
   <span class="hljs-attr">&quot;history&quot;</span>: [
     {
       <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;2016-02-18T19:21:52Z&quot;</span>,
@@ -3975,7 +3983,7 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;External bulk loading bay door&quot;</span>,
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
       },
-      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Door forced&quot;</span>,
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
       <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
       <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
       <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
@@ -4096,7 +4104,7 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;External bulk loading bay door&quot;</span>,
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
       },
-      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Door forced&quot;</span>,
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
       <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
       <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
       <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
@@ -4437,7 +4445,7 @@
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;External bulk loading bay door&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
   },
-  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Door forced&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
   <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
   <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
   <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
@@ -4616,7 +4624,7 @@
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;External bulk loading bay door&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
   },
-  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Door forced&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
   <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
   <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
   <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
@@ -4645,7 +4653,7 @@
   <span class="hljs-attr">&quot;process&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarms/92210/process&quot;</span>
   },
-  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;Door forced&quot;</span>,
+  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
   <span class="hljs-attr">&quot;history&quot;</span>: [
     {
       <span class="hljs-attr">&quot;time&quot;</span>: <span class="hljs-string">&quot;2016-02-18T19:21:52Z&quot;</span>,
