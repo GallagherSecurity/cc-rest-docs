@@ -1815,6 +1815,9 @@
                 </li>
               </ol>
               <p>To further improve the efficiency of your search, filter by event types and a time range.</p>
+              <h4 id="searching-for-events-that-indicate-movement">Searching for events that indicate movement</h4>
+              <p>If your server is running 8.70 or later give your operator the &#39;View cardholder events&#39; privilege instead of &#39;View events&#39;. Then request all events, and the server will only send you movements.</p>
+              <p>If your server is running 8.60 or earlier, use the search filter <code>types=20001,20002,20003,20047,20107,42415</code>.</p>
               <h4 id="searching-for-events-coming-from-other-items">Searching for events coming from other items</h4>
               <p>Events such as &#39;access granted&#39; and &#39;zone count maximum&#39; come from doors and access zones. To search for them, follow the same process as the previous use case (getting cardholder events) but use the <code>source</code> filter parameter instead of <code>cardholder</code>. It will limit the results to just those events that came from the items you gave in the query. If you have the RESTStatus licence (added in v8.00), you can use
                 <a href="rest.html">that API</a> to search for access zones, alarm zones, fence zones, macros, outputs, doors, and (in 8.10) inputs. If you do not, or if your source is not one of those types, use the
