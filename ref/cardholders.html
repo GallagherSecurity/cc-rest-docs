@@ -3006,7 +3006,7 @@
                   <p>If the <code>results</code> array you get back is empty you are up to date and you have nothing to do. Sleep for a time before your next poll, to avoid a tight loop and ease the load on your database. When it comes time to poll again, do not be tempted to resubmit the same request: the URL to use sometimes changes even when there are no results, so always get it from <code>next.href</code>.</p>
                 </li>
                 <li>
-                  <p>If the <code>results</code> array is not empty it will contain the first changes after your previous call. The sections below will help you process them.</p>
+                  <p>If the <code>results</code> array is not empty it will contain the first changes that happened after your previous call. The sections below will help you process them.</p>
                 </li>
                 <li>
                   <p>Restart your polling loop using the link in <code>next.href</code>.</p>
@@ -3018,7 +3018,7 @@
                   <p>The API will not notify changes to any fields that you cannot see in the cardholders API, such as user codes, passwords, card PINs, car park assignments, biometric credentials, and (in versions before 8.50) operator settings.</p>
                 </li>
                 <li>
-                  <p>There is a known issue in 8.50 preventing operator groups changes coming out of this API. Changes to the other five operator settings work correctly.</p>
+                  <p>There is a known issue in 8.50 preventing operator group membership changes coming out of this API. It was fixed in 8.60. Changes to the other five operator settings work correctly in 8.50.</p>
                 </li>
                 <li>
                   <p>The API will return the pre-change values of some fields, but not those that require a lot of storage such as image PDFs and PIV certificates. Command Centre does not hang on to them after they change.</p>
@@ -3142,8 +3142,8 @@
                     <div class="prop-value">
                       <p>Limits the search results to the changes that affected these fields, and limits the <code>oldValues</code> and <code>newValues</code> blocks to these fields. You can specify practically any of the fields in the
                         <a href="#definition-Cardholder-detail">cardholder detail</a>. You can also go into more detail; for example you can monitor a cardholder&#39;s cards&#39; validity dates using <code>filter=cards.from,cards.until</code>.</p>
-                      <p><code>filter</code> reduces the number of results; if you want to change the blocks in each result, use <code>fields</code>.</p>
-                      <p>If you do not supply a filter parameter it will use the same fields you get in a cardholder details page. That is nearly everything the API has for a cardholder, but omits some seldom-used or expensive features such as card tracing and the large PIV fields. If you want to monitor them you must list them here. For example, <code>filter=defaults,cards.trace</code> will add the card trace flag to the usual results.</p>
+                      <p><code>filter</code> reduces the number of results; if you want to choose the blocks you receive in each result, use <code>fields</code>.</p>
+                      <p>If you do not supply a filter parameter it will use the same fields you get in a cardholder details page. That is nearly everything the API has for a cardholder, but omits some seldom-used or expensive features such as card tracing and the large PIV fields. If you want to monitor them you must list them here. For example, <code>filter=defaults,cards.trace</code> will add the card trace flag to the usual filter.</p>
                       <p><code>personalDataFields</code> will filter for PDF changes, and will give you the personalDataDefinitions block plus the PDF values that changed.</p>
                       <p>Being able to monitor operator settings arrived in 8.50 and operator group memberships in 8.60.</p>
                       <p>Note that you cannot monitor changes in the <code>lastSuccessfulAccessTime</code> or <code>lastSuccessfulAccessZone</code> fields because they are not attributes of a cardholder object: they are derivatives of his or her activity. If you want to monitor a person&#39;s movements we advise subscribing to events.</p>
@@ -7910,9 +7910,11 @@
                         </dt>
                         <dd>
                           <p>An example Personal Data Field value.</p>
-                          <p>All PDFs except images appear at the top level of a cardholder in a field named after the PDF with a leading &#39;@&#39;. Date PDFs will contain a date-time with the time part set to midnight.</p>
+                          <p>All PDFs except images appear at the top level of a cardholder in a field named after the PDF with a leading &#39;@&#39;.</p>
+                          <p>Date PDFs will contain a date-time with the time part set to midnight.</p>
                           <p>Image PDFs appear as a block named after the PDF with a leading &#39;@&#39; containing an href. GETting that href will return the image data with an appropriate content-type header.</p>
-                          <p>Put your PDF values here when creating or modifying a cardholder. To set an image PDF, Base64-encode the image and send it as a string. There is one in the
+                          <p>Put your PDF values here when creating or modifying a cardholder. Note that to hold a PDF value the cardholder must be a member of an access group that has that PDF attached to it. In this example, being a member of the special projects group has granted our Mr. Boothroyd the student ID and photo PDFs.</p>
+                          <p>To set an image PDF, Base64-encode the image and send it as a string. There is one in the
                             <a href="#definition-Cardholder-POST-example">cardholder POST example</a>.</p>
                           <p>When you send in date PDFs, Command Centre will set the time to midnight because date PDFs are only accurate to a day. If you specified a time in your PATCH, the server will first perform a timezone correction then convert it to UTC before truncating the time, which might shift the date back a day if you specified a positive timezone offset. To be sure that does not happen, put <code>T00:00:00Z</code> on the end of your date.</p>
                         </dd>
@@ -8516,7 +8518,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>An example PDF value. In this example, access group 352 must include a PDF called &#39;email&#39; otherwise this will fail.</p>
+                      <p>An example PDF value. In this example, access group 352 must include a PDF called &#39;email&#39; otherwise this will appear to have no effect.</p>
                     </dd>
                     <dt data-property-name="-headshot" class="has-description">
                       <span class="json-property-name">@headshot:</span>
@@ -10139,6 +10141,7 @@
                     </dt>
                     <dd>
                       <p>Replace PDF values as though they were flat fields on a cardholder. Prefix the name of the PDF with <code>@</code>, and Base64-encode images. Send &#39;null&#39; if you want to delete a PDF value.</p>
+                      <p>Remember that a cardholder&#39;s record will not return a PDF if he or she is not a member of the access group that grants that PDF. In this example, one or both of access groups 352 and 124 are attached to &#39;employeeId&#39;.</p>
                     </dd>
                     <dt data-property-name="personalDataDefinitions" class="has-description">
                       <span class="json-property-name">personalDataDefinitions:</span>
