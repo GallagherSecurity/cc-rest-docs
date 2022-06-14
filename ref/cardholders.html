@@ -7916,7 +7916,7 @@
                           <p>Put your PDF values here when creating or modifying a cardholder. Note that to hold a PDF value the cardholder must be a member of an access group that has that PDF attached to it. In this example, being a member of the special projects group has granted our Mr. Boothroyd the student ID and photo PDFs.</p>
                           <p>To set an image PDF, Base64-encode the image and send it as a string. There is one in the
                             <a href="#definition-Cardholder-POST-example">cardholder POST example</a>.</p>
-                          <p>When you send in date PDFs, Command Centre will set the time to midnight because date PDFs are only accurate to a day. If you specified a time in your PATCH, the server will first perform a timezone correction then convert it to UTC before truncating the time, which might shift the date back a day if you specified a positive timezone offset. To be sure that does not happen, put <code>T00:00:00Z</code> on the end of your date.</p>
+                          <p>Date PDFs are only accurate to a day, so version 8.75 and later will ignore the time and time zone components if you send them. 8.70 and earlier will first perform a timezone correction then convert it to UTC before truncating the time, which might shift the date back a day if you specified a positive timezone offset. To be sure that does not happen, put <code>T00:00:00Z</code> on the end of your date.</p>
                         </dd>
                         <dt data-property-name="disableCipherPad" class="has-description">
                           <span class="json-property-name">disableCipherPad:</span>

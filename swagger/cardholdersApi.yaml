@@ -1475,12 +1475,11 @@ definitions:
               To set an image PDF, Base64-encode the image and send it as a string.  There is one in
               the [cardholder POST example](#definition-Cardholder-POST-example).
 
-              When you send in date PDFs, Command Centre will set the time to midnight
-              because date PDFs are only accurate to a day.  If you specified a time in
-              your PATCH, the server will first perform a timezone correction then convert
-              it to UTC before truncating the time, which might shift the date back a day
-              if you specified a positive timezone offset.  To be sure that does not
-              happen, put `T00:00:00Z` on the end of your date.
+              Date PDFs are only accurate to a day, so version 8.75 and later will ignore the time
+              and time zone components if you send them.  8.70 and earlier will first perform a
+              timezone correction then convert it to UTC before truncating the time, which might
+              shift the date back a day if you specified a positive timezone offset.  To be sure
+              that does not happen, put `T00:00:00Z` on the end of your date.
 
             example: "8904640"
           disableCipherPad:
