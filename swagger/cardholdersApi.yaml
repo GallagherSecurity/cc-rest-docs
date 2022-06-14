@@ -3142,6 +3142,16 @@ definitions:
         description: |
           The link to the next page of changes.  This will always be present, because (unlike items)
           changes never run out.
+
+          Because the `next` link is a pointer to the head of a queue of changes, and new changes
+          are being added to that queue which will not suit your filter or privileges, it will
+          change even when there are no results.
+
+          Therefore you should always use this link for your next query.  Do not be tempted to
+          re-use a URL after `results` comes back empty, thinking you merely need to ask the same
+          question again.  Doing that will cause the server unnecessary work, skipping over changes
+          that did not pass your filter or privilege checks on the previous call.
+
         properties:
           href: { type: string, format: url }
         example:
