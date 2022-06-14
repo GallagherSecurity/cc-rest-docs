@@ -3224,8 +3224,9 @@ definitions:
           detail](#definition-Cardholder-detail).  If a value is blank, it means that the value was
           null before the change or the server no longer has it.
 
-          Unless you are particularly interested in historical data, you may like to omit this block
-          using something like `fields=time,type,item,operator`.
+          Because this requires extra effort from the server, you may like to omit this block using
+          something like `fields=time,type,item,operator` unless you are particularly interested in
+          historical data.
 
         example:
           firstName: "Craig"
@@ -3238,7 +3239,9 @@ definitions:
           server has them.
 
           Generally, this block is less useful than the current state of the cardholder, described
-          next.
+          next.  It also requires extra effort from the server, so you may like to omit this block
+          using `fields`.
+
         example: {
           firstName: "Gavin",
           competencies: [
@@ -3271,8 +3274,8 @@ definitions:
         }
       cardholder:
         description: |
-          A block containing the current fields on the cardholder (provided the cardholder has not
-          been deleted).  This is in the same format as a [cardholder
+          A block containing the current fields on the cardholder, provided the cardholder has not
+          been deleted.  This is in the same format as a [cardholder
           detail](#definition-Cardholder-detail).
 
           Because building this requires more work from the server it is not in the default result
@@ -5546,7 +5549,8 @@ paths:
           `filter=accessGroups` to your GET, and you will not be troubled with all the other kinds
           of changes that cardholders go through.
 
-        - Ease the load on the server, the network, and your client by reducing the fields in the
+        - The default set of fields is large and expensive to compute.  Ease the load on the server,
+          the network, and your client by asking for a smaller
           response.  For example if you are only interested in the current state of a cardholder's
           group memberships and do not care who made the change, or when, or what state the
           cardholder was in before use `fields=item,cardholder.accessGroups`.  You need `item` so

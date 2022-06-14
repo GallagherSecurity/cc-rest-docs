@@ -3061,7 +3061,7 @@
                       <p>Filter for the kinds of changes you are after using the <code>filter</code> parameter. If you are only interested in people&#39;s access group memberships, for example, add <code>filter=accessGroups</code> to your GET, and you will not be troubled with all the other kinds of changes that cardholders go through.</p>
                     </li>
                     <li>
-                      <p>Ease the load on the server, the network, and your client by reducing the fields in the response. For example if you are only interested in the current state of a cardholder&#39;s group memberships and do not care who made the change, or when, or what state the cardholder was in before use <code>fields=item,cardholder.accessGroups</code>. You need <code>item</code> so you can tell which cardholder changed. If you store your own identifier in a PDF you could drop <code>item</code> and add <code>cardholder.pdf_XXX</code>, where &#39;XXX&#39; is the ID of your PDF.</p>
+                      <p>The default set of fields is large and expensive to compute. Ease the load on the server, the network, and your client by asking for a smaller response. For example if you are only interested in the current state of a cardholder&#39;s group memberships and do not care who made the change, or when, or what state the cardholder was in before use <code>fields=item,cardholder.accessGroups</code>. You need <code>item</code> so you can tell which cardholder changed. If you store your own identifier in a PDF you could drop <code>item</code> and add <code>cardholder.pdf_XXX</code>, where &#39;XXX&#39; is the ID of your PDF.</p>
                     </li>
                     <li>
                       <p>Sleep for as long as you can between calls.</p>
@@ -10914,7 +10914,7 @@
                     <dd>
                       <p>A block containing the values of the changed fields before the change, if Command Centre still has them, in the same format as a
                         <a href="#definition-Cardholder-detail">cardholder detail</a>. If a value is blank, it means that the value was null before the change or the server no longer has it.</p>
-                      <p>Unless you are particularly interested in historical data, you may like to omit this block using something like <code>fields=time,type,item,operator</code>.</p>
+                      <p>Because this requires extra effort from the server, you may like to omit this block using something like <code>fields=time,type,item,operator</code> unless you are particularly interested in historical data.</p>
                     </dd>
                     <dt data-property-name="newValues" class="has-description">
                       <span class="json-property-name">newValues:</span>
@@ -10923,7 +10923,7 @@
                     </dt>
                     <dd>
                       <p>A similar block containing the values of the changed fields after the change, if the server has them.</p>
-                      <p>Generally, this block is less useful than the current state of the cardholder, described next.</p>
+                      <p>Generally, this block is less useful than the current state of the cardholder, described next. It also requires extra effort from the server, so you may like to omit this block using <code>fields</code>.</p>
                     </dd>
                     <dt data-property-name="cardholder" class="has-description">
                       <span class="json-property-name">cardholder:</span>
@@ -10931,7 +10931,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>A block containing the current fields on the cardholder (provided the cardholder has not been deleted). This is in the same format as a
+                      <p>A block containing the current fields on the cardholder, provided the cardholder has not been deleted. This is in the same format as a
                         <a href="#definition-Cardholder-detail">cardholder detail</a>.</p>
                       <p>Because building this requires more work from the server it is not in the default result set. If you need it you must ask for it using the <code>fields</code> parameter. While the server has a default field set for cardholders, your query will be more efficient if you ask for just the fields you need: <code>fields=defaults,cardholder.firstName,cardholder.lastName,cardholder.cards</code>, etc. Note how you must prefix each field with <code>cardholder</code> since they are all inside a block with that name.</p>
                     </dd>
