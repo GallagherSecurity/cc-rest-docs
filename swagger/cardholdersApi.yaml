@@ -2128,12 +2128,17 @@ definitions:
         description: |
           Command Centre will only return this object for a mobile credential, and you should send
           it only when creating one.  In the interests of security you cannot modify the invitation
-          block of an existing credential.  Someone's thumb might be poised to accept it, after all.
+          block of an existing credential.  Someone's thumb might be on its way to accept it, after all.
           If there was something wrong with it you should delete it and start afresh.
 
-          If you specify either `mobile` or `mail` you must also supply the other so that Command
-          Centre can send both an email invitation and a confirmation SMS.  It is an error to only
-          specify one.  If you give neither, Command Centre will not send an invitation to the
+          If you specify either `mobile` or `mail` to early-version servers you must also supply the
+          other so that Command Centre can send both an email invitation and a confirmation SMS.  It
+          is an error to only specify one on those servers.
+
+          Later versions of Command Centre made the SMS verification optional.  The mobile number is
+          not required when creating credentials on those servers.
+
+          If you do not give an email address, Command Centre will not send an invitation to the
           cardholder, and it will be up to another application to complete the creation of this
           credential using the Mobile Connect SDK.
 
