@@ -9188,9 +9188,13 @@
                     </dt>
                     <dd>
                       <p>Command Centre will only return this object for a mobile credential, and you should send it only when creating one. In the interests of security you cannot modify the invitation block of an existing credential. Someone&#39;s thumb might be on its way to accept it, after all. If there was something wrong with it you should delete it and start afresh.</p>
+                      <p>Whether you should send <code>mobile</code> or <code>email</code> when creating a mobile credential depends on whether you are using the Gallagher mobile apps or your own.</p>
                       <p>If you specify either <code>mobile</code> or <code>mail</code> to early-version servers you must also supply the other so that Command Centre can send both an email invitation and a confirmation SMS. It is an error to only specify one on those servers.</p>
-                      <p>Later versions of Command Centre made the SMS verification optional. The mobile number is not required when creating credentials on those servers.</p>
-                      <p>If you do not give an email address, Command Centre will not send an invitation to the cardholder, and it will be up to another application to complete the creation of this credential using the Mobile Connect SDK.</p>
+                      <p>Later versions of Command Centre made the SMS verification optional to better support installations that use the Gallagher apps but dependence on cellular connectivity is undesirable. You do not need to send a mobile number when creating such a credential.</p>
+                      <p>If you do not give an email address Command Centre cannot send an invitation to the cardholder. It will be up to another application to complete the creation of this credential using the Mobile Connect SDK.</p>
+                      <p>You should not send a mobile number when creating a credential for use by third-party apps that use the Mobile Connect SDK. SMS is not supported there.</p>
+                      <p>For more detail on using the Mobile Connect SDK, including more complete coverage of how an email address and mobile number are used in the provisioning process, see its documentation at
+                        <a href="https://gallaghersecurity.github.io">gallaghersecurity.github.io</a>.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
