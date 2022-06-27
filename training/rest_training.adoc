@@ -581,8 +581,8 @@ People toss those keys around like business cards. Its mate, however,
 is very, very private, because it is the one that unlocks the secret message.
 
 These keys do more than just encrypt
-and decrypt data so they are not called encryption and decryption
-keys: the business card one is called the _public key_ and the other is
+and decrypt data so we do not use those terms in their names.  The business
+card one is called the _public key_ and the other is
 the _private key_.
 
 A _certificate_ contains a public key plus metadata: what the key is
@@ -598,7 +598,7 @@ other hand, last for months or years.
 
 If an HTTPS client and server connect and establish an encrypted channel
 of communication without checking certificates, it will be secret (nobody
-ill be able to listen in)
+will be able to listen in)
 but they should not trust each other. The other end could be
 fibbing. So they conduct a negotiation to establish each other’s
 identity (i.e., they _authenticate_).
@@ -3351,16 +3351,48 @@ Schedules arrived in 8.40. The API lets you view, create, and delete them, and
 modify how they affect their items. It does not let you change the items
 they affect.
 
+[TIP]
+====
+If you are not familiar with Command Centre:
+
+There are seven types of schedule.  They all contain a list of day
+categories (more on those later), and for each day category, a list of
+times (00:00 through 23:59) paired with an action to perform at that time.
+
+Where the schedule types differ is in the item types they can control, and
+the actions that they trigger on the item they are controlling.
+
+[cols="30%,70%",stripes=even]
+|===
+|Schedule type | Actions
+|Cardholder | Access granted / denied
+|Access zone | Zone mode (secure, free, etc.).
+|Alarm zone | Zone mode (armed, disarmed, etc.).
+|Output | On / off / cancel overrides
+|Notifications |  On / off
+|HV/LF | High / low / cancel overrides
+|Elevator kiosk | Control mode
+|===
+
+The access zone and alarm zone schedules can switch their zone to any mode.
+The other five select between two modes.
+
+Some of them have another action that cancels any untimed overrides that
+happened since the last scheduled changed, returning control back to the
+schedule.  It won't affect overrides that have an end time.
+
+====
+
 When updating a schedule you must replace its entire list of day
 categories and times. This is quite different from how you update other
 lists via this API. The JSON schema has room for us to accept the normal
 style as a future enhancement, but in 8.40 you must replace all a
 schedule’s schedules at the same time. That suits our target use-case,
-which was for an integration to download the schedule, de-serialise it
+which is for an integration to download the schedule, de-serialise it
 into an object model, change some part of it, then re-serialise and
 upload it back.
 
-As of 8.60, the only types of item that the API can create are
+As of 8.80, the only types of item that the API can create are
 cardholders, visits, and schedules.
 
 == Visitor management
