@@ -1554,13 +1554,21 @@ definitions:
               cardholders) and the value for this cardholder.  The value block of an image PDF will
               contain an href to the image.
 
+              Your visibility of a cardholder's PDF value depends entirely on the PDF's access
+              settings in your operator groups, or if it has none of those, its default privilege.
+              The PDF's division is irrelevant.  So if you were expecting a PDF value here when none
+              arrived, ensure the cardholder has a value for that PDF (because the server does not
+              send nulls) then check the PDF's access settings in all of your operator groups, then
+              the default visibility on the PDF item itself.
+
               When you send this array in a POST or PATCH, Command Centre will take the
               notifications flag from here.  It will use the value from here too, but the '@name'
               field at the root of the cardholder object takes priority.
 
-              To request this block using the 'fields' parameter, use 'personalDataFields'.  Doing
-              so will not only give you the personalDataDefinitions block, but also the values
-              at the root level (with their names preceded by '@'-signs).
+              To request this block using the 'fields' parameter, use 'personalDataFields' (note
+              'fields' not 'definitions').  Doing so will not only give you the
+              personalDataDefinitions block, but also the values at the root level (with their names
+              preceded by '@'-signs).
             items:
               {$ref: '#/definitions/Cardholder PDF'}
             example:
