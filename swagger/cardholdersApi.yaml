@@ -229,7 +229,7 @@ info:
       to match the entire string.  Without the quotes Command Centre will perform a substring
       search, which is slower and may return more results than you need.  In one test, a substring
       search of half a million cardholders took more than ten seconds, but with quotes it took a
-      tenth of a second.
+      tenth of a second.  That is a 100x speedup.
 
     * When modifying a cardholder, do all your operations in one PATCH.  This is much quicker than
       doing it in several smaller PATCHes.
@@ -605,8 +605,9 @@ tags:
     3. Note the ID of the item.  It will be a short alphanumeric.
 
     Case does not matter when searching by name but remember the quotes:  Command Centre will
-    perform a substring match if you omit them, and (for the example above) return you the PDFs
-    'previous_employee_ID' and 'employee_ID_allocated_flag', assuming you had PDFs with those names.
+    perform a substring match if you omit them, which is vastly slower and (for the example above)
+    return you the PDFs 'previous_employee_ID' and 'employee_ID_allocated_flag', assuming you had
+    PDFs with those names.
 
     Now you can use that PDF ID in a cardholder search.
 
@@ -4998,7 +4999,10 @@ paths:
           that matches the parameter.
 
           By default, it is a substring match; surround it with double quotes `"..."` for an exact
-          match.  Without quotes, adding a percent sign `%` or underscore `_` will anchor the string
+          match.  Tests showed an exact match to be 100x quicker than a substring search on a large
+          database.
+
+          Without quotes, adding a percent sign `%` or underscore `_` will anchor the string
           at both ends.  A `_` will match any single character, and a `%` will match any substring.
           A lone `%` will return any cardholder with this PDF set to a non-null value.
 

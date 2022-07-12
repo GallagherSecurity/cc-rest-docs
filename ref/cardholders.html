@@ -502,7 +502,7 @@
                     <p>When creating cardholders, assign their cards, groups, and other attributes in the POST. This is significantly quicker than sending a handful of PATCHes chasing after your POST, and if you are interrupted, you will not end up with a partially-configured cardholder.</p>
                   </li>
                   <li>
-                    <p>When searching for a cardholder (or any other object) by name or PDF value, if you have the exact string, put it in quotes <code>&quot;...&quot;</code>. It is still a case-insensitive search but it attempts to match the entire string. Without the quotes Command Centre will perform a substring search, which is slower and may return more results than you need. In one test, a substring search of half a million cardholders took more than ten seconds, but with quotes it took a tenth of a second.</p>
+                    <p>When searching for a cardholder (or any other object) by name or PDF value, if you have the exact string, put it in quotes <code>&quot;...&quot;</code>. It is still a case-insensitive search but it attempts to match the entire string. Without the quotes Command Centre will perform a substring search, which is slower and may return more results than you need. In one test, a substring search of half a million cardholders took more than ten seconds, but with quotes it took a tenth of a second. That is a 100x speedup.</p>
                   </li>
                   <li>
                     <p>When modifying a cardholder, do all your operations in one PATCH. This is much quicker than doing it in several smaller PATCHes.</p>
@@ -743,7 +743,7 @@
                   <p>Note the ID of the item. It will be a short alphanumeric.</p>
                 </li>
               </ol>
-              <p>Case does not matter when searching by name but remember the quotes: Command Centre will perform a substring match if you omit them, and (for the example above) return you the PDFs &#39;previous_employee_ID&#39; and &#39;employee_ID_allocated_flag&#39;, assuming you had PDFs with those names.</p>
+              <p>Case does not matter when searching by name but remember the quotes: Command Centre will perform a substring match if you omit them, which is vastly slower and (for the example above) return you the PDFs &#39;previous_employee_ID&#39; and &#39;employee_ID_allocated_flag&#39;, assuming you had PDFs with those names.</p>
               <p>Now you can use that PDF ID in a cardholder search.</p>
               <ol>
                 <li>Recall the JSON object you received from <code>GET /api</code>.</li>
@@ -992,7 +992,8 @@
                     </div>
                     <div class="prop-value">
                       <p>Limits the results to cardholders with a value for the Personal Data Field with this ID that matches the parameter.</p>
-                      <p>By default, it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring. A lone <code>%</code> will return any cardholder with this PDF set to a non-null value.</p>
+                      <p>By default, it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Tests showed an exact match to be 100x quicker than a substring search on a large database.</p>
+                      <p>Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring. A lone <code>%</code> will return any cardholder with this PDF set to a non-null value.</p>
                       <p>The search is always case-insensitive.</p>
                       <p>The search parameters form a logical conjunction. They are ANDed together. Therefore the search <code>pdf_1315=nanny&amp;pdf_1315=paratrooper</code> will only return cardholders whose PDF 1315 contains the strings &#39;nanny&#39; and &#39;paratrooper&#39;.</p>
                     </div>
