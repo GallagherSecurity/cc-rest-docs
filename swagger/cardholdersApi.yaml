@@ -72,6 +72,9 @@ info:
       designator, because date PDFs don't hold a time or time zone.  Previously they came out as
       midnight UTC, which implied more accuracy than date PDFs hold.
 
+    * An optional PDF field 'operatorAccess' contains the level of access your operator has to
+      cardholders' values for the PDF.
+
     #### Cardholder API changes in 8.70
 
     * BREAKING CHANGE: Missing image PDFs will no longer have "not captured" as their value.
@@ -222,9 +225,11 @@ info:
       are interrupted, you will not end up with a partially-configured cardholder.
 
     * When searching for a cardholder (or any other object) by name or PDF value, if you have the
-      exact string, put it in quotes `"..."`.  Otherwise Command Centre will perform a substring
-      search, which is slower and may return more results than you need.  Even with quotes, the
-      search is case-insensitive.
+      exact string, put it in quotes `"..."`.  It is still a case-insensitive search but it attempts
+      to match the entire string.  Without the quotes Command Centre will perform a substring
+      search, which is slower and may return more results than you need.  In one test, a substring
+      search of half a million cardholders took more than ten seconds, but with quotes it took a
+      tenth of a second.
 
     * When modifying a cardholder, do all your operations in one PATCH.  This is much quicker than
       doing it in several smaller PATCHes.
@@ -1244,7 +1249,7 @@ parameters:
     items: { type: string }
     default: ['defaults']
     enum: [href, id, name, description, division, serverDisplayName, type, default, required,
-               unique, sortPriority, accessGroups, regex, regexDescription]
+               unique, sortPriority, accessGroups, regex, regexDescription, defaultAccess, operatorAccess]
     description: |
       Specifies the fields in the search results.  The values you can list are the same in the
       search and details pages.  Using it you can return everything on the search page that you
@@ -4520,8 +4525,25 @@ definitions:
 
           After 8.70 this will not show for date and image PDFs, because it can never be true for
           them.
-      privilege:
-        description: Reserved for future use.  Do not use.
+      defaultAccess:
+        type: string
+        example: "fullAccess"
+        enum: [ "noAccess", "readOnly", "fullAccess" ]
+        default: "fullAccess"
+        description: |
+          This is the access that operators will have to cardholders' values of this PDF if the
+          operator is not a member of an operator group that overrides it.  Check the operator
+          group's 'Personal data' tab in the Configuration Client.
+      operatorAccess:
+        description: |
+          This is the access that your operator has to cardholders' values of this PDF, including if
+          the operator is a member of an operator group that overrides it. You will only get this
+          field if you ask for it with the `fields` parameter.
+
+          New in 8.80.
+        type: string
+        enum: [ "noAccess", "readOnly", "fullAccess" ]
+        example: "fullAccess"
       sortPriority:
         description: |
           This is called 'sort order' in the Configuration Client.  Interactive clients use this
