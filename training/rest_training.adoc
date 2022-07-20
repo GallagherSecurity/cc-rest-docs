@@ -3497,10 +3497,9 @@ atomically-incrementing small integer.  It is trivially easy to generate the URL
 item in the system by starting at one and iterating up.
 
 We expect attackers to do this.  We do not rely on a client's ignorance of server state to protect
-it (other than API keys, of course).  If a client guesses an item's ID, or even an undocumented
-path, the server will enforce the licensing and privilege models.  If the session's privileges do
-not permit viewing the requested item the server will respond as though the item does not exist
-(with a 404).
+it (other than API keys, of course).  If a client guesses an item's ID the server will enforce the
+licensing and privilege models.  If the session's privileges do not permit viewing the requested
+item the server will respond with a 404, as though the item does not exist.
 
 The external penetration testers Gallagher engages have access to our source code so that they can
 conduct white-box testing and fully exercise the privilege model.  Their reports are available on
@@ -3623,6 +3622,12 @@ and later.
 |Delete a cardholder.
 |'Delete cardholders'.  Not 'Create cardholders', 'Create and edit cardholder', or 'Edit
  cardholder'.
+
+|Redact a cardholder's events.
+|'Delete cardholder history'.
+
+|Redact a cardholder.
+|'Delete cardholder history' and 'Delete cardholders'.
 
 |Edit a relationship between cardholders.
 |One of the privileges that lets you edit cardholders on the cardholder’s division and on the role’s
