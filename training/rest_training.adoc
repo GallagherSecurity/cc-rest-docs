@@ -171,8 +171,9 @@ leading advice regarding the REST API ("leave it turned off") there is
 plenty more in there to be aware of.
 
 If you are interested in the security of the REST API, look in <<_the_request_process>> for how the
-server authenticates and authorises requests in general, and <<_client_side_certificates>> for how
-it can use certificates to authenticate clients.
+server authenticates and authorises requests in general, <<_client_side_certificates>> for how it
+can use certificates to authenticate clients, and <<_notes_for_penetration_testers>> for a mini-FAQ
+on pen test findings.
 
 === Sample code
 
@@ -3472,15 +3473,70 @@ visitor to the visit’s visitor access groups.
 
 This section TODO.  It should cover:
 
-* Use it when clients cannot reach port 8908 on the server but the server can reach AWS.
-* There are no licence requirements on top of the API's usual licences.
+* Use it when REST clients cannot reach port 8904 on the server but the server can reach AWS.
+* There are no licence requirements on top of the API's usual licences.  It's free.
 * Clients simply change their connection URLs from the server's name to one in the cloud (the same
   cloud server that their server is connected to).  Same API key, same client certificate.
-* The server has to set up a cloud server, turn on the API gateway globally and in each REST Client
-  item that needs it.
+* The server has to set up a cloud server and turn on the API gateway globally and in each REST Client
+  item that needs it.  This is only a few clicks.
 * Everything else is the same.  Including the documentation URL https://gallaghersecurity.github.io.
 * Throughput is reduced.
 
+
+== Notes for penetration testers
+
+This section contains answers to questions raised after penetration tests.
+
+Also see <<_the_request_process>> for how the server authenticates and authorises requests.
+
+
+=== Item IDs are easily predicted
+
+All Command Centre's items are referenced by a URL containing the item's database ID, which is an
+atomically-incrementing small integer.  It is trivially easy to generate the URL ("href") of every
+item in the system by starting at one and iterating up.
+
+We expect attackers to do this.  We do not rely on a client's ignorance of server state to protect
+it (other than API keys, of course).  If a client guesses an item's ID, or even an undocumented
+path, the server will enforce the licensing and privilege models.  If the session's privileges do
+not permit viewing the requested item the server will respond as though the item does not exist
+(with a 404).
+
+The external penetration testers Gallagher engages have access to our source code so that they can
+conduct white-box testing and fully exercise the privilege model.  Their reports are available on
+request.
+
+=== There is no rate-limiting of authorised requests
+
+The API does not throttle correctly-authorised API requests.  This makes it look like it is not
+protecting itself from denial-of-service attacks.
+
+It protects itself from incorrectly-authorised API requests.  It raises medium-priority alarms for
+the first few bad requests, then another at the highest priority to inform operators that it is
+under a DoS, after which it falls silent until the attack ends.
+
+We are looking at options for rate-limiting the API, but it is a balancing act between protecting
+the server from an unlikely situation and preserving the normal operation of our integrations, some
+of which make a huge number of requests per second.
+
+We consider a DoS attack from a fully-authorised bad actor (in other words, one with a valid API
+key, TLS certificate, and source IP) is not likely enough to justify urgency.
+
+A denial-of-service is far more likely to be caused by a sub-optimal implementation.  To help
+developers avoid that the reference documentation contains sections headed "efficiency tips".
+
+=== The server uses the Host header
+
+Our web server does not change its behaviour based on the Host header.  It uses its value to form
+URLs that it sends back to the client.
+
+A client sending a malformed Host header will only affect itself. This would be a problem if an
+attacker was modifying (poisoning) a valid request on its way to us, but if the attacker could do
+that it would also have a valid API key and TLS certificate, plus it would be able to pollute our
+responses on their way back to the client, so it would hardly bother with this attack.
+
+This class of vulnerability is a problem when there is an HTTP cache between client and server.
+This is never the case for program interfaces.
 
 == Appendix: Privilege table
 
@@ -3743,6 +3799,9 @@ all read-only fields.
 8.50 adds views of operator groups, receptions, and visitor management
 settings, and read-write access to visits and cardholders’ operator and
 elevator settings.
+
+8.80 adds cardholder redaction:  scrubbing a person's activity and identifying information out of
+the database to help with privacy protection regulations.
 
 Car parks remain on the roadmap.
 

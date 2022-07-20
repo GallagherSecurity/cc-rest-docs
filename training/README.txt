@@ -30,7 +30,7 @@ It's Ruby, so installing it is simply:
 Now `asciidoctor rest_training.adoc` will generate `rest_training.html` that you can preview in a
 browser.
 
-Do not commit that HTML to github!  There is a .gitignore in there to help revent that.
+Do not commit that HTML to github!  There is a .gitignore in there to help prevent that.
 
 
 Screenshots
