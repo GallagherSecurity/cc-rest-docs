@@ -132,7 +132,7 @@ aims to be complete, and you should have it on hand whenever developing
 against Command Centre. However the amount of detail can be daunting and
 it is not very introductory, which is why this document exists.
 
-The reference documentation is in four sections:
+That reference documentation is in four sections:
 
 * `cardholders.html` describes the cardholder API calls and supporting concepts, such as card types,
 access groups, PDFs, roles, and competencies. These functions were new to 7.90. 8.30 added a
@@ -156,7 +156,14 @@ Javascript, and `file:` URLs on network shares prevents the HTML rendering
 properly so if those files look goofy to you, try a different browser or
 copy the folder to your local drive. Or read it online.
 
-=== Online help and other documents
+=== API gateway technical paper
+
+If you are thinking of using <<_the_api_gateway>> this document will get you started, but if you are
+after a deeper understanding:
+
+https://gallaghersecurity.github.io/docs/Command%20Centre%20Cloud%20Api%20Gateway%20TIP.pdf
+
+=== On the DVD
 
 The Configuration Client’s Help menu opens a CHM file that you can also
 find in the ISO at
@@ -191,7 +198,7 @@ get you started on an integration?  Read <<_useful_background>>.
 Do you want to set up Command Centre and try out its API from a REST client?  Read
 <<_training_setup>>.
 
-Do you want to learn something about HTTP queries in general?  <<_http_requests>> should help.
+Do you want to learn something about HTTP queries in general?  <<_http_requests>> will help.
 
 Do you need an introduction to how HTTPS uses certificates?
 <<_authentication_and_encryption_certificates>> is for you.
@@ -2623,8 +2630,8 @@ the database are out of sync.
 
 == Client-side certificates
 
-First see <<_authentication_and_encryption_certificates>> for what certificates are and what the
-difference is between server certificates and client certificates.
+First see <<_authentication_and_encryption_certificates>> for what certificates are and the
+difference between server certificates and client certificates.
 
 This section deals with the client certificate check that happens if you
 left 'Do not require pinned client certificates' off in the 'Web
@@ -3485,19 +3492,23 @@ using a Gallagher Visitor Management Kiosk, or when a greeter signs them
 in using the Visitor Management Client, Command Centre will add the
 visitor to the visit’s visitor access groups.
 
-== The API gateway TODO
+== The API gateway
 
-This section TODO.  It should cover:
+The API gateway lets clients connect to the server when they cannot reach its port 8904 directly.
+Command Centre needs to be connected to a cloud server, and it needs to turn on the API gateway
+globally and in each REST Client item that needs it (which only takes a few clicks) then the client
+simply changes the host in its connection URL to the cloud server that the CC is connected to.  The
+client uses the same API key, the same client certificate, and the same root path (`/api`).
 
-* Use it when REST clients cannot reach port 8904 on the server but the server can reach AWS.
-* There are no licence requirements on top of the API's usual licences.  It's included.
-* Clients simply change their connection URLs from the server's name to one in the cloud (the same
-  cloud server that their server is connected to).  Same API key, same client certificate.
-* The server has to set up a cloud server and turn on the API gateway globally and in each REST Client
-  item that needs it.  This is only a few clicks.
-* Everything else is the same.  Including the documentation URL https://gallaghersecurity.github.io.
-* Throughput is reduced.
+Everything else is the same, including the documentation URL https://gallaghersecurity.github.io.
 
+There are no additional licence requirements.
+
+Note that due to the traffic hairpinning through Amazon's servers, throughput is significantly
+reduced.
+
+For a lot more detail about the API gateway, see its technical information paper at
+https://gallaghersecurity.github.io/docs/Command%20Centre%20Cloud%20Api%20Gateway%20TIP.pdf
 
 == Notes for penetration testers
 
