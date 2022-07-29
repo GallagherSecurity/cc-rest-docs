@@ -2232,10 +2232,11 @@ minutes on a v7.90 server. The process was to request a summary page of
 10,000 cardholders, then the remaining 2,000, then iterate through all
 their hrefs, getting their details pages one by one.
 
-Extracting the same fields for the same *12,000 cardholders took 12
-seconds* on the same server running v8.00. This process used the `fields`
-parameter to add cards, access groups, and PDFs to the summary page so
-that the test did not have to get any detail pages.
+That is a poor approach these days.  Extracting the same fields for the
+same *12,000 cardholders took 12 seconds* on the same server running
+v8.00. This process used the `fields` parameter to add cards, access
+groups, and PDFs to the summary page so that the test did not have to
+get any detail pages.
 
 ==== Extracting 200,000 cardholders
 
@@ -3524,9 +3525,9 @@ Also see <<_the_request_process>> for how the server authenticates and authorise
 
 === Item IDs are easily predicted
 
-All Command Centre's items are referenced by a URL containing the item's database ID, which is an
-atomically-incrementing small integer.  It is trivially easy to generate the URL ("href") of every
-item in the system by starting at one and iterating up.
+All Command Centre's items are referenced by a URL containing the item's database ID, which is a
+small integer.  It is trivially easy to generate the URL ("href") of every item in the system by
+starting at ID number one and iterating up.
 
 We expect attackers to do this.  We do not rely on a client's ignorance of server state to protect
 it (other than API keys, of course).  If a client guesses an item's ID the server will enforce the
@@ -3539,32 +3540,34 @@ request.
 
 === There is no rate-limiting of authorised requests
 
-The API does not throttle correctly-authorised API requests.  This makes it look like it is not
+The API does not throttle correctly-authenticated API requests.  This makes it look like it is not
 protecting itself from denial-of-service attacks.
 
-It protects itself from incorrectly-authorised API requests.  It raises medium-priority alarms for
+It protects itself from incorrectly-authenticatd API requests.  It raises medium-priority alarms for
 the first few bad requests, then another at the highest priority to inform operators that it is
 under a DoS, after which it falls silent until the attack ends.
 
-We are looking at options for rate-limiting the API, but it is a balancing act between protecting
+We are looking at options for rate-limiting the API, but it is a balance between protecting
 the server from an unlikely situation and preserving the normal operation of our integrations, some
 of which make a huge number of requests per second.
 
-We consider a DoS attack from a fully-authorised bad actor (in other words, one with a valid API
+We consider a DoS attack from a fully-authenticated bad actor (in other words, one with a valid API
 key, TLS certificate, and source IP) is not likely enough to justify urgency.
 
-A denial-of-service is far more likely to be caused by a sub-optimal implementation.  To help
-developers avoid that the reference documentation contains sections headed "efficiency tips".
+So far, the denials of service our customers have observed were caused by authenticated integrations
+acting improperly.  To help developers avoid that the reference documentation contains sections
+headed "efficiency tips".
 
 === The server uses the Host header
 
-Our web server does not change its behaviour based on the Host header.  It uses its value to form
-URLs that it sends back to the client.
+Our web server uses the Host header sent by the client to form URLs that it sends back.  Although
+the server does not change its behaviour based on the header's value, using it to build strings is
+enough to cause a negative result on some tests.
 
 A client sending a malformed Host header will only affect itself. This would be a problem if an
 attacker was modifying (poisoning) a valid request on its way to us, but if the attacker could do
-that it would also have a valid API key and TLS certificate, plus it would be able to pollute our
-responses on their way back to the client, so it would hardly bother with this attack.
+that it would have observed a valid API key and TLS certificate, plus it would be able to pollute
+our responses on their way back to the client, so it would hardly bother with this attack.
 
 This class of vulnerability is a problem when there is an HTTP cache between client and server.
 This is never the case for program interfaces.
