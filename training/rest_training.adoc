@@ -2777,7 +2777,7 @@ in your application.
 === Create a certificate and record the thumbprint in CC
 
 The following commands create a client certificate.  You need to run them on the
-system that will be running your REST client--that may not be your Command
+system that will be running your REST client.  That may not be your Command
 Centre server.
 
 ==== Using OpenSSL tools
@@ -2806,6 +2806,10 @@ openssl req -x509      \
 
 Notice the `rsa:4096`: it produces a four-kilobit key, which is huge.  It might be
 overkill for development, but it's nice to have the option.
+
+Its name will be 'RESTtest'.  You should come up with a name related to your application's purpose
+because diagnising certificate problems is a tough enough job without ambiguous certificate names
+muddying the waters even more.
 
 Again, the bold part is  reducing your security. In this case,
 the `-nodes` option (footnote: it means 'no DES'. It is not the plural
@@ -2892,6 +2896,11 @@ makecert ignoreme.der
 +
 That will create a certificate and place it in your certificate store
 with a copy on disk.
+
++
+Its name will be 'RESTClientCert'.  As previously indicated, you should come up with an informative
+name for your certificates so that the brave souls diagnosing your TLS issues have something to
+go on.
 
 +
 The `-pe` marked the key as exportable.  More on that later.
@@ -3527,12 +3536,12 @@ Also see <<_the_request_process>> for how the server authenticates and authorise
 
 All Command Centre's items are referenced by a URL containing the item's database ID, which is a
 small integer.  It is trivially easy to generate the URL ("href") of every item in the system by
-starting at ID number one and iterating up.
+starting at ID number one and iterating up.  Some tests flag this as an issue.
 
 We expect attackers to do this.  We do not rely on a client's ignorance of server state to protect
-it (other than API keys, of course).  If a client guesses an item's ID the server will enforce the
-licensing and privilege models.  If the session's privileges do not permit viewing the requested
-item the server will respond with a 404, as though the item does not exist.
+it (other than API keys, of course).  The server will always enforce the licensing and privilege
+models.  For example, when a client asks for the details of an item it is unable to view the server
+will respond as though the item does not exist (with a 404).
 
 The external penetration testers Gallagher engages have access to our source code so that they can
 conduct white-box testing and fully exercise the privilege model.  Their reports are available on
@@ -3540,7 +3549,7 @@ request.
 
 === There is no rate-limiting of authorised requests
 
-The API does not throttle correctly-authenticated API requests.  This makes it look like it is not
+The API does not throttle correctly-authenticated API requests, which makes it look like it is not
 protecting itself from denial-of-service attacks.
 
 It protects itself from incorrectly-authenticatd API requests.  It raises medium-priority alarms for
@@ -3648,6 +3657,10 @@ is enough in the thick clients.
 Card' privilege has no effect on current versions of the REST API. In the thick clients you do not
 need edit privileges on the cardholder if you have 'Disable Card'.
 
+|Change a card's PIN.  (Not yet implemented in the API)
+|"Allow re-printing and re-encoding" or "Print/preview & encode card" or "Edit cardholders" or one
+of the privileges that let you edit a cardholder (which in 8.80 are "Edit cardholders", "create and edit cardholders", and of course "Advanced user").
+
 |De-authorise a cardholder.
 |'De-authorise Cardholder' or one of the privileges that lets you edit cardholders on the
 cardholder’s division.  There is a bug in versions up to and including 8.70 that means you need
@@ -3655,14 +3668,14 @@ cardholder’s division.  There is a bug in versions up to and including 8.70 th
 and later.
 
 |Delete a cardholder.
-|'Delete cardholders'.  Not 'Create cardholders', 'Create and edit cardholder', or 'Edit
- cardholder'.
+|'Delete cardholders' on the cardholder's division.  Not 'Create cardholders', 'Create and edit
+ cardholder', or 'Edit cardholder'.
 
 |Redact a cardholder's events.
-|'Delete cardholder history'.
+|'Delete cardholder history' on the cardholder's division.
 
 |Redact a cardholder.
-|'Delete cardholder history' and 'Delete cardholders'.
+|'Delete cardholder history' and 'Delete cardholders' on the cardholder's division.
 
 |Edit a relationship between cardholders.
 |One of the privileges that lets you edit cardholders on the cardholder’s division and on the role’s
