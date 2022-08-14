@@ -206,6 +206,7 @@
           <a href="#definition-Cardholder-detail"> Cardholder detail </a>
           <a href="#definition-Cardholder-POST-example"> Cardholder POST example </a>
           <a href="#definition-Cardholder-Update-Location-POST-example"> Cardholder Update Location POST example </a>
+          <a href="#definition-Cardholder-PATCH-example"> Cardholder PATCH example </a>
           <a href="#definition-Cardholder-PDF"> Cardholder PDF </a>
           <a href="#definition-Cardholder-card"> Cardholder card </a>
           <a href="#definition-Cardholder-card-mobile-example"> Cardholder card mobile example </a>
@@ -215,7 +216,6 @@
           <a href="#definition-Cardholder-competency"> Cardholder competency </a>
           <a href="#definition-Cardholder-competency-update"> Cardholder competency update </a>
           <a href="#definition-Cardholder-relationship"> Cardholder relationship </a>
-          <a href="#definition-Cardholder-PATCH-example"> Cardholder PATCH example </a>
           <a href="#definition-Cardholder-locker"> Cardholder locker </a>
           <a href="#definition-Cardholder-elevator-group"> Cardholder elevator group </a>
           <a href="#definition-Cardholder-changes"> Cardholder changes </a>
@@ -287,6 +287,12 @@
                   </li>
                   <li>
                     <p>You will be able to request the competencies that your operator has the permission to assign. That is determined by privileges, a competency setting, and an operator group setting. Current versions let you request the competencies that your operator has the permission to view, which is a larger set determined by privileges alone, and not suitable for interactive REST clients.</p>
+                  </li>
+                  <li>
+                    <p>Email address and mobile number PDFs will show whether they are suitable to receive SMS and email notifications.</p>
+                  </li>
+                  <li>
+                    <p>Card PINs (write-only).</p>
                   </li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-880">Cardholder API changes in 8.80</h4>
@@ -8923,6 +8929,383 @@
               </div>
             </div>
           </div>
+          <div id="definition-Cardholder-PATCH-example" class="definition panel" data-traverse-target="definition-Cardholder-PATCH-example">
+            <h2 class="panel-title">
+              <a name="/definitions/Cardholder PATCH example"></a>Cardholder PATCH example:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>Send one of these in a PATCH to <code>/api/cardholders/{id}</code> to modify the cardholder at that URL, or to add and modify cards, competencies, groups, and relationships.</p>
+                  <p>All the cardholder fields you can supply are described in the
+                    <a href="#definition-Cardholder-detail">cardholder detail</a>.</p>
+                  <p>This example:</p>
+                  <ul>
+                    <li>sets &#39;authorised&#39; true,</li>
+                    <li>sets a PDF holding an employee ID,</li>
+                    <li>changes the notification flags on two PDFs,</li>
+                    <li>adds two new credentials, one card and one mobile,</li>
+                    <li>changes the issue level and clears the until date on another credential,</li>
+                    <li>deletes a third credential,</li>
+                    <li>adds two access group memberships, one unending and one with an until date,</li>
+                    <li>clears the until date on another access group membership,</li>
+                    <li>removes a fourth access group membership,</li>
+                    <li>adds a competency, inactive, with a future enablement date,</li>
+                    <li>activates a competency that the cardholder already had,</li>
+                    <li>adds one relationship,</li>
+                    <li>changes the cardholder on another,</li>
+                    <li>adds one locker assignment with a from date,</li>
+                    <li>sets the until date on another locker assignment,</li>
+                    <li>removes a third locker assignment,</li>
+                    <li>adds two operator group memberships,</li>
+                    <li>removes a third operator group membership,</li>
+                    <li>adds an elevator group with a default floor,</li>
+                    <li>modifies another elevator group, turning the &#39;code blue&#39; feature on and the VIP feature off, and</li>
+                    <li>removes a third elevator group.</li>
+                  </ul>
+                  <p>This is also the method you use for changing a cardholder&#39;s name, description, notes, user code, etc.</p>
+                  <p>In addition to those fields, this PATCH format accepts five arrays: &#39;cards&#39;, &#39;accessGroups&#39;, &#39;competencies&#39;, &#39;relationships&#39;, and (in 8.50) &#39;operatorGroups&#39;.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="authorised" class="has-description">
+                      <span class="json-property-name">authorised:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>You can modify
+                        <a href="#definition-Cardholder-detail">all the fields</a> on a cardholder, provided you have the necessary privileges,</p>
+                    </dd>
+                    <dt data-property-name="-employeeId" class="has-description">
+                      <span class="json-property-name">@employeeId:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Replace PDF values as though they were flat fields on a cardholder. Prefix the name of the PDF with <code>@</code>, and Base64-encode images. Send &#39;null&#39; if you want to delete a PDF value.</p>
+                      <p>Remember that a cardholder&#39;s record will not return a PDF if he or she is not a member of the access group that grants that PDF. In this example, one or both of access groups 352 and 124 are attached to &#39;employeeId&#39;.</p>
+                    </dd>
+                    <dt data-property-name="personalDataDefinitions" class="has-description">
+                      <span class="json-property-name">personalDataDefinitions:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/Cardholder PDF">Cardholder PDF</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is how you set and unset the notifications flags on PDFs. Presumably this cardholder wants to receive notifications at the email address stored in the &#39;email&#39; PDF rather than by SMS.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/Cardholder PDF">Cardholder PDF</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="cards" class="has-description">
+                      <span class="json-property-name">cards:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This object can contain three arrays, named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;. Every element you put in those arrays should be in the
+                        <a href="#definition-Cardholder-card">card schema</a>.</p>
+                      <p>Each element of the &#39;add&#39; array will need a &#39;type&#39; member, at the very least. Every card field makes sense here except &#39;href&#39;. Only existing cards have hrefs. This example adds two cards: one has nothing more than the type, so it will receive blank &#39;from&#39; and &#39;until&#39; dates and a computed number and issue level. The other is a mobile credential (it has an &#39;invitation&#39; block) with a custom initial state.</p>
+                      <p>Each element of the &#39;update&#39; array should be a card to modify. It will need the href of that card, plus the fields you want to change. Remember you cannot change a card&#39;s type. The example changes the issue level and resets the &#39;until&#39; date.</p>
+                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is &#39;href&#39;.</p>
+                      <p>Do not put the same href in both the &#39;update&#39; and &#39;remove&#39; arrays.</p>
+                    </dd>
+                    <dt data-property-name="accessGroups" class="has-description">
+                      <span class="json-property-name">accessGroups:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Like the &#39;cards&#39; object, this can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;. Every element you send in those arrays should be in the
+                        <a href="#definition-Cardholder-access-group">access group schema</a>.</p>
+                      <p>This operation does not modify access groups in Command Centre; it works on a cardholder&#39;s memberships to those groups.</p>
+                      <p>Each element of the &#39;add&#39; array will need an &#39;accessGroup&#39; member containing an href identifying the group to which you wish to add the cardholder. The other fields are optional.</p>
+                      <p>Each element of the &#39;update&#39; array will need an href identifying the membership to update, and one or both of the &#39;from&#39; and &#39;until&#39; date-times containing new values (you cannot change the group--just the dates). The example removes the until date, effectively making the group membership unending.</p>
+                      <p>In version 7.90.883 or earlier, &#39;from&#39; and &#39;until&#39; should be in UTC with a trailing &#39;Z&#39;. Releases after 883 understand different timezones here.</p>
+                      <p>Note that updating a cardholder&#39;s group membership will change its href, so do not cache it.</p>
+                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href.</p>
+                      <p>Do not put the same href in both the &#39;update&#39; and &#39;remove&#39; arrays.</p>
+                    </dd>
+                    <dt data-property-name="competencies" class="has-description">
+                      <span class="json-property-name">competencies:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Like the cards and accessGroups objects, this can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;. Every element should be in the
+                        <a href="#definition-Cardholder-competency">cardholder competency schema</a>.</p>
+                      <p>This operation does not modify Command Centre&#39;s competencies: it works on a cardholder&#39;s holdings of those competencies.</p>
+                      <p>Each element of the &#39;add&#39; array will need a &#39;competency&#39; block containing an href member identifying the competency you wish to grant the cardholder. All other fields are optional. Note that attempting to give a cardholder a competency he or she already has will result in an error or an alarm depending on the server version.</p>
+                      <p>Each element of the &#39;update&#39; array will need an href identifying the cardholder/competency link to update, and one or more of the &#39;expiry&#39;, &#39;enabled&#39;, &#39;enablement&#39;, &#39;comment&#39;, &#39;limitedCredit&#39;, and &#39;credit&#39; fields.</p>
+                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href of the link between the cardholder and the competency.</p>
+                      <p>Do not put the same href in both the &#39;update&#39; and &#39;remove&#39; arrays.</p>
+                      <p>In this example we are giving the cardholder a disabled competency which will enable in 2021, and activating another competency.</p>
+                    </dd>
+                    <dt data-property-name="relationships" class="has-description">
+                      <span class="json-property-name">relationships:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>It should be no surprise that this can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;, and that every element should be in the
+                        <a href="#definition-Cardholder-relationship">relationship schema</a>.</p>
+                      <p>This operation does not modify Command Centre&#39;s roles: it works on the relationships between two cardholders.</p>
+                      <p>Each element of the &#39;add&#39; array will need a &#39;role&#39; member containing an href identifying the type of relationship you wish to establish, and a &#39;cardholder&#39; member containing an href identifying the other party (the one who will perform the role for the cardholder at the URL you are PATCHing). There are no optional fields.</p>
+                      <p>Each element of the &#39;update&#39; array will need an href identifying the relationship to update, and one or both of the &#39;role&#39; and &#39;cardholder&#39; blocks containing the updated values. The example leaves the role but changes the cardholder - a new supervisor, presumably.</p>
+                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href.</p>
+                      <p>Do not put the same href in both the &#39;update&#39; and &#39;remove&#39; arrays.</p>
+                    </dd>
+                    <dt data-property-name="lockers" class="has-description">
+                      <span class="json-property-name">lockers:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>With you well in the habit by now, each element of your three arrays should be in the
+                        <a href="#definition-Cardholder-locker">cardholder locker schema</a>. They will allocate lockers to cardholders, de-allocate them, and adjust validity periods.</p>
+                      <p>Each member of the &#39;add&#39; array will need a &#39;locker&#39; member containing an href identifying the locker to allocate. The cardholder you will allocate it to is identified by the request URL, remember.</p>
+                      <p>Each member of the &#39;update&#39; array will need an href identifying the allocation to update, and one or both of the &#39;from&#39; and &#39;until&#39; date-times.</p>
+                      <p>The validity period is all you can change about a locker allocation. If you want to change the locker, delete the old one and add a new. You can do that in the same PATCH, with one element in each of the &#39;add&#39; and &#39;remove&#39; arrays.</p>
+                      <p>This example allocates one locker starting in January 2019, sets the end-date of an existing allocation to the end of February 2020, and removes another entirely.</p>
+                    </dd>
+                    <dt data-property-name="operatorGroups" class="has-description">
+                      <span class="json-property-name">operatorGroups:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This can contain two arrays named &#39;add&#39; and &#39;remove&#39;. Every element you send in those arrays should be in the
+                        <a href="#definition-Cardholder-operator-group">cardholder operator group schema</a>.</p>
+                      <p>Each element of the &#39;add&#39; array will need an &#39;operatorGroup&#39; member containing an href identifying the operator group to which you wish to add the cardholder.</p>
+                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href. Make sure it is the href of the membership, not of the operator group.</p>
+                      <p>There is nothing about an operator group membership that you can change so there is no point to an &#39;update&#39; array. Operator group memberships are, or are not - there is no update.</p>
+                      <p>Supported in 8.50 and later.</p>
+                    </dd>
+                    <dt data-property-name="elevatorGroups" class="has-description">
+                      <span class="json-property-name">elevatorGroups:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;, each containing an element in the
+                        <a href="#definition-Cardholder-elevator-group">cardholder elevator group schema</a>.</p>
+                      <p>The &#39;elevatorGroup&#39; block only makes sense in the &#39;add&#39; array. The &#39;update&#39; array is for changing the cardholder&#39;s default floor and passenger types on an existing elevator group assignment.</p>
+                      <p>The server will ignore all fields in the elevatorGroup and accessZone objects except &#39;href&#39; if you place them in the body of your PATCH.</p>
+                      <p>Remove the default floor in an update by supplying an accessZone block with the href set to null or &quot;&quot;.</p>
+                      <p>Change a passenger type in an update by supplying the new value. The passenger type will be unchanged otherwise.</p>
+                      <p>As with cards and access group memberships etc., the server ignores root-level hrefs in the elements of an &#39;add&#39; array, requires them in the &#39;update&#39; array (since they indicate the entries to work on), and ignores everything but them in the &#39;remove&#39; array.</p>
+                      <p>The example shows our cardholder receiving a default floor for one elevator group and updating the Code Blue and VIP passenger types for another elevator group.</p>
+                      <p>Added in 8.50.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;authorised&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;@employeeId&quot;</span>: <span class="hljs-string">&quot;THX1139&quot;</span>,
+  <span class="hljs-attr">&quot;personalDataDefinitions&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;@email&quot;</span>: {
+        <span class="hljs-attr">&quot;notifications&quot;</span>: <span class="hljs-literal">true</span>
+      }
+    },
+    {
+      <span class="hljs-attr">&quot;@cellphone&quot;</span>: {
+        <span class="hljs-attr">&quot;notifications&quot;</span>: <span class="hljs-literal">false</span>
+      }
+    }
+  ],
+  <span class="hljs-attr">&quot;cards&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;type&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/354&quot;</span>
+        }
+      },
+      {
+        <span class="hljs-attr">&quot;type&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>
+        },
+        <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;Jock&apos;s iPhone 8&quot;</span>,
+        <span class="hljs-attr">&quot;status&quot;</span>: {
+          <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;Pending sign-off&quot;</span>
+        },
+        <span class="hljs-attr">&quot;invitation&quot;</span>: {
+          <span class="hljs-attr">&quot;email&quot;</span>: <span class="hljs-string">&quot;jock@example.com&quot;</span>
+        }
+      }
+    ],
+    <span class="hljs-attr">&quot;update&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d&quot;</span>,
+        <span class="hljs-attr">&quot;issueLevel&quot;</span>: <span class="hljs-number">2</span>,
+        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/77e8affe7c7e4b56&quot;</span>
+      }
+    ]
+  },
+  <span class="hljs-attr">&quot;accessGroups&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
+        }
+      },
+      {
+        <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/124&quot;</span>
+        },
+        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2019-12-31&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;update&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/access_groups/10ad21&quot;</span>,
+        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/access_groups/10ed27&quot;</span>
+      }
+    ]
+  },
+  <span class="hljs-attr">&quot;competencies&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;competency&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/competencies/2354&quot;</span>
+        },
+        <span class="hljs-attr">&quot;enabled&quot;</span>: <span class="hljs-literal">false</span>,
+        <span class="hljs-attr">&quot;enablement&quot;</span>: <span class="hljs-string">&quot;2021-01-01T08:00+13&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;update&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/competencies/2dc3&quot;</span>,
+        <span class="hljs-attr">&quot;enabled&quot;</span>: <span class="hljs-literal">true</span>
+      }
+    ]
+  },
+  <span class="hljs-attr">&quot;relationships&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;role&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles/5396&quot;</span>
+        },
+        <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/5398&quot;</span>
+        }
+      }
+    ],
+    <span class="hljs-attr">&quot;update&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/roles/1799lah1170&quot;</span>,
+        <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/10135&quot;</span>
+        }
+      }
+    ]
+  },
+  <span class="hljs-attr">&quot;lockers&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;locker&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/lockers/1200&quot;</span>,
+          <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;2019-01-01&quot;</span>
+        }
+      }
+    ],
+    <span class="hljs-attr">&quot;update&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/lockers/wxyz1234&quot;</span>,
+        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2020-02-29&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/lockers/abcd4321&quot;</span>
+      }
+    ]
+  },
+  <span class="hljs-attr">&quot;operatorGroups&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;operatorGroup&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/532&quot;</span>
+        }
+      },
+      {
+        <span class="hljs-attr">&quot;operatorGroup&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/535&quot;</span>
+        }
+      }
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD&quot;</span>
+      }
+    ]
+  },
+  <span class="hljs-attr">&quot;elevatorGroups&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;elevatorGroup&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>
+        },
+        <span class="hljs-attr">&quot;accessZone&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/637&quot;</span>
+        }
+      }
+    ],
+    <span class="hljs-attr">&quot;update&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/elevator_groups/1268613268&quot;</span>,
+        <span class="hljs-attr">&quot;enableCodeBlueFeatures&quot;</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">&quot;enableVipFeatures&quot;</span>: <span class="hljs-literal">false</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/elevator_groups/3498734&quot;</span>
+      }
+    ]
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
           <div id="definition-Cardholder-PDF" class="definition panel" data-traverse-target="definition-Cardholder-PDF">
             <h2 class="panel-title">
               <a name="/definitions/Cardholder PDF"></a>Cardholder PDF:
@@ -10095,379 +10478,6 @@
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Miles Messervy&quot;</span>,
     <span class="hljs-attr">&quot;firstName&quot;</span>: <span class="hljs-string">&quot;Miles&quot;</span>,
     <span class="hljs-attr">&quot;lastName&quot;</span>: <span class="hljs-string">&quot;Messervy&quot;</span>
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="definition-Cardholder-PATCH-example" class="definition panel" data-traverse-target="definition-Cardholder-PATCH-example">
-            <h2 class="panel-title">
-              <a name="/definitions/Cardholder PATCH example"></a>Cardholder PATCH example:
-              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
-              <span class="json-property-range" title="Value limits"></span>
-              
-              
-              </span> -->
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="json-schema-description">
-                  <p>Send one of these in a PATCH to <code>/api/cardholders/{id}</code> to modify the cardholder at that URL, or to add and modify cards, competencies, groups, and relationships.</p>
-                  <p>All the cardholder fields you can supply are described in the
-                    <a href="#definition-Cardholder-detail">cardholder detail</a>.</p>
-                  <p>This example:</p>
-                  <ul>
-                    <li>sets &#39;authorised&#39; true,</li>
-                    <li>sets a PDF holding an employee ID,</li>
-                    <li>changes the notification flags on two PDFs,</li>
-                    <li>adds two new credentials, one card and one mobile,</li>
-                    <li>changes the issue level and clears the until date on another credential,</li>
-                    <li>deletes a third credential,</li>
-                    <li>adds two access group memberships, one unending and one with an until date,</li>
-                    <li>adds one operator group membership,</li>
-                    <li>clears the until date on another access group membership,</li>
-                    <li>removes a third access group membership,</li>
-                    <li>adds a competency, inactive, with a future enablement date,</li>
-                    <li>activates a competency that the cardholder already had,</li>
-                    <li>adds one relationship,</li>
-                    <li>changes the cardholder on another,</li>
-                    <li>adds one locker assignment with a from date,</li>
-                    <li>sets the until date on another locker assignment, and</li>
-                    <li>removes a third locker assignment.</li>
-                  </ul>
-                  <p>This is also the method you use for changing a cardholder&#39;s name, description, notes, user code, etc.</p>
-                  <p>In addition to those fields, this PATCH format accepts five arrays: &#39;cards&#39;, &#39;accessGroups&#39;, &#39;competencies&#39;, &#39;relationships&#39;, and (in 8.50) &#39;operatorGroups&#39;.</p>
-                </section>
-                <section class="json-schema-properties">
-                  <dl>
-                    <dt data-property-name="authorised" class="has-description">
-                      <span class="json-property-name">authorised:</span>
-                      <span class="json-property-type">boolean</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>You can modify
-                        <a href="#definition-Cardholder-detail">all the fields</a> on a cardholder, provided you have the necessary privileges,</p>
-                    </dd>
-                    <dt data-property-name="-employeeId" class="has-description">
-                      <span class="json-property-name">@employeeId:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>Replace PDF values as though they were flat fields on a cardholder. Prefix the name of the PDF with <code>@</code>, and Base64-encode images. Send &#39;null&#39; if you want to delete a PDF value.</p>
-                      <p>Remember that a cardholder&#39;s record will not return a PDF if he or she is not a member of the access group that grants that PDF. In this example, one or both of access groups 352 and 124 are attached to &#39;employeeId&#39;.</p>
-                    </dd>
-                    <dt data-property-name="personalDataDefinitions" class="has-description">
-                      <span class="json-property-name">personalDataDefinitions:</span>
-                      <span class="json-property-type">
-                        <span class="json-schema-ref-array">
-                          <a class="json-schema-ref" href="#/definitions/Cardholder PDF">Cardholder PDF</a>
-                        </span>
-                      </span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>This is how you set and unset the notifications flags on PDFs. Presumably this cardholder wants to receive notifications at the email address stored in the &#39;email&#39; PDF rather than by SMS.</p>
-                    </dd>
-                    <dt class="json-inner-schema">
-                      <section class="json-schema-array-items">
-                        <span class="json-property-type">
-                          <span class="">
-                            <a class="json-schema-ref" href="#/definitions/Cardholder PDF">Cardholder PDF</a>
-                          </span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                        <div class="json-inner-schema"> </div>
-                      </section>
-                    </dt>
-                    <dt data-property-name="cards" class="has-description">
-                      <span class="json-property-name">cards:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>This object can contain three arrays, named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;. Every element you put in those arrays should be in the
-                        <a href="#definition-Cardholder-card">card schema</a>.</p>
-                      <p>Each element of the &#39;add&#39; array will need a &#39;type&#39; member, at the very least. Every card field makes sense here except &#39;href&#39;. Only existing cards have hrefs. This example adds two cards: one has nothing more than the type, so it will receive blank &#39;from&#39; and &#39;until&#39; dates and a computed number and issue level. The other is a mobile credential (it has an &#39;invitation&#39; block) with a custom initial state.</p>
-                      <p>Each element of the &#39;update&#39; array should be a card to modify. It will need the href of that card, plus the fields you want to change. Remember you cannot change a card&#39;s type. The example changes the issue level and resets the &#39;until&#39; date.</p>
-                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is &#39;href&#39;.</p>
-                      <p>Do not put the same href in both the &#39;update&#39; and &#39;remove&#39; arrays.</p>
-                    </dd>
-                    <dt data-property-name="accessGroups" class="has-description">
-                      <span class="json-property-name">accessGroups:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>Like the &#39;cards&#39; object, this can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;. Every element you send in those arrays should be in the
-                        <a href="#definition-Cardholder-access-group">access group schema</a>.</p>
-                      <p>This operation does not modify access groups in Command Centre; it works on a cardholder&#39;s memberships to those groups.</p>
-                      <p>Each element of the &#39;add&#39; array will need an &#39;accessGroup&#39; member containing an href identifying the group to which you wish to add the cardholder. The other fields are optional.</p>
-                      <p>Each element of the &#39;update&#39; array will need an href identifying the membership to update, and one or both of the &#39;from&#39; and &#39;until&#39; date-times containing new values (you cannot change the group--just the dates). The example removes the until date, effectively making the group membership unending.</p>
-                      <p>In version 7.90.883 or earlier, &#39;from&#39; and &#39;until&#39; should be in UTC with a trailing &#39;Z&#39;. Releases after 883 understand different timezones here.</p>
-                      <p>Note that updating a cardholder&#39;s group membership will change its href, so do not cache it.</p>
-                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href.</p>
-                      <p>Do not put the same href in both the &#39;update&#39; and &#39;remove&#39; arrays.</p>
-                    </dd>
-                    <dt data-property-name="competencies" class="has-description">
-                      <span class="json-property-name">competencies:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>Like the cards and accessGroups objects, this can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;. Every element should be in the
-                        <a href="#definition-Cardholder-competency">cardholder competency schema</a>.</p>
-                      <p>This operation does not modify Command Centre&#39;s competencies: it works on a cardholder&#39;s holdings of those competencies.</p>
-                      <p>Each element of the &#39;add&#39; array will need a &#39;competency&#39; block containing an href member identifying the competency you wish to grant the cardholder. All other fields are optional. Note that attempting to give a cardholder a competency he or she already has will result in an error or an alarm depending on the server version.</p>
-                      <p>Each element of the &#39;update&#39; array will need an href identifying the cardholder/competency link to update, and one or more of the &#39;expiry&#39;, &#39;enabled&#39;, &#39;enablement&#39;, &#39;comment&#39;, &#39;limitedCredit&#39;, and &#39;credit&#39; fields.</p>
-                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href of the link between the cardholder and the competency.</p>
-                      <p>Do not put the same href in both the &#39;update&#39; and &#39;remove&#39; arrays.</p>
-                      <p>In this example we are giving the cardholder a disabled competency which will enable in 2021, and activating another competency.</p>
-                    </dd>
-                    <dt data-property-name="relationships" class="has-description">
-                      <span class="json-property-name">relationships:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>It should be no surprise that this can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;, and that every element should be in the
-                        <a href="#definition-Cardholder-relationship">relationship schema</a>.</p>
-                      <p>This operation does not modify Command Centre&#39;s roles: it works on the relationships between two cardholders.</p>
-                      <p>Each element of the &#39;add&#39; array will need a &#39;role&#39; member containing an href identifying the type of relationship you wish to establish, and a &#39;cardholder&#39; member containing an href identifying the other party (the one who will perform the role for the cardholder at the URL you are PATCHing). There are no optional fields.</p>
-                      <p>Each element of the &#39;update&#39; array will need an href identifying the relationship to update, and one or both of the &#39;role&#39; and &#39;cardholder&#39; blocks containing the updated values. The example leaves the role but changes the cardholder - a new supervisor, presumably.</p>
-                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href.</p>
-                      <p>Do not put the same href in both the &#39;update&#39; and &#39;remove&#39; arrays.</p>
-                    </dd>
-                    <dt data-property-name="lockers" class="has-description">
-                      <span class="json-property-name">lockers:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>With you well in the habit by now, each element of your three arrays should be in the
-                        <a href="#definition-Cardholder-locker">cardholder locker schema</a>. They will allocate lockers to cardholders, de-allocate them, and adjust validity periods.</p>
-                      <p>Each member of the &#39;add&#39; array will need a &#39;locker&#39; member containing an href identifying the locker to allocate. The cardholder you will allocate it to is identified by the request URL, remember.</p>
-                      <p>Each member of the &#39;update&#39; array will need an href identifying the allocation to update, and one or both of the &#39;from&#39; and &#39;until&#39; date-times.</p>
-                      <p>The validity period is all you can change about a locker allocation. If you want to change the locker, delete the old one and add a new. You can do that in the same PATCH, with one element in each of the &#39;add&#39; and &#39;remove&#39; arrays.</p>
-                      <p>This example allocates one locker starting in January 2019, sets the end-date of an existing allocation to the end of February 2020, and removes another entirely.</p>
-                    </dd>
-                    <dt data-property-name="operatorGroups" class="has-description">
-                      <span class="json-property-name">operatorGroups:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>This can contain two arrays named &#39;add&#39; and &#39;remove&#39;. Every element you send in those arrays should be in the
-                        <a href="#definition-Cardholder-operator-group">cardholder operator group schema</a>.</p>
-                      <p>Each element of the &#39;add&#39; array will need an &#39;operatorGroup&#39; member containing an href identifying the operator group to which you wish to add the cardholder.</p>
-                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href. Make sure it is the href of the membership, not of the operator group.</p>
-                      <p>There is nothing about an operator group membership that you can change so there is no point to an &#39;update&#39; array. Operator group memberships are, or are not - there is no update.</p>
-                      <p>Supported in 8.50 and later.</p>
-                    </dd>
-                    <dt data-property-name="elevatorGroups" class="has-description">
-                      <span class="json-property-name">elevatorGroups:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>This can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;, each containing an element in the
-                        <a href="#definition-Cardholder-elevator-group">cardholder elevator group schema</a>.</p>
-                      <p>The &#39;elevatorGroup&#39; block only makes sense in the &#39;add&#39; array. The &#39;update&#39; array is for changing the cardholder&#39;s default floor and passenger types on an existing elevator group assignment.</p>
-                      <p>The server will ignore all fields in the elevatorGroup and accessZone objects except &#39;href&#39; if you place them in the body of your PATCH.</p>
-                      <p>Remove the default floor in an update by supplying an accessZone block with the href set to null or &quot;&quot;.</p>
-                      <p>Change a passenger type in an update by supplying the new value. The passenger type will be unchanged otherwise.</p>
-                      <p>As with cards and access group memberships etc., the server ignores root-level hrefs in the elements of an &#39;add&#39; array, requires them in the &#39;update&#39; array (since they indicate the entries to work on), and ignores everything but them in the &#39;remove&#39; array.</p>
-                      <p>The example shows our cardholder receiving a default floor for one elevator group and updating the Code Blue and VIP passenger types for another elevator group.</p>
-                      <p>Added in 8.50.</p>
-                    </dd>
-                  </dl>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;authorised&quot;</span>: <span class="hljs-literal">true</span>,
-  <span class="hljs-attr">&quot;@employeeId&quot;</span>: <span class="hljs-string">&quot;THX1139&quot;</span>,
-  <span class="hljs-attr">&quot;personalDataDefinitions&quot;</span>: [
-    {
-      <span class="hljs-attr">&quot;@email&quot;</span>: {
-        <span class="hljs-attr">&quot;notifications&quot;</span>: <span class="hljs-literal">true</span>
-      }
-    },
-    {
-      <span class="hljs-attr">&quot;@cellphone&quot;</span>: {
-        <span class="hljs-attr">&quot;notifications&quot;</span>: <span class="hljs-literal">false</span>
-      }
-    }
-  ],
-  <span class="hljs-attr">&quot;cards&quot;</span>: {
-    <span class="hljs-attr">&quot;add&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;type&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/354&quot;</span>
-        }
-      },
-      {
-        <span class="hljs-attr">&quot;type&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>
-        },
-        <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;Jock&apos;s iPhone 8&quot;</span>,
-        <span class="hljs-attr">&quot;status&quot;</span>: {
-          <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;Pending sign-off&quot;</span>
-        },
-        <span class="hljs-attr">&quot;invitation&quot;</span>: {
-          <span class="hljs-attr">&quot;email&quot;</span>: <span class="hljs-string">&quot;jock@example.com&quot;</span>
-        }
-      }
-    ],
-    <span class="hljs-attr">&quot;update&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d&quot;</span>,
-        <span class="hljs-attr">&quot;issueLevel&quot;</span>: <span class="hljs-number">2</span>,
-        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
-      }
-    ],
-    <span class="hljs-attr">&quot;remove&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/77e8affe7c7e4b56&quot;</span>
-      }
-    ]
-  },
-  <span class="hljs-attr">&quot;accessGroups&quot;</span>: {
-    <span class="hljs-attr">&quot;add&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
-        }
-      },
-      {
-        <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/124&quot;</span>
-        },
-        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2019-12-31&quot;</span>
-      }
-    ],
-    <span class="hljs-attr">&quot;update&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/access_groups/10ad21&quot;</span>,
-        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
-      }
-    ],
-    <span class="hljs-attr">&quot;remove&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/access_groups/10ed27&quot;</span>
-      }
-    ]
-  },
-  <span class="hljs-attr">&quot;competencies&quot;</span>: {
-    <span class="hljs-attr">&quot;add&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;competency&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/competencies/2354&quot;</span>
-        },
-        <span class="hljs-attr">&quot;enabled&quot;</span>: <span class="hljs-literal">false</span>,
-        <span class="hljs-attr">&quot;enablement&quot;</span>: <span class="hljs-string">&quot;2021-01-01T08:00+13&quot;</span>
-      }
-    ],
-    <span class="hljs-attr">&quot;update&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/competencies/2dc3&quot;</span>,
-        <span class="hljs-attr">&quot;enabled&quot;</span>: <span class="hljs-literal">true</span>
-      }
-    ]
-  },
-  <span class="hljs-attr">&quot;relationships&quot;</span>: {
-    <span class="hljs-attr">&quot;add&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;role&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/roles/5396&quot;</span>
-        },
-        <span class="hljs-attr">&quot;cardholder&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/5398&quot;</span>
-        }
-      }
-    ],
-    <span class="hljs-attr">&quot;update&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/roles/1799lah1170&quot;</span>,
-        <span class="hljs-attr">&quot;cardholder&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/10135&quot;</span>
-        }
-      }
-    ]
-  },
-  <span class="hljs-attr">&quot;lockers&quot;</span>: {
-    <span class="hljs-attr">&quot;add&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;locker&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/lockers/1200&quot;</span>,
-          <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;2019-01-01&quot;</span>
-        }
-      }
-    ],
-    <span class="hljs-attr">&quot;update&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/lockers/wxyz1234&quot;</span>,
-        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2020-02-29&quot;</span>
-      }
-    ],
-    <span class="hljs-attr">&quot;remove&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/lockers/abcd4321&quot;</span>
-      }
-    ]
-  },
-  <span class="hljs-attr">&quot;operatorGroups&quot;</span>: {
-    <span class="hljs-attr">&quot;add&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;operatorGroup&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/532&quot;</span>
-        }
-      },
-      {
-        <span class="hljs-attr">&quot;operatorGroup&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/535&quot;</span>
-        }
-      }
-    ],
-    <span class="hljs-attr">&quot;remove&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD&quot;</span>
-      }
-    ]
-  },
-  <span class="hljs-attr">&quot;elevatorGroups&quot;</span>: {
-    <span class="hljs-attr">&quot;add&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;elevatorGroup&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/elevator_groups/635&quot;</span>
-        },
-        <span class="hljs-attr">&quot;accessZone&quot;</span>: {
-          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/637&quot;</span>
-        }
-      }
-    ],
-    <span class="hljs-attr">&quot;update&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/elevator_groups/1268613268&quot;</span>,
-        <span class="hljs-attr">&quot;enableCodeBlueFeatures&quot;</span>: <span class="hljs-literal">true</span>,
-        <span class="hljs-attr">&quot;enableVipFeatures&quot;</span>: <span class="hljs-literal">false</span>
-      }
-    ],
-    <span class="hljs-attr">&quot;remove&quot;</span>: [
-      {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/elevator_groups/3498734&quot;</span>
-      }
-    ]
   }
 }
 </code></pre> </body>

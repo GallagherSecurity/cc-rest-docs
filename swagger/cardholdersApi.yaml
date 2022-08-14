@@ -66,6 +66,11 @@ info:
       view, which is a larger set determined by privileges alone, and not suitable for interactive
       REST clients.
 
+    * Email address and mobile number PDFs will show whether they are suitable to receive SMS and
+      email notifications.
+
+    * Card PINs (write-only).
+
     #### Cardholder API changes in 8.80
 
     * BREAKING CHANGE:  Date PDFs no longer come out of the API with a time component or time zone
@@ -1909,6 +1914,323 @@ definitions:
               you can also use an href from the [items controller](events.html#tag-Items) if you do
               not have a RESTStatus or (in 8.60) RESTOverrides licence.
 
+  Cardholder PATCH example:
+    description: |
+      Send one of these in a PATCH to `/api/cardholders/{id}` to modify the cardholder at that URL,
+      or to add and modify cards, competencies, groups, and relationships.
+
+      All the cardholder fields you can supply are described in the [cardholder
+      detail](#definition-Cardholder-detail).
+
+      This example:
+
+        - sets 'authorised' true,
+        - sets a PDF holding an employee ID,
+        - changes the notification flags on two PDFs,
+        - adds two new credentials, one card and one mobile,
+        - changes the issue level and clears the until date on another credential,
+        - deletes a third credential,
+        - adds two access group memberships, one unending and one with an until date,
+        - clears the until date on another access group membership,
+        - removes a fourth access group membership,
+        - adds a competency, inactive, with a future enablement date,
+        - activates a competency that the cardholder already had,
+        - adds one relationship,
+        - changes the cardholder on another,
+        - adds one locker assignment with a from date,
+        - sets the until date on another locker assignment,
+        - removes a third locker assignment,
+        - adds two operator group memberships,
+        - removes a third operator group membership,
+        - adds an elevator group with a default floor,
+        - modifies another elevator group, turning the 'code blue' feature on and the VIP feature off, and
+        - removes a third elevator group.
+
+      This is also the method you use for changing a cardholder's name, description, notes, user
+      code, etc.
+
+      In addition to those fields, this PATCH format accepts five arrays:  'cards',
+      'accessGroups', 'competencies', 'relationships', and (in 8.50) 'operatorGroups'.
+
+    properties:
+      authorised:
+        type: boolean
+        example: true
+        description: |
+          You can modify [all the fields](#definition-Cardholder-detail) on a cardholder, provided
+          you have the necessary privileges,
+      "@employeeId":
+        type: string
+        example: THX1139
+        description: |
+          Replace PDF values as though they were flat fields on a cardholder.  Prefix the name of
+          the PDF with `@`, and Base64-encode images.  Send 'null' if you want to delete a PDF value.
+
+          Remember that a cardholder's record will not return a PDF if he or she is not a member of
+          the access group that grants that PDF.  In this example, one or both of access groups 352
+          and 124 are attached to 'employeeId'.
+      personalDataDefinitions:
+        description: |
+          This is how you set and unset the notifications flags on PDFs.  Presumably this cardholder
+          wants to receive notifications at the email address stored in the 'email' PDF rather than
+          by SMS.
+        type: array
+        items: {$ref: '#/definitions/Cardholder PDF'}
+        example:
+          - "@email": {notifications: true}
+          - "@cellphone": {notifications: false}
+
+      cards:
+        type: object
+        description: |
+          This object can contain three arrays, named 'add', 'update', and 'remove'.  Every element
+          you put in those arrays should be in the [card schema](#definition-Cardholder-card).
+
+          Each element of the 'add' array will need a 'type' member, at the very least.  Every card
+          field makes sense here except 'href'.  Only existing cards have hrefs.  This example adds
+          two cards:  one has nothing more than the type, so it will receive blank 'from' and
+          'until' dates and a computed number and issue level.  The other is a mobile credential (it
+          has an 'invitation' block) with a custom initial state.
+
+          Each element of the 'update' array should be a card to modify.  It will need the href of
+          that card, plus the fields you want to change.  Remember you cannot change a card's type.
+          The example changes the issue level and resets the 'until' date.
+
+          The only field that makes sense in an element of the 'remove' array is 'href'.
+
+          Do not put the same href in both the 'update' and 'remove' arrays.
+
+        example:
+          add:
+            - type:
+                href: "https://localhost:8904/api/card_types/354"
+            - type:
+                href: "https://localhost:8904/api/card_types/600"
+              number: "Jock's iPhone 8"
+              status: { value: "Pending sign-off"}
+              invitation: { email: "jock@example.com" }
+          update:
+            - href: "https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d"
+              issueLevel: 2
+              until: ""
+          remove:
+            - href: "https://localhost:8904/api/cardholders/325/cards/77e8affe7c7e4b56"
+
+      accessGroups:
+        type: object
+        description: |
+          Like the 'cards' object, this can contain three arrays named 'add', 'update', and
+          'remove'.  Every element you send in those arrays should be in the [access group
+          schema](#definition-Cardholder-access-group).
+
+          This operation does not modify access groups in Command Centre; it works on a cardholder's
+          memberships to those groups.
+
+          Each element of the 'add' array will need an 'accessGroup' member containing an href
+          identifying the group to which you wish to add the cardholder.  The other fields are
+          optional.
+
+          Each element of the 'update' array will need an href identifying the membership to update,
+          and one or both of the 'from' and 'until' date-times containing new values (you cannot
+          change the group--just the dates).  The example removes the until date, effectively making
+          the group membership unending.
+
+          In version 7.90.883 or earlier, 'from' and 'until' should be in UTC with a
+          trailing 'Z'.  Releases after 883 understand different timezones here.
+
+          Note that updating a cardholder's group membership will change its href, so do not cache
+          it.
+
+          The only field that makes sense in an element of the 'remove' array is the href.
+
+          Do not put the same href in both the 'update' and 'remove' arrays.
+
+        example:
+          add:
+            - accessGroup:
+                href: "https://localhost:8904/api/access_groups/352"
+            - accessGroup:
+                href: "https://localhost:8904/api/access_groups/124"
+              until: "2019-12-31"
+          update:
+            - href: "https://localhost:8904/api/cardholders/325/access_groups/10ad21"
+              until: ""
+          remove:
+            - href: "https://localhost:8904/api/cardholders/325/access_groups/10ed27"
+
+      competencies:
+        type: object
+        description: |
+          Like the cards and accessGroups objects, this can contain three arrays named 'add',
+          'update', and 'remove'.  Every element should be in the [cardholder competency
+          schema](#definition-Cardholder-competency).
+
+          This operation does not modify Command Centre's competencies:  it works on a cardholder's
+          holdings of those competencies.
+
+          Each element of the 'add' array will need a 'competency' block containing an href member
+          identifying the competency you wish to grant the cardholder.  All other fields are optional.
+          Note that attempting to give a cardholder a competency he or she already has
+          will result in an error or an alarm depending on the server version.
+
+          Each element of the 'update' array will need an href identifying the
+          cardholder/competency link to update, and one or more of the 'expiry', 'enabled',
+          'enablement', 'comment', 'limitedCredit', and 'credit' fields.
+
+          The only field that makes sense in an element of the 'remove' array is the href
+          of the link between the cardholder and the competency.
+
+          Do not put the same href in both the 'update' and 'remove' arrays.
+
+          In this example we are giving the cardholder a disabled competency which will enable
+          in 2021, and activating another competency.
+
+        example:
+          add:
+            - competency:
+                href: "https://localhost:8904/api/competencies/2354"
+              enabled: false
+              enablement: "2021-01-01T08:00+13"
+          update:
+            - href: "https://localhost:8904/api/cardholders/325/competencies/2dc3"
+              enabled: true
+
+      relationships:
+        type: object
+        description: |
+          It should be no surprise that this can contain three arrays named 'add', 'update', and
+          'remove', and that every element should be in the [relationship
+          schema](#definition-Cardholder-relationship).
+
+          This operation does not modify Command Centre's roles:  it works on the relationships
+          between two cardholders.
+
+          Each element of the 'add' array will need a 'role' member containing an href identifying
+          the type of relationship you wish to establish, and a 'cardholder' member containing an
+          href identifying the other party (the one who will perform the role for the cardholder at
+          the URL you are PATCHing).  There are no optional fields.
+
+          Each element of the 'update' array will need an href identifying the relationship to
+          update, and one or both of the 'role' and 'cardholder' blocks containing the updated
+          values.  The example leaves the role but changes the cardholder - a new supervisor,
+          presumably.
+
+          The only field that makes sense in an element of the 'remove' array is the href.
+
+          Do not put the same href in both the 'update' and 'remove' arrays.
+
+        example:
+          add:
+            - role:
+                href: "https://localhost:8904/api/roles/5396"
+              cardholder:
+                href: "https://localhost:8904/api/cardholders/5398"
+          update:
+            - href: "https://localhost:8904/api/cardholders/325/roles/1799lah1170"
+              cardholder:
+                href: "https://localhost:8904/api/cardholders/10135"
+
+      lockers:
+        type: object
+        description: |
+          With you well in the habit by now, each element of your three arrays should be in the
+          [cardholder locker schema](#definition-Cardholder-locker).  They will allocate lockers to
+          cardholders, de-allocate them, and adjust validity periods.
+
+          Each member of the 'add' array will need a 'locker' member containing an href identifying
+          the locker to allocate.  The cardholder you will allocate it to is identified by the
+          request URL, remember.
+
+          Each member of the 'update' array will need an href identifying the allocation to update,
+          and one or both of the 'from' and 'until' date-times.
+
+          The validity period is all you can change about a locker allocation.  If you want to
+          change the locker, delete the old one and add a new.  You can do that in the same PATCH,
+          with one element in each of the 'add' and 'remove' arrays.
+
+          This example allocates one locker starting in January 2019, sets the end-date of an
+          existing allocation to the end of February 2020, and removes another entirely.
+
+        example:
+          add:
+            - locker:
+                href: "https://localhost:8904/api/lockers/1200"
+                from: "2019-01-01"
+          update:
+            - href: "https://localhost:8904/api/cardholders/325/lockers/wxyz1234"
+              until: "2020-02-29"
+          remove:
+            - href: "https://localhost:8904/api/cardholders/325/lockers/abcd4321"
+
+      operatorGroups:
+        type: object
+        description: |
+          This can contain two arrays named 'add' and 'remove'.  Every element you send in those
+          arrays should be in the [cardholder operator group
+          schema](#definition-Cardholder-operator-group).
+
+          Each element of the 'add' array will need an 'operatorGroup' member containing an href
+          identifying the operator group to which you wish to add the cardholder.
+
+          The only field that makes sense in an element of the 'remove' array is the href.  Make
+          sure it is the href of the membership, not of the operator group.
+
+          There is nothing about an operator group membership that you can change so there is no
+          point to an 'update' array.  Operator group memberships are, or are not - there is no
+          update.
+
+          Supported in 8.50 and later.
+
+        example:
+          add:
+            - operatorGroup:
+                href: "https://localhost:8904/api/access_groups/532"
+            - operatorGroup:
+                href: "https://localhost:8904/api/access_groups/535"
+          remove:
+            - href: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
+
+      elevatorGroups:
+        type: object
+        description: |
+          This can contain three arrays named 'add', 'update', and
+          'remove', each containing an element in the [cardholder elevator group
+          schema](#definition-Cardholder-elevator-group).
+
+          The 'elevatorGroup' block only makes sense in the 'add' array.  The 'update' array is for
+          changing the cardholder's default floor and passenger types on an existing elevator group
+          assignment.
+
+          The server will ignore all fields in the elevatorGroup and accessZone objects except 'href'
+          if you place them in the body of your PATCH.
+
+          Remove the default floor in an update by supplying an accessZone block with the href set
+          to null or "".
+
+          Change a passenger type in an update by supplying the new value. The passenger type will
+          be unchanged otherwise.
+
+          As with cards and access group memberships etc., the server ignores root-level hrefs in
+          the elements of an 'add' array, requires them in the 'update' array (since they indicate
+          the entries to work on), and ignores everything but them in the 'remove' array.
+
+          The example shows our cardholder receiving a default floor for one elevator group and
+          updating the Code Blue and VIP passenger types for another elevator group.
+
+          Added in 8.50.
+        example:
+          add:
+            - elevatorGroup:
+                href:  "https://localhost:8904/api/elevator_groups/635"
+              accessZone:
+                href:  "https://localhost:8904/api/access_zones/637"
+          update:
+            - href: "https://localhost:8904/api/cardholders/325/elevator_groups/1268613268"
+              enableCodeBlueFeatures: true
+              enableVipFeatures: false
+          remove:
+            - href: "https://localhost:8904/api/cardholders/325/elevator_groups/3498734"
+
   Cardholder PDF:
     description: |
       A personal data definition and its value for a cardholder.  Each definition is an object
@@ -2703,319 +3025,6 @@ definitions:
           name: "Miles Messervy"
           firstName: "Miles"
           lastName: "Messervy"
-
-  Cardholder PATCH example:
-    description: |
-      Send one of these in a PATCH to `/api/cardholders/{id}` to modify the cardholder at that URL,
-      or to add and modify cards, competencies, groups, and relationships.
-
-      All the cardholder fields you can supply are described in the [cardholder
-      detail](#definition-Cardholder-detail).
-
-      This example:
-
-        - sets 'authorised' true,
-        - sets a PDF holding an employee ID,
-        - changes the notification flags on two PDFs,
-        - adds two new credentials, one card and one mobile,
-        - changes the issue level and clears the until date on another credential,
-        - deletes a third credential,
-        - adds two access group memberships, one unending and one with an until date,
-        - adds one operator group membership,
-        - clears the until date on another access group membership,
-        - removes a third access group membership,
-        - adds a competency, inactive, with a future enablement date,
-        - activates a competency that the cardholder already had,
-        - adds one relationship,
-        - changes the cardholder on another,
-        - adds one locker assignment with a from date,
-        - sets the until date on another locker assignment, and
-        - removes a third locker assignment.
-
-      This is also the method you use for changing a cardholder's name, description, notes, user
-      code, etc.
-
-      In addition to those fields, this PATCH format accepts five arrays:  'cards',
-      'accessGroups', 'competencies', 'relationships', and (in 8.50) 'operatorGroups'.
-
-    properties:
-      authorised:
-        type: boolean
-        example: true
-        description: |
-          You can modify [all the fields](#definition-Cardholder-detail) on a cardholder, provided
-          you have the necessary privileges,
-      "@employeeId":
-        type: string
-        example: THX1139
-        description: |
-          Replace PDF values as though they were flat fields on a cardholder.  Prefix the name of
-          the PDF with `@`, and Base64-encode images.  Send 'null' if you want to delete a PDF value.
-
-          Remember that a cardholder's record will not return a PDF if he or she is not a member of
-          the access group that grants that PDF.  In this example, one or both of access groups 352
-          and 124 are attached to 'employeeId'.
-      personalDataDefinitions:
-        description: |
-          This is how you set and unset the notifications flags on PDFs.  Presumably this cardholder
-          wants to receive notifications at the email address stored in the 'email' PDF rather than
-          by SMS.
-        type: array
-        items: {$ref: '#/definitions/Cardholder PDF'}
-        example:
-          - "@email": {notifications: true}
-          - "@cellphone": {notifications: false}
-
-      cards:
-        type: object
-        description: |
-          This object can contain three arrays, named 'add', 'update', and 'remove'.  Every element
-          you put in those arrays should be in the [card schema](#definition-Cardholder-card).
-
-          Each element of the 'add' array will need a 'type' member, at the very least.  Every card
-          field makes sense here except 'href'.  Only existing cards have hrefs.  This example adds
-          two cards:  one has nothing more than the type, so it will receive blank 'from' and
-          'until' dates and a computed number and issue level.  The other is a mobile credential (it
-          has an 'invitation' block) with a custom initial state.
-
-          Each element of the 'update' array should be a card to modify.  It will need the href of
-          that card, plus the fields you want to change.  Remember you cannot change a card's type.
-          The example changes the issue level and resets the 'until' date.
-
-          The only field that makes sense in an element of the 'remove' array is 'href'.
-
-          Do not put the same href in both the 'update' and 'remove' arrays.
-
-        example:
-          add:
-            - type:
-                href: "https://localhost:8904/api/card_types/354"
-            - type:
-                href: "https://localhost:8904/api/card_types/600"
-              number: "Jock's iPhone 8"
-              status: { value: "Pending sign-off"}
-              invitation: { email: "jock@example.com" }
-          update:
-            - href: "https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d"
-              issueLevel: 2
-              until: ""
-          remove:
-            - href: "https://localhost:8904/api/cardholders/325/cards/77e8affe7c7e4b56"
-
-      accessGroups:
-        type: object
-        description: |
-          Like the 'cards' object, this can contain three arrays named 'add', 'update', and
-          'remove'.  Every element you send in those arrays should be in the [access group
-          schema](#definition-Cardholder-access-group).
-
-          This operation does not modify access groups in Command Centre; it works on a cardholder's
-          memberships to those groups.
-
-          Each element of the 'add' array will need an 'accessGroup' member containing an href
-          identifying the group to which you wish to add the cardholder.  The other fields are
-          optional.
-
-          Each element of the 'update' array will need an href identifying the membership to update,
-          and one or both of the 'from' and 'until' date-times containing new values (you cannot
-          change the group--just the dates).  The example removes the until date, effectively making
-          the group membership unending.
-
-          In version 7.90.883 or earlier, 'from' and 'until' should be in UTC with a
-          trailing 'Z'.  Releases after 883 understand different timezones here.
-
-          Note that updating a cardholder's group membership will change its href, so do not cache
-          it.
-
-          The only field that makes sense in an element of the 'remove' array is the href.
-
-          Do not put the same href in both the 'update' and 'remove' arrays.
-
-        example:
-          add:
-            - accessGroup:
-                href: "https://localhost:8904/api/access_groups/352"
-            - accessGroup:
-                href: "https://localhost:8904/api/access_groups/124"
-              until: "2019-12-31"
-          update:
-            - href: "https://localhost:8904/api/cardholders/325/access_groups/10ad21"
-              until: ""
-          remove:
-            - href: "https://localhost:8904/api/cardholders/325/access_groups/10ed27"
-
-      competencies:
-        type: object
-        description: |
-          Like the cards and accessGroups objects, this can contain three arrays named 'add',
-          'update', and 'remove'.  Every element should be in the [cardholder competency
-          schema](#definition-Cardholder-competency).
-
-          This operation does not modify Command Centre's competencies:  it works on a cardholder's
-          holdings of those competencies.
-
-          Each element of the 'add' array will need a 'competency' block containing an href member
-          identifying the competency you wish to grant the cardholder.  All other fields are optional.
-          Note that attempting to give a cardholder a competency he or she already has
-          will result in an error or an alarm depending on the server version.
-
-          Each element of the 'update' array will need an href identifying the
-          cardholder/competency link to update, and one or more of the 'expiry', 'enabled',
-          'enablement', 'comment', 'limitedCredit', and 'credit' fields.
-
-          The only field that makes sense in an element of the 'remove' array is the href
-          of the link between the cardholder and the competency.
-
-          Do not put the same href in both the 'update' and 'remove' arrays.
-
-          In this example we are giving the cardholder a disabled competency which will enable
-          in 2021, and activating another competency.
-
-        example:
-          add:
-            - competency:
-                href: "https://localhost:8904/api/competencies/2354"
-              enabled: false
-              enablement: "2021-01-01T08:00+13"
-          update:
-            - href: "https://localhost:8904/api/cardholders/325/competencies/2dc3"
-              enabled: true
-
-      relationships:
-        type: object
-        description: |
-          It should be no surprise that this can contain three arrays named 'add', 'update', and
-          'remove', and that every element should be in the [relationship
-          schema](#definition-Cardholder-relationship).
-
-          This operation does not modify Command Centre's roles:  it works on the relationships
-          between two cardholders.
-
-          Each element of the 'add' array will need a 'role' member containing an href identifying
-          the type of relationship you wish to establish, and a 'cardholder' member containing an
-          href identifying the other party (the one who will perform the role for the cardholder at
-          the URL you are PATCHing).  There are no optional fields.
-
-          Each element of the 'update' array will need an href identifying the relationship to
-          update, and one or both of the 'role' and 'cardholder' blocks containing the updated
-          values.  The example leaves the role but changes the cardholder - a new supervisor,
-          presumably.
-
-          The only field that makes sense in an element of the 'remove' array is the href.
-
-          Do not put the same href in both the 'update' and 'remove' arrays.
-
-        example:
-          add:
-            - role:
-                href: "https://localhost:8904/api/roles/5396"
-              cardholder:
-                href: "https://localhost:8904/api/cardholders/5398"
-          update:
-            - href: "https://localhost:8904/api/cardholders/325/roles/1799lah1170"
-              cardholder:
-                href: "https://localhost:8904/api/cardholders/10135"
-
-      lockers:
-        type: object
-        description: |
-          With you well in the habit by now, each element of your three arrays should be in the
-          [cardholder locker schema](#definition-Cardholder-locker).  They will allocate lockers to
-          cardholders, de-allocate them, and adjust validity periods.
-
-          Each member of the 'add' array will need a 'locker' member containing an href identifying
-          the locker to allocate.  The cardholder you will allocate it to is identified by the
-          request URL, remember.
-
-          Each member of the 'update' array will need an href identifying the allocation to update,
-          and one or both of the 'from' and 'until' date-times.
-
-          The validity period is all you can change about a locker allocation.  If you want to
-          change the locker, delete the old one and add a new.  You can do that in the same PATCH,
-          with one element in each of the 'add' and 'remove' arrays.
-
-          This example allocates one locker starting in January 2019, sets the end-date of an
-          existing allocation to the end of February 2020, and removes another entirely.
-
-        example:
-          add:
-            - locker:
-                href: "https://localhost:8904/api/lockers/1200"
-                from: "2019-01-01"
-          update:
-            - href: "https://localhost:8904/api/cardholders/325/lockers/wxyz1234"
-              until: "2020-02-29"
-          remove:
-            - href: "https://localhost:8904/api/cardholders/325/lockers/abcd4321"
-
-      operatorGroups:
-        type: object
-        description: |
-          This can contain two arrays named 'add' and 'remove'.  Every element you send in those
-          arrays should be in the [cardholder operator group
-          schema](#definition-Cardholder-operator-group).
-
-          Each element of the 'add' array will need an 'operatorGroup' member containing an href
-          identifying the operator group to which you wish to add the cardholder.
-
-          The only field that makes sense in an element of the 'remove' array is the href.  Make
-          sure it is the href of the membership, not of the operator group.
-
-          There is nothing about an operator group membership that you can change so there is no
-          point to an 'update' array.  Operator group memberships are, or are not - there is no
-          update.
-
-          Supported in 8.50 and later.
-
-        example:
-          add:
-            - operatorGroup:
-                href: "https://localhost:8904/api/access_groups/532"
-            - operatorGroup:
-                href: "https://localhost:8904/api/access_groups/535"
-          remove:
-            - href: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
-
-      elevatorGroups:
-        type: object
-        description: |
-          This can contain three arrays named 'add', 'update', and
-          'remove', each containing an element in the [cardholder elevator group
-          schema](#definition-Cardholder-elevator-group).
-
-          The 'elevatorGroup' block only makes sense in the 'add' array.  The 'update' array is for
-          changing the cardholder's default floor and passenger types on an existing elevator group
-          assignment.
-
-          The server will ignore all fields in the elevatorGroup and accessZone objects except 'href'
-          if you place them in the body of your PATCH.
-
-          Remove the default floor in an update by supplying an accessZone block with the href set
-          to null or "".
-
-          Change a passenger type in an update by supplying the new value. The passenger type will
-          be unchanged otherwise.
-
-          As with cards and access group memberships etc., the server ignores root-level hrefs in
-          the elements of an 'add' array, requires them in the 'update' array (since they indicate
-          the entries to work on), and ignores everything but them in the 'remove' array.
-
-          The example shows our cardholder receiving a default floor for one elevator group and
-          updating the Code Blue and VIP passenger types for another elevator group.
-
-          Added in 8.50.
-        example:
-          add:
-            - elevatorGroup:
-                href:  "https://localhost:8904/api/elevator_groups/635"
-              accessZone:
-                href:  "https://localhost:8904/api/access_zones/637"
-          update:
-            - href: "https://localhost:8904/api/cardholders/325/elevator_groups/1268613268"
-              enableCodeBlueFeatures: true
-              enableVipFeatures: false
-          remove:
-            - href: "https://localhost:8904/api/cardholders/325/elevator_groups/3498734"
 
   Cardholder locker:
     description: |
