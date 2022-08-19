@@ -38,7 +38,7 @@ info:
     The body of this document clearly indicates when recent features arrived in the API so that
     readers with older versions of Command Centre know not to expect them.
 
-    #### Alarms and events API changes on the roadmap
+    #### Alarms, events, and items API changes on the roadmap
 
     * BREAKING CHANGE:  a future version will require that the operator has the 'Create Events and
       Alarms' privilege in the division of the source item, if your request specifies a source item.
@@ -49,6 +49,8 @@ info:
 
     * An alarm will contain a new field called `event` containing a link to its corresponding event,
       mirroring the existing `alarm` field coming the other way from an event.
+
+    * You will be able to request a division's description (in version 8.50 and later).
 
     #### Alarms and events API changes in 8.70
 
@@ -2642,6 +2644,13 @@ definitions:
               type: string
               description: The division's name.
               example: "Root division"
+            description:
+              type: string
+              description:  |
+                **Not yet supported.  Coming soon.**
+
+                The division's description.
+              example: "Contains all other divisions"
             serverDisplayName:
               $ref: "cardholdersApi.yaml#/x-common-blocks/server"
             parent:
