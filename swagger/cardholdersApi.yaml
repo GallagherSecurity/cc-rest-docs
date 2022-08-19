@@ -80,6 +80,8 @@ info:
     * An optional PDF field 'operatorAccess' contains the level of access your operator has to
       cardholders' values for the PDF.
 
+    * Card type `regex` and `regexDescription` fields.
+
     #### Cardholder API changes in 8.70
 
     * BREAKING CHANGE: Missing image PDFs will no longer have "not captured" as their value.
@@ -4342,6 +4344,16 @@ definitions:
         example: "16777215"
       serverDisplayName:
         <<: *SERVER
+      regex:
+        description: |
+          This is the regular expression that a Card Type text card number
+          must match before Command Centre will accept it. 
+        type: string
+        example: "^[A-Za-z0-9]+$"
+      regexDescription:
+        description: Regular expressions often need explaining.
+        type: string
+        example: "Only alphanumeric characters"
 
 ######################################################################
 
@@ -6047,7 +6059,7 @@ paths:
         type: array
         items: { type: string }
         enum: [ href, id, name, division, facilityCode, availableCardStates, credentialClass,
-        minimumNumber, maximumNumber, notes ]
+        minimumNumber, maximumNumber, notes, regex, regexDescription ]
 
         description: |
           Specifies which fields to return instead of the default set (which contains

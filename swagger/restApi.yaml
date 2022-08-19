@@ -52,8 +52,13 @@ info:
 
     #### API changes on the roadmap
 
-    * A future version sort its search results differently, if you did not use a query parameter to
+    * A future version will sort its search results differently if you do not use a query parameter to
       override the default.
+
+    #### Changes in 8.80
+
+    * Early-adopter support for [Interlock groups](#tag-Interlock-Groups) and their status (no
+      overrides).
 
     #### Changes in 8.70
 
@@ -231,7 +236,8 @@ x-spectacle-topics:
       Pre-arm check while Alarm Zone is arming.
       </pre>
 
-      For one-line display, the `status` field is the same thing with line feeds replaced by spaces.
+      For one-line display, the `status` field is the same thing with spaces instead of line
+      endings.
 
       Neither of these is intended for integrations.  By all means display them in a user interface
       (as Gallagher software does) but do not attempt to parse information out of them.
@@ -413,13 +419,28 @@ x-common-blocks-this-is-made-up:
       The search and details pages do not return status flags by default, because an item's status
       is unknown until something is monitoring it.  If you want status flags on the search and
       details pages you must ask for them using the `fields` parameter, but our advice is to monitor
-      them using the item's `updates` link or (if you are running 8.30 or better) [status
-      subscriptions](events.html#status-subscriptions).  See the [item status](#topic-Item-status)
-      section for a full description of how to stay up to date with item status, and this item's
+      them using [status subscriptions](events.html#status-subscriptions) if you are running 8.30 or
+      later, otherwise the item's `updates` link.  See the [item status](#topic-Item-status) section
+      for a full description of how to stay up to date with item status, and this item's
       introduction in the Operations section for what flags this item might return and what they
       mean.
     type: array
     items: { type: string, example: "controllerOffline" }
+
+  statustext_: &STATUSTEXT
+    description: |
+      This field contains a translated multi-line human-readable description of the item's status.
+      See the `statusFlags` field for notes on when you should ask for this field and how to keep it
+      up to date.
+    type: string
+    example: "Controller offline."
+  status_: &STATUS
+    description: |
+      This field contains the `statusText` field with line endings turned into spaces to make a
+      one-line string.  See the `statusFlags` field for notes on when you should ask for this field
+      and how to keep it up to date.
+    type: string
+    example: "Controller offline."
 
   update_fields_desc_ignored: &UPDFIELDS
     in: query
@@ -459,7 +480,7 @@ x-common-blocks-this-is-made-up:
     in: query
     required: false
     type: string
-    enum: [href, id, name, shortName, description, division, commands, connectedController, doors, zoneCount, statusFlags, status, notes, updates]
+    enum: [href, id, name, shortName, description, division, commands, connectedController, doors, zoneCount, statusFlags, statusText, status, notes, updates]
 
   alz_ignored: &ALZFIELDS
     in: query
@@ -472,7 +493,7 @@ x-common-blocks-this-is-made-up:
     required: false
     type: string
     enum: [href, id, name, shortName, description, division, commands, connectedController,
-           entryAccessZone, exitAccessZone, statusFlags, status, notes, updates]
+           entryAccessZone, exitAccessZone, statusFlags, statusText, status, notes, updates]
 
   eg_ignored: &ELEVATORGROUPALLFIELDS
     in: query
@@ -491,7 +512,13 @@ x-common-blocks-this-is-made-up:
     in: query
     required: false
     type: string
-    enum: [href, id, name, shortName, description, division, commands, connectedController, voltage, statusFlags, status, notes, updates]
+    enum: [href, id, name, shortName, description, division, commands, connectedController, voltage, statusFlags, statusText, status, notes, updates]
+
+  interlock_: &INTERLOCKFIELDS
+    in: query
+    required: false
+    type: string
+    enum: [href, id, name, shortName, description, division, commands, connectedController, statusFlags, statusText, status, notes, updates]
 
   macro_ignored: &MACROFIELDS
     in: query
@@ -503,7 +530,7 @@ x-common-blocks-this-is-made-up:
     in: query
     required: false
     type: string
-    enum: [href, id, name, shortName, description, division, commands, connectedController, statusFlags, status, notes, updates]
+    enum: [href, id, name, shortName, description, division, commands, connectedController, statusFlags, statusText, status, notes, updates]
 
   schedule_ignored: &SCHEDULEFIELDS
     in: query
@@ -1709,7 +1736,7 @@ definitions:
                   href:
                     example: "https://localhost:8904/api/inputs/9701/shunt"
                     description: |
-                      [POST](#operation--api-inputs--id--off-shunt) to this to shunt the input.
+                      [POST](#operation--api-inputs--id--shunt-post) to this to shunt the input.
                     type: string
                     format: url
               unshunt:
@@ -1718,7 +1745,7 @@ definitions:
                   href:
                     example: "https://localhost:8904/api/inputs/9701/unshunt"
                     description: |
-                      [POST](#operation--api-inputs--id--off-unshunt) to this to stop shunting the
+                      [POST](#operation--api-inputs--id--unshunt-post) to this to stop shunting the
                       input.
                     type: string
                     format: url
@@ -1728,7 +1755,7 @@ definitions:
                   href:
                     example: "https://localhost:8904/api/inputs/9701/isolate"
                     description: |
-                      [POST](#operation--api-inputs--id--off-isolate) to this to isolate the input.
+                      [POST](#operation--api-inputs--id--isolate-post) to this to isolate the input.
                       Isolated inputs do not prevent alarm zones from arming.
 
                       The link will be missing if the input is shunted.
@@ -1740,12 +1767,123 @@ definitions:
                   href:
                     example: "https://localhost:8904/api/inputs/9701/deisolate"
                     description: |
-                      [POST](#operation--api-inputs--id--off-deisolate) to this to stop isolating
+                      [POST](#operation--api-inputs--id--deisolate-post) to this to stop isolating
                       the input.  The link will be missing if the input is shunted.
                     type: string
                     format: url
 
       - $ref: "#/definitions/Input summary"
+
+#######################################################################
+#######################################################################
+  Interlock Group search:
+    tags:
+      - "Interlock Groups"
+    description: |
+      **API support for interlocks is still in development and may change in future versions.**
+
+      An array of interlock group summaries and a `next` link for more.
+    properties:
+      results:
+        type: array
+        description: An array of interlock group summaries.
+        items: { $ref: '#/definitions/Interlock Group summary' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/interlock_groups?skip=1000"
+
+  Interlock Group summary:
+    description: |
+      **API support for interlocks is still in development and may change in future versions.**
+
+      `/api/interlock_groups` returns an array of these.  It is a subset of what you get from an
+      interlock's details page at `/api/interlock_groups/{id}` (linked as the href in this object).
+
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          A link to an [interlock group detail](#definition-Interlock-Group-detail) object for this
+          item.
+        example: "https://localhost:8904/api/interlock_group/122322"
+      name:
+        type: string
+        example: "Excercise yard egress"
+
+  Interlock Group detail:
+    description: |
+      **API support for interlocks is still in development and may change in future versions.**
+
+      [/api/interlock_groups/{id}](#operation--api-interlock_groups--id--get) returns one of these.
+
+      Some of the fields will not come from the server unless you request them via the `fields`
+      query parameter.
+
+    allOf:
+      - type: object
+        properties:
+          description:
+            type: string
+            example: "Exercise yard egress."
+          division:
+            type: object
+            description:  The division containing this interlock group.
+            example:
+              href: "https://localhost:8904/api/divisions/2"
+          shortName: {<<: *SHORTNAME}
+          notes: {<<: *NOTES}
+          updates:
+            <<: *UPDATES
+            example: { href: "https://localhost:8904/api/interlock_groups/122322/updates/0_0_0" }
+          statusFlags:
+            <<: *STATUSFLAGS
+            example: ["secure"]
+          statusText:
+            <<: *STATUSTEXT
+            example: "All doors in the group are in a Secure state."
+          status:
+            <<: *STATUS
+            example: "All doors in the group are in a Secure state."
+          connectedController:
+            <<: *CONNECTEDCONTROLLER
+          commands:
+            type: object
+            description: |
+              A block of commands, each represented by a block containing an href that accepts a
+              POST that will send an override to the interlock.
+
+              It will be missing if your operator does not have a privilege that allows overriding
+              the interlock (examples of which are in the documentation for the POSTs).
+
+            properties:
+              disable:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/interlock_groups/122322/disable"
+                    description: |
+                      [POST](#operation--api-interlock_groups--id--disable-post) to this to disable the
+                      interlock group, allowing the doors to operate independently.
+                    type: string
+                    format: url
+              enable:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/interlock_groups/122322/enable"
+                    description: |
+                      [POST](#operation--api-interlock_groups--id--enable-post) to re-enable the
+                      interlock group, causing its doors to return to interlock behaviour.
+                    type: string
+                    format: url
+
+      - $ref: "#/definitions/Interlock Group summary"
 
 #######################################################################
 #######################################################################
@@ -2667,7 +2805,7 @@ tags:
     #### Overriding an Input
     1. Find the href for the input using the process above.
     2. GET it.
-    3. Find the API URL to for the override you need in the `commands` structure of the
+    3. Find the API URL for the override you need in the `commands` structure of the
        [results](#definition-Input-detail).
     4. POST to that URL with an empty body.
 
@@ -2677,6 +2815,113 @@ tags:
     4. GET it.
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
+
+- name: "Interlock Groups"
+  description: |-
+    These methods, yet to be released, will give you read access to Interlock Group items.
+
+    **API support for interlocks is still in development and may change in future versions.**
+
+    The first use case below introduces the main entry point.  It is a paginated search interface
+    that gives you any number of interlock groups, each containing the fields you ask for in the
+    query.  You can, for instance, ask for the IDs you need to monitor their status.
+
+    ### Status flags
+
+    If an interlock is not in an error state it will return one flag out of the following set:
+
+    - `secure` means the interlock items are closed and the door/s will open to a badge.  This is
+      probably where an interlock group spends most of its time.
+
+    - `open` means the interlock's doors will not open because at least one of the other items in
+      the group already is.  This is a normal state after someone gains access at an interlock door.
+      It will last until the door closes.
+
+    - `overridden` means the interlock group has received a disable override.  Doors will open as
+      normal.
+
+    - `forced` means that the interlock rules have been breached.  This could be because someone
+      forced a door or used an emergency release while another was already open.
+
+    To establish if the input is in a completely normal state look for 'secure' or 'open'.
+
+    ### Use cases
+
+    #### Listing Interlock Groups
+    1. `GET /api`.
+    2. Follow the link at `features.interlockGroups.interlockGroups.href`, appending a search term
+       such as `name=substring` to select the interlocks, `top` if you expect lots of them, and
+       `fields` to tell the server what to return about each.  The next section covers those query
+       parameters.
+    3. Process the results, following the `next` link if there is one.
+
+    #### Finding the status of many items including an interlock group
+    1. Find the IDs of all the items you're interested in, including the interlock group, by
+       searching for them with a query parameter appended such as `fields=name,id`.
+    2. Create a [status subscription](events.html#status-subscriptions) for those items.
+
+    #### Finding the status of an interlock group
+    1. Find the href for the interlock using the process above, and GET it.
+    3. Take the `updates` href from that page.
+    4. GET it.
+    4. Use the flag rules above to interpret the status flags you receive.
+    5. Follow the `next` link to stay up to date.
+
+- name: "Interlock Groups"
+  description: |-
+    These methods, yet to be released, will give you read access to Interlock Group items.
+
+    The first use case below introduces the main entry point.  It is a paginated search interface
+    that gives you any number of interlock groups, each containing the fields you ask for in the
+    query.  You can, for instance, ask for the IDs you need to monitor their status.
+
+    ### Status flags
+
+    If an interlock is not in an error state it will return one flag out of the following set:
+
+    - `secure` means the interlock items are closed and the door/s will open to a badge.  This is
+      probably where an interlock group spends most of its time.
+
+    - `open` means the interlock's doors will not open because at least one of the other items in
+      the group already is.  This is a normal state after someone gains access at an interlock door.
+      It will last until the door closes.
+
+    - `overridden` means the interlock group has received a disable override.  Doors will open as
+      normal.
+
+    - `forced` means that the interlock rules have been breached.  This could be because someone
+      forced a door or used an emergency release while another was already open.
+
+    To establish if the input is in a completely normal state look for 'secure' or 'open'.
+
+    ### Use cases
+
+    #### Listing Interlock Groups
+    1. `GET /api`.
+    2. Follow the link at `features.interlockGroups.interlockGroups.href`, appending a search term
+       such as `name=substring` to select the interlocks, `top` if you expect lots of them, and
+       `fields` to tell the server what to return about each.  The next section covers those query
+       parameters.
+    3. Process the results, following the `next` link if there is one.
+
+    #### Finding the status of many items including an interlock group
+    1. Find the IDs of all the items you're interested in, including the interlock group, by
+       searching for them with a query parameter appended such as `fields=name,id`.
+    2. Create a [status subscription](events.html#status-subscriptions) for those items.
+
+    #### Finding the status of an interlock group
+    1. Find the href for the interlock using the process above, and GET it.
+    3. Take the `updates` href from that page.
+    4. GET it.
+    4. Use the flag rules above to interpret the status flags you receive.
+    5. Follow the `next` link to stay up to date.
+
+    #### Overriding an Interlock Group
+    1. Find the href for the interlock using the process above.
+    2. GET it.
+    3. Find the API URL for the override you need (disable or re-enable) in the `commands` structure
+       of the [results](#definition-Interlock-Group-detail).
+    4. POST to that URL with an empty body.
 
 - name: "Macros"
   description: |
@@ -4142,6 +4387,166 @@ paths:
         404: {$ref: "#responses/404input"}
 
 ######################################################################
+  /api/interlock_groups:
+    get:
+      tags:
+        - "Interlock Groups"
+      summary: Search interlock groups
+      description: |
+
+        **Not yet available.  API support for interlocks is still in development and may change in
+        future versions.**
+
+        This returns a summary of the interlock groups matching your search criteria.
+
+        The result will contain no more than 100 or 1000 interlock groups (depending on your
+        version), or as many as you asked for more in your request; you should follow the `next`
+        link, if it is present, to collect the next batch.
+
+        If your result set is empty it means your operator does not have the privilege to view any
+        interlock groups such as 'View Site', 'Edit Site', or 'Maintenance Override'.  Perhaps there
+        are no interlock groups in the divisions in which your operator has privileges, or your
+        operator has no privileges at all.
+
+        When you have loaded them all there will be no `next` link.
+
+        Take this URL from the 'href' field in the `features.interlockGroups.interlockGroups`
+        section of `/api`.
+
+      parameters:
+      - $ref: "cardholdersApi.yaml#/parameters/sort"
+      - $ref: "cardholdersApi.yaml#/parameters/top"
+      - $ref: "cardholdersApi.yaml#/parameters/name"
+      - $ref: "cardholdersApi.yaml#/parameters/division"
+      - $ref: "cardholdersApi.yaml#/parameters/description"
+      - name: "fields"
+        <<: *FIELDSDESC_SUM_810
+        <<: *INTERLOCKFIELDS
+
+      responses:
+        200:
+          description: |
+            Success.  See the note in the description about privileges if your result set is empty.
+          schema: {$ref: '#/definitions/Interlock Group search'}
+        403:
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
+
+  /api/interlock_groups/{id}:
+    get:
+      tags:
+        - "Interlock Groups"
+      summary: Get details of an interlock group
+      description: |
+        **Not yet available.  API support for interlocks is still in development and may change in
+        future versions.**
+
+        This returns the detail of one interlock group.
+
+        Follow the 'href' field in an [interlock group summary](#definition-Interlock-Group-summary)
+        to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the interlock group.
+      - name: "fields"
+        <<: *FIELDSDESC_DET_810
+        <<: *INTERLOCKFIELDS
+
+      responses:
+        200:
+          description: Success.
+          schema: {$ref: '#/definitions/Interlock Group detail'}
+        403:
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
+        404: {$ref: "#responses/404interlock"}
+
+  /api/interlock_groups/{id}/disable:
+    post:
+      tags: ["Interlock Groups"]
+      summary: Disable an interlock group.
+      description: |
+        **Not yet available.  API support for interlocks is still in development and may change in
+        future versions.**
+
+        Sends an override to disable an interlock group, allowing all doors to act independently.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the interlock group.",
+         type: string}
+      - $ref: "cardholdersApi.yaml#/parameters/requested_by"
+      responses:
+        204: { description: Success. }
+        403: { $ref: "#/responses/403interlockoverride" }
+
+  /api/interlock_groups/{id}/enable:
+    post:
+      tags: ["Interlock Groups"]
+      summary: Re-enable an interlock group.
+      description: |
+        **Not yet available.  API support for interlocks is still in development and may change in
+        future versions.**
+
+        Cancels the disabling override on an interlock group, causing the doors to return to
+        interlocking behaviour.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the interlock group.",
+         type: string}
+      - $ref: "cardholdersApi.yaml#/parameters/requested_by"
+      responses:
+        204: { description: Success. }
+        403: { $ref: "#/responses/403interlockoverride" }
+
+  /api/interlock_groups/{id}/updates:
+    get:
+      tags: ["Interlock Groups"]
+      summary: Monitor an interlock group.
+      description: |
+        **Not yet available.  API support for interlocks is still in development and may change in
+        future versions.**
+
+        See the [item status topic](#topic-Item-status) for how to use the updates APIs.
+
+        Note that this API call is good for watching one item only; if you want to monitor several,
+        you are better off with a [status subscription](events.html#status-subscriptions).
+
+        Follow the 'updates' field in an interlock group
+        [summary](#definition-Interlock-Group-summary) or
+        [details](#definition-Interlock-Group-detail) pages to get here.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: The ID of the interlock group.
+      - name: "fields"
+        <<: *UPDFIELDS
+        <<: *UPDFIELDSENUM
+
+      responses:
+        200:
+          description: |
+            Success.  See the [introduction](#tag-Interlock-Groups) for a description of the status
+            fields.
+          schema:
+            example: {
+              updates: {
+                statusFlags: [ open ]
+              },
+              next: { href: https://localhost:8904/api/interlock_groups/122322/updates/9_1 }
+            }
+        403:
+          description: |
+            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
+        404: {$ref: "#responses/404interlock"}
+
+######################################################################
   /api/macros:
     get:
       tags:
@@ -4627,6 +5032,10 @@ responses:
     description: |
       The site does not have the RESTOverrides licence (in which case the body of the result will
       say so), or the operator does not have the 'Maintenance Override' privilege.
+  403interlockoverride:
+    description: |
+      The site does not have the RESTOverrides licence (in which case the body of the result will
+      say so), or the operator does not have the 'Override' privilege.
   403macrooverride:
     description: |
       The site does not have the RESTOverrides licence (in which case the body of the result will
@@ -4658,6 +5067,11 @@ responses:
       The request's URL does not represent an input, or the operator does not have a privilege on
       the input's division that allows viewing inputs, such as 'View Site', 'Edit Site', or
       'Maintenance Override'."
+  404interlock:
+    description: |
+      The request's URL does not represent an interlock or the operator does not have a privilege on
+      the interlock's division that allows viewing interlocks, such as 'View Site', 'Edit Site', or
+      'Override'."
   404macro:
     description: |
       The request's URL does not represent a macro, or the operator does not have a privilege on the

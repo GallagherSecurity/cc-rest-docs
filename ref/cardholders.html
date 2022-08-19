@@ -303,6 +303,9 @@
                   <li>
                     <p>An optional PDF field &#39;operatorAccess&#39; contains the level of access your operator has to cardholders&#39; values for the PDF.</p>
                   </li>
+                  <li>
+                    <p>Card type <code>regex</code> and <code>regexDescription</code> fields.</p>
+                  </li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-870">Cardholder API changes in 8.70</h4>
                 <ul>
@@ -4538,7 +4541,9 @@
                           <span class="json-property-enum-item">credentialClass</span>,
                           <span class="json-property-enum-item">minimumNumber</span>,
                           <span class="json-property-enum-item">maximumNumber</span>,
-                          <span class="json-property-enum-item">notes</span>
+                          <span class="json-property-enum-item">notes</span>,
+                          <span class="json-property-enum-item">regex</span>,
+                          <span class="json-property-enum-item">regexDescription</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                       </div>
@@ -4609,7 +4614,9 @@
       <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
       <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
       <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
-      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+      <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
+      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -12971,7 +12978,9 @@
       <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
       <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
       <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
-      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+      <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
+      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -13105,6 +13114,22 @@
                     <dd>
                       <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
                     </dd>
+                    <dt data-property-name="regex" class="has-description">
+                      <span class="json-property-name">regex:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the regular expression that a Card Type text card number must match before Command Centre will accept it. </p>
+                    </dd>
+                    <dt data-property-name="regexDescription" class="has-description">
+                      <span class="json-property-name">regexDescription:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Regular expressions often need explaining.</p>
+                    </dd>
                   </dl>
                 </section>
               </div>
@@ -13134,7 +13159,9 @@
   <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
   <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
   <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
-  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
+  <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
 }
 </code></pre> </body>
                   </html>
