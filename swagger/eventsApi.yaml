@@ -236,6 +236,17 @@ tags:
        might encounter a problem writing events mid-batch.  Note that that advises using the `next`
        field, but you will be using the `updates` field, which is the same thing in long-poll form.
 
+    #### Receiving new events as they occur, starting from now, with no long polls
+    1. `GET /api`
+    2. Follow the link at `features.events.events.href` [↪](#operation--api-events-get) and append
+       `previous=true&top=1`.  Add the appropriate query separator `?` or `&` first, depending on
+       whether there is a query parameter in the URL already.  The call will return one event (which
+       you can ignore) and a `next` link you'll need later.
+    5. Sleep and loop, following the link at `next.href` after processing each batch of events.  It
+       will return immediately whether or not there are new events waiting.  Follow the advice in
+       [downloading the entire event database](#downloading-the-entire-event-database) about keeping
+       track of your position if you might encounter a problem writing events mid-batch.
+
     #### Receiving new events as they occur, starting in the past
     1. `GET /api`
     2. Follow the link at `features.events.events.href` [↪](#operation--api-events-get) appending

@@ -1790,6 +1790,14 @@
                 <li>Loop, following the link at <code>updates.href</code> after processing each batch of events. It will return immediately if there are new events waiting, or it will block until new events arrive. Follow the advice in
                   <a href="#downloading-the-entire-event-database">downloading the entire event database</a> about keeping track of your position if you might encounter a problem writing events mid-batch. Note that that advises using the <code>next</code> field, but you will be using the <code>updates</code> field, which is the same thing in long-poll form.</li>
               </ol>
+              <h4 id="receiving-new-events-as-they-occur-starting-from-now-with-no-long-polls">Receiving new events as they occur, starting from now, with no long polls</h4>
+              <ol>
+                <li><code>GET /api</code></li>
+                <li>Follow the link at <code>features.events.events.href</code>
+                  <a href="#operation--api-events-get">↪</a> and append <code>previous=true&amp;top=1</code>. Add the appropriate query separator <code>?</code> or <code>&amp;</code> first, depending on whether there is a query parameter in the URL already. The call will return one event (which you can ignore) and a <code>next</code> link you&#39;ll need later.</li>
+                <li>Sleep and loop, following the link at <code>next.href</code> after processing each batch of events. It will return immediately whether or not there are new events waiting. Follow the advice in
+                  <a href="#downloading-the-entire-event-database">downloading the entire event database</a> about keeping track of your position if you might encounter a problem writing events mid-batch.</li>
+              </ol>
               <h4 id="receiving-new-events-as-they-occur-starting-in-the-past">Receiving new events as they occur, starting in the past</h4>
               <ol>
                 <li><code>GET /api</code></li>
