@@ -1257,12 +1257,26 @@ paths:
         in: query
         required: false
         type: string
-        description: Restricts events to those with this event type ID.  Separate multiple IDs with commas.  Use `/api/events/groups` to see all of Command Centre's event types and groups.
+        description: |
+          Restricts events to those with this event type ID.  Separate multiple IDs with commas.
+
+          Use `/api/events/groups` to see all of Command Centre's event types and groups.  Event
+          types names and IDs rarely change, but the ID is the more stable of the two.  Therefore it
+          is probably safer to use that API for reference then hard-code the event type IDs you find
+          there into your application.
       - name: "group"
         in: query
         required: false
         type: string
-        description: Restricts events to those with this event group ID.  Separate multiple IDs with commas.  Use `/api/events/groups` to see all of Command Centre's event types and groups.
+        description: |
+          Restricts events to those with this event group ID.  Separate multiple IDs with commas.
+
+          The documentation for `/api/events/groups` advises when to filter for event groups instead
+          of event types.
+
+          Like event types, hard-coding the ID into your application is probably stabler (and
+          definitely simpler) than searching for it at runtime.
+
       - name: "cardholder"
         in: query
         required: false
@@ -1327,10 +1341,13 @@ paths:
         obtaining IDs to use in event filters.  There are about 1000 event types, divided into
         about 150 groups.  Each event type is in one group.
 
-        Event type identifiers do not often change between Command Centre versions, but group
-        assignments do.  Therefore if you choose to use type groups in event filters we advise using
-        this function at run-time rather than at build-time.  If you hard-code a group ID into your
-        application you run the risk of event filters not later versions.
+        Event type identifiers do not often change between Command Centre versions, but the types in
+        each group do.  Therefore if you choose to use groups in filters rather than types you may
+        find that your filter catches more or fewer event types after a Command Centre upgrade.
+        That may be desirable if, for example, you are intested in a class of event and you want to
+        grow with CC as it grows new features.  If you want to catch all 'access denied's, for
+        example.  We frequently add new varieties of 'access denied'.  If you do not want that, use
+        types rather than groups.
 
         Do not code this URL into your application.  Take it from `events.eventGroups.href` in the
         results of `GET /api`.
