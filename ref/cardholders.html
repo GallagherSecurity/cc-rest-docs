@@ -6805,6 +6805,8 @@
               <p>Because redactions can take some time, and should not be allowed to run immediately for security reasons, API clients can only schedule a redaction to occur at a future date. After doing that you can check the progress of redactions, and cancel them.</p>
               <p>Exactly how far in the future a redaction needs to be depends on the site configuration.</p>
               <p>There are two ways to list redactions: via their own paginated interface, which returns all the redactions in the system that your operator has the permission to view, or in the cardholder record.</p>
+              <h3 id="performance">Performance</h3>
+              <p>In early tests with SQL Server and Command Centre on a Core i5, event redactions took roughly one second per 1000 affected events. Logs and events generated when a redaction completes contain statistics you could use to calculate your own redaction rate, but expect them to vary with the other demands on the database at the time.</p>
             </div>
           </div>
           <div id="operation--api-cardholders-redactions-get" class="operation panel" data-traverse-target="operation--api-cardholders-redactions-get">
