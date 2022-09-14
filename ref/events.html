@@ -156,17 +156,18 @@
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
                 <h4 id="alarms-events-and-items-api-changes-on-the-roadmap">Alarms, events, and items API changes on the roadmap</h4>
                 <ul>
+                  <li>BREAKING CHANGE: a future version will require that the operator has the &#39;Create Events and Alarms&#39; privilege in the division of the source item, if your request specifies a source item. Current versions only require that the operator has that privilege on at least one division.</li>
+                </ul>
+                <h4 id="alarms-and-events-api-changes-in-890">Alarms and events API changes in 8.90</h4>
+                <ul>
                   <li>
-                    <p>BREAKING CHANGE: a future version will require that the operator has the &#39;Create Events and Alarms&#39; privilege in the division of the source item, if your request specifies a source item. Current versions only require that the operator has that privilege on at least one division.</p>
+                    <p>To improve the symmetry between events and alarms, they now carry a field <code>eventType</code> containing the ID and name of their type. The <code>type</code> field, which has different contents for alarms and events, is now obsolete (but still supported).</p>
                   </li>
                   <li>
-                    <p>An alarm will carry a new field called <code>eventType</code> containing the event type&#39;s ID and name. The existing <code>type</code> field will remain, but will be obsolete.</p>
+                    <p>Alarms contain a new field called <code>event</code> containing a link to the corresponding event, mirroring the existing <code>alarm</code> field coming the other way from an event.</p>
                   </li>
                   <li>
-                    <p>An alarm will contain a new field called <code>event</code> containing a link to its corresponding event, mirroring the existing <code>alarm</code> field coming the other way from an event.</p>
-                  </li>
-                  <li>
-                    <p>You will be able to request a division&#39;s description (in version 8.50 and later).</p>
+                    <p>You can request a division&#39;s description. This has been possible since 8.50 but was not certified until 2022, so it gets a mention here.</p>
                   </li>
                 </ul>
                 <h4 id="alarms-and-events-api-changes-in-870">Alarms and events API changes in 8.70</h4>
@@ -201,6 +202,9 @@
                   </li>
                   <li>
                     <p>You can view any item&#39;s notes. You have been able to for a while now, but it was missing from this document.</p>
+                  </li>
+                  <li>
+                    <p>You can request a division&#39;s description.</p>
                   </li>
                 </ul>
                 <h4 id="alarms-and-events-api-changes-in-840">Alarms and events API changes in 8.40</h4>
@@ -543,6 +547,7 @@
                           <span class="json-property-enum-item">message</span>,
                           <span class="json-property-enum-item">source</span>,
                           <span class="json-property-enum-item">type</span>,
+                          <span class="json-property-enum-item">eventType</span>,
                           <span class="json-property-enum-item">priority</span>,
                           <span class="json-property-enum-item">state</span>,
                           <span class="json-property-enum-item">active</span>,
@@ -557,7 +562,8 @@
                           <span class="json-property-enum-item">details</span>,
                           <span class="json-property-enum-item">history</span>,
                           <span class="json-property-enum-item">instruction</span>,
-                          <span class="json-property-enum-item">cardholder</span>
+                          <span class="json-property-enum-item">cardholder</span>,
+                          <span class="json-property-enum-item">event</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                       </div>
@@ -619,11 +625,18 @@
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
       },
       <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
+      <span class="hljs-attr">&quot;eventType&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+      },
       <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
       <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
       <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
       <span class="hljs-attr">&quot;division&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;event&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/10135&quot;</span>
       },
       <span class="hljs-attr">&quot;notePresets&quot;</span>: [
         <span class="hljs-string">&quot;False alarm confirmed by surveillance&quot;</span>,
@@ -711,6 +724,7 @@
                           <span class="json-property-enum-item">message</span>,
                           <span class="json-property-enum-item">source</span>,
                           <span class="json-property-enum-item">type</span>,
+                          <span class="json-property-enum-item">eventType</span>,
                           <span class="json-property-enum-item">priority</span>,
                           <span class="json-property-enum-item">state</span>,
                           <span class="json-property-enum-item">active</span>,
@@ -725,7 +739,8 @@
                           <span class="json-property-enum-item">details</span>,
                           <span class="json-property-enum-item">history</span>,
                           <span class="json-property-enum-item">instruction</span>,
-                          <span class="json-property-enum-item">cardholder</span>
+                          <span class="json-property-enum-item">cardholder</span>,
+                          <span class="json-property-enum-item">event</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                       </div>
@@ -787,11 +802,18 @@
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
       },
       <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
+      <span class="hljs-attr">&quot;eventType&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+      },
       <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
       <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
       <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
       <span class="hljs-attr">&quot;division&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;event&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/10135&quot;</span>
       },
       <span class="hljs-attr">&quot;notePresets&quot;</span>: [
         <span class="hljs-string">&quot;False alarm confirmed by surveillance&quot;</span>,
@@ -885,6 +907,7 @@
                           <span class="json-property-enum-item">message</span>,
                           <span class="json-property-enum-item">source</span>,
                           <span class="json-property-enum-item">type</span>,
+                          <span class="json-property-enum-item">eventType</span>,
                           <span class="json-property-enum-item">priority</span>,
                           <span class="json-property-enum-item">state</span>,
                           <span class="json-property-enum-item">active</span>,
@@ -899,7 +922,8 @@
                           <span class="json-property-enum-item">details</span>,
                           <span class="json-property-enum-item">history</span>,
                           <span class="json-property-enum-item">instruction</span>,
-                          <span class="json-property-enum-item">cardholder</span>
+                          <span class="json-property-enum-item">cardholder</span>,
+                          <span class="json-property-enum-item">event</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                       </div>
@@ -959,11 +983,18 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
   },
   <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
+  <span class="hljs-attr">&quot;eventType&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+  },
   <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
   <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
   <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;event&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/10135&quot;</span>
   },
   <span class="hljs-attr">&quot;notePresets&quot;</span>: [
     <span class="hljs-string">&quot;False alarm confirmed by surveillance&quot;</span>,
@@ -1572,6 +1603,40 @@
       <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
       <span class="hljs-attr">&quot;parent&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;visitorManagement&quot;</span>: {
+        <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">&quot;visitortypes&quot;</span>: [
+          {
+            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925&quot;</span>,
+            <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+              <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor access group 1&quot;</span>,
+              <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+            },
+            <span class="hljs-attr">&quot;hostAccessGroups&quot;</span>: [
+              {
+                <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+                  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Host access group 1&quot;</span>,
+                  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/938&quot;</span>
+                }
+              }
+            ],
+            <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
+              {
+                <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+                  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
+                  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
+                }
+              },
+              {
+                <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+                  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 30&quot;</span>,
+                  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/927&quot;</span>
+                }
+              }
+            ]
+          }
+        ]
       }
     }
   ],
@@ -1702,6 +1767,7 @@
   <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>,
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Contains all other divisions&quot;</span>,
   <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;parent&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>
@@ -1964,6 +2030,9 @@
                   <head></head>
                   <body><pre><code class="hljs language-json">{
   <span class="hljs-attr">&quot;type&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/types/4000&quot;</span>
+  },
+  <span class="hljs-attr">&quot;eventType&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/types/4000&quot;</span>
   },
   <span class="hljs-attr">&quot;source&quot;</span>: {
@@ -2260,6 +2329,7 @@
                           <span class="json-property-enum-item">source</span>,
                           <span class="json-property-enum-item">group</span>,
                           <span class="json-property-enum-item">type</span>,
+                          <span class="json-property-enum-item">eventType</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">cardholder</span>,
                           <span class="json-property-enum-item">entryAccessZone</span>,
@@ -2378,6 +2448,10 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Invalid Logon&quot;</span>
       },
       <span class="hljs-attr">&quot;type&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+      },
+      <span class="hljs-attr">&quot;eventType&quot;</span>: {
         <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
       },
@@ -2652,6 +2726,7 @@
                           <span class="json-property-enum-item">source</span>,
                           <span class="json-property-enum-item">group</span>,
                           <span class="json-property-enum-item">type</span>,
+                          <span class="json-property-enum-item">eventType</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">cardholder</span>,
                           <span class="json-property-enum-item">entryAccessZone</span>,
@@ -2755,6 +2830,10 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Invalid Logon&quot;</span>
       },
       <span class="hljs-attr">&quot;type&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+      },
+      <span class="hljs-attr">&quot;eventType&quot;</span>: {
         <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
       },
@@ -2893,6 +2972,7 @@
                           <span class="json-property-enum-item">source</span>,
                           <span class="json-property-enum-item">group</span>,
                           <span class="json-property-enum-item">type</span>,
+                          <span class="json-property-enum-item">eventType</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">cardholder</span>,
                           <span class="json-property-enum-item">entryAccessZone</span>,
@@ -2988,6 +3068,10 @@
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Invalid Logon&quot;</span>
   },
   <span class="hljs-attr">&quot;type&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+  },
+  <span class="hljs-attr">&quot;eventType&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
   },
@@ -4005,11 +4089,18 @@
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
       },
       <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
+      <span class="hljs-attr">&quot;eventType&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+      },
       <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
       <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
       <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
       <span class="hljs-attr">&quot;division&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;event&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/10135&quot;</span>
       },
       <span class="hljs-attr">&quot;notePresets&quot;</span>: [
         <span class="hljs-string">&quot;False alarm confirmed by surveillance&quot;</span>,
@@ -4126,11 +4217,18 @@
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
       },
       <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
+      <span class="hljs-attr">&quot;eventType&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+      },
       <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
       <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
       <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
       <span class="hljs-attr">&quot;division&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;event&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/10135&quot;</span>
       },
       <span class="hljs-attr">&quot;notePresets&quot;</span>: [
         <span class="hljs-string">&quot;False alarm confirmed by surveillance&quot;</span>,
@@ -4263,6 +4361,40 @@
                     <dd>
                       <p>The name of this alarm&#39;s event type.</p>
                     </dd>
+                    <dt data-property-name="eventType" class="has-description">
+                      <span class="json-property-name">eventType:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>ID and name of the event&#39;s or alarm&#39;s type. There is a long list of them at
+                        <a href="#operation--api-events-groups-get">/events/groups</a>.</p>
+                      <p>Unlike the <code>type</code> field, this has the same format in an event as it does in an alarm.</p>
+                      <p>Added in 8.90. Because it is a new field, it does not appear by default. Ask for it using the <code>fields</code> parameter.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="id" class="has-description">
+                            <span class="json-property-name">id:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>The alphanumeric ID of the event type. You can use this ID in the <code>type</code> parameter when searching for events with
+                              <a href="#operation--api-events-get">/events</a>.</p>
+                          </dd>
+                          <dt data-property-name="name" class="has-description">
+                            <span class="json-property-name">name:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>The name of the event type.</p>
+                          </dd>
+                        </dl>
+                      </section>
+                    </dt>
                     <dt data-property-name="priority" class="has-description">
                       <span class="json-property-name">priority:</span>
                       <span class="json-property-type">integer</span>
@@ -4309,6 +4441,31 @@
                             <span class="json-property-format">(url)</span>
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                    <dt data-property-name="event" class="has-description">
+                      <span class="json-property-name">event:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A block containing a link (&quot;href&quot;) to the details page of this alarm&#39;s event. Useful if you want an alarm&#39;s related items.</p>
+                      <p>This mirrors an event&#39;s <code>alarm</code> field, which comes the other way.</p>
+                      <p>Added in 8.90. Not returned by default - you need to ask for it using the <code>fields</code> query parameter.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href" class="has-description">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>Link to the event page for this alarm. GET it for the fields found on an event that are not on an alarm.</p>
+                          </dd>
                         </dl>
                       </section>
                     </dt>
@@ -4467,11 +4624,18 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
   },
   <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
+  <span class="hljs-attr">&quot;eventType&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+  },
   <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
   <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
   <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;event&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/10135&quot;</span>
   },
   <span class="hljs-attr">&quot;notePresets&quot;</span>: [
     <span class="hljs-string">&quot;False alarm confirmed by surveillance&quot;</span>,
@@ -4646,11 +4810,18 @@
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/1321&quot;</span>
   },
   <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Forced door&quot;</span>,
+  <span class="hljs-attr">&quot;eventType&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+  },
   <span class="hljs-attr">&quot;priority&quot;</span>: <span class="hljs-number">8</span>,
   <span class="hljs-attr">&quot;state&quot;</span>: <span class="hljs-string">&quot;unacknowledged&quot;</span>,
   <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;event&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/10135&quot;</span>
   },
   <span class="hljs-attr">&quot;notePresets&quot;</span>: [
     <span class="hljs-string">&quot;False alarm confirmed by surveillance&quot;</span>,
@@ -4960,6 +5131,10 @@
         <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
       },
+      <span class="hljs-attr">&quot;eventType&quot;</span>: {
+        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+      },
       <span class="hljs-attr">&quot;division&quot;</span>: {
         <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>,
@@ -5266,6 +5441,40 @@
                           </dt>
                           <dd>
                             <p>The alphanumeric ID of the event type. To search for events of the same type as this example, put <code>type=23035</code> in the query parameters of
+                              <a href="#operation--api-events-get">/events</a>.</p>
+                          </dd>
+                          <dt data-property-name="name" class="has-description">
+                            <span class="json-property-name">name:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>The name of the event type.</p>
+                          </dd>
+                        </dl>
+                      </section>
+                    </dt>
+                    <dt data-property-name="eventType" class="has-description">
+                      <span class="json-property-name">eventType:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>ID and name of the event&#39;s or alarm&#39;s type. There is a long list of them at
+                        <a href="#operation--api-events-groups-get">/events/groups</a>.</p>
+                      <p>Unlike the <code>type</code> field, this has the same format in an event as it does in an alarm.</p>
+                      <p>Added in 8.90. Because it is a new field, it does not appear by default. Ask for it using the <code>fields</code> parameter.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="id" class="has-description">
+                            <span class="json-property-name">id:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>The alphanumeric ID of the event type. You can use this ID in the <code>type</code> parameter when searching for events with
                               <a href="#operation--api-events-get">/events</a>.</p>
                           </dd>
                           <dt data-property-name="name" class="has-description">
@@ -5711,6 +5920,10 @@
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
   },
+  <span class="hljs-attr">&quot;eventType&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+  },
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>,
@@ -5854,6 +6067,10 @@
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
   },
+  <span class="hljs-attr">&quot;eventType&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;601&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Operator logon failed&quot;</span>
+  },
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>,
@@ -5935,6 +6152,7 @@
                     <dd>
                       <p>This is a mandatory field in an event. Without it, the POST will fail.</p>
                       <p>It is mandatory because the server cannot assume a reasonable default. It can for the others.</p>
+                      <p>If your server is running 8.90 <code>eventType</code> is a synonym. If you send both a <code>type</code> block and an <code>eventType</code> block it will use <code>eventType</code>.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -5949,6 +6167,26 @@
                             <p>Take this href from the list of
                               <a href="#operation--api-events-groups-get">event types</a>. Note that you can only use event types in one of the thirty external event groups with IDs 57-66 and 190-209. Command Centre ships with one event type per group, IDs 4000-4009 and 6010-6029, but you can create 970 more using the External Event Type Configuration utility.</p>
                           </dd>
+                        </dl>
+                      </section>
+                    </dt>
+                    <dt data-property-name="eventType" class="has-description">
+                      <span class="json-property-name">eventType:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Synonym for <code>type</code>, introduced in 8.90.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
                         </dl>
                       </section>
                     </dt>
@@ -6202,6 +6440,9 @@
   <span class="hljs-attr">&quot;type&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/types/4000&quot;</span>
   },
+  <span class="hljs-attr">&quot;eventType&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/types/4000&quot;</span>
+  },
   <span class="hljs-attr">&quot;source&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/745&quot;</span>
   },
@@ -6382,7 +6623,11 @@
                   <dl>
                     <dt data-property-name="results" class="has-description">
                       <span class="json-property-name">results:</span>
-                      <span class="json-property-type">object[]</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/Division">Division</a>
+                        </span>
+                      </span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
@@ -6390,78 +6635,13 @@
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-array-items">
-                        <span class="json-property-type">object</span>
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/Division">Division</a>
+                          </span>
+                        </span>
                         <span class="json-property-range" title="Value limits"></span>
-                        <div class="json-inner-schema">
-                          <section class="json-schema-properties">
-                            <dl>
-                              <dt data-property-name="href" class="has-description">
-                                <span class="json-property-name">href:</span>
-                                <span class="json-property-type">string</span>
-                                <span class="json-property-format">(url)</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>A self reference.</p>
-                              </dd>
-                              <dt data-property-name="id" class="has-description">
-                                <span class="json-property-name">id:</span>
-                                <span class="json-property-type">string</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>The alphanumeric ID of the division. Use this ID in the <code>division</code> filter when requesting events.</p>
-                              </dd>
-                              <dt data-property-name="name" class="has-description">
-                                <span class="json-property-name">name:</span>
-                                <span class="json-property-type">string</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>The division&#39;s name.</p>
-                              </dd>
-                              <dt data-property-name="description" class="has-description">
-                                <span class="json-property-name">description:</span>
-                                <span class="json-property-type">string</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>
-                                  <strong>Not yet supported. Coming soon.</strong>
-                                </p>
-                                <p>The division&#39;s description.</p>
-                              </dd>
-                              <dt data-property-name="serverDisplayName" class="has-description">
-                                <span class="json-property-name">serverDisplayName:</span>
-                                <span class="json-property-type">string</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
-                              </dd>
-                              <dt data-property-name="parent" class="has-description">
-                                <span class="json-property-name">parent:</span>
-                                <span class="json-property-type">object</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>An object containing an href to the division entity representing the current division&#39;s parent. GET the href for full details.</p>
-                              </dd>
-                              <dt class="json-inner-schema">
-                                <section class="json-schema-properties">
-                                  <dl>
-                                    <dt data-property-name="href">
-                                      <span class="json-property-name">href:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-format">(url)</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                  </dl>
-                                </section>
-                              </dt>
-                            </dl>
-                          </section>
-                        </div>
+                        <div class="json-inner-schema"> </div>
                       </section>
                     </dt>
                     <dt data-property-name="next" class="has-description">
@@ -6503,6 +6683,40 @@
       <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
       <span class="hljs-attr">&quot;parent&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;visitorManagement&quot;</span>: {
+        <span class="hljs-attr">&quot;active&quot;</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">&quot;visitortypes&quot;</span>: [
+          {
+            <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/visitor_types/925&quot;</span>,
+            <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+              <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor access group 1&quot;</span>,
+              <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
+            },
+            <span class="hljs-attr">&quot;hostAccessGroups&quot;</span>: [
+              {
+                <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+                  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Host access group 1&quot;</span>,
+                  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/938&quot;</span>
+                }
+              }
+            ],
+            <span class="hljs-attr">&quot;visitorAccessGroups&quot;</span>: [
+              {
+                <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+                  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 22&quot;</span>,
+                  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/926&quot;</span>
+                }
+              },
+              {
+                <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
+                  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access group 30&quot;</span>,
+                  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/927&quot;</span>
+                }
+              }
+            ]
+          }
+        ]
       }
     }
   ],
@@ -6557,6 +6771,14 @@
                     </dt>
                     <dd>
                       <p>The division&#39;s name.</p>
+                    </dd>
+                    <dt data-property-name="description" class="has-description">
+                      <span class="json-property-name">description:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The division&#39;s description. New in 8.50. Not sent by default; ask for it with <code>fields</code>.</p>
                     </dd>
                     <dt data-property-name="serverDisplayName" class="has-description">
                       <span class="json-property-name">serverDisplayName:</span>
@@ -6769,6 +6991,7 @@
   <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>,
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Root division&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Contains all other divisions&quot;</span>,
   <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;parent&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/divisions/2&quot;</span>

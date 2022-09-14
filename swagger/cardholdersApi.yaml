@@ -71,16 +71,26 @@ info:
 
     * Card PINs (write-only).
 
+    #### Cardholder API changes in 8.90
+
+    * You can set a reason when re-issuing or removing a card, and the reason appears on the
+      resulting event.  The default is the card's previous state.
+
     #### Cardholder API changes in 8.80
 
     * BREAKING CHANGE:  Date PDFs no longer come out of the API with a time component or time zone
       designator, because date PDFs don't hold a time or time zone.  Previously they came out as
       midnight UTC, which implied more accuracy than date PDFs hold.
 
-    * An optional PDF field 'operatorAccess' contains the level of access your operator has to
+    * [Redactions](#tag-Redactions).
+
+    * An optional PDF field `operatorAccess` contains the level of access your operator has to
       cardholders' values for the PDF.
 
     * Card type `regex` and `regexDescription` fields.
+
+    * Email and mobile PDFs return their 'Default Notifications' flag on request.  This actually
+      happened in 8.50 but did not make it into the "changes" list.
 
     #### Cardholder API changes in 8.70
 
@@ -127,6 +137,8 @@ info:
 
     * Image Personal Data Field definitions will show their width, height, and format (JPG, PNG, or
       BMP) on request.
+
+    * Email and mobile PDFs return their 'Default Notifications' flag on request.
 
     #### API changes in 8.40
 
@@ -751,17 +763,16 @@ tags:
     [details](#operation--api-cardholders--id--get) operations' `fields` parameter and the [change
     tracking](#operation--api-cardholders-changes-get) operation's `fields` and `filter` parameters
     take a list of field names.  Other sections of this document describe how those parameters
-    affect the API calls, but their format is the same and the exhaustive list is long so rather
-    than repeat it for each call, this section will cover it once.
+    affect the API calls, but their format is the same so this section will cover it once.
 
     You can form the name of a field by joining the components of its JSON path with dots.  Fields
     at the root level of the cardholder object, such as `firstName` and `@emailAddress` (a PDF),
     have just one component.  Fields that are one level down, such as `accessGroups.status`, have
     two.
 
-    Treat the string matches as case sensitive:  use 'lastName' rather than 'lastname'.
+    Treat the string matches as case sensitive:  use `lastName` rather than `lastname`.
 
-    This is the list you can choose from in 8.30:
+    To serve as examples, this is the list you can choose from in 8.30:
 
     `href`, `id`, `firstName`, `lastName`, `shortName`, `description`, `authorised`,
     `lastSuccessfulAccessTime`, `lastSuccessfulAccessZone`, `division`,
@@ -779,6 +790,10 @@ tags:
     `cards.accessGroups.until`, `cards.accessGroups.status`,
     `cards.relationships.href`, `cards.relationships.cardholder`, `cards.relationships.role`,
     `cards.lockers.href`, `cards.lockers.locker`, `cards.lockers.from`, `cards.lockers.until`
+
+    Later versions of Command Centre added many more.  See the
+    [details](#operation--api-cardholders--id--get) operation for the complete list of cardholder
+    fields.
 
     A special value `default` applies a default set of fields that varies with the call you're
     making.
@@ -1067,7 +1082,8 @@ tags:
     (text, image, numeric, ...) and optional constraints on the values that it can hold.  For
     example, text, email, and telephone number types can have a regular expression with
     which new values must match.  A date can have a maximum and a minimum.  Text PDFs can have a
-    list of valid values, like an enumeration.
+    list of valid values, like an enumeration.  Mobile numbers and email addresses have a flag
+    indicating whether they are suitable to receive SMS and email notifications.
 
     There is more configuration:  image PDFs have a type and size, to which Command Centre will
     transcode incoming images.  All PDFs have their own access level
@@ -1134,6 +1150,39 @@ tags:
        after adding search terms such as `name="Front lobby"`.  A site typically has very few
        receptions, so if you add `top=1000` you're very unlikely to need to follow a `next` link.
     1. Find the reception you're after and use its href in a visit.
+
+- name: Redactions
+  description: |
+    A _redaction_ is a process that removes one cardholder's personal information from Command
+    Centre.  There are two kinds of redaction:
+
+    An _event_ redaction disconnects a cardholder from events that record an operation that affected
+    that cardholder.  Examples:
+
+    - an operator created the cardholder,
+
+    - an operator changed the value of one of the cardholder's PDFs,
+
+    - an operator changed the cardholder's access group memberships, or
+
+    - the cardholder moved through a door.
+
+    An event recation does not affect a cardholder's history (visible in the enterprise clients).
+
+    A _cardholder information_ redaction is absolute.  It clears all the data held against the item.
+    After being redacted a cardholder has nothing that can identify it:  no names and no PDFs.
+
+    The only way back from a redaction is a database restore.
+
+    Because redactions can take some time, and should not be allowed to run immediately for security
+    reasons, API clients can only schedule a redaction to occur at a future date.  After doing that
+    you can check the progress of redactions, and cancel them.
+
+    Exactly how far in the future a redaction needs to be depends on the site configuration.
+
+    There are two ways to list redactions:  via their own paginated interface, which returns all the
+    redactions in the system that your operator has the permission to view, or in the cardholder
+    record.
 
 - name: Roles
   description: |
@@ -1257,7 +1306,9 @@ parameters:
     items: { type: string }
     default: ['defaults']
     enum: [href, id, name, description, division, serverDisplayName, type, default, required,
-               unique, sortPriority, accessGroups, regex, regexDescription, defaultAccess, operatorAccess]
+               unique, sortPriority, accessGroups, regex, regexDescription, defaultAccess,
+               operatorAccess, notificationDefault
+               ]
     description: |
       Specifies the fields in the search results.  The values you can list are the same in the
       search and details pages.  Using it you can return everything on the search page that you
@@ -1729,6 +1780,14 @@ definitions:
               cardholder per TCP session in a long poll.  However the [Cardholder
               Changes](#tag-Cardholder-changes) methods are a far more efficient way of monitoring
               your cardholders.
+          redactions:
+            type: array
+            description: |
+              All the cardholder's scheduled redactions.  Because this is relatively expensive to
+              compute, this field does not appear by default.  You must ask for it.
+
+              Added in 8.80.
+            items: {$ref: '#/definitions/Cardholder redaction'}
 
       - $ref: "#/definitions/Cardholder summary"
 
@@ -1930,8 +1989,8 @@ definitions:
         - sets a PDF holding an employee ID,
         - changes the notification flags on two PDFs,
         - adds two new credentials, one card and one mobile,
-        - changes the issue level and clears the until date on another credential,
-        - deletes a third credential,
+        - changes the issue level with `Stolen` as the reissue reason and clears the until date on another credential,
+        - deletes a third credential with `Lost` as the remove reason,
         - adds two access group memberships, one unending and one with an until date,
         - clears the until date on another access group membership,
         - removes a fourth access group membership,
@@ -1998,9 +2057,16 @@ definitions:
           that card, plus the fields you want to change.  Remember you cannot change a card's type.
           The example changes the issue level and resets the 'until' date.
 
-          The only field that makes sense in an element of the 'remove' array is 'href'.
+          The only field that makes sense in an element of the 'remove' array is 'href' and 'status'.
 
           Do not put the same href in both the 'update' and 'remove' arrays.
+
+          In version 8.90 and later you can specify a card state in the `value` field inside the
+          `status` block when removing a card or changing its issue level.  It becomes the final
+          state of the card if you remove it or the final state of the card with the previous issue
+          level if you re-issue it, so it must be one of the valid states for the card type.  The
+          Gallagher clients and the resulting event call this state the 'reason' for the re-issue or
+          removal.  By default it will be the same as the card's current state.
 
         example:
           add:
@@ -2015,8 +2081,10 @@ definitions:
             - href: "https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d"
               issueLevel: 2
               until: ""
+              status: { value: "Stolen" }
           remove:
             - href: "https://localhost:8904/api/cardholders/325/cards/77e8affe7c7e4b56"
+              status: { value: "Lost" }
 
       accessGroups:
         type: object
@@ -2240,13 +2308,14 @@ definitions:
       value and notifications flag for the containing cardholder and an object containing some of
       the PDF definition's basic fields.
 
-      This is returned as part of a [cardholder's details](#definition-Cardholder-detail) and you
-      can send it in a [POST](#definition-Cardholder-POST-example) or a
-      [PATCH](#definition-Cardholder-PATCH-example).
+      This is returned as part of a [cardholder](#definition-Cardholder-detail), and you can send it
+      in a [POST](#definition-Cardholder-POST-example) or a
+      [PATCH](#definition-Cardholder-PATCH-example) to set the PDF's value and notification flag for
+      a cardholder.  The server will ignore the `definition` block if you send it back.  It uses the
+      name of the block (minus its leading `@`) to find the PDF to change.
 
-      To change the value of a PDF, you can use this structure but it may be simpler for you to
-      PATCH the cardholder with a property in the root of the payload named after the PDF with a
-      leading '@'.
+      While you can use this structure to change the value of a cardholder's PDF, it may be simpler
+      to put a property in the root of the payload named after the PDF with a leading '@'.
 
     properties:
       href:
@@ -3339,6 +3408,66 @@ definitions:
             }
           ]
         }
+
+######################################################################
+
+  Cardholder redaction:
+    description: |
+      These appear in an array in a cardholder object.  Each describes a redaction scheduled for the
+      cardholder.
+
+      A cardholder can have multiple event redactions pending, because they can operate on events
+      from different periods, but since a cardholder redaction removes the cardholder item there
+      can be only one.
+
+    properties:
+      href:
+        type: string
+        format: url
+        description: |
+          DELETE this URL to cancel this redaction.
+
+          DELETE is the only verb you can use on this URL.  GET will always return a 404.
+
+        example: "https://localhost:8904/api/cardholders/redactions/625"
+      type:
+        type: string 
+        enum: [ normalEvents, cardholder ]
+        description: |
+          Whether this redaction is for cardholder events or cardholder information.
+        example: "normalEvents"
+      when:
+        description: |
+          When redaction is meant to happen.  This should be in the future.  If it is in the past,
+          the service returns 400-Bad Request Invalid Start Time.
+
+          Optional.  If it is absent, it means to do it asap.
+
+        type: string
+        format: date-time
+        example: "2023-01-01T00:00:00Z"
+      before:
+        description: |
+          For event redactions, do not redact any events after this time.  No effect on cardholder
+          information redactions.
+
+          Optional.
+
+        type: string
+        format: date-time
+        example: "2022-01-01T00:00:00Z"
+      status:
+        type: string
+        enum: [ pending, inProgress, cancelled, done, failed ]
+        description: |
+          The status of this redaction.
+        example: "pending"
+      redactionOperator:
+        description: |
+          A block containing the href and current name of the operator who scheduled the redaction.
+
+        type: object
+        example: {"name": "REST Operator", "href": "https://localhost:8904/api/items/100"}
 
 ######################################################################
 
@@ -4592,6 +4721,16 @@ definitions:
         description: Regular expressions often need explaining.
         type: string
         example: "@ least"
+      notificationDefault:
+        description: |
+          This value is copied to the 'notification' flag on a cardholder's value for this PDF when
+          they first gain membership of one of this PDF's access groups.  It will only appear for
+          PDF types that can receive notifications (email addresses and mobile numbers), and only if
+          you ask for it with the `fields` parameter.
+
+          New in 8.50.
+        type: boolean
+        example: false
       imageWidth:
         description: |
           The maximum width of an image stored in this PDF, in pixels, for image PDF types.  You
@@ -4703,6 +4842,87 @@ definitions:
         description: |
           Free-form text.  You will only get this field if you ask for it with the `fields`
           parameter.
+
+######################################################################
+  Redaction:
+    description: |
+      An array of these comes from `GET /cardholders/redactions`.
+
+    allOf:
+      - type: object
+        properties:
+          cardholder:
+            type: object
+            description: |
+              The href of the cardholder whose events or item this redaction should affect.
+
+              Required.
+            example: {"href": "https://localhost:8904/api/cardholders/630"}
+          finished:
+            type: string
+            description: |
+              When the redaction finished.
+
+              Will be missing from pending redactions.
+            format: date-time
+            example: "2022-01-01T00:00:00Z"
+          message:
+            type: string
+            description: |
+              Translated string from the redaction's error code.  Will be absent if empty, or if the
+              redaction is pending or complete.
+            example: "Invalid cardholder"
+          details:
+            type: string
+            description: |
+              A more detailed description of what went wrong.
+
+              Not translated.  Will be absent if empty, or if the redaction is pending or complete.
+
+            example: ""
+      - $ref: "#/definitions/Cardholder redaction"
+
+######################################################################
+  Redaction POST Example:
+    description: |
+      POST one of these to schedule a redaction.
+
+    properties:
+      cardholder:
+        type: object
+        description: |
+          The href of the cardholder whose events or item this redaction should affect.
+
+          Required.
+        example: {"href": "https://localhost:8904/api/cardholders/630"}
+      type:
+        type: string 
+        enum: [ normalEvents, cardholder ]
+        description: |
+          Whether this redaction is for events or cardholder information.
+
+          Required.
+        example: "normalEvents"
+      when:
+        type: string
+        description: |
+          When redaction is meant to happen.  This should be in the future.  If it is in the past,
+          the service returns 400-Bad Request Invalid Start Time.
+
+          Optional.  If it is absent, it means to do it asap.
+
+        format: date-time
+        example: "2023-01-01T00:00:00Z"
+      before:
+        type: string
+        description: |
+          For event redactions, do not redact any events after this time.  No effect on cardholder
+          information redactions.
+
+          Optional.
+
+        format: date-time
+        example: "2022-01-01T00:00:00Z"
 
 ######################################################################
 
@@ -5007,6 +5227,9 @@ paths:
           for the empty string (`name=`).  You will receive no cardholders if you search for those
           with no name (`name=""`), as all items must have a name.
 
+          Because a plus sign `+` represents a space in a query string, replace each plus sign in
+          your search string with `%2d`.
+
           The search parameters form a logical conjunction.  They are ANDed
           together.  Therefore if you search for `name=Mary&pdf_1315=nanny` you will only get back
           cardholders with 'Mary' in their name and 'nanny' in the PDF with ID 1315.
@@ -5026,6 +5249,9 @@ paths:
           Without quotes, adding a percent sign `%` or underscore `_` will anchor the string
           at both ends.  A `_` will match any single character, and a `%` will match any substring.
           A lone `%` will return any cardholder with this PDF set to a non-null value.
+
+          Because a plus sign `+` represents a space in a query string, turn plus signs in your
+          string into `%2d`.
 
           The search is always case-insensitive.
 
@@ -5047,7 +5273,7 @@ paths:
 
         description: |
           Specifies the fields you want in the search results.  The values you can use here are the
-          same as you can for the details page, [listed here](#field-names-in-query-parameters).
+          same as you can for the [details page](#operation--api-cardholders--id--get).
           Using it you can return everything on the search page that you would find on the details
           page with the exception of the `edit` and `updates` links.  Separate values with commas.
 
@@ -5680,7 +5906,8 @@ paths:
           `filter=defaults,cards.trace` will add the card trace flag to the usual filter.
 
           `personalDataFields` will filter for PDF changes, and will give you the
-          personalDataDefinitions block plus the PDF values that changed.
+          personalDataDefinitions block plus the PDF values that changed.  You cannot filter for
+          changes to a particular PDF:  you will need to do that in your client.
 
           Being able to monitor operator settings arrived in 8.50 and operator group memberships in
           8.60.
@@ -6577,6 +6804,102 @@ paths:
           description: |
             The operator does not have a privilege that allows viewing that reception's definition
             ('View Site', 'Edit Site', 'View Visits', 'Edit Visits', or 'Manage Receptions').
+
+######################################################################
+  /api/cardholders/redactions:
+    get:
+      tags: [ "Redactions" ]
+      summary: Search redactions
+      description: |
+        All the cardholders' redactions.  Paginated.
+
+      parameters:
+        - name: "cardholder"
+          in: query
+          required: false
+          type: string
+          description: |
+            Limits the results to redactions to cardholders with these IDs.  Separate with commas.
+
+        - name: "status"
+          in: query
+          required: false
+          type: string
+          enum: [ pending, inProgress, cancelled, done, failed ]
+          description: |
+            Limits the results to redactions with this status.  Separate with commas.
+
+        - name: "type"
+          in: query
+          required: false
+          type: string
+          enum: [ normalEvents, cardholder ]
+          description: |
+            Limits the results to redactions of this type.  Separate with commas.
+
+        - name: "after"
+          in: query
+          required: false
+          type: string
+          format: date-time
+          description: |
+            Limits the results to redactions that were scheduled to occur after this time.
+
+        - name: "before"
+          in: query
+          required: false
+          type: string
+          format: date-time
+          description: |
+            Limits the results to redactions that were scheduled to occur before this time.
+
+      responses:
+        200:
+          description: An array of redactions and a link to the next page.
+          schema: {$ref: '#/definitions/Redaction'}
+        403:
+          description: The site does not have the RESTCardholders licence.
+    post:
+      tags: [ "Redactions" ]
+      summary: Schedule a redaction
+      description: |
+        Schedules a cardholder redaction.
+
+      parameters:
+        - name: "this string not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Redaction POST Example'}
+          description: |
+            Required fields are `cardholder` and `type`
+      responses:
+        201:
+          description: "Success."
+        400:
+          description: |
+            The cardholder does not exist.
+        403:
+          description: |
+            The operator does not have permissions to redact or to delete a cardholder, 
+            or the server is not licensed for cardholder operations.
+    delete:
+      tags: [ "Redactions" ]
+      summary: Cancel a redaction
+      description: |
+        Deletes a redaction record.  Has to be pending.
+
+        Note that the only way to modify a redaction is to delete it and create a new one for the
+        same cardholder.  This is due to concerns about redaction's effect on auditing.
+      responses:
+        201:
+          description: "Success."
+        403:
+          description: |
+            The operator does not have permissions to redact or to delete a cardholder, 
+            or the server is not licensed for cardholder operations.
+        404:
+          description: |
+            No such redaction, or your operator cannot see it.
 
 ######################################################################
   /api/roles:

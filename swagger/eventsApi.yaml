@@ -44,13 +44,17 @@ info:
       Alarms' privilege in the division of the source item, if your request specifies a source item.
       Current versions only require that the operator has that privilege on at least one division.
 
-    * An alarm will carry a new field called `eventType` containing the event type's ID and name.
-      The existing `type` field will remain, but will be obsolete.
+    #### Alarms and events API changes in 8.90
 
-    * An alarm will contain a new field called `event` containing a link to its corresponding event,
+    * To improve the symmetry between events and alarms, they now carry a field `eventType`
+      containing the ID and name of their type.  The `type` field, which has different
+      contents for alarms and events, is now obsolete (but still supported).
+
+    * Alarms contain a new field called `event` containing a link to the corresponding event,
       mirroring the existing `alarm` field coming the other way from an event.
 
-    * You will be able to request a division's description (in version 8.50 and later).
+    * You can request a division's description.  This has been possible since 8.50 but was not
+      certified until 2022, so it gets a mention here.
 
     #### Alarms and events API changes in 8.70
 
@@ -84,6 +88,8 @@ info:
 
     * You can view any item's notes.  You have been able to for a while now, but it was missing from
       this document.
+
+    * You can request a division's description.
 
     #### Alarms and events API changes in 8.40
 
@@ -679,6 +685,32 @@ x-common-blocks-this-is-made-up:
       reserves the right to change item type names in new versions, so you should not do
       anything with this string except show it to a person.
 
+  eventType_ignored: &EVENTTYPE
+    type: object
+    description: |
+      ID and name of the event's or alarm's type.  There is a long list of them at
+      [/events/groups](#operation--api-events-groups-get).
+
+      Unlike the `type` field, this has the same format in an event as it does in an alarm.
+
+      Added in 8.90.  Because it is a new field, it does not appear by default.  Ask for it using
+      the `fields` parameter.
+
+    properties:
+      id:
+        type: string
+        description: |
+          The alphanumeric ID of the event type.  You can use this ID in the `type` parameter when
+          searching for events with [/events](#operation--api-events-get).
+        example: "23035"
+      name:
+        type: string
+        description: The name of the event type.
+        example: "Forced door"
+    example:
+      id: "601"
+      name: "Operator logon failed"
+
 security:
   - "API key": []
 
@@ -701,9 +733,9 @@ parameters:
     type: string
     required: false
 
-    enum: [ href, id, time, message, source, type, priority, state, active, division, notePresets,
+    enum: [ href, id, time, message, source, type, eventType, priority, state, active, division, notePresets,
     view, comment, acknowledgeWithComment, acknowledge, processWithComment, process, details,
-    history, instruction, cardholder ]
+    history, instruction, cardholder, event ]
 
     description: |
       Sets the fields you want in your results.  Separate fields with commas.
@@ -716,7 +748,7 @@ parameters:
     type: string
     required: false
     enum: [ defaults, details, cardholder.pdf_*, href, id, serverDisplayName, time, message,
-    occurrences, priority, alarm, operator, source, group, type, division, cardholder,
+    occurrences, priority, alarm, operator, source, group, type, eventType, division, cardholder,
     entryAccessZone, exitAccessZone, door, accessGroup, card, modifiedItem, lastOccurrenceTime,
     previous, next, updates]
 
@@ -1745,6 +1777,8 @@ definitions:
           The name of this alarm's event type.
 
         example: "Forced door"
+      eventType:
+        <<: *EVENTTYPE
       priority:
         type: integer
         description: Numeric priority.  9 is critical and 0 is not an event.
@@ -1768,6 +1802,23 @@ definitions:
             type: string
             format: url
             example: "https://localhost:8904/api/divisions/2"
+      event:
+        type: object
+        description: |
+          A block containing a link ("href") to the details page of this alarm's event.  Useful if
+          you want an alarm's related items.
+
+          This mirrors an event's `alarm` field, which comes the other way.
+
+          Added in 8.90.  Not returned by default - you need to ask for it using the `fields` query parameter.
+        properties:
+          href:
+            type: string
+            format: url
+            description: |
+              Link to the event page for this alarm.  GET it for the fields found on an event
+              that are not on an alarm.
+            example: "https://localhost:8904/api/events/10135"
       notePresets:
         type: array
         items: 
@@ -2105,6 +2156,8 @@ definitions:
             type: string
             description: The name of the event type.
             example: "Operator logon failed"
+      eventType:
+        <<: *EVENTTYPE
       division:
         type: object
         description: |
@@ -2423,6 +2476,10 @@ definitions:
 
           It is mandatory because the server cannot assume a reasonable default.  It can for the
           others.
+
+          If your server is running 8.90 `eventType` is a synonym.  If you send both a `type` block
+          and an `eventType` block it will use `eventType`.
+
         type: object
         properties:
           href:
@@ -2435,6 +2492,14 @@ definitions:
               IDs 57-66 and 190-209.  Command Centre ships with one event type per group, IDs
               4000-4009 and 6010-6029, but you can create 970 more using the External Event Type
               Configuration utility.
+      eventType:
+        description: |
+          Synonym for `type`, introduced in 8.90.
+        properties:
+          href:
+            type: string
+            format: url
+            example: https://localhost:8904/api/events/types/4000
       source:
         description: |
           This block should contain the href of the item you wish to use as the source of your
@@ -2655,40 +2720,7 @@ definitions:
         type: array
         description: An array of division objects.
         items:
-          type: object
-          properties:
-            href:
-              type: string
-              format: url
-              description: A self reference.
-              example: "https://localhost:8904/divisions/2"
-            id:
-              type: string
-              description: |
-                The alphanumeric ID of the division.  Use this ID in the `division` filter when
-                requesting events.
-              example: "2"
-            name:
-              type: string
-              description: The division's name.
-              example: "Root division"
-            description:
-              type: string
-              description:  |
-                **Not yet supported.  Coming soon.**
-
-                The division's description.
-              example: "Contains all other divisions"
-            serverDisplayName:
-              $ref: "cardholdersApi.yaml#/x-common-blocks/server"
-            parent:
-              description: "An object containing an href to the division entity representing the current division's parent. GET the href for full details."
-              type: object
-              properties:
-                href:
-                  type: string
-                  format: url
-                  example: "https://localhost:8904/divisions/2"
+          { $ref: '#/definitions/Division' }
       next:
         description: |
           A site generally does not have too many divisions.  You should be able to collect them all
@@ -2723,6 +2755,10 @@ definitions:
         type: string
         description: The division's name.
         example: "Root division"
+      description:
+        type: string
+        description:  The division's description.  New in 8.50.  Not sent by default;  ask for it with `fields`.
+        example: "Contains all other divisions"
       serverDisplayName:
         $ref: "cardholdersApi.yaml#/x-common-blocks/server"
       parent:

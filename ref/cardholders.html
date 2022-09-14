@@ -176,6 +176,20 @@
             </ul>
           </section>
           <section>
+            <a href="#tag-Redactions">Redactions</a>
+            <ul>
+              <li>
+                <a href="#operation--api-cardholders-redactions-get"> Search redactions </a>
+              </li>
+              <li>
+                <a href="#operation--api-cardholders-redactions-post"> Schedule a redaction </a>
+              </li>
+              <li>
+                <a href="#operation--api-cardholders-redactions-delete"> Cancel a redaction </a>
+              </li>
+            </ul>
+          </section>
+          <section>
             <a href="#tag-Roles">Roles</a>
             <ul>
               <li>
@@ -220,6 +234,7 @@
           <a href="#definition-Cardholder-elevator-group"> Cardholder elevator group </a>
           <a href="#definition-Cardholder-changes"> Cardholder changes </a>
           <a href="#definition-Cardholder-change"> Cardholder change </a>
+          <a href="#definition-Cardholder-redaction"> Cardholder redaction </a>
           <a href="#definition-Access-group-search"> Access group search </a>
           <a href="#definition-Access-group-summary"> Access group summary </a>
           <a href="#definition-Access-group-detail"> Access group detail </a>
@@ -241,6 +256,8 @@
           <a href="#definition-PDF-definition"> PDF definition </a>
           <a href="#definition-Reception-search"> Reception search </a>
           <a href="#definition-Reception"> Reception </a>
+          <a href="#definition-Redaction"> Redaction </a>
+          <a href="#definition-Redaction-POST-Example"> Redaction POST Example </a>
           <a href="#definition-Role-search"> Role search </a>
           <a href="#definition-Role"> Role </a>
           <a href="#definition-Visit-search"> Visit search </a>
@@ -295,16 +312,27 @@
                     <p>Card PINs (write-only).</p>
                   </li>
                 </ul>
+                <h4 id="cardholder-api-changes-in-890">Cardholder API changes in 8.90</h4>
+                <ul>
+                  <li>You can set a reason when re-issuing or removing a card, and the reason appears on the resulting event. The default is the card&#39;s previous state.</li>
+                </ul>
                 <h4 id="cardholder-api-changes-in-880">Cardholder API changes in 8.80</h4>
                 <ul>
                   <li>
                     <p>BREAKING CHANGE: Date PDFs no longer come out of the API with a time component or time zone designator, because date PDFs don&#39;t hold a time or time zone. Previously they came out as midnight UTC, which implied more accuracy than date PDFs hold.</p>
                   </li>
                   <li>
-                    <p>An optional PDF field &#39;operatorAccess&#39; contains the level of access your operator has to cardholders&#39; values for the PDF.</p>
+                    <p>
+                      <a href="#tag-Redactions">Redactions</a>.</p>
+                  </li>
+                  <li>
+                    <p>An optional PDF field <code>operatorAccess</code> contains the level of access your operator has to cardholders&#39; values for the PDF.</p>
                   </li>
                   <li>
                     <p>Card type <code>regex</code> and <code>regexDescription</code> fields.</p>
+                  </li>
+                  <li>
+                    <p>Email and mobile PDFs return their &#39;Default Notifications&#39; flag on request. This actually happened in 8.50 but did not make it into the &quot;changes&quot; list.</p>
                   </li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-870">Cardholder API changes in 8.70</h4>
@@ -367,6 +395,9 @@
                   </li>
                   <li>
                     <p>Image Personal Data Field definitions will show their width, height, and format (JPG, PNG, or BMP) on request.</p>
+                  </li>
+                  <li>
+                    <p>Email and mobile PDFs return their &#39;Default Notifications&#39; flag on request.</p>
                   </li>
                 </ul>
                 <h4 id="api-changes-in-840">API changes in 8.40</h4>
@@ -887,11 +918,13 @@
               <p>The cardholder
                 <a href="#operation--api-cardholders-get">search</a> and
                 <a href="#operation--api-cardholders--id--get">details</a> operations&#39; <code>fields</code> parameter and the
-                <a href="#operation--api-cardholders-changes-get">change tracking</a> operation&#39;s <code>fields</code> and <code>filter</code> parameters take a list of field names. Other sections of this document describe how those parameters affect the API calls, but their format is the same and the exhaustive list is long so rather than repeat it for each call, this section will cover it once.</p>
+                <a href="#operation--api-cardholders-changes-get">change tracking</a> operation&#39;s <code>fields</code> and <code>filter</code> parameters take a list of field names. Other sections of this document describe how those parameters affect the API calls, but their format is the same so this section will cover it once.</p>
               <p>You can form the name of a field by joining the components of its JSON path with dots. Fields at the root level of the cardholder object, such as <code>firstName</code> and <code>@emailAddress</code> (a PDF), have just one component. Fields that are one level down, such as <code>accessGroups.status</code>, have two.</p>
-              <p>Treat the string matches as case sensitive: use &#39;lastName&#39; rather than &#39;lastname&#39;.</p>
-              <p>This is the list you can choose from in 8.30:</p>
+              <p>Treat the string matches as case sensitive: use <code>lastName</code> rather than <code>lastname</code>.</p>
+              <p>To serve as examples, this is the list you can choose from in 8.30:</p>
               <p><code>href</code>, <code>id</code>, <code>firstName</code>, <code>lastName</code>, <code>shortName</code>, <code>description</code>, <code>authorised</code>, <code>lastSuccessfulAccessTime</code>, <code>lastSuccessfulAccessZone</code>, <code>division</code>, <code>personalDataFields</code>, <code>cards</code>, <code>accessGroups</code>, <code>competencies</code>, <code>notes</code>, <code>notifications</code>, <code>relationships</code>, <code>lockers</code>, <code>cards.href</code>, <code>cards.number</code>, <code>cards.from</code>, <code>cards.until</code>, <code>cards.cardSerialNumber</code>, <code>cards.type</code>, <code>cards.status</code>, <code>cards.invitation</code>, <code>cards.issueLevel</code>, <code>cards.pivData</code>, <code>cards.pivData.chuid</code>, <code>cards.pivData.pivStatus</code>, <code>cards.pivData.lastCheckTime</code>, <code>cards.pivData.chuid.hash</code>, <code>cards.pivData.chuid.fascn</code>, <code>cards.pivData.chuid.duns</code>, <code>cards.pivData.chuid.orgIdentifier</code>, <code>cards.invitation.href</code>, <code>cards.invitation.singleFactorOnly</code>, <code>cards.invitation.email</code>, <code>cards.invitation.mobile</code>, <code>cards.notifications.enabled</code>, <code>cards.notifications.from</code>, <code>cards.notifications.until</code>, <code>cards.accessGroups.href</code>, <code>cards.accessGroups.accessGroup</code>, <code>cards.accessGroups.from</code>, <code>cards.accessGroups.until</code>, <code>cards.accessGroups.status</code>, <code>cards.relationships.href</code>, <code>cards.relationships.cardholder</code>, <code>cards.relationships.role</code>, <code>cards.lockers.href</code>, <code>cards.lockers.locker</code>, <code>cards.lockers.from</code>, <code>cards.lockers.until</code></p>
+              <p>Later versions of Command Centre added many more. See the
+                <a href="#operation--api-cardholders--id--get">details</a> operation for the complete list of cardholder fields.</p>
               <p>A special value <code>default</code> applies a default set of fields that varies with the call you&#39;re making.</p>
               <p><code>personalDataFields</code> is also special. It will give you the personalDataDefinitions block plus all the PDF values at the root level with their names preceded by &#39;@&#39;-signs.</p>
             </div>
@@ -987,6 +1020,7 @@
                       <p>Limits the results to cardholders with a name that matches this string. By default, it is a substring search against the first name or the last name or the concatenation &#39;lastName, firstName&#39;; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact search.</p>
                       <p>Without quotes, a percent sign <code>%</code> inside your search string will anchor the search at both ends (so it will no longer be a substring search) and the <code>%</code> will match any substring. For example, <code>boothroyd,%</code> will only match cardholders whose last name is Boothroyd.</p>
                       <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no cardholders if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
+                      <p>Because a plus sign <code>+</code> represents a space in a query string, replace each plus sign in your search string with <code>%2d</code>.</p>
                       <p>The search parameters form a logical conjunction. They are ANDed together. Therefore if you search for <code>name=Mary&amp;pdf_1315=nanny</code> you will only get back cardholders with &#39;Mary&#39; in their name and &#39;nanny&#39; in the PDF with ID 1315.</p>
                     </div>
                   </div>
@@ -1003,6 +1037,7 @@
                       <p>Limits the results to cardholders with a value for the Personal Data Field with this ID that matches the parameter.</p>
                       <p>By default, it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Tests showed an exact match to be 100x quicker than a substring search on a large database.</p>
                       <p>Without quotes, adding a percent sign <code>%</code> or underscore <code>_</code> will anchor the string at both ends. A <code>_</code> will match any single character, and a <code>%</code> will match any substring. A lone <code>%</code> will return any cardholder with this PDF set to a non-null value.</p>
+                      <p>Because a plus sign <code>+</code> represents a space in a query string, turn plus signs in your string into <code>%2d</code>.</p>
                       <p>The search is always case-insensitive.</p>
                       <p>The search parameters form a logical conjunction. They are ANDed together. Therefore the search <code>pdf_1315=nanny&amp;pdf_1315=paratrooper</code> will only return cardholders whose PDF 1315 contains the strings &#39;nanny&#39; and &#39;paratrooper&#39;.</p>
                     </div>
@@ -1050,8 +1085,8 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Specifies the fields you want in the search results. The values you can use here are the same as you can for the details page,
-                        <a href="#field-names-in-query-parameters">listed here</a>. Using it you can return everything on the search page that you would find on the details page with the exception of the <code>edit</code> and <code>updates</code> links. Separate values with commas.</p>
+                      <p>Specifies the fields you want in the search results. The values you can use here are the same as you can for the
+                        <a href="#operation--api-cardholders--id--get">details page</a>. Using it you can return everything on the search page that you would find on the details page with the exception of the <code>edit</code> and <code>updates</code> links. Separate values with commas.</p>
                       <p>Use the special value <code>defaults</code> to return the fields you would have received had you not given the parameter at all. Obviously only do that if you have more to add.</p>
                       <p>Use the special value <code>personalDataFields</code> to return the &#39;personalDataDefinitions&#39; block as well as the PDF values at the root level of the cardholder object.</p>
                       <p>Treat the string matches as case sensitive: use &#39;lastName&#39; rather than &#39;lastname&#39;.</p>
@@ -1651,7 +1686,20 @@
   ],
   <span class="hljs-attr">&quot;lastPrintedOrEncodedTime&quot;</span>: <span class="hljs-string">&quot;2020-08-10T09:20:50Z&quot;</span>,
   <span class="hljs-attr">&quot;lastPrintedOrEncodedIssueLevel&quot;</span>: <span class="hljs-number">1</span>,
-  <span class="hljs-attr">&quot;updates&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>
+  <span class="hljs-attr">&quot;updates&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,
+  <span class="hljs-attr">&quot;redactions&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/redactions/625&quot;</span>,
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;normalEvents&quot;</span>,
+      <span class="hljs-attr">&quot;when&quot;</span>: <span class="hljs-string">&quot;2023-01-01T00:00:00Z&quot;</span>,
+      <span class="hljs-attr">&quot;before&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>,
+      <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;pending&quot;</span>,
+      <span class="hljs-attr">&quot;redactionOperator&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;REST Operator&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/100&quot;</span>
+      }
+    }
+  ]
 }
 </code></pre> </body>
                   </html>
@@ -1800,12 +1848,18 @@
       {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d&quot;</span>,
         <span class="hljs-attr">&quot;issueLevel&quot;</span>: <span class="hljs-number">2</span>,
-        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+        <span class="hljs-attr">&quot;status&quot;</span>: {
+          <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;Stolen&quot;</span>
+        }
       }
     ],
     <span class="hljs-attr">&quot;remove&quot;</span>: [
       {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/77e8affe7c7e4b56&quot;</span>
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/77e8affe7c7e4b56&quot;</span>,
+        <span class="hljs-attr">&quot;status&quot;</span>: {
+          <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;Lost&quot;</span>
+        }
       }
     ]
   },
@@ -3159,7 +3213,7 @@
                         <a href="#definition-Cardholder-detail">cardholder detail</a>. You can also go into more detail; for example you can monitor a cardholder&#39;s cards&#39; validity dates using <code>filter=cards.from,cards.until</code>.</p>
                       <p><code>filter</code> reduces the number of results; if you want to choose the blocks you receive in each result, use <code>fields</code>.</p>
                       <p>If you do not supply a filter parameter it will use the same fields you get in a cardholder details page. That is nearly everything the API has for a cardholder, but omits some seldom-used or expensive features such as card tracing and the large PIV fields. If you want to monitor them you must list them here. For example, <code>filter=defaults,cards.trace</code> will add the card trace flag to the usual filter.</p>
-                      <p><code>personalDataFields</code> will filter for PDF changes, and will give you the personalDataDefinitions block plus the PDF values that changed.</p>
+                      <p><code>personalDataFields</code> will filter for PDF changes, and will give you the personalDataDefinitions block plus the PDF values that changed. You cannot filter for changes to a particular PDF: you will need to do that in your client.</p>
                       <p>Being able to monitor operator settings arrived in 8.50 and operator group memberships in 8.60.</p>
                       <p>Note that you cannot monitor changes in the <code>lastSuccessfulAccessTime</code> or <code>lastSuccessfulAccessZone</code> fields because they are not attributes of a cardholder object: they are derivatives of his or her activity. If you want to monitor a person&#39;s movements we advise subscribing to events.</p>
                     </div>
@@ -5941,7 +5995,7 @@
           <h1 id="tag-PDF-definitions" class="swagger-summary-tag" data-traverse-target="tag-PDF-definitions">PDF definitions</h1>
           <div class="tag-description doc-row">
             <div class="doc-copy">
-              <p>A Personal Data Field is an item that adds a custom value to a cardholder. Each PDF has a type (text, image, numeric, ...) and optional constraints on the values that it can hold. For example, text, email, and telephone number types can have a regular expression with which new values must match. A date can have a maximum and a minimum. Text PDFs can have a list of valid values, like an enumeration.</p>
+              <p>A Personal Data Field is an item that adds a custom value to a cardholder. Each PDF has a type (text, image, numeric, ...) and optional constraints on the values that it can hold. For example, text, email, and telephone number types can have a regular expression with which new values must match. A date can have a maximum and a minimum. Text PDFs can have a list of valid values, like an enumeration. Mobile numbers and email addresses have a flag indicating whether they are suitable to receive SMS and email notifications.</p>
               <p>There is more configuration: image PDFs have a type and size, to which Command Centre will transcode incoming images. All PDFs have their own access level (hidden, read-only, or full access) that applies to operators in operator groups that do not expressly override it.</p>
               <p>Importantly, PDFs are attached to access groups. A cardholder can have a value for a PDF only if he or she is a member of one of the PDF&#39;s access groups.</p>
               <p>This API lets you see the definitions and configuration of all the personal data fields in the system.</p>
@@ -6112,7 +6166,8 @@
                           <span class="json-property-enum-item">regex</span>,
                           <span class="json-property-enum-item">regexDescription</span>,
                           <span class="json-property-enum-item">defaultAccess</span>,
-                          <span class="json-property-enum-item">operatorAccess</span>
+                          <span class="json-property-enum-item">operatorAccess</span>,
+                          <span class="json-property-enum-item">notificationDefault</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                         <span class="json-property-default-value" title="Default value">defaults</span>
@@ -6255,7 +6310,8 @@
                           <span class="json-property-enum-item">regex</span>,
                           <span class="json-property-enum-item">regexDescription</span>,
                           <span class="json-property-enum-item">defaultAccess</span>,
-                          <span class="json-property-enum-item">operatorAccess</span>
+                          <span class="json-property-enum-item">operatorAccess</span>,
+                          <span class="json-property-enum-item">notificationDefault</span>
                         </span>
                         <span class="json-property-range" title="Value limits"></span>
                         <span class="json-property-default-value" title="Default value">defaults</span>
@@ -6341,6 +6397,7 @@
   ],
   <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;.*@.*&quot;</span>,
   <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;@ least&quot;</span>,
+  <span class="hljs-attr">&quot;notificationDefault&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;imageWidth&quot;</span>: <span class="hljs-number">600</span>,
   <span class="hljs-attr">&quot;imageHeight&quot;</span>: <span class="hljs-number">800</span>,
   <span class="hljs-attr">&quot;imageFormat&quot;</span>: <span class="hljs-string">&quot;jpg&quot;</span>,
@@ -6718,6 +6775,369 @@
                   <!-- </div> -->
                 </section>
               </div>
+            </div>
+          </div>
+          <h1 id="tag-Redactions" class="swagger-summary-tag" data-traverse-target="tag-Redactions">Redactions</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>A
+                <em>redaction</em> is a process that removes one cardholder&#39;s personal information from Command Centre. There are two kinds of redaction:</p>
+              <p>An
+                <em>event</em> redaction disconnects a cardholder from events that record an operation that affected that cardholder. Examples:</p>
+              <ul>
+                <li>
+                  <p>an operator created the cardholder,</p>
+                </li>
+                <li>
+                  <p>an operator changed the value of one of the cardholder&#39;s PDFs,</p>
+                </li>
+                <li>
+                  <p>an operator changed the cardholder&#39;s access group memberships, or</p>
+                </li>
+                <li>
+                  <p>the cardholder moved through a door.</p>
+                </li>
+              </ul>
+              <p>An event recation does not affect a cardholder&#39;s history (visible in the enterprise clients).</p>
+              <p>A
+                <em>cardholder information</em> redaction is absolute. It clears all the data held against the item. After being redacted a cardholder has nothing that can identify it: no names and no PDFs.</p>
+              <p>The only way back from a redaction is a database restore.</p>
+              <p>Because redactions can take some time, and should not be allowed to run immediately for security reasons, API clients can only schedule a redaction to occur at a future date. After doing that you can check the progress of redactions, and cancel them.</p>
+              <p>Exactly how far in the future a redaction needs to be depends on the site configuration.</p>
+              <p>There are two ways to list redactions: via their own paginated interface, which returns all the redactions in the system that your operator has the permission to view, or in the cardholder record.</p>
+            </div>
+          </div>
+          <div id="operation--api-cardholders-redactions-get" class="operation panel" data-traverse-target="operation--api-cardholders-redactions-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Redactions">Redactions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Search redactions</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/cardholders/redactions</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>All the cardholders&#39; redactions. Paginated.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">cardholder</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Limits the results to redactions to cardholders with these IDs. Separate with commas.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">status</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">pending</span>,
+                          <span class="json-property-enum-item">inProgress</span>,
+                          <span class="json-property-enum-item">cancelled</span>,
+                          <span class="json-property-enum-item">done</span>,
+                          <span class="json-property-enum-item">failed</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Limits the results to redactions with this status. Separate with commas.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">type</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">normalEvents</span>,
+                          <span class="json-property-enum-item">cardholder</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Limits the results to redactions of this type. Separate with commas.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">after</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-format">(date-time)</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Limits the results to redactions that were scheduled to occur after this time.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">before</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-format">(date-time)</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Limits the results to redactions that were scheduled to occur before this time.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Redaction">Redaction</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>An array of redactions and a link to the next page.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/redactions/625&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;normalEvents&quot;</span>,
+  <span class="hljs-attr">&quot;when&quot;</span>: <span class="hljs-string">&quot;2023-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;before&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;pending&quot;</span>,
+  <span class="hljs-attr">&quot;redactionOperator&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;REST Operator&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/100&quot;</span>
+  },
+  <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/630&quot;</span>
+  },
+  <span class="hljs-attr">&quot;finished&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Invalid cardholder&quot;</span>,
+  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-cardholders-redactions-post" class="operation panel" data-traverse-target="operation--api-cardholders-redactions-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Redactions">Redactions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Schedule a redaction</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/cardholders/redactions</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Schedules a cardholder redaction.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Redaction POST Example">Redaction POST Example</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>Required fields are <code>cardholder</code> and <code>type</code></p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/630&quot;</span>
+  },
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;normalEvents&quot;</span>,
+  <span class="hljs-attr">&quot;when&quot;</span>: <span class="hljs-string">&quot;2023-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;before&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The cardholder does not exist.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have permissions to redact or to delete a cardholder, or the server is not licensed for cardholder operations.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-cardholders-redactions-delete" class="operation panel" data-traverse-target="operation--api-cardholders-redactions-delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Redactions">Redactions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Cancel a redaction</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/cardholders/redactions</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Deletes a redaction record. Has to be pending.</p>
+                  <p>Note that the only way to modify a redaction is to delete it and create a new one for the same cardholder. This is due to concerns about redaction&#39;s effect on auditing.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have permissions to redact or to delete a cardholder, or the server is not licensed for cardholder operations.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>No such redaction, or your operator cannot see it.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
             </div>
           </div>
           <h1 id="tag-Roles" class="swagger-summary-tag" data-traverse-target="tag-Roles">Roles</h1>
@@ -8275,6 +8695,30 @@
                           <p>Cardholders include an <code>updates</code> block, as other items do, that allows monitoring one cardholder per TCP session in a long poll. However the
                             <a href="#tag-Cardholder-changes">Cardholder Changes</a> methods are a far more efficient way of monitoring your cardholders.</p>
                         </dd>
+                        <dt data-property-name="redactions" class="has-description">
+                          <span class="json-property-name">redactions:</span>
+                          <span class="json-property-type">
+                            <span class="json-schema-ref-array">
+                              <a class="json-schema-ref" href="#/definitions/Cardholder redaction">Cardholder redaction</a>
+                            </span>
+                          </span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>All the cardholder&#39;s scheduled redactions. Because this is relatively expensive to compute, this field does not appear by default. You must ask for it.</p>
+                          <p>Added in 8.80.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-array-items">
+                            <span class="json-property-type">
+                              <span class="">
+                                <a class="json-schema-ref" href="#/definitions/Cardholder redaction">Cardholder redaction</a>
+                              </span>
+                            </span>
+                            <span class="json-property-range" title="Value limits"></span>
+                            <div class="json-inner-schema"> </div>
+                          </section>
+                        </dt>
                       </dl>
                     </section>
                   </section>
@@ -8475,7 +8919,20 @@
   ],
   <span class="hljs-attr">&quot;lastPrintedOrEncodedTime&quot;</span>: <span class="hljs-string">&quot;2020-08-10T09:20:50Z&quot;</span>,
   <span class="hljs-attr">&quot;lastPrintedOrEncodedIssueLevel&quot;</span>: <span class="hljs-number">1</span>,
-  <span class="hljs-attr">&quot;updates&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>
+  <span class="hljs-attr">&quot;updates&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,
+  <span class="hljs-attr">&quot;redactions&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/redactions/625&quot;</span>,
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;normalEvents&quot;</span>,
+      <span class="hljs-attr">&quot;when&quot;</span>: <span class="hljs-string">&quot;2023-01-01T00:00:00Z&quot;</span>,
+      <span class="hljs-attr">&quot;before&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>,
+      <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;pending&quot;</span>,
+      <span class="hljs-attr">&quot;redactionOperator&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;REST Operator&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/100&quot;</span>
+      }
+    }
+  ]
 }
 </code></pre> </body>
                   </html>
@@ -8957,8 +9414,8 @@
                     <li>sets a PDF holding an employee ID,</li>
                     <li>changes the notification flags on two PDFs,</li>
                     <li>adds two new credentials, one card and one mobile,</li>
-                    <li>changes the issue level and clears the until date on another credential,</li>
-                    <li>deletes a third credential,</li>
+                    <li>changes the issue level with <code>Stolen</code> as the reissue reason and clears the until date on another credential,</li>
+                    <li>deletes a third credential with <code>Lost</code> as the remove reason,</li>
                     <li>adds two access group memberships, one unending and one with an until date,</li>
                     <li>clears the until date on another access group membership,</li>
                     <li>removes a fourth access group membership,</li>
@@ -9031,8 +9488,9 @@
                         <a href="#definition-Cardholder-card">card schema</a>.</p>
                       <p>Each element of the &#39;add&#39; array will need a &#39;type&#39; member, at the very least. Every card field makes sense here except &#39;href&#39;. Only existing cards have hrefs. This example adds two cards: one has nothing more than the type, so it will receive blank &#39;from&#39; and &#39;until&#39; dates and a computed number and issue level. The other is a mobile credential (it has an &#39;invitation&#39; block) with a custom initial state.</p>
                       <p>Each element of the &#39;update&#39; array should be a card to modify. It will need the href of that card, plus the fields you want to change. Remember you cannot change a card&#39;s type. The example changes the issue level and resets the &#39;until&#39; date.</p>
-                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is &#39;href&#39;.</p>
+                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is &#39;href&#39; and &#39;status&#39;.</p>
                       <p>Do not put the same href in both the &#39;update&#39; and &#39;remove&#39; arrays.</p>
+                      <p>In version 8.90 and later you can specify a card state in the <code>value</code> field inside the <code>status</code> block when removing a card or changing its issue level. It becomes the final state of the card if you remove it or the final state of the card with the previous issue level if you re-issue it, so it must be one of the valid states for the card type. The Gallagher clients and the resulting event call this state the &#39;reason&#39; for the re-issue or removal. By default it will be the same as the card&#39;s current state.</p>
                     </dd>
                     <dt data-property-name="accessGroups" class="has-description">
                       <span class="json-property-name">accessGroups:</span>
@@ -9169,12 +9627,18 @@
       {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d&quot;</span>,
         <span class="hljs-attr">&quot;issueLevel&quot;</span>: <span class="hljs-number">2</span>,
-        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+        <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+        <span class="hljs-attr">&quot;status&quot;</span>: {
+          <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;Stolen&quot;</span>
+        }
       }
     ],
     <span class="hljs-attr">&quot;remove&quot;</span>: [
       {
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/77e8affe7c7e4b56&quot;</span>
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/77e8affe7c7e4b56&quot;</span>,
+        <span class="hljs-attr">&quot;status&quot;</span>: {
+          <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;Lost&quot;</span>
+        }
       }
     ]
   },
@@ -9327,10 +9791,10 @@
                 <section class="json-schema-description">
                   <p>A personal data definition and its value for a cardholder. Each definition is an object containing one property named after the PDF (plus a leading &#39;@&#39;), which in turn contains its value and notifications flag for the containing cardholder and an object containing some of the PDF definition&#39;s basic fields.</p>
                   <p>This is returned as part of a
-                    <a href="#definition-Cardholder-detail">cardholder&#39;s details</a> and you can send it in a
+                    <a href="#definition-Cardholder-detail">cardholder</a>, and you can send it in a
                     <a href="#definition-Cardholder-POST-example">POST</a> or a
-                    <a href="#definition-Cardholder-PATCH-example">PATCH</a>.</p>
-                  <p>To change the value of a PDF, you can use this structure but it may be simpler for you to PATCH the cardholder with a property in the root of the payload named after the PDF with a leading &#39;@&#39;.</p>
+                    <a href="#definition-Cardholder-PATCH-example">PATCH</a> to set the PDF&#39;s value and notification flag for a cardholder. The server will ignore the <code>definition</code> block if you send it back. It uses the name of the block (minus its leading <code>@</code>) to find the PDF to change.</p>
+                  <p>While you can use this structure to change the value of a cardholder&#39;s PDF, it may be simpler to put a property in the root of the payload named after the PDF with a leading &#39;@&#39;.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -11042,6 +11506,115 @@
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/525/cards/285f779af1ef49abbba&quot;</span>
       }
     ]
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Cardholder-redaction" class="definition panel" data-traverse-target="definition-Cardholder-redaction">
+            <h2 class="panel-title">
+              <a name="/definitions/Cardholder redaction"></a>Cardholder redaction:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>These appear in an array in a cardholder object. Each describes a redaction scheduled for the cardholder.</p>
+                  <p>A cardholder can have multiple event redactions pending, because they can operate on events from different periods, but since a cardholder redaction removes the cardholder item there can be only one.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>DELETE this URL to cancel this redaction.</p>
+                      <p>DELETE is the only verb you can use on this URL. GET will always return a 404.</p>
+                    </dd>
+                    <dt data-property-name="type" class="has-description">
+                      <span class="json-property-name">type:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-enum" title="Possible values">
+                        <span class="json-property-enum-item">normalEvents</span>,
+                        <span class="json-property-enum-item">cardholder</span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Whether this redaction is for cardholder events or cardholder information.</p>
+                    </dd>
+                    <dt data-property-name="when" class="has-description">
+                      <span class="json-property-name">when:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(date-time)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>When redaction is meant to happen. This should be in the future. If it is in the past, the service returns 400-Bad Request Invalid Start Time.</p>
+                      <p>Optional. If it is absent, it means to do it asap.</p>
+                    </dd>
+                    <dt data-property-name="before" class="has-description">
+                      <span class="json-property-name">before:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(date-time)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>For event redactions, do not redact any events after this time. No effect on cardholder information redactions.</p>
+                      <p>Optional.</p>
+                    </dd>
+                    <dt data-property-name="status" class="has-description">
+                      <span class="json-property-name">status:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-enum" title="Possible values">
+                        <span class="json-property-enum-item">pending</span>,
+                        <span class="json-property-enum-item">inProgress</span>,
+                        <span class="json-property-enum-item">cancelled</span>,
+                        <span class="json-property-enum-item">done</span>,
+                        <span class="json-property-enum-item">failed</span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The status of this redaction.</p>
+                    </dd>
+                    <dt data-property-name="redactionOperator" class="has-description">
+                      <span class="json-property-name">redactionOperator:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A block containing the href and current name of the operator who scheduled the redaction.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/redactions/625&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;normalEvents&quot;</span>,
+  <span class="hljs-attr">&quot;when&quot;</span>: <span class="hljs-string">&quot;2023-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;before&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;pending&quot;</span>,
+  <span class="hljs-attr">&quot;redactionOperator&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;REST Operator&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/100&quot;</span>
   }
 }
 </code></pre> </body>
@@ -13729,6 +14302,15 @@
                     <dd>
                       <p>Regular expressions often need explaining.</p>
                     </dd>
+                    <dt data-property-name="notificationDefault" class="has-description">
+                      <span class="json-property-name">notificationDefault:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This value is copied to the &#39;notification&#39; flag on a cardholder&#39;s value for this PDF when they first gain membership of one of this PDF&#39;s access groups. It will only appear for PDF types that can receive notifications (email addresses and mobile numbers), and only if you ask for it with the <code>fields</code> parameter.</p>
+                      <p>New in 8.50.</p>
+                    </dd>
                     <dt data-property-name="imageWidth" class="has-description">
                       <span class="json-property-name">imageWidth:</span>
                       <span class="json-property-type">integer</span>
@@ -13820,6 +14402,7 @@
   ],
   <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;.*@.*&quot;</span>,
   <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;@ least&quot;</span>,
+  <span class="hljs-attr">&quot;notificationDefault&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;imageWidth&quot;</span>: <span class="hljs-number">600</span>,
   <span class="hljs-attr">&quot;imageHeight&quot;</span>: <span class="hljs-number">800</span>,
   <span class="hljs-attr">&quot;imageFormat&quot;</span>: <span class="hljs-string">&quot;jpg&quot;</span>,
@@ -14019,6 +14602,184 @@
     }
   },
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Redaction" class="definition panel" data-traverse-target="definition-Redaction">
+            <h2 class="panel-title">
+              <a name="/definitions/Redaction"></a>Redaction:
+              <!-- <span class="json-property-type"><span class="json-property-type"></span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>An array of these comes from <code>GET /cardholders/redactions</code>.</p>
+                </section>
+                <section class="json-schema-allOf">
+                  <section class="json-schema-allOf-inherited">
+                    <ul>
+                      <span class="">
+                        <a class="json-schema-ref" href="#/definitions/Cardholder redaction">Cardholder redaction</a>
+                      </span>
+                    </ul>
+                  </section>
+                  <section class="json-schema-allOf-additional">
+                    <section class="json-schema-properties">
+                      <dl>
+                        <dt data-property-name="cardholder" class="has-description">
+                          <span class="json-property-name">cardholder:</span>
+                          <span class="json-property-type">object</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>The href of the cardholder whose events or item this redaction should affect.</p>
+                          <p>Required.</p>
+                        </dd>
+                        <dt data-property-name="finished" class="has-description">
+                          <span class="json-property-name">finished:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-format">(date-time)</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>When the redaction finished.</p>
+                          <p>Will be missing from pending redactions.</p>
+                        </dd>
+                        <dt data-property-name="message" class="has-description">
+                          <span class="json-property-name">message:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>Translated string from the redaction&#39;s error code. Will be absent if empty, or if the redaction is pending or complete.</p>
+                        </dd>
+                        <dt data-property-name="details" class="has-description">
+                          <span class="json-property-name">details:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>A more detailed description of what went wrong.</p>
+                          <p>Not translated. Will be absent if empty, or if the redaction is pending or complete.</p>
+                        </dd>
+                      </dl>
+                    </section>
+                  </section>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/redactions/625&quot;</span>,
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;normalEvents&quot;</span>,
+  <span class="hljs-attr">&quot;when&quot;</span>: <span class="hljs-string">&quot;2023-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;before&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;pending&quot;</span>,
+  <span class="hljs-attr">&quot;redactionOperator&quot;</span>: {
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;REST Operator&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/100&quot;</span>
+  },
+  <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/630&quot;</span>
+  },
+  <span class="hljs-attr">&quot;finished&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Invalid cardholder&quot;</span>,
+  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Redaction-POST-Example" class="definition panel" data-traverse-target="definition-Redaction-POST-Example">
+            <h2 class="panel-title">
+              <a name="/definitions/Redaction POST Example"></a>Redaction POST Example:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>POST one of these to schedule a redaction.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="cardholder" class="has-description">
+                      <span class="json-property-name">cardholder:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The href of the cardholder whose events or item this redaction should affect.</p>
+                      <p>Required.</p>
+                    </dd>
+                    <dt data-property-name="type" class="has-description">
+                      <span class="json-property-name">type:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-enum" title="Possible values">
+                        <span class="json-property-enum-item">normalEvents</span>,
+                        <span class="json-property-enum-item">cardholder</span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Whether this redaction is for events or cardholder information.</p>
+                      <p>Required.</p>
+                    </dd>
+                    <dt data-property-name="when" class="has-description">
+                      <span class="json-property-name">when:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(date-time)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>When redaction is meant to happen. This should be in the future. If it is in the past, the service returns 400-Bad Request Invalid Start Time.</p>
+                      <p>Optional. If it is absent, it means to do it asap.</p>
+                    </dd>
+                    <dt data-property-name="before" class="has-description">
+                      <span class="json-property-name">before:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(date-time)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>For event redactions, do not redact any events after this time. No effect on cardholder information redactions.</p>
+                      <p>Optional.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/630&quot;</span>
+  },
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;normalEvents&quot;</span>,
+  <span class="hljs-attr">&quot;when&quot;</span>: <span class="hljs-string">&quot;2023-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;before&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>
 }
 </code></pre> </body>
                   </html>
