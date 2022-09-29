@@ -207,10 +207,6 @@
           </section>
           <section>
             <a href="#tag-Interlock-Groups">Interlock Groups</a>
-            <ul> </ul>
-          </section>
-          <section>
-            <a href="#tag-Interlock-Groups">Interlock Groups</a>
             <ul>
               <li>
                 <a href="#operation--api-interlock_groups-get"> Search interlock groups </a>
@@ -363,7 +359,7 @@
                 <h4 id="changes-in-880">Changes in 8.80</h4>
                 <ul>
                   <li>Early-adopter support for
-                    <a href="#tag-Interlock-Groups">Interlock groups</a> and their status (no overrides).</li>
+                    <a href="#tag-Interlock-Groups">Interlock groups</a>.</li>
                 </ul>
                 <h4 id="changes-in-870">Changes in 8.70</h4>
                 <ul>
@@ -7604,51 +7600,6 @@
               <p>
                 <strong>API support for interlocks is still in development and may change in future versions.</strong>
               </p>
-              <p>The first use case below introduces the main entry point. It is a paginated search interface that gives you any number of interlock groups, each containing the fields you ask for in the query. You can, for instance, ask for the IDs you need to monitor their status.</p>
-              <h3 id="status-flags">Status flags</h3>
-              <p>If an interlock is not in an error state it will return one flag out of the following set:</p>
-              <ul>
-                <li>
-                  <p><code>secure</code> means the interlock items are closed and the door/s will open to a badge. This is probably where an interlock group spends most of its time.</p>
-                </li>
-                <li>
-                  <p><code>open</code> means the interlock&#39;s doors will not open because at least one of the other items in the group already is. This is a normal state after someone gains access at an interlock door. It will last until the door closes.</p>
-                </li>
-                <li>
-                  <p><code>overridden</code> means the interlock group has received a disable override. Doors will open as normal.</p>
-                </li>
-                <li>
-                  <p><code>forced</code> means that the interlock rules have been breached. This could be because someone forced a door or used an emergency release while another was already open.</p>
-                </li>
-              </ul>
-              <p>To establish if the input is in a completely normal state look for &#39;secure&#39; or &#39;open&#39;.</p>
-              <h3 id="use-cases">Use cases</h3>
-              <h4 id="listing-interlock-groups">Listing Interlock Groups</h4>
-              <ol>
-                <li><code>GET /api</code>.</li>
-                <li>Follow the link at <code>features.interlockGroups.interlockGroups.href</code>, appending a search term such as <code>name=substring</code> to select the interlocks, <code>top</code> if you expect lots of them, and <code>fields</code> to tell the server what to return about each. The next section covers those query parameters.</li>
-                <li>Process the results, following the <code>next</code> link if there is one.</li>
-              </ol>
-              <h4 id="finding-the-status-of-many-items-including-an-interlock-group">Finding the status of many items including an interlock group</h4>
-              <ol>
-                <li>Find the IDs of all the items you&#39;re interested in, including the interlock group, by searching for them with a query parameter appended such as <code>fields=name,id</code>.</li>
-                <li>Create a
-                  <a href="events.html#status-subscriptions">status subscription</a> for those items.</li>
-              </ol>
-              <h4 id="finding-the-status-of-an-interlock-group">Finding the status of an interlock group</h4>
-              <ol>
-                <li>Find the href for the interlock using the process above, and GET it.</li>
-                <li>Take the <code>updates</code> href from that page.</li>
-                <li>GET it.</li>
-                <li>Use the flag rules above to interpret the status flags you receive.</li>
-                <li>Follow the <code>next</code> link to stay up to date.</li>
-              </ol>
-            </div>
-          </div>
-          <h1 id="tag-Interlock-Groups" class="swagger-summary-tag" data-traverse-target="tag-Interlock-Groups">Interlock Groups</h1>
-          <div class="tag-description doc-row">
-            <div class="doc-copy">
-              <p>These methods, yet to be released, will give you read access to Interlock Group items.</p>
               <p>The first use case below introduces the main entry point. It is a paginated search interface that gives you any number of interlock groups, each containing the fields you ask for in the query. You can, for instance, ask for the IDs you need to monitor their status.</p>
               <h3 id="status-flags">Status flags</h3>
               <p>If an interlock is not in an error state it will return one flag out of the following set:</p>

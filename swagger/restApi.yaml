@@ -57,8 +57,7 @@ info:
 
     #### Changes in 8.80
 
-    * Early-adopter support for [Interlock groups](#tag-Interlock-Groups) and their status (no
-      overrides).
+    * Early-adopter support for [Interlock groups](#tag-Interlock-Groups).
 
     #### Changes in 8.70
 
@@ -2821,55 +2820,6 @@ tags:
     These methods, yet to be released, will give you read access to Interlock Group items.
 
     **API support for interlocks is still in development and may change in future versions.**
-
-    The first use case below introduces the main entry point.  It is a paginated search interface
-    that gives you any number of interlock groups, each containing the fields you ask for in the
-    query.  You can, for instance, ask for the IDs you need to monitor their status.
-
-    ### Status flags
-
-    If an interlock is not in an error state it will return one flag out of the following set:
-
-    - `secure` means the interlock items are closed and the door/s will open to a badge.  This is
-      probably where an interlock group spends most of its time.
-
-    - `open` means the interlock's doors will not open because at least one of the other items in
-      the group already is.  This is a normal state after someone gains access at an interlock door.
-      It will last until the door closes.
-
-    - `overridden` means the interlock group has received a disable override.  Doors will open as
-      normal.
-
-    - `forced` means that the interlock rules have been breached.  This could be because someone
-      forced a door or used an emergency release while another was already open.
-
-    To establish if the input is in a completely normal state look for 'secure' or 'open'.
-
-    ### Use cases
-
-    #### Listing Interlock Groups
-    1. `GET /api`.
-    2. Follow the link at `features.interlockGroups.interlockGroups.href`, appending a search term
-       such as `name=substring` to select the interlocks, `top` if you expect lots of them, and
-       `fields` to tell the server what to return about each.  The next section covers those query
-       parameters.
-    3. Process the results, following the `next` link if there is one.
-
-    #### Finding the status of many items including an interlock group
-    1. Find the IDs of all the items you're interested in, including the interlock group, by
-       searching for them with a query parameter appended such as `fields=name,id`.
-    2. Create a [status subscription](events.html#status-subscriptions) for those items.
-
-    #### Finding the status of an interlock group
-    1. Find the href for the interlock using the process above, and GET it.
-    3. Take the `updates` href from that page.
-    4. GET it.
-    4. Use the flag rules above to interpret the status flags you receive.
-    5. Follow the `next` link to stay up to date.
-
-- name: "Interlock Groups"
-  description: |-
-    These methods, yet to be released, will give you read access to Interlock Group items.
 
     The first use case below introduces the main entry point.  It is a paginated search interface
     that gives you any number of interlock groups, each containing the fields you ask for in the
