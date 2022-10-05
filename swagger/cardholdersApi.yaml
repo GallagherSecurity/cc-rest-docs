@@ -1338,7 +1338,7 @@ parameters:
 
       That includes all the items in those divisions' child divisions, because Command Centre treats
       items as though they are also in their division's parent, and its parent, and so on up to the
-      root.
+      root division.
 
       List the IDs of the divisions you are interested in separated by commas.  Item IDs are short
       alphanumeric strings, not URLs.
@@ -1354,9 +1354,10 @@ parameters:
     type: string
     description: |
       Limits the returned items to those with a description that matches this string.  By default it
-      is a substring match; surround it with double quotes `"..."` for an exact match.  Without
-      quotes, adding a percent sign `%` or underscore `_` will anchor the string at both ends.  A
-      `_` will match any single character, and a `%` will match any substring.
+      is a substring match; surround it with double quotes `"..."` for an exact match.  A `_` will
+      match any single character, and a `%` will match any substring.  With or without quotes,
+      having either of these wildcards in the string will anchor it at both ends as though you had
+      surrounded it with `"`.
 
       The search is always case-insensitive.  Results are undefined if you search for the empty
       string (`description=` or `description=""`).
