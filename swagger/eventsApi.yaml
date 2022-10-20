@@ -800,20 +800,28 @@ paths:
         - Alarms
       summary: Get changes to alarms (or wait)
       description: |
-        Long poll this link for live updates to alarms.  You *must* *not* bookmark or generate this
-        link.  You should only use this call after following it from the `/api/alarms` response, as
-        it uses unspecified query parameters to track state.
+        Long poll this link for live updates to alarms.  It will return the alarms that occurred or
+        changed since the previous call, no matter how long ago that was.  If there are no changes
+        to alarms before a timeout passes (about 30 seconds) the server will return a normal
+        response, except that the `updates` array will be empty.
 
-        This request should always complete succesfully. If there are no alarm updates, the server
-        will return a valid response containing an empty `updates` array. The client should simply
-        follow the `next` link in the poll responses forever.
+        Whether or not the response contained updates the client should follow the `next` link to
+        wait for the next updates.  If your server receives a lot of alarm updates, wait some time
+        between calls to reduce its load.  You will not miss any updates:  each response contains
+        everything that happened since the previous call.
 
         Command Centre does not tell you which alarms were added, removed, or modified. It is up to
         you to match the incoming alarms against your own internal alarm list and determine the
         differences.
 
         Do not code this URL into your application.  Take it from `alarms.updates.href` in the
-        results of `GET /api`, or from `updates` in the results of `GET /api/alarms`.
+        results of `GET /api`, or from `updates` in the results of `GET /api/alarms`, or from `next`
+        in the results of this call.  Do not attempt to interpret or set the `id` query parameter in
+        the URL, as it tracks your progress through the alarm history.
+
+        Assuming you got the URL for this call from the response from another call, and your
+        operator therefore has the privileges required to view alarms, this should always complete
+        succesfully.
 
       parameters:
         - $ref: "#/parameters/alarmfields"
@@ -1971,7 +1979,8 @@ definitions:
         type: object
         description: |
           Follow this link to make a non-blocking call to collect the previous page of events (in
-          order of arrival).  It will return an empty page if no more events are available.
+          order of arrival).  It will return an empty page if you have already received the first
+          event in the database.
         properties:
           href:
             type: string

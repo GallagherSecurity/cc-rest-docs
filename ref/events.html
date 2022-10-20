@@ -699,12 +699,11 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>Long poll this link for live updates to alarms. You
-                    <em>must</em>
-                    <em>not</em> bookmark or generate this link. You should only use this call after following it from the <code>/api/alarms</code> response, as it uses unspecified query parameters to track state.</p>
-                  <p>This request should always complete succesfully. If there are no alarm updates, the server will return a valid response containing an empty <code>updates</code> array. The client should simply follow the <code>next</code> link in the poll responses forever.</p>
+                  <p>Long poll this link for live updates to alarms. It will return the alarms that occurred or changed since the previous call, no matter how long ago that was. If there are no changes to alarms before a timeout passes (about 30 seconds) the server will return a normal response, except that the <code>updates</code> array will be empty.</p>
+                  <p>Whether or not the response contained updates the client should follow the <code>next</code> link to wait for the next updates. If your server receives a lot of alarm updates, wait some time between calls to reduce its load. You will not miss any updates: each response contains everything that happened since the previous call.</p>
                   <p>Command Centre does not tell you which alarms were added, removed, or modified. It is up to you to match the incoming alarms against your own internal alarm list and determine the differences.</p>
-                  <p>Do not code this URL into your application. Take it from <code>alarms.updates.href</code> in the results of <code>GET /api</code>, or from <code>updates</code> in the results of <code>GET /api/alarms</code>.</p>
+                  <p>Do not code this URL into your application. Take it from <code>alarms.updates.href</code> in the results of <code>GET /api</code>, or from <code>updates</code> in the results of <code>GET /api/alarms</code>, or from <code>next</code> in the results of this call. Do not attempt to interpret or set the <code>id</code> query parameter in the URL, as it tracks your progress through the alarm history.</p>
+                  <p>Assuming you got the URL for this call from the response from another call, and your operator therefore has the privileges required to view alarms, this should always complete succesfully.</p>
                 </section>
               </div>
             </div>
@@ -5036,7 +5035,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Follow this link to make a non-blocking call to collect the previous page of events (in order of arrival). It will return an empty page if no more events are available.</p>
+                      <p>Follow this link to make a non-blocking call to collect the previous page of events (in order of arrival). It will return an empty page if you have already received the first event in the database.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
