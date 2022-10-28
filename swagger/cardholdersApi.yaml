@@ -1586,6 +1586,8 @@ definitions:
             example: qmaster
             description: |
               The name that the operator uses when logging in to the interactive clients.  Absent if blank.
+
+              Send the empty string `""` to clear it.
           operatorPassword:
             type: string
             example: write-only
@@ -1617,6 +1619,8 @@ definitions:
               This user's Windows username.  For an example of the format that will work in your
               organisation, look in the 'Windows logon' field of the 'Operator configuration' tab of
               a cardholder's properties in the Configuration Client.
+
+              Send the empty string `""` to clear it.
           personalDataDefinitions:
             type: array
             description: |
@@ -5363,7 +5367,8 @@ paths:
         403:
           description: |
             The operator does not have a privilege that allows creating cardholders, or you
-            attempted to set a field for which the operator has no privilege (probably 'notes').
+            attempted to set a field for which the operator has no privilege (probably 'notes'), or
+            the server has reached its licensed limit of cardholders.
 
   /api/cardholders/{id}:
     parameters:
