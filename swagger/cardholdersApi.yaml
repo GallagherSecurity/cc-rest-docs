@@ -53,6 +53,10 @@ info:
 
     #### Cardholder API changes on the roadmap
 
+    * You will be able to mark visitors on-site, off-site, etc.
+
+    * "Revealable" access levels on PDFs.
+
     * BREAKING CHANGE:  a future version will sort its search results differently if your query does
       not include a parameter to override the default.
 
@@ -387,7 +391,8 @@ x-common-blocks:
       Your choice of reception also determines the rules with which the visit must comply, because
       those rules come from the visitor management configuration on the reception's division.
 
-      Since every visit must have a reception, every POST must have one.  Once you have a visit in
+      Since every visit must have a reception, every POST that creates a visit must have one.  Once
+      you have a visit in
       the system you can change its reception, but be aware that changing receptions might change
       the visit's division, which also might change the rules to which the visit must conform, and
       if any validation fails--and there is a lot of it--the PATCH will fail.
@@ -4699,9 +4704,9 @@ definitions:
           group's 'Personal data' tab in the Configuration Client.
       operatorAccess:
         description: |
-          This is the access that your operator has to cardholders' values of this PDF, including if
-          the operator is a member of an operator group that overrides it. You will only get this
-          field if you ask for it with the `fields` parameter.
+          This is the access that your operator has to cardholders' values of this PDF including the
+          permissions granted by this cardholder's operator groups.  You will only
+          get this field if you ask for it with the `fields` parameter.
 
           New in 8.80.
         type: string
