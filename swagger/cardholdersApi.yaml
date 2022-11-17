@@ -77,8 +77,11 @@ info:
 
     #### Cardholder API changes in 8.90
 
-    * You can set a reason when re-issuing or removing a card, and the reason appears on the
+    * You can set a reason when re-issuing or removing a card which will appear on the
       resulting event.  The default is the card's previous state.
+
+    * You can now [set](#operation--api-visits--id--visitors--visitorId--patch) a visitor's state
+      (signing in, etc.).  Visits will return that, if you ask.
 
     #### Cardholder API changes in 8.80
 
@@ -525,9 +528,13 @@ x-common-blocks:
     type: array
     description: |
       When the server sends this array to you, it contains two hrefs for each cardholder due to
-      arrive in this visit.  The first, outside the `cardholder` block, is reserved for a future
-      feature.  The one inside the `cardholder` block is simply an href to the cardholder item.  You
+      arrive in this visit.  The first, outside the `cardholder` block, is the URL you
+      [PATCH](#operation--api-visits--id--visitors--visitorId--patch) to change their state (new in
+      8.90).  The one inside the `cardholder` block is simply an href to the cardholder item.  You
       can use either href when removing visitors from a visit with a PATCH.
+
+      The `status` block contains two fields.  `value` is a human-readable description of their
+      state in by the server's language.  `type` comes from a fixed enumeration.
 
       A visit with no visitors on it will not appear in Gallagher's visitor management
       application.  Why clutter the screen if you're not expecting anybody, after all.
@@ -535,7 +542,8 @@ x-common-blocks:
       When you send a visitor block to the server in a POST to create a visit, just send an array of
       hrefs to cardholders.  8.50 does not accept the same kind of visitor hrefs here
       that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON
-      from a GET.
+      from a GET.  Don't send a `status` block:  the server will ignore it and set all visitors to
+      'expected'.
 
       When you send a visitor block in a PATCH to edit an existing visit, the server expects it to
       contain one or two arrays called `add` and `remove`.  The `add` array should contain
@@ -547,13 +555,55 @@ x-common-blocks:
       viewing the cardholders and changing their access groups memberships, otherwise you will
       be told 'Access denied when writing to one or more fields'.
 
+    items:
+      type: object
+      properties:
+        cardholder:
+          description: |
+            A block containing the name and cardholder href of the visitor.
+        href:
+          type: string
+          format: url
+          description: |
+            An href unique to this cardholder on this visit.  You can PATCH it to change the
+            visitor's state.
+
+            New to 8.90.
+        status:
+          type: object
+          description: |
+            The cardholder's status on this visit, in human-readable and machine-readable forms.
+
+            Also new to 8.90.
+          properties:
+            value:
+              type: string
+              description: |
+                A human-readable version of the visitor's status, varying with the version of
+                Command Centre and the server's locale.
+            type:
+              type: string
+              description: |
+                The visitor's current state taken from a fixed list of strings.  New visitors have a
+                starting state of 'expected'.
+              enum:
+                [expected, signingIn, signedIn, onSite, expectedBack, departed, cancelled ]
+
     example:
-    - cardholder:
+    - href: "https://localhost:8904/api/visits/941/visitors/940"
+      cardholder:
         name: "Red Adair"
         href: "https://localhost:8904/api/cardholders/940"
-    - cardholder:
+      status:
+        value: "Expected Back"
+        type: "expectedBack"
+    - href: "https://localhost:8904/api/visits/941/visitors/9040"
+      cardholder:
         name: "James Page"
         href: "https://localhost:8904/api/cardholders/9040"
+      status:
+        value: "On-Site"
+        type: "onSite"
 
 #####################################################################################
 #####################################################################################
@@ -5176,6 +5226,25 @@ definitions:
           - href: https://localhost:8904/api/cardholders/937
           - href: https://localhost:8904/api/visits/941/visitors/937
 
+  Visitor PATCH example:
+    description: |
+      This is a sample PATCH body that marks a visitor as signing in.
+
+    properties:
+      status:
+        type: object
+        description: |
+          This is the same status that you see in a [visit GET](#definition-Visit) for each visitor
+          except that you only need to send the `value` field.
+        properties:
+          value:
+            type: string
+            description: |
+              An enum describing the state in which you want your visitor to be.
+            example: "signingIn"
+            enum:
+              [expected, signingIn, signedIn, onSite, expectedBack, departed, cancelled ]
+
 ######################################################################
 ######################################################################
 ######################################################################
@@ -7095,3 +7164,46 @@ paths:
             That is not the URL of a visit, or it is a visit that the operator does not have the
             privilege to see ('View Visits' or 'Edit Visits').
 
+  /api/visits/{id}/visitors/{visitorId}:
+    patch:
+      tags: [ "Visits" ]
+      summary: Modify a visitor's status
+      description: |
+        Changes a visitor's state for a visit.  This is how you mark a visitor as signing in, signed
+        in, on site, off site again, etc.
+
+        Doing so will create an event if your visitor was not already in the state you attempted to
+        move them to.
+
+        Note that this URL is different from a normal cardholder href because a cardholder can be a
+        visitor on more than one visit at a time.
+
+        Take this href from a [visit search](#definition-Visit-search) or [visit](#definition-Visit).
+
+        New to 8.90.
+
+      parameters:
+      - name: "this string not rendered"
+        in: body
+        required: true
+        schema: {$ref: '#/definitions/Visitor PATCH example'}
+        description: |
+          This must contain a block called `status` containing a string called `value`, giving your
+          desired state of the visitor.
+      responses:
+        204:
+          description: "Success."
+        400:
+          description: |
+            The body of the PATCH did not describe a valid change to a visitor's status.  Check the
+            body of the server's response for hints.
+
+        403:
+          description: |
+            The site does not have the RESTCardholders licence, or the operator does not have the
+            privilege to modify that visit ('Edit Visits'), or you attempted to set a field for
+            which you have no privilege, or the visit has expired.
+        404:
+          description: |
+            That is not the URL of a visitor, or it is a visitor on a visit that the operator does
+            not have the privilege to see ('View Visits' or 'Edit Visits').
