@@ -323,7 +323,8 @@ x-common-blocks-this-is-made-up:
     type: string
     description: |
       An alphanumeric identifier, unique to the server. This is the ID to use in the `source`
-      parameter of [event filters](events.html#operation--api-events-get).
+      parameter of [event filters](events.html#operation--api-events-get) and in the body of [status
+      subscriptions](events.html#status-subscriptions).
 
   updates_ignored: &UPDATES
     type: object
@@ -1827,6 +1828,9 @@ definitions:
     allOf:
       - type: object
         properties:
+          id:
+            <<: *ID
+            example: "122322"
           description:
             type: string
             example: "Exercise yard egress."
@@ -4381,7 +4385,7 @@ paths:
           schema: {$ref: '#/definitions/Interlock Group search'}
         403:
           description: |
-            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
+            The site has neither the RESTStatus nor the RESTOverrides licence.
 
   /api/interlock_groups/{id}:
     get:
@@ -4413,7 +4417,7 @@ paths:
           schema: {$ref: '#/definitions/Interlock Group detail'}
         403:
           description: |
-            The site does not have the RESTStatus or (in 8.60 or later) the RESTOverrides licence.
+            The site has neither the RESTStatus nor the RESTOverrides licence.
         404: {$ref: "#responses/404interlock"}
 
   /api/interlock_groups/{id}/disable:
