@@ -3589,6 +3589,104 @@ our responses on their way back to the client, so it would hardly bother with th
 This class of vulnerability is a problem when there is an HTTP cache between client and server.
 This is never the case for program interfaces.
 
+== Monitoring the API
+
+The web server presents its vital statistics in Windows performance counters, and (optionally)
+writes every API call to a log file.
+
+=== Performance Counters
+
+Every API call increments a Windows Performance counter called 'REST API Request Rate'.  You can
+find it, along with other performance counters updated by Command Centre's other API servers, in a
+category called 'Gallagher Command Centre'.  That counter will give you a view of how many calls the
+API is receiving.
+
+==== Per-client performance counters
+
+If you are running 8.90 or later, another category called 'Gallagher Command Centre REST clients'
+contains counters that will show you which of your clients are hitting the API the hardest.  They
+are called 'Requests per second' and 'Total processing time (ms)' each with an _instance_ for each
+REST Client item in Command Centre.
+
+TIP: An _instance_ of a performance counter is one created at run-time to suit to the environment.
+They are the lowest tier in the hierarchy: category, counter, instance.
+
+In our case, the environment is a pool of REST clients so CC creates an instance for the REST Client
+item the first time an API call arrives for that item (i.e., the first time an API call arrives with
+that item's API key in its Authorization header).
+
+NOTE: The instance takes the name that the client item had when the session was first created, which
+is also when all its privileges were calculated.  If you rename a REST Client item and notice that
+no new performance counter appears, that's why.  Click on the 'Refresh Operator privileges' button
+in the item's configuration page if you need it to update smartly.
+
+Also note that some characters are not permitted in the name of a performance counter, so the server
+may have adjusted them to suit.
+
+==== Per-route performance counters
+
+The 'Gallagher Command Centre API routes' category, also added to 8.90, will show you which API
+routes (a.k.a. endpoints) are the most popular.  It contains counters called 'Requests per second'
+and 'Total processing time (ms)' again but this time each has one instance for each API route.
+
+Only routes that a client has called will have a counter.
+
+Like client names, API routes have their URLs heavily modified to become suitable performance
+counter names and to make them more readable.
+
+==== A word of warning about processing times
+
+The processing time that comes out of these counters for an API call does not necessarily reflect
+the CPU or I/O cost of that call.  It is simply the difference in wall-clock times before and after.
+If the operation the client requested had to wait for a resource, such as a lock, then the call will
+look expensive even though it spent part of its time in a queue.
+
+Therefore these processing times only represent the true cost of an operation when the server and
+database were able to give it their full attention.
+
+=== Access log
+
+Servers 8.90 and later can write a line to an access log for every API request.
+
+It is off by default, but you can turn it on by giving a non-zero value to a DWORD value called
+`LogRESTRequests` inside the registry key `HKLM\SOFTWARE\WOW6432Node\Gallagher\Command Centre`.
+Change it back to zero to stop the logging with immediate effect.
+
+The default file name is `RESTAccess.log` and it will appear in the same folder as the server's
+licence and other logs.  NLog will rotate it once per day, for ten days, then delete it.
+
+The default file format is JSON, for easy consumption by the popular log aggregation platforms.
+Each request will be on one line.  Here is an example busted out and indented for easier reading:
+
+----
+{
+  "request_time": "2022-12-02T03:41:52.5732150Z",
+  "ip":           "127.0.0.1",
+  "client":       "REST Client item name",
+  "method":       "GET",
+  "url":          "/api/events?top=9999",
+  "status":       200,
+  "elapsed_ms":   502,
+  "endpoint":     "api/events"
+}
+----
+
+`request_time` was the time when the API call arrived, but the log line goes to disk when the call
+finishes, so it will not always be an increasing value.  A long poll, for example, may be logged 50
+seconds after it was requested, by which time many other (quicker) calls may have started, finished,
+and been logged.
+
+`endpoint` will be null (missing, actually) if the web server couldn't find a route to service the
+request.  The status of that will be a 404.  Somebody didn't read link:#_the_importance_of_api[about the importance of `/api`].
+
+The format of this file, plus its name and rotation policy, are yours to configure via the
+application config file.  There is an example in there of how to produce a format closer to the
+Apache common log format.  However:
+
+CAUTION: Contact Gallagher Technical Support with your wishes before editing Command Centre's
+configuration file.  It is large and complex and if you get it wrong, the server will not start.
+Worse, it may start but then not behave as you expect.
+
 == Appendix: Privilege table
 
 This is not the complete list of privileges! See the topic 'Which Operator Privileges
