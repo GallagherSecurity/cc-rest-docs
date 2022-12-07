@@ -1462,8 +1462,8 @@
           <h1 id="tag-Divisions" class="swagger-summary-tag" data-traverse-target="tag-Divisions">Divisions</h1>
           <div class="tag-description doc-row">
             <div class="doc-copy">
-              <p>These methods provide access to the Command Centre divisions that are available to the REST client. Call <code>/api</code> and use the link at <code>features.{your_feature}.divisions.href</code> to retrieve the divisions in which the REST operator has privileges for that feature, alarms or events. Pick out the ones of interest and use those IDs in event, alarm, or item searches to make them more efficient.</p>
-              <p>Or, following a division&#39;s link from a reception item to retrieve the visitor management configuration for that reception&#39;s division.</p>
+              <p>These methods provide access to the Command Centre divisions that are available to the REST client. Call <code>/api</code> and use the link at <code>features.{your_feature}.divisions.href</code> to retrieve the divisions in which the REST operator has privileges for that feature. Pick out the ones of interest and use those IDs in event, alarm, or item searches if you don&#39;t want the search to scan everything.</p>
+              <p>Or, you may end up here by following a division&#39;s link from a reception item when you need to retrieve the visitor management configuration for that reception&#39;s division.</p>
               <h3 id="licensing">Licensing</h3>
               <p>Every REST licence enables the divisions controller: RESTEvents, RESTCreateEvents, RESTCardholders, RESTStatus, and RESTOverrides.</p>
             </div>
@@ -3250,14 +3250,15 @@
               <p>These methods let you find items for your search filters and events, and monitor their states. They return all items, including those that this API does not yet support in depth, and items added by customisations. However because they do not have deep knowledge of item types they can only give you the most basic fields.</p>
               <h3 id="searching-for-items">Searching for items</h3>
               <p>Use the search methods when you are building a filter for an
-                <a href="#operation--api-events-get">event search</a> and need the ID of an item or an item type, or when you are
+                <a href="#operation--api-events-get">event search</a> or a
+                <a href="#operation--api-items-updates-post">status subscription</a> and need the ID of an item or an item type, or when you are
                 <a href="#operation--api-events-post">creating an event</a> and need an href to use as the event source.</p>
-              <p>To find an item, pass a substring of its name to the link at <code>features.items.items.href</code> in the results of a call to <code>/api</code>. If you are sure of its name, place the name inside <code>&quot;</code> quotes, and it will use a full (though case-insensitive) string match.</p>
-              <p>To limit the search to items of a particular type, first get the ID of the type you are after using the link at <code>features.items.itemTypes.href</code> in the results of <code>/api</code>. Add that ID as the <code>type</code> parameter to the call above. You can specify multiple item types if, for example, you are interested in all the different kinds of doors.</p>
+              <p>To find an item, pass a substring of its name to the link at <code>features.items.items.href</code> in the results of a call to <code>/api</code>. If you are sure of its name, place the name inside <code>&quot;</code> quotes, and it will use a full string match. Both types of search are case-insensitive.</p>
+              <p>To limit the search to items of a particular type, first get the ID of the type you are after using the link at <code>features.items.itemTypes.href</code> in the results of <code>GET /api</code>. Add that ID as the <code>type</code> parameter to the call above. You can specify multiple item types if, for example, you are interested in all the different kinds of doors.</p>
               <p>For example, if you were after a list of divisions, following the instructions above on the current versions of Command Centre would produce the URL <code>/api/items?type=15</code>.</p>
               <h3 id="status-subscriptions">Status subscriptions</h3>
               <p>The
-                <a href="rest.html">item-specific APIs</a> monitor only one item at a time, and are therefore not suitable for watching large collections. If you have CC version 8.30 or later, you should use the status subscription methods instead. We have tested subscriptions of 1000 items, and while the calls do not impose an upper bound on that we suggest keeping a watchful eye on the performance of the overall system if you go much higher.</p>
+                <a href="rest.html">item-specific APIs</a> monitor only one item at a time, and are therefore not suitable for watching large collections. If you have CC version 8.30 or later, you should use the status subscription methods instead. We have tested subscriptions of 1000 items without noticing undue strain on the server. While the calls do not impose an upper bound on that we suggest keeping a watchful eye on the performance of the overall system if you go much higher.</p>
               <p>The basic operations for monitoring item states is:</p>
               <ol>
                 <li>

@@ -163,12 +163,12 @@ tags:
   description: |
     These methods provide access to the Command Centre divisions that are available to the REST
     client.  Call `/api` and use the link at `features.{your_feature}.divisions.href` to retrieve
-    the divisions in which the REST operator has privileges for that feature, alarms or events.
-    Pick out the ones of interest and use those IDs in event, alarm, or item searches to make them
-    more efficient.
+    the divisions in which the REST operator has privileges for that feature.  Pick out the ones of
+    interest and use those IDs in event, alarm, or item searches if you don't want the search to
+    scan everything.
 
-    Or, following a division's link from a reception item to retrieve the visitor management
-    configuration for that reception's division.
+    Or, you may end up here by following a division's link from a reception item when you need to
+    retrieve the visitor management configuration for that reception's division.
 
     ### Licensing
 
@@ -363,15 +363,17 @@ tags:
     ### Searching for items
 
     Use the search methods when you are building a filter for an [event
-    search](#operation--api-events-get) and need the ID of an item or an item type, or when you are
-    [creating an event](#operation--api-events-post) and need an href to use as the event source.
+    search](#operation--api-events-get) or a [status
+    subscription](#operation--api-items-updates-post) and need the ID of an item or an item type, or
+    when you are [creating an event](#operation--api-events-post) and need an href to use as the
+    event source.
 
     To find an item, pass a substring of its name to the link at `features.items.items.href` in the
     results of a call to `/api`.  If you are sure of its name, place the name inside `"` quotes, and
-    it will use a full (though case-insensitive) string match.
+    it will use a full string match.  Both types of search are case-insensitive.
 
     To limit the search to items of a particular type, first get the ID of the type you
-    are after using the link at `features.items.itemTypes.href` in the results of `/api`.
+    are after using the link at `features.items.itemTypes.href` in the results of `GET /api`.
     Add that ID as the `type` parameter to the call above.  You can specify multiple item
     types if, for example, you are interested in all the different kinds of doors.
 
@@ -382,9 +384,9 @@ tags:
 
     The [item-specific APIs](rest.html) monitor only one item at a time, and are therefore not
     suitable for watching large collections.  If you have CC version 8.30 or later, you should use
-    the status subscription methods instead.  We have tested subscriptions of 1000 items, and while
-    the calls do not impose an upper bound on that we suggest keeping a watchful eye on the
-    performance of the overall system if you go much higher.
+    the status subscription methods instead.  We have tested subscriptions of 1000 items without
+    noticing undue strain on the server.  While the calls do not impose an upper bound on that we
+    suggest keeping a watchful eye on the performance of the overall system if you go much higher.
 
     The basic operations for monitoring item states is:
 
