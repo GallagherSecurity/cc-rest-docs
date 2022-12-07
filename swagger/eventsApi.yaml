@@ -908,7 +908,8 @@ paths:
   /api/alarms/{id}/process:
     post:
       summary: Mark an alarm as processed
-      description: Follow the `processWithComment` or the `process` link in the alarm summary to get here.
+      description: |
+        Follow the `processWithComment`, `forceProcess`, or `process` link in the alarm to get here.
       tags:
         - Alarms
       parameters:
@@ -1856,16 +1857,6 @@ definitions:
             type: string
             format: url
             example: "https://localhost:8904/api/alarms/92210/comment"
-      acknowledgeWithComment:
-        type: object
-        description: |
-          POST an alarm update request JSON object to the href to acknowledge an alarm and place an
-          alarm note against it.  Missing if the alarm is already acknowledged.
-        properties:
-          href:
-            type: string
-            format: url
-            example: "https://localhost:8904/api/alarms/92210/acknowledge"
       acknowledge:
         type: object
         description: |
@@ -1877,6 +1868,24 @@ definitions:
             type: string
             format: url
             example: "https://localhost:8904/api/alarms/92210/acknowledge"
+      acknowledgeWithComment:
+        type: object
+        description: |
+          POST an alarm update request JSON object to the href to acknowledge an alarm and place an
+          alarm note against it.  Missing if the alarm is already acknowledged.
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/alarms/92210/acknowledge"
+      process:
+        type: object
+        description: POST an alarm update request JSON object to the href to process an alarm. Missing if the system has mandatory alarm notes on for this alarm.  Missing if the alarm cannot be processed (if it is active, for example).
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/alarms/92210/process"
       processWithComment:
         type: object
         description: POST an alarm update request JSON object to the href to process an alarm and place an alarm note against it.  Missing if the alarm cannot be processed (if it is active, for example).
@@ -1885,9 +1894,12 @@ definitions:
             type: string
             format: url
             example: "https://localhost:8904/api/alarms/92210/process"
-      process:
+      forceProcess:
         type: object
-        description: POST an alarm update request JSON object to the href to process an alarm. Missing if the system has mandatory alarm notes on for this alarm.  Missing if the alarm cannot be processed (if it is active, for example).
+        description: |
+          POST an alarm update request JSON object to this href to process an active alarm.  Missing
+          if the alarm is not active (in which case you will have `process` and `processWithComment`
+          links instead).
         properties:
           href:
             type: string
