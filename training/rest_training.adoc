@@ -3650,14 +3650,18 @@ database were able to give it their full attention.
 
 === Access log
 
-Servers 8.90 and later can write a line to an access log for every API request.
+Servers 8.90 and later write a line to an access log for every API request.
 
-It is off by default, but you can turn it on by giving a non-zero value to a DWORD value called
-`LogRESTRequests` inside the registry key `HKLM\SOFTWARE\WOW6432Node\Gallagher\Command Centre`.
-Change it back to zero to stop the logging with immediate effect.
+It is controlled by a DWORD value called `LogRESTRequests` inside the registry key
+`HKLM\SOFTWARE\WOW6432Node\Gallagher\Command Centre`, set to one by the installer.  Change its value
+to zero to stop the logging.  You do not need to restart Command Centre.
 
-The default file name is `RESTAccess.log` and it will appear in the same folder as the server's
-licence and other logs.  NLog will rotate it once per day, for ten days, then delete it.
+The default file name is `RESTAccess.log` and the file will appear in the same folder as the
+server's licence and other logs.  NLog will rotate it once per day by adding a time stamp to its
+name.  After ten days it will delete it.  There is no limit to the size of the file.  Those settings
+are in the server's application config, but we advise against changing them as doing so may affect
+our ability to offer technical support.  Also, your changes may not survive an upgrade.  Also, a
+syntax error in the app config will prevent Command Centre from starting.
 
 The default file format is JSON, for easy consumption by the popular log aggregation platforms.
 Each request will be on one line.  Here is an example busted out and indented for easier reading:
