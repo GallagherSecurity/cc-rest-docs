@@ -2820,9 +2820,9 @@ the `-nodes` option and type in a password (a really good one) when
 
 To get the thumbprint for Command Centre:
 
-[source,shell]
+[source,console]
 ----
-openssl x509 -fingerprint -in rest.pem -noout
+$ openssl x509 -fingerprint -in rest.pem -noout
 ----
 
 If you protected the PEM with a password, `openssl x509` will ask you
@@ -2881,7 +2881,7 @@ present on all versions of Windows, so here is an alternative using…
 . In it:
 
 +
-[subs="quotes"]
+[,console,subs="verbatim,quotes"]
 ----
 makecert ignoreme.der
          -a sha1
@@ -2986,9 +2986,9 @@ file.
 . For old versions of Postman you may have to convert that PFX into a
 file it understands. The current version of Postman does not need this:
 +
-[subs="quotes"]
+[,console,subs="verbatim,quotes"]
 ....
-openssl pkcs12 -in restexported.pfx –out rest.pem *–nodes*
+$ openssl pkcs12 -in restexported.pfx –out rest.pem *–nodes*
 ....
 
 
@@ -3050,11 +3050,11 @@ Select the one you just put there.
 
 ==== wget
 
-[subs="quotes"]
+[,console,subs="verbatim,quotes"]
 ----
-wget                                                                          \
+$ wget                                                                        \
     *--no-check-certificate*                                                    \
-    --certificate=<i>your_pem_file</i>                                               \
+    --certificate=_your_pem_file_                                               \
     --header="Authorization: GGL-API-KEY _your-API-key_"                        \
     https://localhost:8904/api
 ----
@@ -3067,12 +3067,12 @@ certificate file.
 
 ==== curl
 
-[subs="quotes"]
+[,console,subs="verbatim,quotes"]
 ----
-curl                                                                          \
+$ curl                                                                        \
     --verbose                                                                 \
     *--insecure*                                                                \
-    --cert <i>your_pem_file</i>                                                      \
+    --cert _your_pem_file_                                                      \
     --header "Authorization: GGL-API-KEY _your-API-key_"                        \
     https://localhost:8904/api
 ----
