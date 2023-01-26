@@ -2,7 +2,7 @@
 # dot auth_flow.dot -Tpdf -O
 digraph
 {
-        start[label=Start]
+        start[label=Start style=filled fillcolor="#04ff04"]
 
         node [shape=ellipse, style=filled, fillcolor="#ff9090"]
         o_noapikey[label="Raise 'invalid API key' alarm,\nreturn 401"]
@@ -10,7 +10,7 @@ digraph
         o_badip[label="Raise 'bad source IP' alarm,\nreturn 401"]
         o_disabled[label="Return 4xx"] # TBD
         o_nolicence[label="Return 403"]
-        clientquit[label="Client throws error"]
+        o_clientquit[label="Client faults,\nserver logs all it can\n(which isn't much)"]
         o_nopriv[label="Return 403"]
 
         node [shape=box, style=""]
@@ -21,7 +21,7 @@ digraph
         o_argcheck[label="Proceed to argument checks\nand execution" style=filled fillcolor="#04ff04"]
 
         node [shape=diamond]
-        cond[label="Client likes server cert?\nImplementation-\ndependent"]
+        cond[label="Client accepts server cert?" ordering=out ]
         c_apikeycheck[label="REST Client exists\nwith that API key?"]
         c_versioncheck [label="Server version" ]
         c_clientcertcheck1[label="Fingerprint on that\nREST Client?"]
@@ -30,45 +30,45 @@ digraph
         c_clientcertcheck840[label="Server ignores client certs?"]
 
         c_correctcert[label="Client cert has\nmatching fingerprint?" shape=diamond]
-        c_sourceip1[label="Client item has IP restrictions,\nand the client does not meet them?"]
-        c_disabled[label="Client item is disabled\n(8.90 or later)?"]
+        c_sourceip[label="Client item has IP restrictions,\nand the client does not meet them?" ordering=out ]
+        c_disabled[label="Client item is disabled\n(8.90 or later)?" ordering=out ]
         c_licence[label="Server has licence\nfor requested operation?"]
         c_privcheck[label="Operator has privilege\nfor requested operation?"]
 
         start->op1
         op1->cond
-        cond->clientquit [label = "no"]
         cond->o_reqclientcert [label = "yes"]
+        cond->o_clientquit [label = "no"]
         o_reqclientcert -> o_clientsendscert
         o_clientsendscert -> o_clientreq
         o_clientreq->c_apikeycheck
 
-        c_apikeycheck->o_noapikey [label = "no"]
         c_apikeycheck->c_versioncheck [label = "yes"]
+        c_apikeycheck->o_noapikey [label = "no"]
 
         c_versioncheck -> c_clientcertcheck1 [label = ">= 8.50"]
         c_versioncheck -> c_clientcertcheck840 [label = "< 8.50"]
 
         c_clientcertcheck1->c_clientcertcheck2 [label= "no"]
 
-        c_clientcertcheck840->c_sourceip1 [label = "yes"]
+        c_clientcertcheck840->c_sourceip [label = "yes"]
         c_clientcertcheck840->c_correctcert [label = "no"]
 
+        c_clientcertcheck2->c_sourceip [label = "yes"]
         c_clientcertcheck2->o_badprint [label = "no"]
-        c_clientcertcheck2->c_sourceip1 [label = "yes"]
 
         c_clientcertcheck1->c_correctcert [label = "yes"]
         c_correctcert->o_badprint [label = "no"]
 
-        c_correctcert->c_sourceip1 [label = "yes"]
-        c_sourceip1->c_disabled [label = "no"]
-        c_sourceip1->o_badip [label = "yes"]
+        c_correctcert->c_sourceip [label = "yes"]
+        c_sourceip->c_disabled [label = "no"]
+        c_sourceip->o_badip [label = "yes"]
 
         c_disabled->c_licence [label = "no"]
         c_disabled->o_disabled [label = "yes"]
 
-        c_licence->o_nolicence [label="no"]
         c_licence->c_privcheck [label="yes"]
+        c_licence->o_nolicence [label="no"]
         c_privcheck->o_nopriv [label="no"]
         c_privcheck->o_argcheck [label="yes"]
 }
