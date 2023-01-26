@@ -40,11 +40,11 @@ info:
 
     #### Alarms, events, and items API changes on the roadmap
 
-    * BREAKING CHANGE:  a future version will require that the operator has the 'Create Events and
+    #### Alarms and events API changes in 8.90
+
+    * BREAKING CHANGE:  the operator must have the 'Create Events and
       Alarms' privilege in the division of the source item, if your request specifies a source item.
       Current versions only require that the operator has that privilege on at least one division.
-
-    #### Alarms and events API changes in 8.90
 
     * To improve the symmetry between events and alarms, they now carry a field `eventType`
       containing the ID and name of their type.  The `type` field, which has different
@@ -967,6 +967,10 @@ paths:
         REST Client item identified by your API key) or you can use any item that has an 'Event
         Response' tab in its Configuration Client window (which is most of them).  Our existing
         integrations use items like doors, external system items, and cameras.
+
+        If you specify a source item to a server running 8.90 or later, your operator must have the
+        'Create events and alarms' privilege in that item's division.  In older versions it was
+        enough for your operator to have that privilege in any division.
 
         Cardholders do not have an 'Event Response' tab so cannot be event sources, but...
 

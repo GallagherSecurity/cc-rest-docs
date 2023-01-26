@@ -155,11 +155,11 @@
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
                 <h4 id="alarms-events-and-items-api-changes-on-the-roadmap">Alarms, events, and items API changes on the roadmap</h4>
-                <ul>
-                  <li>BREAKING CHANGE: a future version will require that the operator has the &#39;Create Events and Alarms&#39; privilege in the division of the source item, if your request specifies a source item. Current versions only require that the operator has that privilege on at least one division.</li>
-                </ul>
                 <h4 id="alarms-and-events-api-changes-in-890">Alarms and events API changes in 8.90</h4>
                 <ul>
+                  <li>
+                    <p>BREAKING CHANGE: the operator must have the &#39;Create Events and Alarms&#39; privilege in the division of the source item, if your request specifies a source item. Current versions only require that the operator has that privilege on at least one division.</p>
+                  </li>
                   <li>
                     <p>To improve the symmetry between events and alarms, they now carry a field <code>eventType</code> containing the ID and name of their type. The <code>type</code> field, which has different contents for alarms and events, is now obsolete (but still supported).</p>
                   </li>
@@ -1986,6 +1986,7 @@
                   <p>1000 event types sounds like a lot, but be aware that you cannot delete event types, and the only thing you can modify on an existing event type is its name. Their event type group and item types are permanent once you save them from the utility. Please plan carefully, and take backups!</p>
                   <h4 id="usable-source-items">Usable source items</h4>
                   <p>Every event needs a source item. You can let the server pick one for you (it will use the REST Client item identified by your API key) or you can use any item that has an &#39;Event Response&#39; tab in its Configuration Client window (which is most of them). Our existing integrations use items like doors, external system items, and cameras.</p>
+                  <p>If you specify a source item to a server running 8.90 or later, your operator must have the &#39;Create events and alarms&#39; privilege in that item&#39;s division. In older versions it was enough for your operator to have that privilege in any division.</p>
                   <p>Cardholders do not have an &#39;Event Response&#39; tab so cannot be event sources, but...</p>
                   <h4 id="related-items">Related items</h4>
                   <p>Along with a source, you can link other items to the events you create. If you link a cardholder, for example, your events will show on an activity report generated for that cardholder. To link an item your operator must have a privilege that allows viewing it (such as &#39;View cardholders&#39; or &#39;View site&#39;).</p>
