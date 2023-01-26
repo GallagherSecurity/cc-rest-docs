@@ -2210,7 +2210,10 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Restricts events to those that occurred at or after this time. It must an ISO-8601 date or date-time with a timezone specifier.</p>
+                      <p>Restricts events to those that occurred at or after this time.</p>
+                      <p>The server accepts extended ISO-8601 time stamp formats. There must be hyphen separators in the date and colons in the time, and a <code>T</code> separating the two.</p>
+                      <p>For predictable results you should also add a timezone specifier. A <code>Z</code> means UTC and is recommended, but <code>+hh</code>, <code>+hhmm</code>, and <code>+hh:mm</code> also work. Note that you need to encode plus-signs as <code>%2b</code> in a URL.</p>
+                      <p>If you omit the time, the server will assume midnight. If you omit just the seconds, the server will take it to the top of the minute, <code>:00</code>.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2224,7 +2227,8 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Restricts events to those that occurred before this time. It must be an ISO-8601 date or date-time with a timezone specifier. Events that occurred at this exact time (to the second) will not appear in the results. For example, to collect all events that occurred on 1 January 2017, use <code>after=2017-01-01Z,before=2017-01-02Z</code>. You will not receive any events from 2 January.</p>
+                      <p>Restricts events to those that occurred before this time. Events that occurred at this exact time (to the second) will not appear in the results. For example, to collect all events that occurred on 1 January 2017, use <code>after=2017-01-01Z,before=2017-01-02Z</code>. You will not receive any events from 2 January.</p>
+                      <p>The <code>after</code> parameter (above) describes the time stamp formats that the server accepts.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">

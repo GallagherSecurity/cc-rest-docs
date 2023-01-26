@@ -1105,19 +1105,29 @@ paths:
         type: string
         format: date-time
         description: |
-          Restricts events to those that occurred at or after this time.  It must an ISO-8601
-          date or date-time with a timezone specifier.
+          Restricts events to those that occurred at or after this time.
+
+          The server accepts extended ISO-8601 time stamp formats.  There must be hyphen separators
+          in the date and colons in the time, and a `T` separating the two.
+
+          For predictable results you should also add a timezone specifier.  A `Z` means UTC and is
+          recommended, but `+hh`, `+hhmm`, and `+hh:mm` also work.  Note that you need to encode
+          plus-signs as `%2b` in a URL.
+
+          If you omit the time, the server will assume midnight.  If you omit just the seconds, the
+          server will take it to the top of the minute, `:00`.
       - name: "before"
         in: query
         required: false
         type: string
         format: date-time
         description: |
-          Restricts events to those that occurred before this time.  It must be an ISO-8601 date or
-          date-time with a timezone specifier.  Events that occurred at this exact time (to the
-          second) will not appear in the results.  For example, to collect all events that occurred
-          on 1 January 2017, use `after=2017-01-01Z,before=2017-01-02Z`.  You will not receive any
-          events from 2 January.
+          Restricts events to those that occurred before this time.  Events that occurred at this
+          exact time (to the second) will not appear in the results.  For example, to collect all
+          events that occurred on 1 January 2017, use `after=2017-01-01Z,before=2017-01-02Z`.  You
+          will not receive any events from 2 January.
+
+          The `after` parameter (above) describes the time stamp formats that the server accepts.
       - name: "source"
         in: query
         required: false
