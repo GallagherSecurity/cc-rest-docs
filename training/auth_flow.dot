@@ -8,7 +8,7 @@ digraph
         o_noapikey[label="Raise 'invalid API key' alarm,\nreturn 401"]
         o_badprint[label="Raise 'incorrect fingerprint' alarm,\nreturn 401"]
         o_badip[label="Raise 'bad source IP' alarm,\nreturn 401"]
-        o_disabled[label="Return 4xx"] # TBD
+        o_disabled[label="Return 403"]
         o_nolicence[label="Return 403"]
         o_clientquit[label="Client faults,\nserver logs all it can\n(which isn't much)"]
         o_nopriv[label="Return 403"]
@@ -68,7 +68,7 @@ digraph
         c_disabled->o_disabled [label = "yes"]
 
         c_licence->c_privcheck [label="yes"]
-        c_licence->o_nolicence [label="no"]
-        c_privcheck->o_nopriv [label="no"]
+        c_licence->o_disabled [label="no"]
+        c_privcheck->o_disabled [label="no"]
         c_privcheck->o_argcheck [label="yes"]
 }
