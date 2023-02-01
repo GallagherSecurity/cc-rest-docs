@@ -1986,7 +1986,7 @@
                   <p>1000 event types sounds like a lot, but be aware that you cannot delete event types, and the only thing you can modify on an existing event type is its name. Their event type group and item types are permanent once you save them from the utility. Please plan carefully, and take backups!</p>
                   <h4 id="usable-source-items">Usable source items</h4>
                   <p>Every event needs a source item. You can let the server pick one for you (it will use the REST Client item identified by your API key) or you can use any item that has an &#39;Event Response&#39; tab in its Configuration Client window (which is most of them). Our existing integrations use items like doors, external system items, and cameras.</p>
-                  <p>If you specify a source item to a server running 8.90 or later, your operator must have the &#39;Create events and alarms&#39; privilege in that item&#39;s division. In older versions it was enough for your operator to have that privilege in any division.</p>
+                  <p>If you specify a source item to a server running 8.90 or later, and that item is not your REST Client item (which is what you would get if you didn&#39;t specify a source item) your operator must have the &#39;Create events and alarms&#39; privilege in that item&#39;s division. In older versions it was enough for your operator to have that privilege in any division.</p>
                   <p>Cardholders do not have an &#39;Event Response&#39; tab so cannot be event sources, but...</p>
                   <h4 id="related-items">Related items</h4>
                   <p>Along with a source, you can link other items to the events you create. If you link a cardholder, for example, your events will show on an activity report generated for that cardholder. To link an item your operator must have a privilege that allows viewing it (such as &#39;View cardholders&#39; or &#39;View site&#39;).</p>
@@ -2113,7 +2113,7 @@
                     </div>
                     <div class="prop-value">
                       <p>The site does not have the RESTCreateEvents licence (in which case the body of the response will say so) or operator does not have the &#39;Create Events and Alarms&#39; privilege.</p>
-                      <p>A future version of Command Centre will reject the POST with a 403 if your event specifies a source item and the operator does not have &#39;Create Events and Alarms&#39; on that item&#39;s division.</p>
+                      <p>8.90 and later will reject the POST with a 403 if your event specifies a source item which is not your REST Client item and the operator does not have &#39;Create Events and Alarms&#39; on that item&#39;s division.</p>
                     </div>
                   </div>
                 </section>
@@ -6245,7 +6245,7 @@
                     <dd>
                       <p>This block should contain the href of the item you wish to use as the source of your event. It can be any site item to which your operator has view access including all hardware, access zones, fence zones, doors, lockers, car parks, servers, external systems, and many other item types. If you do not supply one Command Centre will use the REST Client item identified by the API key in the <code>Authorization</code> header.</p>
                       <p>Cardholders cannot be event sources. To relate a cardholder to your event, use the <code>cardholder</code> block.</p>
-                      <p>Make sure that your operator has the &#39;Create Events and Alarms&#39; privilege on this item&#39;s division. Future versions of Command Centre will require it.</p>
+                      <p>Make sure that your operator has the &#39;Create Events and Alarms&#39; privilege on this item&#39;s division. 8.90 and later insist on it.</p>
                       <p>The API will use the source&#39;s division as the event&#39;s division.</p>
                     </dd>
                     <dt class="json-inner-schema">
