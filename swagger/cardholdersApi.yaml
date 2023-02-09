@@ -211,6 +211,14 @@ info:
 
     ### Efficiency tips
 
+    * When searching for a cardholder (or any other object) by name or PDF value, if you have the
+      exact string, put it in quotes `"..."`.  It is still a case-insensitive search but it attempts
+      to match the entire string.  Without the quotes Command Centre will perform a substring
+      search, which is slower and may return more results than you need.  In one test, a substring
+      search of half a million cardholders took more than ten seconds, but with quotes it took a
+      tenth of a second.  That is a 100x speedup.  If the server believes you have omitted the
+      quotes in error, it will include a polite reminder in its results.
+
     * When downloading a significant number of items, sort by ID.
 
     * Set your page size as large as your client can handle.  The default was 100 before 8.70; using
@@ -247,13 +255,6 @@ info:
     * When creating cardholders, assign their cards, groups, and other attributes in the POST.  This is
       significantly quicker than sending a handful of PATCHes chasing after your POST, and if you
       are interrupted, you will not end up with a partially-configured cardholder.
-
-    * When searching for a cardholder (or any other object) by name or PDF value, if you have the
-      exact string, put it in quotes `"..."`.  It is still a case-insensitive search but it attempts
-      to match the entire string.  Without the quotes Command Centre will perform a substring
-      search, which is slower and may return more results than you need.  In one test, a substring
-      search of half a million cardholders took more than ten seconds, but with quotes it took a
-      tenth of a second.  That is a 100x speedup.
 
     * When modifying a cardholder, do all your operations in one PATCH.  This is much quicker than
       doing it in several smaller PATCHes.

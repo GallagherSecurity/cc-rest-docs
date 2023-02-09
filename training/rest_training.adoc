@@ -3515,8 +3515,8 @@ visitor to the visit’s visitor access groups.
 The API gateway lets clients connect to the server when they cannot reach its port 8904 directly.
 Command Centre needs to be connected to a cloud server, and it needs to turn on the API gateway
 globally and in each REST Client item that needs it (which only takes a few clicks) then the client
-simply changes the host in its connection URL to the cloud server that the Command Centre server is
-connected to.  That is most likely to be one of these two:
+simply changes the host and port in its connection URL to the cloud server that the Command Centre
+server is connected to.  That is most likely to be one of these two:
 
 [cols="1,3"]
 |===
@@ -3526,10 +3526,17 @@ connected to.  That is most likely to be one of these two:
 | United States | commandcentre-api-*us*.security.gallagher.cloud
 |===
 
+The port (8904, unless you changed it from the factory setting) also has to go because the gateway
+listens on the default port for HTTPS, 443.
+
 Everything else is the same, including the API key, the client certificate, the root path (`/api`),
 and the documentation URL https://gallaghersecurity.github.io.
 
-There are no additional licence requirements.
+The gateway will enforce the REST Client item's source IP restrictions.  If the source IP of your
+client's connections will change when you move them from the Command Centre server to the API
+gateway, you will need to adjust those restrictions.
+
+There are no additional licence requirements for the API gateway.
 
 Note that due to the traffic hairpinning through Amazon's servers, throughput is significantly
 reduced.

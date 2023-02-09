@@ -497,6 +497,9 @@
                 <h3 id="efficiency-tips">Efficiency tips</h3>
                 <ul>
                   <li>
+                    <p>When searching for a cardholder (or any other object) by name or PDF value, if you have the exact string, put it in quotes <code>&quot;...&quot;</code>. It is still a case-insensitive search but it attempts to match the entire string. Without the quotes Command Centre will perform a substring search, which is slower and may return more results than you need. In one test, a substring search of half a million cardholders took more than ten seconds, but with quotes it took a tenth of a second. That is a 100x speedup. If the server believes you have omitted the quotes in error, it will include a polite reminder in its results.</p>
+                  </li>
+                  <li>
                     <p>When downloading a significant number of items, sort by ID.</p>
                   </li>
                   <li>
@@ -555,9 +558,6 @@
                     <p>When creating cardholders, assign their cards, groups, and other attributes in the POST. This is significantly quicker than sending a handful of PATCHes chasing after your POST, and if you are interrupted, you will not end up with a partially-configured cardholder.</p>
                   </li>
                   <li>
-                    <p>When searching for a cardholder (or any other object) by name or PDF value, if you have the exact string, put it in quotes <code>&quot;...&quot;</code>. It is still a case-insensitive search but it attempts to match the entire string. Without the quotes Command Centre will perform a substring search, which is slower and may return more results than you need. In one test, a substring search of half a million cardholders took more than ten seconds, but with quotes it took a tenth of a second. That is a 100x speedup.</p>
-                  </li>
-                  <li>
                     <p>When modifying a cardholder, do all your operations in one PATCH. This is much quicker than doing it in several smaller PATCHes.</p>
                   </li>
                 </ul>
@@ -595,7 +595,7 @@
                   <p>Clients authenticate by including a pre-shared API key in the <code>Authorization</code> header of each request. Command Centre generates an API key when you create an endpoint for your clients to connect to. Search the Configuration Client online help for &#39;REST API&#39; for how do do that.</p>
                   <p>The API key will be in the format <code>XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX</code> and should be in the header following an authorisation method of <code>GGL-API-KEY</code> and a space. Both should be in upper case. For example:</p>
                   <p><code>Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB</code></p>
-                  <p>Early versions of Command Centre allowed you to omit the &#39;GGL-API-KEY&#39;. Later versions will reject you with a 401 if you do that.</p>
+                  <p>Early versions of Command Centre allowed you to omit the &#39;GGL-API-KEY&#39;. Later versions of CC and all versions of the API gateway will reject you with a 401 if you do that.</p>
                   <p>Depending on Command Centre&#39;s site configuration, its REST API may also require a client certificate with each request. In versions up to and including 8.40 this was controlled by a flag labelled &#39;Do not require pinned client certficates&#39; on the &#39;Web Services&#39; tab of the server properties. In 8.50 that flag&#39;s label changed to &#39;Enable REST Clients with no client certificate&#39;, and its behaviour changed slightly when turned on.</p>
                   <p>If off, for all versions of CC, an incoming request&#39;s certificate has to match the thumbprint on its API key&#39;s REST Client item, and REST Client items with a blank thumbprint field do not work at all. This is how it ships, and it is the recommended way of running a production server.</p>
                   <p>If &#39;Do not require pinned client certificates&#39; was turned on in versions up to and including 8.40, the server did not check any client certificates. If that flag is turned on in 8.50, now relabelled &#39;Enable REST Clients with no client certificate&#39;, it still does not check the client certificate if the thumbprint field of the matching REST Client item is blank, but if the Client item has a thumbprint, the server will reject connections with the wrong certificate.</p>
