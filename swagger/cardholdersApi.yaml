@@ -97,6 +97,8 @@ info:
     * Email and mobile PDFs return their 'Default Notifications' flag on request.  This actually
       happened in 8.50 but did not make it into the "changes" list.
 
+    * Bug fix:  removing an operator group from a cardholder by PATCH works in 8.90.
+
     #### Cardholder API changes in 8.70
 
     * BREAKING CHANGE: Missing image PDFs will no longer have "not captured" as their value.
@@ -1605,7 +1607,7 @@ definitions:
               and time zone components if you send them.  8.70 and earlier will first perform a
               timezone correction then convert it to UTC before truncating the time, which might
               shift the date back a day if you specified a positive timezone offset.  To be sure
-              that does not happen, put `T00:00:00Z` on the end of your date.
+              that does not happen on a server older than 8.75, put `T00:00:00Z` on the end of your date.
 
             example: "8904640"
           disableCipherPad:
