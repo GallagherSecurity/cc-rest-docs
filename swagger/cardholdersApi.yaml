@@ -1719,8 +1719,8 @@ definitions:
             type: array
             description: |
               All the cards for this cardholder.  Note that even though Command Centre
-              calls these things 'cards', they include mobile credentials
-              that do not require a physical card.
+              calls these things 'cards', they include other types that do not require a physical
+              card, such as digital IDs and mobile credentials.
             items: {$ref: '#/definitions/Cardholder card'}
           accessGroups:
             type: array
@@ -1919,7 +1919,7 @@ definitions:
       cards:
         description: |
           This example creates one physical card of type 600 using a default card number, and
-          another of type 654 which must be a mobile credential, judging by the invitation block.
+          another of type 654 which--judging by the invitation block--must be a mobile credential.
           Command Centre will send an invitation to Nick at those coordinates.
         type: array
         items: {$ref: '#/definitions/Cardholder card'}
@@ -2459,7 +2459,7 @@ definitions:
   Cardholder card:
     description: |
       A _card_ is an access credential, including physical cards and mobile (Bluetooth and NFC)
-      credentials.  The server returns it as part of a [cardholder's
+      credentials and digital IDs.  The server returns it as part of a [cardholder's
       details](#definition-Cardholder-detail), and you supply it when creating or modifying a card
       or credential on a cardholder.
 
@@ -2488,6 +2488,8 @@ definitions:
 
           Card numbers for a mobile credential need not be unique.  They are strings, and are not
           used by Command Centre except for display.
+
+          Card numbers for digital IDs are GUIDs.
 
           This field is mandatory for card types with text or PIV number formats.  If the card type
           has a text card number format with a regular expression and you supply a card number that
@@ -2524,7 +2526,8 @@ definitions:
 
           If you increase it when modifying a card, all cards with lower issue levels will stop working.
 
-          Do not specify one when creating a mobile credential.  They do not have issue levels.
+          Do not specify one when creating or updating a mobile credential or digital ID.  They do
+          not have issue levels.
 
         type: integer
         minimum: 0
@@ -2585,7 +2588,7 @@ definitions:
 
       type:
         description: |
-          The name of the card type, and a link to the card type object.
+          The name of the card type from the site configuration, and a link to the card type object.
 
           When creating a card, the href must be a card type that makes sense for the other values
           you placed this object.
@@ -2599,6 +2602,7 @@ definitions:
             format: url
             example: "https://localhost:8904/api/card_types/354"
           name: {type: string, example: "Card type no. 1"}
+
       invitation:
         description: |
           Command Centre will only return this object for a mobile credential, and you should send
@@ -2703,11 +2707,16 @@ definitions:
         type: string
         format: date-time
         example: "2017-12-31T11:59:59Z"
+
       credentialClass:
         readOnly: true
-        description: "This indicates the type of card.  Added in 8.00."
+        description: |
+          This indicates the type of the card.  It comes from an enumeration, and is a reliable way
+          of determining the credential's type.
+
+          Added in 8.00.
         type: string
-        enum: ['card', 'piv', 'mobile']
+        enum: [ 'card', 'piv', 'mobile', 'digitalId' ]
         example: mobile
       trace:
         description: |

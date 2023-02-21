@@ -8608,7 +8608,7 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>All the cards for this cardholder. Note that even though Command Centre calls these things &#39;cards&#39;, they include mobile credentials that do not require a physical card.</p>
+                          <p>All the cards for this cardholder. Note that even though Command Centre calls these things &#39;cards&#39;, they include other types that do not require a physical card, such as digital IDs and mobile credentials.</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-array-items">
@@ -9184,7 +9184,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This example creates one physical card of type 600 using a default card number, and another of type 654 which must be a mobile credential, judging by the invitation block. Command Centre will send an invitation to Nick at those coordinates.</p>
+                      <p>This example creates one physical card of type 600 using a default card number, and another of type 654 which--judging by the invitation block--must be a mobile credential. Command Centre will send an invitation to Nick at those coordinates.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-array-items">
@@ -10064,7 +10064,7 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>A
-                    <em>card</em> is an access credential, including physical cards and mobile (Bluetooth and NFC) credentials. The server returns it as part of a
+                    <em>card</em> is an access credential, including physical cards and mobile (Bluetooth and NFC) credentials and digital IDs. The server returns it as part of a
                     <a href="#definition-Cardholder-detail">cardholder&#39;s details</a>, and you supply it when creating or modifying a card or credential on a cardholder.</p>
                   <p>Every card has a type, a status, and a validity period. Its type determines other fields of relevance, described below.</p>
                   <p>PIV cards are complex enough to warrant a
@@ -10091,6 +10091,7 @@
                     <dd>
                       <p>For a physical access card, this is its card number. It must be unique across all cards of the same card type. If you leave it blank when creating a card of a type that has a decimal number format, Command Centre will use the next available number.</p>
                       <p>Card numbers for a mobile credential need not be unique. They are strings, and are not used by Command Centre except for display.</p>
+                      <p>Card numbers for digital IDs are GUIDs.</p>
                       <p>This field is mandatory for card types with text or PIV number formats. If the card type has a text card number format with a regular expression and you supply a card number that does not match that regex, Command Centre will reject your update.</p>
                       <p>PIV card numbers must be the same as the card&#39;s FASC-N. PIV-I card numbers must not.</p>
                       <p>One rule is common across all card types: you cannot change the number of an existing card or credential.</p>
@@ -10114,7 +10115,7 @@
                       <p>The issue level of a physical access card. If two cards have the same number but different issue levels, only the one with this issue level will gain access.</p>
                       <p>If you leave it blank when creating a card, Command Centre will pick an appropriate value.</p>
                       <p>If you increase it when modifying a card, all cards with lower issue levels will stop working.</p>
-                      <p>Do not specify one when creating a mobile credential. They do not have issue levels.</p>
+                      <p>Do not specify one when creating or updating a mobile credential or digital ID. They do not have issue levels.</p>
                     </dd>
                     <dt data-property-name="status" class="has-description">
                       <span class="json-property-name">status:</span>
@@ -10167,7 +10168,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The name of the card type, and a link to the card type object.</p>
+                      <p>The name of the card type from the site configuration, and a link to the card type object.</p>
                       <p>When creating a card, the href must be a card type that makes sense for the other values you placed this object.</p>
                       <p>You cannot change a card&#39;s type once it is created.</p>
                     </dd>
@@ -10302,13 +10303,15 @@
                       <span class="json-property-enum" title="Possible values">
                         <span class="json-property-enum-item">card</span>,
                         <span class="json-property-enum-item">piv</span>,
-                        <span class="json-property-enum-item">mobile</span>
+                        <span class="json-property-enum-item">mobile</span>,
+                        <span class="json-property-enum-item">digitalId</span>
                       </span>
                       <span class="json-property-range" title="Value limits"></span>
                       <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
-                      <p>This indicates the type of card. Added in 8.00.</p>
+                      <p>This indicates the type of the card. It comes from an enumeration, and is a reliable way of determining the credential&#39;s type.</p>
+                      <p>Added in 8.00.</p>
                     </dd>
                     <dt data-property-name="trace" class="has-description">
                       <span class="json-property-name">trace:</span>
