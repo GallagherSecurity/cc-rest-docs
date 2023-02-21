@@ -9698,10 +9698,9 @@
                     <dd>
                       <p>This can contain two arrays named &#39;add&#39; and &#39;remove&#39;. Every element you send in those arrays should be in the
                         <a href="#definition-Cardholder-operator-group">cardholder operator group schema</a>.</p>
-                      <p>Each element of the &#39;add&#39; array will need an &#39;operatorGroup&#39; member containing an href identifying the operator group to which you wish to add the cardholder.</p>
-                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href. Make sure it is the href of the membership, not of the operator group.</p>
-                      <p>There is nothing about an operator group membership that you can change so there is no point to an &#39;update&#39; array. Operator group memberships are, or are not - there is no update.</p>
-                      <p>Supported in 8.50 and later.</p>
+                      <p>Each element of the &#39;add&#39; array will need an &#39;operatorGroup&#39; member containing an href identifying the operator group to which you wish to add the cardholder. Supported in 8.50 and later.</p>
+                      <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href. Make sure it is the href of the membership, not of the operator group. Supported in 8.90 and later.</p>
+                      <p>There is nothing about an operator group membership that you can change so there is no point to an &#39;update&#39; array. Operator group memberships are, or are not: there is no update.</p>
                     </dd>
                     <dt data-property-name="elevatorGroups" class="has-description">
                       <span class="json-property-name">elevatorGroups:</span>
@@ -10673,9 +10672,9 @@
                 <section class="json-schema-description">
                   <p>An
                     <em>operator group</em> is an object in Command Centre. The connection between an operator group and a cardholder is a
-                    <em>membership</em>. A cardholder can be a member of many groups, and groups usually have more than one member.</p>
+                    <em>membership</em>. A cardholder can be a member of many different operator groups, and operator groups usually have more than one member, but a cardholder can only have one membership to a given operator group at a time. This is because an operator group membership, unlike an access group membership, does not have start and end dates.</p>
                   <p>Presence in an operator group affects software access. Your REST operator, for example, must be in an operator group that grants privileges, otherwise it will receive nothing but 404s.</p>
-                  <p>Added in 8.50.</p>
+                  <p>Added to the API in 8.50.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>

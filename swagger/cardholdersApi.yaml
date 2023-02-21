@@ -2308,16 +2308,16 @@ definitions:
           schema](#definition-Cardholder-operator-group).
 
           Each element of the 'add' array will need an 'operatorGroup' member containing an href
-          identifying the operator group to which you wish to add the cardholder.
+          identifying the operator group to which you wish to add the cardholder.  Supported in 8.50
+          and later.
 
           The only field that makes sense in an element of the 'remove' array is the href.  Make
-          sure it is the href of the membership, not of the operator group.
+          sure it is the href of the membership, not of the operator group.  Supported in 8.90 and
+          later.
 
           There is nothing about an operator group membership that you can change so there is no
-          point to an 'update' array.  Operator group memberships are, or are not - there is no
+          point to an 'update' array.  Operator group memberships are, or are not:  there is no
           update.
-
-          Supported in 8.50 and later.
 
         example:
           add:
@@ -2869,13 +2869,15 @@ definitions:
   Cardholder operator group:
     description: |
       An _operator group_ is an object in Command Centre.  The connection between an operator group
-      and a cardholder is a _membership_.  A cardholder can be a member of many groups, and groups
-      usually have more than one member.
+      and a cardholder is a _membership_.  A cardholder can be a member of many different operator
+      groups, and operator groups usually have more than one member, but a cardholder can only have
+      one membership to a given operator group at a time.  This is because an operator group
+      membership, unlike an access group membership, does not have start and end dates.
 
       Presence in an operator group affects software access.  Your REST operator, for example, must
       be in an operator group that grants privileges, otherwise it will receive nothing but 404s.
 
-      Added in 8.50.
+      Added to the API in 8.50.
 
     properties:
       href:
