@@ -2875,7 +2875,7 @@ definitions:
       membership, unlike an access group membership, does not have start and end dates.
 
       Presence in an operator group affects software access.  Your REST operator, for example, must
-      be in an operator group that grants privileges, otherwise it will receive nothing but 404s.
+      be in an operator group that grants privileges otherwise it will receive nothing but 404s.
 
       Added to the API in 8.50.
 
@@ -2883,7 +2883,8 @@ definitions:
       href:
         type: string (url)
         description: |
-          DELETE this URL to remove this operator group membership.
+          DELETE this URL or use it in the 'operatorGroups' block of a [cardholder
+          PATCH](#operation--api-cardholders--id--patch) to remove this operator group membership.
 
           DELETE is the only verb you can use on this URL.  GET will always return a 404.
 
@@ -2891,7 +2892,8 @@ definitions:
       operatorGroup:
         description:  |
           An object containing a link to this operator group's detail page and its name.  It is
-          read-only because you cannot change a group membership's group.
+          marked read-only because you do not send it to the server when managing a cardholder's
+          operator groups:  you cannot change a group membership's group.
 
           The link will be absent if your operator does not have the privilege to view the operator
           group ('View operators' or 'Edit operators', for example).

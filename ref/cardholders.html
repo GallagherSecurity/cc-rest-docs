@@ -662,7 +662,7 @@
                     <td valign=top>
                       <a href=rest.html>Status and overrides</a>
                     </td>
-                    <td> These functions let you monitor and override several more Command Centre item types. For example you can use them to watch the status of inputs, open doors, run macros, and modify schedules. </td>
+                    <td> These functions let you monitor and override several Command Centre item types, including access zones, alarm zones, doors, fence zones, inputs, outputs, macros, elevator groups, interlock groups, and schedules. </td>
                   </tr>
                   <tr>
                     <td valign=top>
@@ -10673,7 +10673,7 @@
                   <p>An
                     <em>operator group</em> is an object in Command Centre. The connection between an operator group and a cardholder is a
                     <em>membership</em>. A cardholder can be a member of many different operator groups, and operator groups usually have more than one member, but a cardholder can only have one membership to a given operator group at a time. This is because an operator group membership, unlike an access group membership, does not have start and end dates.</p>
-                  <p>Presence in an operator group affects software access. Your REST operator, for example, must be in an operator group that grants privileges, otherwise it will receive nothing but 404s.</p>
+                  <p>Presence in an operator group affects software access. Your REST operator, for example, must be in an operator group that grants privileges otherwise it will receive nothing but 404s.</p>
                   <p>Added to the API in 8.50.</p>
                 </section>
                 <section class="json-schema-properties">
@@ -10684,7 +10684,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>DELETE this URL to remove this operator group membership.</p>
+                      <p>DELETE this URL or use it in the &#39;operatorGroups&#39; block of a
+                        <a href="#operation--api-cardholders--id--patch">cardholder PATCH</a> to remove this operator group membership.</p>
                       <p>DELETE is the only verb you can use on this URL. GET will always return a 404.</p>
                     </dd>
                     <dt data-property-name="operatorGroup" class="has-description">
@@ -10694,7 +10695,7 @@
                       <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
-                      <p>An object containing a link to this operator group&#39;s detail page and its name. It is read-only because you cannot change a group membership&#39;s group.</p>
+                      <p>An object containing a link to this operator group&#39;s detail page and its name. It is marked read-only because you do not send it to the server when managing a cardholder&#39;s operator groups: you cannot change a group membership&#39;s group.</p>
                       <p>The link will be absent if your operator does not have the privilege to view the operator group (&#39;View operators&#39; or &#39;Edit operators&#39;, for example).</p>
                     </dd>
                   </dl>
