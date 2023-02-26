@@ -3532,9 +3532,13 @@ listens on the default port for HTTPS, 443.
 Everything else is the same, including the API key, the client certificate, the root path (`/api`),
 and the documentation URL https://gallaghersecurity.github.io.
 
-The gateway will enforce the REST Client item's source IP restrictions.  If the source IP of your
-client's connections will change when you move them from the Command Centre server to the API
-gateway, you will need to adjust those restrictions.
+// Bob Coleman is making a TFS item for a bug that hides source IP numbers from us when the request
+// comes through the gateway.  The source IP will be one of Amazon's load balancers, 10.218.x.x.
+
+The request's source IP number will _not_ be that of your client host by the time the request
+arrives at our gateway.  It will be the internal address of one of Amazon's load balancers, so you
+will need to untick 'Enable IP Filtering' when you move from the Command Centre server to the API
+gateway.
 
 There are no additional licence requirements for the API gateway.
 
