@@ -2127,6 +2127,12 @@ definitions:
 
           The only field that makes sense in an element of the 'remove' array is 'href' and 'status'.
 
+          You can remove and add cards in the same PATCH.  In fact you should do that in preference
+          to making multiple API calls.  That is a good way of reissuing a mobile credentials, for
+          example:  put the href to the old one in the 'remove' array and a new invitation in the
+          'add' array.  The new credential should have the same card number and the same 'type' and
+          'invitation' blocks as the credential you're re-issuing.
+
           Do not put the same href in both the 'update' and 'remove' arrays.
 
           In version 8.90 and later you can specify a card state in the `value` field inside the
