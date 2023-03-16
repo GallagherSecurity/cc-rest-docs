@@ -443,6 +443,49 @@ cardholders and schedules--it does not let create, alter, or delete them.
 The purpose of the cardholder API is to let you associate items with
 cardholders and manage those associations.
 
+=== Items versus a cardholder’s link to them
+
+Talking about a PDF or a competency can be confusing, because there is a
+PDF item and a competency item, and cardholders can have PDFs and
+competencies, but the item and the cardholder’s link to the item are
+different things.
+
+The items (on the left in the table below) and the connection to a
+cardholder (on the right) both appear in the REST API, but the API only
+lets you change the things in the right column, the connections.
+So let
+us make some definitions:
+
+[width="100%",cols="50%,50%",options="header",]
+|===
+|Item |A cardholder’s possession of that item
+|Access group |Group membership
+
+|Competency |Cardholder competency
+
+|Role |Relationship +
+(the role is the nature of the relationship between two cardholders)
+
+|Locker |Locker assignment
+
+|PDF |Cardholder PDF +
+or +
+PDF value
+|===
+
+There is a question of scale. You may have only two competencies, but thousands of cardholders with
+those competencies. You may have only one role in the system, but every one of your cardholders
+might have a relationship using that role.
+
+For that reason, the API calls that list items such as roles and competencies do not list their
+connections to cardholders. The result sets would be too large. Instead,
+you see those connections from the cardholder side: when you GET a
+cardholder’s details, you will see all the connections that cardholder
+has to PDFs, competencies, groups, cards, lockers, and roles.
+
+Access groups and operator groups will show you their cardholder
+members, but only if you ask.
+
 === Events and alarms
 
 Events record occurrences in the system. They are not items. They have
@@ -661,49 +704,6 @@ acceptable to the client, the server has a chance to check the client certificat
 does not like the client certificate, Command Centre will raise an 'invalid client certificate'
 alarm.
 
-
-=== Items versus a cardholder’s link to them
-
-Talking about a PDF or a competency can be confusing, because there is a
-PDF item and a competency item, and cardholders can have PDFs and
-competencies, but the item and the cardholder’s link to the item are
-different things.
-
-The items (on the left in the table below) and the connection to a
-cardholder (on the right) both appear in the REST API, but the API only
-lets you change the things in the right column, the connections.
-So let
-us make some definitions:
-
-[width="100%",cols="50%,50%",options="header",]
-|===
-|Item |A cardholder’s possession of that item
-|Access group |Group membership
-
-|Competency |Cardholder competency
-
-|Role |Relationship +
-(the role is the nature of the relationship between two cardholders)
-
-|Locker |Locker assignment
-
-|PDF |Cardholder PDF +
-or +
-PDF value
-|===
-
-There is a question of scale. You may have only two competencies, but thousands of cardholders with
-those competencies. You may have only one role in the system, but every one of your cardholders
-might have a relationship using that role.
-
-For that reason, the API calls that list items such as roles and competencies do not list their
-connections to cardholders. The result sets would be too large. Instead,
-you see those connections from the cardholder side: when you GET a
-cardholder’s details, you will see all the connections that cardholder
-has to PDFs, competencies, groups, cards, lockers, and roles.
-
-Access groups and operator groups will show you their cardholder
-members, but only if you ask.
 
 == Enable Command Centre's API
 
