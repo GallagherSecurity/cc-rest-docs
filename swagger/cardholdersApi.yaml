@@ -2749,8 +2749,9 @@ definitions:
           Even though PINs are numeric, put them in quotes.  Otherwise leading zeros will be lost
           when the JSON parser converts them to integers.
 
-          The server will quietly ignore this field if the card's `credentialClass` is not `card`,
-          `piv`, `piv-i`, or `govPass`.
+          8.90 servers will reject your update if the card's `credentialClass` is not `card`, `piv`,
+          `piv-i`, or `govPass`.  9.00 servers and beyond will not set a PIN in that case, but will
+          allow the rest of the update.
 
           Added in 8.90.
 
