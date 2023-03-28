@@ -8473,7 +8473,7 @@
                           <span class="json-property-read-only"></span>
                         </dt>
                         <dd>
-                          <p>The last zone the cardholder entered. If the cardholder is a visitor and their last movement was to leave the site, this will be their visit&#39;s reception, not an access zone. 8.50 and later will present only the name of the reception and withhold the href.</p>
+                          <p>The last zone the cardholder entered. If the cardholder is a visitor and their last movement was to leave the site, this will be their visit&#39;s reception, not an access zone. 8.50 and later will present only the name of the reception and withhold the href in that case.</p>
                         </dd>
                         <dt data-property-name="serverDisplayName" class="has-description">
                           <span class="json-property-name">serverDisplayName:</span>
@@ -10342,9 +10342,9 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This is a write-only field. You can use it in POSTs and PATCHes, but the server will not send it to you.</p>
-                      <p>Even though PINs are numeric, put them in quotes. Otherwise leading zeros will be lost when the JSON parser converts them to integers.</p>
-                      <p>8.90 servers will reject your update if the card&#39;s <code>credentialClass</code> is not <code>card</code>, <code>piv</code>, <code>piv-i</code>, or <code>govPass</code>. 9.00 servers and beyond will not set a PIN in that case, but will allow the rest of the update.</p>
+                      <p>Even though this appears in the example of a cardholder GET, this is a write-only field. You can use it in POSTs and PATCHes but the server will not send it to you.</p>
+                      <p>Being numeric, you might be tempted to send PINs to the server without surrounding quotes. However if you do that, leading zeros will be lost when the server converts them to integers. Putting quotes around the PIN forces the server to treat them as strings, which preserves any leading zeros.</p>
+                      <p>8.90 servers will reject your request if the card&#39;s <code>credentialClass</code> is not <code>card</code>, <code>piv</code>, <code>piv-i</code>, or <code>govPass</code>. More recent servers will issue a warning in that case, and will not set the PIN, but will allow the rest of the update.</p>
                       <p>Added in 8.90.</p>
                     </dd>
                   </dl>
