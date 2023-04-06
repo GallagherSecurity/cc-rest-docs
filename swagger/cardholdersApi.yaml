@@ -70,9 +70,6 @@ info:
       view, which is a larger set determined by privileges alone, and not suitable for interactive
       REST clients.
 
-    * Email address and mobile number PDFs will show whether they are suitable to receive SMS and
-      email notifications.
-
     #### Cardholder API changes in 8.90
 
     * Write access to card PINs.
@@ -1686,7 +1683,7 @@ definitions:
               All the personal data definitions and values for this cardholder.  It is an array of
               objects, each with one key/value pair.  The key is the name of the PDF preceded by
               an '@'; the value is an object containing the definition of the PDF (common for all
-              cardholders) and the value for this cardholder.  The value block of an image PDF will
+              cardholders) and the value for this cardholder.  The `value` block of an image PDF will
               contain an href to the image.
 
               Your visibility of a cardholder's PDF value depends entirely on the PDF's access
@@ -1697,12 +1694,13 @@ definitions:
               the default visibility on the PDF item itself.
 
               When you send this array in a POST or PATCH, Command Centre will take the
-              notifications flag from here.  It will use the value from here too, but the '@name'
-              field at the root of the cardholder object takes priority.
+              `notifications` flag from here.  It can take `value` from here too, but if you also
+              send a field in the root of the cardholder with the name of the PDF preceded by an
+              '@', that one wins.
 
-              To request this block using the 'fields' parameter, use 'personalDataFields' (note
+              To request this block using the 'fields' parameter, use `personalDataFields` (note
               'fields' not 'definitions').  Doing so will not only give you the
-              personalDataDefinitions block, but also the values at the root level (with their names
+              `personalDataDefinitions` block, but also the values at the root level (with their names
               preceded by '@'-signs).
             items:
               {$ref: '#/definitions/Cardholder PDF'}

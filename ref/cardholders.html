@@ -315,9 +315,6 @@
                   <li>
                     <p>You will be able to request the competencies that your operator has the permission to assign. That is determined by privileges, a competency setting, and an operator group setting. Current versions let you request the competencies that your operator has the permission to view, which is a larger set determined by privileges alone, and not suitable for interactive REST clients.</p>
                   </li>
-                  <li>
-                    <p>Email address and mobile number PDFs will show whether they are suitable to receive SMS and email notifications.</p>
-                  </li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-890">Cardholder API changes in 8.90</h4>
                 <ul>
@@ -8590,10 +8587,10 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>All the personal data definitions and values for this cardholder. It is an array of objects, each with one key/value pair. The key is the name of the PDF preceded by an &#39;@&#39;; the value is an object containing the definition of the PDF (common for all cardholders) and the value for this cardholder. The value block of an image PDF will contain an href to the image.</p>
+                          <p>All the personal data definitions and values for this cardholder. It is an array of objects, each with one key/value pair. The key is the name of the PDF preceded by an &#39;@&#39;; the value is an object containing the definition of the PDF (common for all cardholders) and the value for this cardholder. The <code>value</code> block of an image PDF will contain an href to the image.</p>
                           <p>Your visibility of a cardholder&#39;s PDF value depends entirely on the PDF&#39;s access settings in your operator groups, or if it has none of those, its default privilege. The PDF&#39;s division is irrelevant. So if you were expecting a PDF value here when none arrived, ensure the cardholder has a value for that PDF (because the server does not send nulls) then check the PDF&#39;s access settings in all of your operator groups, then the default visibility on the PDF item itself.</p>
-                          <p>When you send this array in a POST or PATCH, Command Centre will take the notifications flag from here. It will use the value from here too, but the &#39;@name&#39; field at the root of the cardholder object takes priority.</p>
-                          <p>To request this block using the &#39;fields&#39; parameter, use &#39;personalDataFields&#39; (note &#39;fields&#39; not &#39;definitions&#39;). Doing so will not only give you the personalDataDefinitions block, but also the values at the root level (with their names preceded by &#39;@&#39;-signs).</p>
+                          <p>When you send this array in a POST or PATCH, Command Centre will take the <code>notifications</code> flag from here. It can take <code>value</code> from here too, but if you also send a field in the root of the cardholder with the name of the PDF preceded by an &#39;@&#39;, that one wins.</p>
+                          <p>To request this block using the &#39;fields&#39; parameter, use <code>personalDataFields</code> (note &#39;fields&#39; not &#39;definitions&#39;). Doing so will not only give you the <code>personalDataDefinitions</code> block, but also the values at the root level (with their names preceded by &#39;@&#39;-signs).</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-array-items">
