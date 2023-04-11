@@ -806,10 +806,10 @@ paths:
         - Alarms
       summary: Get changes to alarms (or wait)
       description: |
-        Long poll this link for live updates to alarms.  It will return the alarms that occurred or
-        changed since the previous call, no matter how long ago that was.  If there are no changes
-        to alarms before a timeout passes (about 30 seconds) the server will return a normal
-        response, except that the `updates` array will be empty.
+        Long poll this link for live updates to alarms.  If alarms occurred or changed since the
+        previous call, no matter how long ago that was, it will return them immediately.  If there
+        are no updates pending, it will wait until one arrives.  If none arrive before a timeout
+        passes (about 30 seconds) the `updates` array in its response will be empty.
 
         Whether or not the response contained updates the client should follow the `next` link to
         wait for the next updates.  If your server receives a lot of alarm updates, wait some time
