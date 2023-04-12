@@ -1847,12 +1847,15 @@ definitions:
       schema for the detailed [cardholder object](#definition-Cardholder-detail) that you receive
       from a cardholder href.
 
+    required: [ division ]
     properties:
       firstName:
         type: string
+        description: You must supply either this or the last name when creating a cardholder.
         example: "Algernon"
       lastName:
         type: string
+        description: You must supply either this or the first name when creating a cardholder.
         example: "Boothroyd"
       shortName:
         type: string
@@ -3083,6 +3086,7 @@ definitions:
       competency a second time will either fail or raise a stateful alarm depending on your version
       of Command Centre.
 
+    required: [ href ]
     properties:
       href:
         type: string
@@ -4998,6 +5002,7 @@ definitions:
     description: |
       POST one of these to schedule a redaction.
 
+    required: [ cardholder, type ]
     properties:
       cardholder:
         type: object
@@ -5180,6 +5185,7 @@ definitions:
       ignore `href`, and (unusually) `division` because it copies a visit's division from its
       reception.
 
+    required: [ name, reception, visitorType, host, from, until ]
     properties:
       name:
         <<: *VISIT_NAME
