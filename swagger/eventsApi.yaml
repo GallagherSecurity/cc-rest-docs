@@ -2516,6 +2516,7 @@ definitions:
       - $ref: "#/definitions/Event summary"
 
   Event POST body:
+    required: [type, eventType]
     properties:
       type:
         description: |
@@ -2524,7 +2525,7 @@ definitions:
           It is mandatory because the server cannot assume a reasonable default.  It can for the
           others.
 
-          If your server is running 8.90 `eventType` is a synonym.  If you send both a `type` block
+          If your server is running 8.90 or later, `eventType` is a synonym.  If you send both a `type` block
           and an `eventType` block it will use `eventType`.
 
         type: object
@@ -3164,6 +3165,7 @@ definitions:
       Contains a list of item IDs (short alphanums).  Send it in the body of a
       [POST](#operation--api-items-updates-post) to create a subscription to status updates to the
       items with these IDs.
+    required: [itemIds]
     properties:
       itemIds:
         type: array
