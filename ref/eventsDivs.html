@@ -2049,7 +2049,7 @@
                   <p>The POST expects a document in the same format as the
                     <a href="#definition-Division">the division detail</a> but with far fewer fields. An example is
                     <a href="#definition-Division-PATCH-and-POST-example">this POST example</a>. The only mandatory field is <code>parent</code>.</p>
-                  <p>When successful it returns a <code>location</code> header containing the address of the new cardholder.</p>
+                  <p>When successful it returns a <code>location</code> header containing the address of the new division.</p>
                   <p>Note that you can only create one division per POST.</p>
                   <p>Do not code this URL into your application. Take it from the results of <code>GET /api</code>.
                     <strong>TODO THERE IS NOTHING THERE YET but it will probably be ** <code>divisions.divisions.href</code> **TODO</strong>
@@ -7454,7 +7454,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The division&#39;s name.</p>
+                      <p>The division&#39;s name. If you supply a name and another division already exists with that name, the call will fail. If you leave it blank in a POST, Command Centre will pick value for you.</p>
                     </dd>
                     <dt data-property-name="description" class="has-description">
                       <span class="json-property-name">description:</span>
@@ -7470,7 +7470,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>A string, much longer than <code>description</code>, suitable for holding notes about the division.</p>
+                      <p>A string, able to me much longer than <code>description</code>, suitable for holding notes about the division.</p>
                     </dd>
                     <dt data-property-name="parent" class="has-description">
                       <span class="json-property-name">parent:</span>
@@ -7480,6 +7480,8 @@
                     <dd>
                       <p>An object containing an href to the division entity representing the current division&#39;s parent.</p>
                       <p>Required when creating a new division, because only root divisions can be unparented and you cannot create a new one of those.</p>
+                      <p>
+                        <strong>BUG</strong> also required when updating a division. See comments in code.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
