@@ -1907,6 +1907,14 @@
                 <section class="swagger-responses">
                   <div class="prop-row prop-group">
                     <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. The response body will contain feedback from the server about your PATCH.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
@@ -1918,7 +1926,7 @@
                       <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The body of the PATCH did not describe a valid division.</p>
+                      <p>The body of the PATCH did not describe a valid division. See the body of the response for help on what went wrong. It may be that you tried to use the name of another division: no two items of the same type can have the same name.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -1926,11 +1934,11 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator has a privilege that allows viewing the division but not modifying it, or the server is missing the necessary licence. *
+                      <p>The operator has a privilege that allows viewing the division but not modifying it, or you tried to set a parent on the root division, or the server is missing the necessary licence. *
                         <em>WHAT LICENCE DO YOU NEED? Creating a division should probably require RESTCardholders. *</em>
                       </p>
                       <p>
-                        <strong>TODO</strong> WHAT PRIVS DO YOU NEED ON IT AND IT&#39;S NEW PARENT?
+                        <strong>TODO</strong> WHAT PRIVS DO YOU NEED ON IT AND ITS NEW PARENT?
                         <strong>TODO</strong>
                       </p>
                     </div>
@@ -1996,9 +2004,7 @@
                       <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>Deleting the division failed. This happens when
-                        <strong>WHAT? IT STILL HAS ITEMS IN IT?</strong>
-                      </p>
+                      <p>Deleting the division failed. This happens when the division is not empty or is still being used by another item (such as an operator group).</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2108,7 +2114,7 @@
                       <div class="prop-title">201 Created</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success.</p>
+                      <p>Success. Check the response body for feedback about your request.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2116,7 +2122,8 @@
                       <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The body of the POST did not describe a valid division.</p>
+                      <p>The body of the POST did not describe a valid division. This includes not specifying a parent division. Or it may be that you tried to give the new division the same name as an existing one.</p>
+                      <p>See the body of the response for help.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2124,11 +2131,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have a privilege that allows creating divisions, or you attempted to
-                        <strong>TODO</strong> WHAT PRIVS DO YOU NEED ON THE PARENT?
-                        <strong>TODO</strong> or the server has reached its licensed limit of divisions
-                        <strong>TODO</strong> is there a limit on divisions
-                        <strong>TODO</strong>.</p>
+                      <p>The operator does not have a privilege on the parent division that allows creating divisions inside it, or the server has reached its licensed limit of divisions.</p>
                     </div>
                   </div>
                 </section>

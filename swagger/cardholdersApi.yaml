@@ -53,11 +53,16 @@ info:
 
     #### Cardholder API changes on the roadmap
 
+    * POTENTIALLY BREAKING CHANGE:  PATCH methods may return "200 Success" instead of "204 No
+      Content" and will contain a message from the API giving you feedback on your request.  Please
+      be aware that all 200-level response codes mean success, not just the ones old versions have
+      been sending you.
+
     * A cardholder's visits and escort.
 
     * "Revealable" access levels on PDFs.
 
-    * BREAKING CHANGE:  a future version will sort its search results differently if your query does
+    * POTENTIALLY BREAKING CHANGE:  a future version will sort its search results differently if your query does
       not include a parameter to override the default.
 
     * Current versions of the API only show a PDF on a cardholder if he or she has a value for that
@@ -5599,7 +5604,10 @@ paths:
           instructions for creating, updating, and deleting personal data, group
           memberships, etc.
 
-      responses: 
+      responses:
+        200:
+          description: |
+            Success.  The response body will contain feedback from the server about your PATCH.
         204: 
           description: "Success."
         400:
@@ -7196,6 +7204,9 @@ paths:
           As well as simple attributes such as `from` and `until`, the PATCH body you send can
           contain instructions for updating the lists of visitors and access groups.
       responses:
+        200:
+          description: |
+            Success.  The response body will contain feedback from the server about your PATCH.
         204:
           description: "Success."
         400:
