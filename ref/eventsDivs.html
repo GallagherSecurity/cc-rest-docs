@@ -122,6 +122,7 @@
           <a href="#definition-Event-search"> Event search </a>
           <a href="#definition-Event-summary"> Event summary </a>
           <a href="#definition-Event-detail"> Event detail </a>
+          <a href="#definition-Event-location"> Event location </a>
           <a href="#definition-Event-POST-body"> Event POST body </a>
           <a href="#definition-Event-groups"> Event groups </a>
           <a href="#definition-Divisions"> Divisions </a>
@@ -6444,170 +6445,17 @@
                         </dd>
                         <dt data-property-name="location" class="has-description">
                           <span class="json-property-name">location:</span>
-                          <span class="json-property-type">object</span>
+                          <span class="json-property-type">
+                            <span class="">
+                              <a class="json-schema-ref" href="#/definitions/Event location">Event location</a>
+                            </span>
+                          </span>
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>This field is present only when requested and when the event contains information about a cardholder&#39;s location.</p>
-                          <p>Raw Command Centre events store their cardholder, access zones, and &quot;point&quot; differently depending on the event type. Not all events have all those fields, but when they do, this block presents them in a consistent way. Using this block you can track cardholder movements without needing to know anything about events.</p>
+                          <p>This block is big enough to earn itself its own section in the documentation.</p>
+                          <p>It will not appear by default (you must ask for it using the <code>fields</code> query parameter), and only for certain event types, and only in version 9.0 or later.</p>
                         </dd>
-                        <dt class="json-inner-schema">
-                          <section class="json-schema-properties">
-                            <dl>
-                              <dt data-property-name="cardholder" class="has-description">
-                                <span class="json-property-name">cardholder:</span>
-                                <span class="json-property-type">object</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>This is the cardholder whose location was changed by or became known by the event.</p>
-                                <p>When a cardholder shows a credential to a reader, this field contains that cardholder. When an operator moves a cardholder using a tag board, this field contains the cardholder.</p>
-                              </dd>
-                              <dt class="json-inner-schema">
-                                <section class="json-schema-properties">
-                                  <dl>
-                                    <dt data-property-name="href" class="has-description">
-                                      <span class="json-property-name">href:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-format">(url)</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>Missing if the operator does not have the privilege to view the cardholder.</p>
-                                    </dd>
-                                    <dt data-property-name="name" class="has-description">
-                                      <span class="json-property-name">name:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>This is the name of the cardholder at the time of the event.</p>
-                                    </dd>
-                                  </dl>
-                                </section>
-                              </dt>
-                              <dt data-property-name="moved" class="has-description">
-                                <span class="json-property-name">moved:</span>
-                                <span class="json-property-type">boolean</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>This flag indicates whether the cardholder changed locations.</p>
-                                <p>It is based purely on the event type. It will be true for &#39;Access granted&#39; and &#39;Operator moved cardholder&#39; events, for example, but false for &#39;Access granted but not taken&#39; and &#39;Access denied&#39;.</p>
-                              </dd>
-                              <dt data-property-name="before" class="has-description">
-                                <span class="json-property-name">before:</span>
-                                <span class="json-property-type">object</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>This is the zone the cardholder was in before this event.</p>
-                                <p>It will be missing if there is no exit zone on the event: when Command Centre does not know what zone they attempted to move out of. That happens when, for example, a person moves into the entry zone of a door that has no exit zone.</p>
-                                <p>It also happens when there is no notion of a &#39;before&#39; zone. When a person logs into an alarm terminal, for example.</p>
-                              </dd>
-                              <dt class="json-inner-schema">
-                                <section class="json-schema-properties">
-                                  <dl>
-                                    <dt data-property-name="href" class="has-description">
-                                      <span class="json-property-name">href:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-format">(url)</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>Missing if the operator does not have the privilege to view the access zone.</p>
-                                    </dd>
-                                    <dt data-property-name="name" class="has-description">
-                                      <span class="json-property-name">name:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>The name of the access zone at the time of the event.</p>
-                                    </dd>
-                                  </dl>
-                                </section>
-                              </dt>
-                              <dt data-property-name="after" class="has-description">
-                                <span class="json-property-name">after:</span>
-                                <span class="json-property-type">object</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>This is the access zone or reception the cardholder was in after this event, if known.</p>
-                                <p>It will be missing if there is no entry zone on the event. That happens when, for example, an operator moves a cardholder &quot;outside the system&quot; or when a person badges at an elevator kiosk or a non-Gallagher door.</p>
-                                <p>When a visitor leaves the system the &#39;after&#39; area on the event is their visit&#39;s reception item, not an access zone.</p>
-                                <p>
-                                  <strong>TODO</strong> what are we going to call the &quot;after&quot; zone when it could be a reception?</p>
-                                <ul>
-                                  <li><code>after</code> but everything else in this API called &#39;after&#39; is a timestamp.</li>
-                                  <li><code>afterZone</code> okay if you consider a reception some kind of zone.</li>
-                                  <li><code>afterAccessZone</code> to match with <code>entryAccessZone</code> on the event. But a reception is definitely not one of those.</li>
-                                  <li><code>afterArea</code> but &quot;area&quot; isn&#39;t a CC thing.</li>
-                                </ul>
-                              </dd>
-                              <dt class="json-inner-schema">
-                                <section class="json-schema-properties">
-                                  <dl>
-                                    <dt data-property-name="href" class="has-description">
-                                      <span class="json-property-name">href:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-format">(url)</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>Missing if the operator does not have the privilege to view the item.</p>
-                                    </dd>
-                                    <dt data-property-name="name" class="has-description">
-                                      <span class="json-property-name">name:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>The name of the access zone at the time of the event.</p>
-                                    </dd>
-                                  </dl>
-                                </section>
-                              </dt>
-                              <dt data-property-name="point" class="has-description">
-                                <span class="json-property-name">point:</span>
-                                <span class="json-property-type">object</span>
-                                <span class="json-property-range" title="Value limits"></span>
-                              </dt>
-                              <dd>
-                                <p>This is the item that the cardholder or operator used to cause the location event. For regular card badges it will be a reader.</p>
-                                <p>
-                                  <strong>TODO more examples</strong>
-                                </p>
-                              </dd>
-                              <dt class="json-inner-schema">
-                                <section class="json-schema-properties">
-                                  <dl>
-                                    <dt data-property-name="href" class="has-description">
-                                      <span class="json-property-name">href:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-format">(url)</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>This is the href of the &#39;point&#39; item. When that is a reader—and it often will be—the link will be to the
-                                        <a href="#definition-Item-detail">items</a> controller because the API does not have a controller for readers.</p>
-                                      <p>It will be missing if the operator does not have the privilege to view the item (if following it would cause a 404).</p>
-                                    </dd>
-                                    <dt data-property-name="name" class="has-description">
-                                      <span class="json-property-name">name:</span>
-                                      <span class="json-property-type">string</span>
-                                      <span class="json-property-range" title="Value limits"></span>
-                                    </dt>
-                                    <dd>
-                                      <p>The name of the item at the time of the event.</p>
-                                    </dd>
-                                  </dl>
-                                </section>
-                              </dt>
-                            </dl>
-                          </section>
-                        </dt>
                       </dl>
                     </section>
                   </section>
@@ -6722,6 +6570,216 @@
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/2160&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Basement T30&quot;</span>
     }
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Event-location" class="definition panel" data-traverse-target="definition-Event-location">
+            <h2 class="panel-title">
+              <a name="/definitions/Event location"></a>Event location:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>This block of fields is present in an
+                    <a href="#definition-Event-detail">event</a> only when you ask for it and only when a cardholder:</p>
+                  <ul>
+                    <li>moved,</li>
+                    <li>attempted to move, or</li>
+                    <li>authenticated at a device.</li>
+                  </ul>
+                  <p>It is derived from other fields that the API can return to you. But raw Command Centre events store their cardholder, access zones, and &quot;point&quot; differently depending on the event type. When a suitable event has some of those fields, this block presents them in a consistent way. Using it you can track cardholder movements without needing to know anything about events.</p>
+                  <p>Added in 9.0.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="cardholder" class="has-description">
+                      <span class="json-property-name">cardholder:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the cardholder whose location was changed by or became known by the event.</p>
+                      <p>When a cardholder shows a credential to a reader, this field contains that cardholder. When an operator moves a cardholder using a tag board, this field contains the cardholder.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href" class="has-description">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>Missing if the operator does not have the privilege to view the cardholder.</p>
+                          </dd>
+                          <dt data-property-name="name" class="has-description">
+                            <span class="json-property-name">name:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>This is the name of the cardholder at the time of the event.</p>
+                          </dd>
+                        </dl>
+                      </section>
+                    </dt>
+                    <dt data-property-name="moved" class="has-description">
+                      <span class="json-property-name">moved:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This flag indicates whether the cardholder changed locations.</p>
+                      <p>It is based purely on the event type. It will be true for &#39;Access granted&#39; and &#39;Operator moved cardholder&#39; events, for example, but false for &#39;Access granted but not taken&#39; and &#39;Access denied&#39;.</p>
+                    </dd>
+                    <dt data-property-name="before" class="has-description">
+                      <span class="json-property-name">before:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the zone the cardholder was in before this event.</p>
+                      <p>It will be missing if there is no exit zone on the event: when Command Centre does not know what zone they attempted to move out of. That happens when, for example, a person moves into the entry zone of a door that has no exit zone.</p>
+                      <p>It also happens when there is no notion of a &#39;before&#39; zone. When a person logs into an alarm terminal, for example.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href" class="has-description">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>Missing if the operator does not have the privilege to view the access zone.</p>
+                          </dd>
+                          <dt data-property-name="name" class="has-description">
+                            <span class="json-property-name">name:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>The name of the access zone at the time of the event.</p>
+                          </dd>
+                        </dl>
+                      </section>
+                    </dt>
+                    <dt data-property-name="after" class="has-description">
+                      <span class="json-property-name">after:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the access zone or reception the cardholder was in after this event, if known.</p>
+                      <p>It will be missing if there is no entry zone on the event. That happens when, for example, an operator moves a cardholder &quot;outside the system&quot; or when a person badges at an elevator kiosk or a non-Gallagher door.</p>
+                      <p>When a visitor leaves the system the &#39;after&#39; area on the event is their visit&#39;s reception item, not an access zone.</p>
+                      <p>
+                        <strong>TODO</strong> what are we going to call the &quot;after&quot; zone when it could be a reception?</p>
+                      <ul>
+                        <li><code>after</code> but everything else in this API called &#39;after&#39; is a timestamp.</li>
+                        <li><code>afterZone</code> okay if you consider a reception some kind of zone.</li>
+                        <li><code>afterAccessZone</code> to match with <code>entryAccessZone</code> on the event. But a reception is definitely not one of those.</li>
+                        <li><code>afterArea</code> but &quot;area&quot; isn&#39;t a CC thing.</li>
+                      </ul>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href" class="has-description">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>Missing if the operator does not have the privilege to view the item.</p>
+                          </dd>
+                          <dt data-property-name="name" class="has-description">
+                            <span class="json-property-name">name:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>The name of the access zone at the time of the event.</p>
+                          </dd>
+                        </dl>
+                      </section>
+                    </dt>
+                    <dt data-property-name="point" class="has-description">
+                      <span class="json-property-name">point:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the item that the cardholder or operator used to cause the location event. For regular card badges it will be a reader.</p>
+                      <p>
+                        <strong>TODO more examples</strong>
+                      </p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href" class="has-description">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>This is the href of the &#39;point&#39; item. When that is a reader—and it often will be—the link will be to the
+                              <a href="#definition-Item-detail">items</a> controller because the API does not have a controller for readers.</p>
+                            <p>It will be missing if the operator does not have the privilege to view the item (if following it would cause a 404).</p>
+                          </dd>
+                          <dt data-property-name="name" class="has-description">
+                            <span class="json-property-name">name:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>The name of the item at the time of the event.</p>
+                          </dd>
+                        </dl>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Smith, Jane&quot;</span>
+  },
+  <span class="hljs-attr">&quot;moved&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;before&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/333&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell stairwell&quot;</span>
+  },
+  <span class="hljs-attr">&quot;after&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/334&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell basement&quot;</span>
+  },
+  <span class="hljs-attr">&quot;point&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/2160&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Basement T30&quot;</span>
   }
 }
 </code></pre> </body>
