@@ -9,25 +9,25 @@ digraph
         o_badprint[label="Raise 'incorrect fingerprint' alarm,\nreturn 401"]
         o_badip[label="Raise 'bad source IP' alarm,\nreturn 401"]
         o_disabled[label="Return 403"]
-        o_clientquit[label="Client faults,\nserver logs all it can\n(which isn't much)"]
+        o_clientquit[label="Their client faults,\nour server logs all it can\n(which isn't much)"]
 
         node [shape=box, style=""]
-        op1[label="Client connects, server sends cert"]
-        o_reqclientcert[label="Server requests client cert.\n(TLS step one)"]
-        o_clientsendscert[label="Client sends cert"]
-        o_clientreq[label="Client sends request\nincluding API key"]
+        op1[label="Client connects, server sends its certificate"]
+        o_reqclientcert[label="Server requests client certificate.\n(TLS step one)"]
+        o_clientsendscert[label="Client sends its certificate"]
+        o_clientreq[label="Client sends API request\nincluding API key"]
         o_argcheck[label="Proceed to argument checks\nand execution" style=filled fillcolor="#04ff04"]
 
         node [shape=diamond]
         cond[label="Client accepts server cert?" ordering=out ]
-        c_apikeycheck[label="REST Client exists\nwith that API key?"]
-        c_versioncheck [label="Server version" ]
-        c_clientcertcheck1[label="Fingerprint on that\nREST Client?"]
-        c_clientcertcheck2[label="Server allows clients\nwith no key?"]
+        c_apikeycheck[label="Is there a REST Client item\nwith that API key?"]
+        c_versioncheck [label="What version is the server?" ]
+        c_clientcertcheck1[label="Is there a fingerprint\non that REST Client item?"]
+        c_clientcertcheck2[label="Does the server allow clients with no key?\n('Enable REST Clients with no client certificate'\nserver property on)"]
 
-        c_clientcertcheck840[label="Server ignores client certs?"]
+        c_clientcertcheck840[label="Does the server ignore client certs?\n('Require pinned client certificates'\nserver property off)"]
 
-        c_correctcert[label="Client cert has\nmatching fingerprint?" shape=diamond]
+        c_correctcert[label="Does the client certificate match\nthe client item's fingerprint?" shape=diamond]
         c_sourceip[label="Client item has IP restrictions,\nand the client does not meet them?" ordering=out ]
         c_disabled[label="Client item is disabled\n(8.90 or later)?" ordering=out ]
         c_licence[label="Server has licence\nfor requested operation?"]
@@ -44,8 +44,8 @@ digraph
         c_apikeycheck->c_versioncheck [label = "yes"]
         c_apikeycheck->o_noapikey [label = "no"]
 
-        c_versioncheck -> c_clientcertcheck1 [label = ">= 8.50"]
-        c_versioncheck -> c_clientcertcheck840 [label = "< 8.50"]
+        c_versioncheck -> c_clientcertcheck1 [label = "8.50 or later"]
+        c_versioncheck -> c_clientcertcheck840 [label = "before 8.50"]
 
         c_clientcertcheck1->c_clientcertcheck2 [label= "no"]
 
