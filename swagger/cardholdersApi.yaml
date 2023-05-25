@@ -53,6 +53,8 @@ info:
 
     #### Cardholder API changes on the roadmap
 
+    * GovPass cards will reveal two new fields, `visitorContractor` and `ownedBySite`.
+
     * POTENTIALLY BREAKING CHANGE:  PATCH methods may return "200 Success" instead of "204 No
       Content" and will contain a message from the API giving you feedback on your request.  Please
       be aware that all 200-level response codes mean success, not just the ones old versions have
@@ -2765,6 +2767,29 @@ definitions:
           will not set the PIN, but will allow the rest of the update.
 
           Added in 8.90.
+      visitorContractor:
+        description: |
+          This is a credential property only for GovPass, indicating that the enrolled credential is
+          for a visitor / contractor.
+
+          It is a write-once field.
+
+          It is on the roadmap for verson 9.0.  Until its release, its behaviour is subject to
+          change.
+        type: boolean
+        example: false
+      ownedBySite:
+        description: |
+          This is a credential property only for GovPass, indicating if the site is the owner of the
+          card.
+
+          It is a read-only field.
+
+          It is on the roadmap for verson 9.0.  Until its release, its behaviour is subject to
+          change.
+        readOnly: true
+        type: boolean
+        example: false
 
   Cardholder card mobile example:
     description: |
