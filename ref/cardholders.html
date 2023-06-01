@@ -295,6 +295,7 @@
                 <p>Each section contains a list of use cases intended as quick solutions for simple tasks or a how-to to get you started toward your particular goal. However they also serve as a good introduction to the API if you step through them using a web browser, starting at <code>/api</code> on your Command Centre server. To do that, you will need a browser plugin that lets you set an Authorization HTTP header, and a JSON formatter to prettify the results documents. Search the Configuration client&#39;s online help for &#39;test REST API&#39; for guidance. You will also need to prepare Command Centre, as above.</p>
                 <h3 id="licensing">Licensing</h3>
                 <p>All of the API calls described here are available with the RESTCardholders licence. Lockers and locker banks are also available with the RESTStatus licence, and partially with the RESTOverrides licence.</p>
+                <p>The server will return a 403 if you attempt an operation for which the server is not licensed.</p>
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
                 <h4 id="cardholder-api-changes-on-the-roadmap">Cardholder API changes on the roadmap</h4>
@@ -10382,7 +10383,7 @@
                       <p>Even though this appears in the example of a cardholder GET, this is a write-only field. You can use it in POSTs and PATCHes but the server will not send it to you.</p>
                       <p>Being numeric, you might be tempted to send PINs to the server without surrounding quotes. However if you do that, leading zeros will be lost when the server converts them to integers. Putting quotes around the PIN forces the server to treat them as strings, which preserves any leading zeros.</p>
                       <p>8.90 servers will reject your request if the card&#39;s <code>credentialClass</code> is not <code>card</code>, <code>piv</code>, <code>piv-i</code>, or <code>govPass</code>. More recent servers will issue a warning in that case, and will not set the PIN, but will allow the rest of the update.</p>
-                      <p>Added in 8.90.</p>
+                      <p>PINs were added to the API in 8.90.</p>
                     </dd>
                     <dt data-property-name="visitorContractor" class="has-description">
                       <span class="json-property-name">visitorContractor:</span>

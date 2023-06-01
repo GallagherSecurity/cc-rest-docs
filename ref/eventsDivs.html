@@ -163,6 +163,7 @@
                 <p>Helper methods allow you to look up Command Centre&#39;s internal identifiers for cardholders, divisions, and other items, so that you can use those identifiers in search filters.</p>
                 <h3 id="licensing">Licensing</h3>
                 <p>All of the GETs in this document and the POSTs that manage alarms require the RESTEvents licence. The POST to create a new event requires RESTCreateEvents.</p>
+                <p>The server will return a 403 if you attempt an operation for which the server is not licensed.</p>
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
                 <h4 id="alarms-events-and-items-api-changes-on-the-roadmap">Alarms, events, and items API changes on the roadmap</h4>
@@ -1927,7 +1928,7 @@
                       <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The body of the PATCH did not describe a valid division. See the body of the response for help on what went wrong. It may be that you tried to use the name of another division: no two items of the same type can have the same name.</p>
+                      <p>The body of the PATCH did not describe a valid division. See the body of the response for help on what went wrong. It may be that you tried to use the name of another division: no two items of the same type can have the same name. Or you may have tried to set the division&#39;s parent to a division that is not visible to you.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -1935,7 +1936,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator has a privilege that allows viewing the division but not modifying it, or you tried to set a parent on the root division, or you tried to set the parent to a division you cannot view, or the server is missing the necessary licence.</p>
+                      <p>The operator has a privilege that allows viewing the division but not modifying it, or you tried to set a parent on the root division, or you tried to set the parent to a division you cannot configure, or the server is missing the necessary licence.</p>
                       <p>You need the &#39;Configure Site&#39; privilege on the division you are changing. You also need it on the parent, if you are changing that.</p>
                     </div>
                   </div>
@@ -2122,7 +2123,7 @@
                       <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The body of the POST did not describe a valid division. This includes not specifying a parent division. Or it may be that you tried to give the new division the same name as an existing one.</p>
+                      <p>The body of the POST did not describe a valid division. This includes not specifying a parent division. Or it may be that you tried to give the new division the same name as an existing one. Or you may have tried to set the new division&#39;s parent to a division that is not visible to you.</p>
                       <p>See the body of the response for help.</p>
                     </div>
                   </div>
@@ -6717,6 +6718,7 @@
                     </dt>
                     <dd>
                       <p>This is the item that the cardholder or operator used to cause the location event. For regular card badges it will be a door.</p>
+                      <p>For many event types it will be the same as the source item.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -7735,8 +7737,6 @@
                     <dd>
                       <p>An object containing an href to the division entity representing the current division&#39;s parent.</p>
                       <p>Required when creating a new division, because only root divisions can be unparented and you cannot create a new one of those.</p>
-                      <p>
-                        <strong>BUG</strong> also required when updating a division. See comments in code.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
