@@ -56,6 +56,9 @@
             <a href="#tag-Divisions">Divisions</a>
             <ul>
               <li>
+                <a href="#operation--api-divisions-post"> Create a division </a>
+              </li>
+              <li>
                 <a href="#operation--api-divisions--operation--get"> List divisions </a>
               </li>
               <li>
@@ -66,9 +69,6 @@
               </li>
               <li>
                 <a href="#operation--api-divisions--id--delete"> Remove a division </a>
-              </li>
-              <li>
-                <a href="#operation--api-divisions-post"> Create a division </a>
               </li>
             </ul>
           </section>
@@ -1492,6 +1492,144 @@
               <p>Every REST licence enables the divisions controller: RESTEvents, RESTCreateEvents, RESTCardholders, RESTStatus, and RESTOverrides.</p>
             </div>
           </div>
+          <div id="operation--api-divisions-post" class="operation panel" data-traverse-target="operation--api-divisions-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Divisions">Divisions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create a division</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/divisions</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Creates a new division.</p>
+                  <p>The POST expects a document in the same format as the
+                    <a href="#definition-Division">the division detail</a> but with far fewer fields. An example is
+                    <a href="#definition-Division-PATCH-and-POST-example">this POST example</a>. The only mandatory field is <code>parent</code>.</p>
+                  <p>When successful it returns a <code>location</code> header containing the address of the new division.</p>
+                  <p>Note that you can only create one division per POST.</p>
+                  <p>Do not code this URL into your application. Take it from the results of <code>GET /api</code>.</p>
+                  <p><code>/api</code> only shows API features for which you have the necessary licence.</p>
+                  <p>Creating a division requires the RESTCardholders licence.</p>
+                  <p>Creating divisions is new to 9.00.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Division PATCH and POST example">Division PATCH and POST example</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>The only required field here is the new division&#39;s parent. All divisions (except the root) must have a parent.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Long division&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Quatermasters&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A very long string.&quot;</span>,
+  <span class="hljs-attr">&quot;parent&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. Check the response body for feedback about your request.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the POST did not describe a valid division. This includes not specifying a parent division. Or it may be that you tried to give the new division the same name as an existing one. Or you may have tried to set the new division&#39;s parent to a division that is not visible to you.</p>
+                      <p>See the body of the response for help.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege on the parent division that allows creating divisions inside it (&#39;Configure Site&#39; or &#39;Edit Divisions&#39;), or the server has reached its licensed limit of divisions.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Headers
+                    <span>(201 Created)</span>
+                  </h5>
+                  <section class="swagger-response-headers">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="swagger-response-header-name"></th>
+                          <th class="swagger-response-header-description"></th>
+                          <th class="swagger-response-header-data-type"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="swagger-response-header-location">
+                          <td> location
+                            <td>
+                              <p>The href of the new division.</p>
+                            </td>
+                            <td>
+                              <span class="json-property-type">string</span>
+                              <span class="json-property-format">(url)</span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </section>
+                </section>
+              </div>
+            </div>
+          </div>
           <div id="operation--api-divisions--operation--get" class="operation panel" data-traverse-target="operation--api-divisions--operation--get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
@@ -2045,144 +2183,6 @@
                 </section>
               </div>
               <div class="doc-examples"> </div>
-            </div>
-          </div>
-          <div id="operation--api-divisions-post" class="operation panel" data-traverse-target="operation--api-divisions-post">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Divisions">Divisions</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">Create a division</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">POST</span>
-                  <span class="operation-path">/api/divisions</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>Creates a new division.</p>
-                  <p>The POST expects a document in the same format as the
-                    <a href="#definition-Division">the division detail</a> but with far fewer fields. An example is
-                    <a href="#definition-Division-PATCH-and-POST-example">this POST example</a>. The only mandatory field is <code>parent</code>.</p>
-                  <p>When successful it returns a <code>location</code> header containing the address of the new division.</p>
-                  <p>Note that you can only create one division per POST.</p>
-                  <p>Do not code this URL into your application. Take it from the results of <code>GET /api</code>.</p>
-                  <p><code>/api</code> only shows API features for which you have the necessary licence.</p>
-                  <p>Creating a division requires the RESTCardholders licence.</p>
-                  <p>Creating divisions is new to 9.00.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-body">
-                  <div class="prop-row">
-                    <div class="prop-name">
-                      <div class="swagger-request-model">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Division PATCH and POST example">Division PATCH and POST example</a>
-                        </span>
-                      </div>
-                    </div>
-                    <div class="prop-value columns small-6">
-                      <!-- <div class="swagger-request-description"> -->
-                      <p>The only required field here is the new division&#39;s parent. All divisions (except the root) must have a parent.</p>
-                      <!-- </div> -->
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Request Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Long division&quot;</span>,
-  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Quatermasters&quot;</span>,
-  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A very long string.&quot;</span>,
-  <span class="hljs-attr">&quot;parent&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">201 Created</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Success. Check the response body for feedback about your request.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">400 Bad Request</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The body of the POST did not describe a valid division. This includes not specifying a parent division. Or it may be that you tried to give the new division the same name as an existing one. Or you may have tried to set the new division&#39;s parent to a division that is not visible to you.</p>
-                      <p>See the body of the response for help.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The operator does not have a privilege on the parent division that allows creating divisions inside it (&#39;Configure Site&#39; or &#39;Edit Divisions&#39;), or the server has reached its licensed limit of divisions.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Response Headers
-                    <span>(201 Created)</span>
-                  </h5>
-                  <section class="swagger-response-headers">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th class="swagger-response-header-name"></th>
-                          <th class="swagger-response-header-description"></th>
-                          <th class="swagger-response-header-data-type"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr class="swagger-response-header-location">
-                          <td> location
-                            <td>
-                              <p>The href of the new division.</p>
-                            </td>
-                            <td>
-                              <span class="json-property-type">string</span>
-                              <span class="json-property-format">(url)</span>
-                              <span class="json-property-range" title="Value limits"></span>
-                            </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </section>
-                </section>
-              </div>
             </div>
           </div>
           <h1 id="tag-Events" class="swagger-summary-tag" data-traverse-target="tag-Events">Events</h1>

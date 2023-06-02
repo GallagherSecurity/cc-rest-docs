@@ -1453,6 +1453,63 @@ paths:
 
 ######################################################################
 
+  /api/divisions:
+    post:
+      tags:
+      - Divisions
+      summary: Create a division
+      description: |
+        Creates a new division.
+
+        The POST expects a document in the same format as the [the division
+        detail](#definition-Division) but with far fewer fields.  An example is [this POST
+        example](#definition-Division-PATCH-and-POST-example).  The only mandatory field is `parent`.
+
+        When successful it returns a `location` header containing the address of the new division.
+
+        Note that you can only create one division per POST.
+
+        Do not code this URL into your application.  Take it from the results of `GET /api`.
+
+        `/api` only shows API features for which you have the necessary licence.
+
+        Creating a division requires the RESTCardholders licence.
+
+        Creating divisions is new to 9.00.
+
+      parameters:
+        - name: "this name not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Division PATCH and POST example'}
+          description: |
+            The only required field here is the new division's parent.  All divisions (except the
+            root) must have a parent.
+
+      responses:
+        201: 
+          description: |
+            Success.  Check the response body for feedback about your request.
+          headers:
+            location:
+              type: string
+              format: url
+              description: The href of the new division.
+        400:
+          description: |
+            The body of the POST did not describe a valid division.  This includes not specifying a
+            parent division.  Or it may be that you tried to give the new division the same name as
+            an existing one.  Or you may have tried to set the new division's parent to a division
+            that is not visible to you.
+
+            See the body of the response for help.
+
+        403:
+          description: |
+            The operator does not have a privilege on the parent division that allows creating
+            divisions inside it ('Configure Site' or 'Edit Divisions'), or the server has reached
+            its licensed limit of divisions.
+
   /api/divisions/{operation}:
     get:
       tags:
@@ -1584,63 +1641,6 @@ paths:
         404:
           description: |
             That is not the URL of a division, or the operator is not privileged to view it.
-
-  /api/divisions:
-    post:
-      tags:
-      - Divisions
-      summary: Create a division
-      description: |
-        Creates a new division.
-
-        The POST expects a document in the same format as the [the division
-        detail](#definition-Division) but with far fewer fields.  An example is [this POST
-        example](#definition-Division-PATCH-and-POST-example).  The only mandatory field is `parent`.
-
-        When successful it returns a `location` header containing the address of the new division.
-
-        Note that you can only create one division per POST.
-
-        Do not code this URL into your application.  Take it from the results of `GET /api`.
-
-        `/api` only shows API features for which you have the necessary licence.
-
-        Creating a division requires the RESTCardholders licence.
-
-        Creating divisions is new to 9.00.
-
-      parameters:
-        - name: "this name not rendered"
-          in: body
-          required: true
-          schema: {$ref: '#/definitions/Division PATCH and POST example'}
-          description: |
-            The only required field here is the new division's parent.  All divisions (except the
-            root) must have a parent.
-
-      responses:
-        201: 
-          description: |
-            Success.  Check the response body for feedback about your request.
-          headers:
-            location:
-              type: string
-              format: url
-              description: The href of the new division.
-        400:
-          description: |
-            The body of the POST did not describe a valid division.  This includes not specifying a
-            parent division.  Or it may be that you tried to give the new division the same name as
-            an existing one.  Or you may have tried to set the new division's parent to a division
-            that is not visible to you.
-
-            See the body of the response for help.
-
-        403:
-          description: |
-            The operator does not have a privilege on the parent division that allows creating
-            divisions inside it ('Configure Site' or 'Edit Divisions'), or the server has reached
-            its licensed limit of divisions.
 
 ######################################################################
 

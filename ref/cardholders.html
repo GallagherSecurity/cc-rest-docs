@@ -101,10 +101,19 @@
             <a href="#tag-Competencies">Competencies</a>
             <ul>
               <li>
+                <a href="#operation--api-competencies-post"> Create a competency </a>
+              </li>
+              <li>
                 <a href="#operation--api-competencies-get"> Search competencies </a>
               </li>
               <li>
                 <a href="#operation--api-competencies--id--get"> Get details of a competency </a>
+              </li>
+              <li>
+                <a href="#operation--api-competencies--id--patch"> Update a competency </a>
+              </li>
+              <li>
+                <a href="#operation--api-competencies--id--delete"> Remove a competency </a>
               </li>
             </ul>
           </section>
@@ -246,6 +255,7 @@
           <a href="#definition-Locker-bank-summary"> Locker bank summary </a>
           <a href="#definition-Locker-bank-detail"> Locker bank detail </a>
           <a href="#definition-Locker-detail"> Locker detail </a>
+          <a href="#definition-Competency-PATCH-and-POST-example"> Competency PATCH and POST example </a>
           <a href="#definition-Competency-search"> Competency search </a>
           <a href="#definition-Competency-summary"> Competency summary </a>
           <a href="#definition-Competency-detail"> Competency detail </a>
@@ -323,10 +333,14 @@
                     <p>You will be able to request the competencies that your operator has the permission to assign. That is determined by privileges, a competency setting, and an operator group setting. Current versions let you request the competencies that your operator has the permission to view, which is a larger set determined by privileges alone, and not suitable for interactive REST clients.</p>
                   </li>
                 </ul>
+                <h4 id="cardholder-api-changes-in-900">Cardholder API changes in 9.00</h4>
+                <ul>
+                  <li>You can create and delete competencies, and modify some basic fields.</li>
+                </ul>
                 <h4 id="cardholder-api-changes-in-890">Cardholder API changes in 8.90</h4>
                 <ul>
                   <li>
-                    <p>Write access to card PINs.</p>
+                    <p>Write-only access to card PINs.</p>
                   </li>
                   <li>
                     <p>You can set a reason when re-issuing or removing a card which will appear on the resulting event. The default is the card&#39;s previous state.</p>
@@ -336,7 +350,7 @@
                       <a href="#operation--api-visits--id--visitors--visitorId--patch">set</a> a visitor&#39;s state (signing in, etc.). Visits will return that, if you ask.</p>
                   </li>
                   <li>
-                    <p>Bug fix: removing an operator group from a cardholder by PATCH was not possible in the early versions of 8.70 and 8.80. It was fixed in 8.70.2113 and 8.80.1116.</p>
+                    <p>Bug fix: removing an operator group from a cardholder by PATCH was not possible in the early versions of 8.70 and 8.80. It was fixed in 8.70.2113, 8.80.1116, and all versions of 8.90.</p>
                   </li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-880">Cardholder API changes in 8.80</h4>
@@ -4087,6 +4101,143 @@
               <p>The Configuration Client online help describes competencies fully.</p>
             </div>
           </div>
+          <div id="operation--api-competencies-post" class="operation panel" data-traverse-target="operation--api-competencies-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Competencies">Competencies</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create a competency</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/competencies</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Creates a new competency.</p>
+                  <p>The POST expects a document in the same format as the
+                    <a href="#definition-Competency">the competency detail</a> but with far fewer fields. An example is
+                    <a href="#definition-Competency-PATCH-and-POST-example">this POST example</a>.</p>
+                  <p>When successful it returns a <code>location</code> header containing the address of the new competency.</p>
+                  <p>Note that you can only create one competency per POST.</p>
+                  <p>Do not code this URL into your application. Take it from the results of <code>GET /api</code>.</p>
+                  <p>Creating a competency requires the RESTCardholders licence, and is new to 9.00.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Competency PATCH and POST example">Competency PATCH and POST example</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>There are no mandatory fields. If you do not specify a division when creating a competency, or any other item for that matter, the API will put it in the root division.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;New competency&quot;</span>,
+  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;C4&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Translated automatically.&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A very long string.&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. Check the response body for feedback about your request.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the POST did not describe a valid competency. You may have tried to give the new competency the same name as an existing one.</p>
+                      <p>See the body of the response for help.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege on the division that allows creating items inside it (&#39;Configure Site&#39;), or the server has reached its licensed limit of competencies.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Headers
+                    <span>(201 Created)</span>
+                  </h5>
+                  <section class="swagger-response-headers">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="swagger-response-header-name"></th>
+                          <th class="swagger-response-header-description"></th>
+                          <th class="swagger-response-header-data-type"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="swagger-response-header-location">
+                          <td> location
+                            <td>
+                              <p>The href of the new competency.</p>
+                            </td>
+                            <td>
+                              <span class="json-property-type">string</span>
+                              <span class="json-property-format">(url)</span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </section>
+                </section>
+              </div>
+            </div>
+          </div>
           <div id="operation--api-competencies-get" class="operation panel" data-traverse-target="operation--api-competencies-get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
@@ -4452,6 +4603,207 @@
                   <!-- </div> -->
                 </section>
               </div>
+            </div>
+          </div>
+          <div id="operation--api-competencies--id--patch" class="operation panel" data-traverse-target="operation--api-competencies--id--patch">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Competencies">Competencies</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Update a competency</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">PATCH</span>
+                  <span class="operation-path">/api/competencies/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This is the call you use to update a division&#39;s name, short name, description, notes, or division.</p>
+                  <p>The PATCH expects a document in the same format as the
+                    <a href="#definition-Competency-detail">the competency detail</a> but with fewer fields. An example is
+                    <a href="#definition-Competency-PATCH-and-POST-example">this PATCH example</a>.</p>
+                  <p>Patching competencies is new to 9.00.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Competency PATCH and POST example">Competency PATCH and POST example</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>There are no mandatory fields.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;New competency&quot;</span>,
+  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;C4&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Translated automatically.&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A very long string.&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. The response body will contain feedback from the server about your PATCH.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the PATCH did not describe a valid competency. See the body of the response for help on what went wrong. It may be that you tried to use the name of another competency: no two items of the same type can have the same name. Or you may have tried to set the competency&#39;s division to one that is not visible to you.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has a privilege that allows viewing the item but not modifying it, or you tried to set the division to one you cannot configure, or the server is missing the necessary licence.</p>
+                      <p>You need either the &#39;Configure Site&#39; on the item you are changing, which means you need on it on the item&#39;s current division. You also need it on the new division, if you are changing that.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a competency or your operator does not have the privilege to view it. This probably means you have built the URL yourself instead of taking it from the results of a
+                        <a href="#operation--api-competencies--operation--get">GET</a>.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The item is locked for editing by another operator. The body of the response will tell you which operator is holding the lock.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-competencies--id--delete" class="operation panel" data-traverse-target="operation--api-competencies--id--delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Competencies">Competencies</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Remove a competency</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/competencies/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This call removes a competency from Command Centre.</p>
+                  <p>Deleting competencies is new to 9.00.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Deleting the competency failed. This happens when the item is still being used by another item.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has the permission to view the item but not delete it, or the server is not licensed for the operation.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a competency, or the operator is not privileged to view it.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
             </div>
           </div>
           <h1 id="tag-Card-types" class="swagger-summary-tag" data-traverse-target="tag-Card-types">Card types</h1>
@@ -13325,6 +13677,89 @@
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/lockers/3456/open&quot;</span>
     }
   }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Competency-PATCH-and-POST-example" class="definition panel" data-traverse-target="definition-Competency-PATCH-and-POST-example">
+            <h2 class="panel-title">
+              <a name="/definitions/Competency PATCH and POST example"></a>Competency PATCH and POST example: object
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>This is an example of a PATCH you could use to update a competency, and a POST you could use to create one.</p>
+                  <p>No fields are mandatory.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="name" class="has-description">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The new item&#39;s name. If you supply a name and another item of the same type already exists with that name, the call will fail. If you leave it blank in a POST, Command Centre will pick value for you.</p>
+                    </dd>
+                    <dt data-property-name="shortName" class="has-description">
+                      <span class="json-property-name">shortName:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-range" title="String length limits"> (up to 16 chars) </span>
+                    </dt>
+                    <dd>
+                      <p>If you supply a string that is too long, Command Centre will truncate it.</p>
+                    </dd>
+                    <dt data-property-name="description" class="has-description">
+                      <span class="json-property-name">description:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The new item&#39;s description.</p>
+                    </dd>
+                    <dt data-property-name="division" class="has-description">
+                      <span class="json-property-name">division:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The division to contain this competency.</p>
+                    </dd>
+                    <dt data-property-name="notes" class="has-description">
+                      <span class="json-property-name">notes:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A string, able to me much longer than <code>description</code>, suitable for holding notes about the item.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;New competency&quot;</span>,
+  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;C4&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Translated automatically.&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A very long string.&quot;</span>
 }
 </code></pre> </body>
                   </html>

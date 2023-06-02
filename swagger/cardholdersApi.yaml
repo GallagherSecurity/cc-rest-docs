@@ -79,9 +79,13 @@ info:
       view, which is a larger set determined by privileges alone, and not suitable for interactive
       REST clients.
 
+    #### Cardholder API changes in 9.00
+
+    * You can create and delete competencies, and modify some basic fields.
+
     #### Cardholder API changes in 8.90
 
-    * Write access to card PINs.
+    * Write-only access to card PINs.
 
     * You can set a reason when re-issuing or removing a card which will appear on the
       resulting event.  The default is the card's previous state.
@@ -90,7 +94,7 @@ info:
       (signing in, etc.).  Visits will return that, if you ask.
 
     * Bug fix:  removing an operator group from a cardholder by PATCH was not possible in the early
-      versions of 8.70 and 8.80.  It was fixed in 8.70.2113 and 8.80.1116.
+      versions of 8.70 and 8.80.  It was fixed in 8.70.2113, 8.80.1116, and all versions of 8.90.
 
     #### Cardholder API changes in 8.80
 
@@ -4419,6 +4423,42 @@ definitions:
                   open its door.
                 example: "https://localhost:8904/api/lockers/3456/open"
 
+  Competency PATCH and POST example:
+    type: object
+    description: |
+      This is an example of a PATCH you could use to update a competency, and a POST you could use to create one.
+
+      No fields are mandatory.
+
+    properties:
+      name:
+        type: string
+        description: |
+          The new item's name.  If you supply a name and another item of the same type already
+          exists with that name, the call will fail.  If you leave it blank in a POST, Command
+          Centre will pick value for you.
+
+        example: "New competency"
+      shortName:
+        type: string
+        maxLength: 16
+        description: "If you supply a string that is too long, Command Centre will truncate it."
+        example: "C4"
+      description:
+        type: string
+        description:  The new item's description.
+        example: "Translated automatically."
+      division:
+        type: object
+        description: The division to contain this competency.
+        example: {href: "https://localhost:8904/api/divisions/2" }
+      notes:
+        type: string
+        description: |
+          A string, able to me much longer than `description`, suitable for holding notes about the
+          item.
+        example: "A very long string."
+
   Competency search:
     description: An array of competency summaries, and a `next` link for more.
     properties:
@@ -6322,6 +6362,55 @@ paths:
 ######################################################################
 
   /api/competencies:
+    post:
+      tags:
+      - Competencies
+      summary: Create a competency
+      description: |
+        Creates a new competency.
+
+        The POST expects a document in the same format as the [the competency
+        detail](#definition-Competency) but with far fewer fields.  An example is [this POST
+        example](#definition-Competency-PATCH-and-POST-example).
+
+        When successful it returns a `location` header containing the address of the new competency.
+
+        Note that you can only create one competency per POST.
+
+        Do not code this URL into your application.  Take it from the results of `GET /api`.
+
+        Creating a competency requires the RESTCardholders licence, and is new to 9.00.
+
+      parameters:
+        - name: "this name not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Competency PATCH and POST example'}
+          description: |
+            There are no mandatory fields.  If you do not specify a division when creating a
+            competency, or any other item for that matter, the API will put it in the root division.
+
+      responses:
+        201:
+          description: |
+            Success.  Check the response body for feedback about your request.
+          headers:
+            location:
+              type: string
+              format: url
+              description: The href of the new competency.
+        400:
+          description: |
+            The body of the POST did not describe a valid competency.  You may have tried to give
+            the new competency the same name as an existing one.
+
+            See the body of the response for help.
+
+        403:
+          description: |
+            The operator does not have a privilege on the division that allows creating items inside
+            it ('Configure Site'), or the server has reached its licensed limit of competencies.
+
     get:
       tags:
         - Competencies
@@ -6420,6 +6509,82 @@ paths:
         404:
           description: |
             Your REST operator does not have the privilege to view this competency.
+
+    patch:
+      tags:
+      - Competencies
+      summary: Update a competency
+      description: |
+        This is the call you use to update a division's name, short name, description, notes, or
+        division.
+
+        The PATCH expects a document in the same format as the [the competency
+        detail](#definition-Competency-detail) but with fewer fields.  An example is [this PATCH
+        example](#definition-Competency-PATCH-and-POST-example).
+
+        Patching competencies is new to 9.00.
+
+      parameters:
+        - name: "this name not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Competency PATCH and POST example'}
+          description: |
+            There are no mandatory fields.
+
+      responses:
+        200:
+          description: |
+            Success.  The response body will contain feedback from the server about your PATCH.
+        204:
+          description: "Success."
+        400:
+          description: |
+            The body of the PATCH did not describe a valid competency.  See the body of the response
+            for help on what went wrong.  It may be that you tried to use the name of another
+            competency:  no two items of the same type can have the same name.  Or you may have
+            tried to set the competency's division to one that is not visible to you.
+        403:
+          description: |
+            The operator has a privilege that allows viewing the item but not modifying it, or you
+            tried to set the division to one you cannot configure, or the server is missing the
+            necessary licence.
+
+            You need either the 'Configure Site' on the item you are changing, which means you need
+            on it on the item's current division.  You also need it on the new division, if you are
+            changing that.
+
+        404:
+          description: |
+            That is not the URL of a competency or your operator does not have the privilege to view
+            it.  This probably means you have built the URL yourself instead of taking it from the
+            results of a [GET](#operation--api-competencies--operation--get).
+
+        409:
+          description: |
+            The item is locked for editing by another operator.  The body of the response will
+            tell you which operator is holding the lock.
+
+    delete:
+      tags: [ Competencies ]
+      summary: Remove a competency
+      description: |
+        This call removes a competency from Command Centre.
+
+        Deleting competencies is new to 9.00.
+      responses: 
+        204: { description: "Success." }
+        400:
+          description: |
+            Deleting the competency failed.  This happens when the item is still being used by
+            another item.
+        403:
+          description: |
+            The operator has the permission to view the item but not delete it, or the server is not
+            licensed for the operation.
+        404:
+          description: |
+            That is not the URL of a competency, or the operator is not privileged to view it.
 
 ######################################################################
   /api/card_types:
