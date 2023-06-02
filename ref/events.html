@@ -61,6 +61,15 @@
               <li>
                 <a href="#operation--api-divisions--id--get"> Get details of a division </a>
               </li>
+              <li>
+                <a href="#operation--api-divisions--id--patch"> Update a division </a>
+              </li>
+              <li>
+                <a href="#operation--api-divisions--id--delete"> Remove a division </a>
+              </li>
+              <li>
+                <a href="#operation--api-divisions-post"> Create a division </a>
+              </li>
             </ul>
           </section>
           <section>
@@ -117,6 +126,7 @@
           <a href="#definition-Event-groups"> Event groups </a>
           <a href="#definition-Divisions"> Divisions </a>
           <a href="#definition-Division"> Division </a>
+          <a href="#definition-Division-PATCH-and-POST-example"> Division PATCH and POST example </a>
           <a href="#definition-Item-search"> Item search </a>
           <a href="#definition-Item-summary"> Item summary </a>
           <a href="#definition-Item-detail"> Item detail </a>
@@ -152,11 +162,18 @@
                 <p>Helper methods allow you to look up Command Centre&#39;s internal identifiers for cardholders, divisions, and other items, so that you can use those identifiers in search filters.</p>
                 <h3 id="licensing">Licensing</h3>
                 <p>All of the GETs in this document and the POSTs that manage alarms require the RESTEvents licence. The POST to create a new event requires RESTCreateEvents.</p>
+                <p>The server will return a 403 if you attempt an operation for which the server is not licensed.</p>
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
                 <h4 id="alarms-events-and-items-api-changes-on-the-roadmap">Alarms, events, and items API changes on the roadmap</h4>
+                <h4 id="alarms-and-events-api-changes-in-900">Alarms and events API changes in 9.00</h4>
                 <ul>
-                  <li>Creating, modifying, and deleting divisions.</li>
+                  <li>
+                    <p>You can create and delete divisions, and modify some basic fields.</p>
+                  </li>
+                  <li>
+                    <p>A new <code>location</code> block on events greatly simplifies the monitoring of cardholder movements.</p>
+                  </li>
                 </ul>
                 <h4 id="alarms-and-events-api-changes-in-890">Alarms and events API changes in 8.90</h4>
                 <ul>
@@ -1766,7 +1783,7 @@
                       <div class="prop-title">404 Not Found</div>
                     </div>
                     <div class="prop-value">
-                      <p>That is not the href of a division or you do not have privileges to read divisions (View Site, Configure Site, or Advanced User).</p>
+                      <p>That is not the href of a division or you do not have privileges to read divisions (View Site, Configure Site, Edit Divisions, or Advanced User).</p>
                     </div>
                   </div>
                 </section>
@@ -1826,6 +1843,344 @@
 </code></pre> </body>
                   </html>
                   <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-divisions--id--patch" class="operation panel" data-traverse-target="operation--api-divisions--id--patch">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Divisions">Divisions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Update a division</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">PATCH</span>
+                  <span class="operation-path">/api/divisions/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This is the call you use to update a division&#39;s name, description, notes, or parent.</p>
+                  <p>The PATCH expects a document in the same format as the
+                    <a href="#definition-Division">the division detail</a> but with fewer valid fields. An example is
+                    <a href="#definition-Division-PATCH-and-POST-example">this PATCH example</a>.</p>
+                  <p>Patching divisions is new to 9.00.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Division PATCH and POST example">Division PATCH and POST example</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>There are no mandatory fields.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Long division&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Quatermasters&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A very long string.&quot;</span>,
+  <span class="hljs-attr">&quot;parent&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. The response body will contain feedback from the server about your PATCH.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the PATCH did not describe a valid division. See the body of the response for help on what went wrong. It may be that you tried to use the name of another division: no two items of the same type can have the same name. Or you may have tried to set the division&#39;s parent to a division that is not visible to you.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has a privilege that allows viewing the division but not modifying it, or you tried to set a parent on the root division, or you tried to set the parent to a division you cannot configure, or the server is missing the necessary licence.</p>
+                      <p>You need either the &#39;Configure Site&#39; or &#39;Edit Divisions&#39; privilege on the division you are changing. You also need it on the new parent, if you are changing that.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a division or the operator does not have the privilege to view that division. This probably means you have built the URL yourself instead of taking it from the results of a
+                        <a href="#operation--api-divisions--operation--get">GET</a>.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The item is locked for editing by another operator. The body of the response will tell you which operator is holding the lock.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-divisions--id--delete" class="operation panel" data-traverse-target="operation--api-divisions--id--delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Divisions">Divisions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Remove a division</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/divisions/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This call removes a division from Command Centre.</p>
+                  <p>Deleting divisions is new to 9.00.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Deleting the division failed. This happens when the division is not empty or is still being used by another item (such as an operator group).</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has the permission to view the division but not delete it, or the server is not licensed for the operation.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a division, or the operator is not privileged to view it.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-divisions-post" class="operation panel" data-traverse-target="operation--api-divisions-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Divisions">Divisions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create a division</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/divisions</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Creates a new division.</p>
+                  <p>The POST expects a document in the same format as the
+                    <a href="#definition-Division">the division detail</a> but with far fewer fields. An example is
+                    <a href="#definition-Division-PATCH-and-POST-example">this POST example</a>. The only mandatory field is <code>parent</code>.</p>
+                  <p>When successful it returns a <code>location</code> header containing the address of the new division.</p>
+                  <p>Note that you can only create one division per POST.</p>
+                  <p>Do not code this URL into your application. Take it from the results of <code>GET /api</code>.</p>
+                  <p><code>/api</code> only shows API features for which you have the necessary licence.</p>
+                  <p>Creating a division requires the RESTCardholders licence.</p>
+                  <p>Creating divisions is new to 9.00.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Division PATCH and POST example">Division PATCH and POST example</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>The only required field here is the new division&#39;s parent. All divisions (except the root) must have a parent.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Long division&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Quatermasters&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A very long string.&quot;</span>,
+  <span class="hljs-attr">&quot;parent&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. Check the response body for feedback about your request.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the POST did not describe a valid division. This includes not specifying a parent division. Or it may be that you tried to give the new division the same name as an existing one. Or you may have tried to set the new division&#39;s parent to a division that is not visible to you.</p>
+                      <p>See the body of the response for help.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege on the parent division that allows creating divisions inside it (&#39;Configure Site&#39; or &#39;Edit Divisions&#39;), or the server has reached its licensed limit of divisions.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Headers
+                    <span>(201 Created)</span>
+                  </h5>
+                  <section class="swagger-response-headers">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="swagger-response-header-name"></th>
+                          <th class="swagger-response-header-description"></th>
+                          <th class="swagger-response-header-data-type"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="swagger-response-header-location">
+                          <td> location
+                            <td>
+                              <p>The href of the new division.</p>
+                            </td>
+                            <td>
+                              <span class="json-property-type">string</span>
+                              <span class="json-property-format">(url)</span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </section>
                 </section>
               </div>
             </div>
@@ -7093,6 +7448,92 @@
         ]
       }
     ]
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Division-PATCH-and-POST-example" class="definition panel" data-traverse-target="definition-Division-PATCH-and-POST-example">
+            <h2 class="panel-title">
+              <a name="/definitions/Division PATCH and POST example"></a>Division PATCH and POST example: object
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>This is an example of a PATCH you could use to update a division, and a POST you could use to create one.</p>
+                  <p>When POSTing, <code>parent</code> is mandatory.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="name" class="has-description">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The division&#39;s name. If you supply a name and another division already exists with that name, the call will fail. If you leave it blank in a POST, Command Centre will pick value for you.</p>
+                    </dd>
+                    <dt data-property-name="description" class="has-description">
+                      <span class="json-property-name">description:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The division&#39;s description.</p>
+                    </dd>
+                    <dt data-property-name="notes" class="has-description">
+                      <span class="json-property-name">notes:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A string, able to me much longer than <code>description</code>, suitable for holding notes about the division.</p>
+                    </dd>
+                    <dt data-property-name="parent" class="has-description">
+                      <span class="json-property-name">parent:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>An object containing an href to the division entity representing the current division&#39;s parent.</p>
+                      <p>Required when creating a new division, because only root divisions can be unparented and you cannot create a new one of those.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Long division&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Quatermasters&quot;</span>,
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A very long string.&quot;</span>,
+  <span class="hljs-attr">&quot;parent&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   }
 }
 </code></pre> </body>

@@ -33,6 +33,8 @@ info:
     All of the GETs in this document and the POSTs that manage alarms require the RESTEvents
     licence.  The POST to create a new event requires RESTCreateEvents.
 
+    The server will return a 403 if you attempt an operation for which the server is not licensed.
+
     ### Versions
 
     The body of this document clearly indicates when recent features arrived in the API so that
@@ -40,7 +42,11 @@ info:
 
     #### Alarms, events, and items API changes on the roadmap
 
-    * Creating, modifying, and deleting divisions.
+    #### Alarms and events API changes in 9.00
+
+    * You can create and delete divisions, and modify some basic fields.
+
+    * A new `location` block on events greatly simplifies the monitoring of cardholder movements.
 
     #### Alarms and events API changes in 8.90
 
@@ -1503,7 +1509,138 @@ paths:
           description: "Success"
           schema: { $ref: '#/definitions/Division' }
         403: { description: The site does not have a REST licence. }
-        404: { description: "That is not the href of a division or you do not have privileges to read divisions (View Site, Configure Site, or Advanced User)." }
+        404: { description: "That is not the href of a division or you do not have privileges to read divisions (View Site, Configure Site, Edit Divisions, or Advanced User)." }
+
+    patch:
+      tags:
+      - Divisions
+      summary: Update a division
+      description: |
+        This is the call you use to update a division's name, description, notes, or parent.
+
+        The PATCH expects a document in the same format as the [the division
+        detail](#definition-Division) but with fewer valid fields.  An example is [this PATCH
+        example](#definition-Division-PATCH-and-POST-example).
+
+        Patching divisions is new to 9.00.
+
+      parameters:
+        - name: "this name not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Division PATCH and POST example'}
+          description: |
+            There are no mandatory fields.
+
+      responses:
+        200:
+          description: |
+            Success.  The response body will contain feedback from the server about your PATCH.
+        204:
+          description: "Success."
+        400:
+          description: |
+            The body of the PATCH did not describe a valid division.  See the body of the response
+            for help on what went wrong.  It may be that you tried to use the name of another
+            division:  no two items of the same type can have the same name.  Or you may have tried
+            to set the division's parent to a division that is not visible to you.
+        403:
+          description: |
+            The operator has a privilege that allows viewing the division but not modifying it, or
+            you tried to set a parent on the root division, or you tried to set the parent to a
+            division you cannot configure, or the server is missing the necessary licence.
+
+            You need either the 'Configure Site' or 'Edit Divisions' privilege on the division you
+            are changing.  You also need it on the new parent, if you are changing that.
+
+        404:
+          description: |
+            That is not the URL of a division or the operator does not have the privilege to view
+            that division.  This probably means you have built the URL yourself instead of taking it
+            from the results of a [GET](#operation--api-divisions--operation--get).
+
+        409:
+          description: |
+            The item is locked for editing by another operator.  The body of the response will
+            tell you which operator is holding the lock.
+
+    delete:
+      tags: [ Divisions ]
+      summary: Remove a division
+      description: |
+        This call removes a division from Command Centre.
+
+        Deleting divisions is new to 9.00.
+      responses: 
+        204: { description: "Success." }
+        400:
+          description: |
+            Deleting the division failed.  This happens when the division is not empty or is still
+            being used by another item (such as an operator group).
+        403:
+          description: |
+            The operator has the permission to view the division but not delete it, or the server is
+            not licensed for the operation.
+        404:
+          description: |
+            That is not the URL of a division, or the operator is not privileged to view it.
+
+  /api/divisions:
+    post:
+      tags:
+      - Divisions
+      summary: Create a division
+      description: |
+        Creates a new division.
+
+        The POST expects a document in the same format as the [the division
+        detail](#definition-Division) but with far fewer fields.  An example is [this POST
+        example](#definition-Division-PATCH-and-POST-example).  The only mandatory field is `parent`.
+
+        When successful it returns a `location` header containing the address of the new division.
+
+        Note that you can only create one division per POST.
+
+        Do not code this URL into your application.  Take it from the results of `GET /api`.
+
+        `/api` only shows API features for which you have the necessary licence.
+
+        Creating a division requires the RESTCardholders licence.
+
+        Creating divisions is new to 9.00.
+
+      parameters:
+        - name: "this name not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Division PATCH and POST example'}
+          description: |
+            The only required field here is the new division's parent.  All divisions (except the
+            root) must have a parent.
+
+      responses:
+        201: 
+          description: |
+            Success.  Check the response body for feedback about your request.
+          headers:
+            location:
+              type: string
+              format: url
+              description: The href of the new division.
+        400:
+          description: |
+            The body of the POST did not describe a valid division.  This includes not specifying a
+            parent division.  Or it may be that you tried to give the new division the same name as
+            an existing one.  Or you may have tried to set the new division's parent to a division
+            that is not visible to you.
+
+            See the body of the response for help.
+
+        403:
+          description: |
+            The operator does not have a privilege on the parent division that allows creating
+            divisions inside it ('Configure Site' or 'Edit Divisions'), or the server has reached
+            its licensed limit of divisions.
 
 ######################################################################
 
@@ -2965,6 +3102,46 @@ definitions:
                       }
                     }
                   ]
+
+  Division PATCH and POST example:
+    type: object
+    description: |
+      This is an example of a PATCH you could use to update a division, and a POST you could use to create one.
+
+      When POSTing, `parent` is mandatory.
+
+    properties:
+      name:
+        type: string
+        description: |
+          The division's name.  If you supply a name and another division already exists with that
+          name, the call will fail.  If you leave it blank in a POST, Command Centre will pick value
+          for you.
+
+        example: "Long division"
+      description:
+        type: string
+        description:  The division's description.
+        example: "Quatermasters"
+      notes:
+        type: string
+        description: |
+          A string, able to me much longer than `description`, suitable for holding notes about the
+          division.
+        example: "A very long string."
+      parent:
+        description: |
+          An object containing an href to the division entity representing the current division's parent.
+
+          Required when creating a new division, because only root divisions can be unparented and
+          you cannot create a new one of those.
+
+        type: object
+        properties:
+          href:
+            type: string
+            format: url
+            example: "https://localhost:8904/api/divisions/2"
 
   Item search:
     type: object

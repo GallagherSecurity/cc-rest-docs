@@ -1937,7 +1937,7 @@
                     </div>
                     <div class="prop-value">
                       <p>The operator has a privilege that allows viewing the division but not modifying it, or you tried to set a parent on the root division, or you tried to set the parent to a division you cannot configure, or the server is missing the necessary licence.</p>
-                      <p>You need the &#39;Configure Site&#39; privilege on the division you are changing. You also need it on the parent, if you are changing that.</p>
+                      <p>You need either the &#39;Configure Site&#39; or &#39;Edit Divisions&#39; privilege on the division you are changing. You also need it on the new parent, if you are changing that.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2132,7 +2132,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have a privilege on the parent division that allows creating divisions inside it, or the server has reached its licensed limit of divisions.</p>
+                      <p>The operator does not have a privilege on the parent division that allows creating divisions inside it (&#39;Configure Site&#39; or &#39;Edit Divisions&#39;), or the server has reached its licensed limit of divisions.</p>
                     </div>
                   </div>
                 </section>
@@ -2251,9 +2251,14 @@
                 </li>
               </ol>
               <p>To further improve the efficiency of your search, filter by event types and a time range.</p>
-              <h4 id="searching-for-events-that-indicate-movement">Searching for events that indicate movement</h4>
-              <p>If your server is running 8.70 or later give your operator the &#39;View cardholder events&#39; privilege instead of &#39;View events&#39;. Then request all events, and the server will only send you movements.</p>
+              <h4 id="searching-for-events-that-indicate-movement-before-version-900">Searching for events that indicate movement (before version 9.00)</h4>
+              <p>If your server is running 8.70-8.90 give your operator the &#39;View cardholder events&#39; privilege instead of &#39;View events&#39;. Then request all events, and the server will only send you movements.</p>
               <p>If your server is running 8.60 or earlier, use the search filter <code>types=20001,20002,20003,20047,20107,42415</code>.</p>
+              <h4 id="searching-for-events-that-indicate-location-or-movement-version-900-or-later">Searching for events that indicate location or movement (version 9.00 or later)</h4>
+              <p>Give your operator the &#39;View cardholder events&#39; privilege instead of &#39;View events&#39;. Then request all events, and the server will only send you movements.</p>
+              <p>Or, if you don&#39;t mind the extra traffic, give your operator &#39;View events&#39; and request all events, then ignore all those that do not have a <code>location</code> block.</p>
+              <p>The
+                <a href="#definition-Event-location">section on event locations</a> describes how to interpret its contents.</p>
               <h4 id="searching-for-events-coming-from-other-items">Searching for events coming from other items</h4>
               <p>Events such as &#39;access granted&#39; and &#39;zone count maximum&#39; come from doors and access zones. To search for them, follow the same process as the previous use case (getting cardholder events) but use the <code>source</code> filter parameter instead of <code>cardholder</code>. It will limit the results to just those events that came from the items you gave in the query. If you have the RESTStatus licence (added in v8.00), you can use
                 <a href="rest.html">that API</a> to search for access zones, alarm zones, fence zones, macros, outputs, doors, and (in 8.10) inputs. If you do not, or if your source is not one of those types, use the
@@ -3493,11 +3498,11 @@
   <span class="hljs-attr">&quot;lastOccurrenceTime&quot;</span>: <span class="hljs-string">&quot;2016-02-18T19:21:59Z&quot;</span>,
   <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;Originating IP address: 192.168.2.3&quot;</span>,
   <span class="hljs-attr">&quot;location&quot;</span>: {
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;moved&quot;</span>,
     <span class="hljs-attr">&quot;cardholder&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Smith, Jane&quot;</span>
     },
-    <span class="hljs-attr">&quot;moved&quot;</span>: <span class="hljs-literal">true</span>,
     <span class="hljs-attr">&quot;beforeLocation&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/333&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell stairwell&quot;</span>
@@ -6454,7 +6459,7 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>This block is big enough to earn itself its own section in the documentation.</p>
+                          <p>This block is big enough to warrant its own section in the documentation.</p>
                           <p>It will not appear by default (you must ask for it using the <code>fields</code> query parameter), and only for certain event types, and only in version 9.0 or later.</p>
                         </dd>
                       </dl>
@@ -6554,11 +6559,11 @@
   <span class="hljs-attr">&quot;lastOccurrenceTime&quot;</span>: <span class="hljs-string">&quot;2016-02-18T19:21:59Z&quot;</span>,
   <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;Originating IP address: 192.168.2.3&quot;</span>,
   <span class="hljs-attr">&quot;location&quot;</span>: {
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;moved&quot;</span>,
     <span class="hljs-attr">&quot;cardholder&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Smith, Jane&quot;</span>
     },
-    <span class="hljs-attr">&quot;moved&quot;</span>: <span class="hljs-literal">true</span>,
     <span class="hljs-attr">&quot;beforeLocation&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/333&quot;</span>,
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell stairwell&quot;</span>
@@ -6597,13 +6602,42 @@
                   <ul>
                     <li>moved,</li>
                     <li>attempted to move, or</li>
-                    <li>authenticated at a device.</li>
+                    <li>authenticated at a device such as a T20 Alarms Terminal.</li>
                   </ul>
-                  <p>It is derived from other fields that the API can return to you. But raw Command Centre events store their cardholder, access zones, and &quot;point&quot; differently depending on the event type. When a suitable event has some of those fields, this block presents them in a consistent way. Using it you can track cardholder movements without needing to know anything about events.</p>
+                  <p>Its fields are derived from other fields that the API can return to you.</p>
+                  <p>It exists because raw Command Centre events store their cardholder, access zones, and &quot;point&quot; differently depending on their type. When a suitable event has some of those fields, this block presents them in a consistent way. Using it you can track cardholder movements without needing to know anything about event types.</p>
+                  <p>The first field you should look at is <code>type</code>. It tells you what happened, and depending on your need you may only be interested in events with a particular value here.</p>
+                  <p>Then, depending on your use case, you might need <code>afterLocation</code> for where the cardholder was after the event or <code>point</code> for the item that spotted them.</p>
                   <p>Added in 9.0.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
+                    <dt data-property-name="type" class="has-description">
+                      <span class="json-property-name">type:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-enum" title="Possible values">
+                        <span class="json-property-enum-item">observed</span>,
+                        <span class="json-property-enum-item">moved</span>,
+                        <span class="json-property-enum-item">denied</span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This indicates the type of locating or movement event. It is based purely on the event type.</p>
+                      <ul>
+                        <li>
+                          <p><code>observed</code> means a cardholder did not attempt to move but the server now knows something about their location. Even if it is only a piece of hardware that they are standing next to. This happens when a cardholder logs in to a T20 alarms terminal, or gains access through a door but changes their mind about going through it. It may also occur when a third-party system observes a cardholder in an area, perhaps through a video feed or by sensing a radio tag.</p>
+                          <p>It will also occur for &#39;Access granted but not taken&#39; events. They happen when a person is granted access through a door, and the door is equipped with an open sensor, and that sensor never opens. Meaning they changed their mind.</p>
+                        </li>
+                        <li>
+                          <p><code>moved</code> means the cardholder moved, probably by badging at a reader and passing through its door. It also occurs when an operator moves someone using a tag board, a mobile application, or
+                            <a href="cardholders.html#operation--api-cardholders--id--update_location-post">this API</a>.</p>
+                        </li>
+                        <li>
+                          <p><code>denied</code> means the cardholder attemped some kind of access, perhaps into an alarms terminal or through a door, but was rejected.</p>
+                        </li>
+                      </ul>
+                    </dd>
                     <dt data-property-name="cardholder" class="has-description">
                       <span class="json-property-name">cardholder:</span>
                       <span class="json-property-type">object</span>
@@ -6636,15 +6670,6 @@
                         </dl>
                       </section>
                     </dt>
-                    <dt data-property-name="moved" class="has-description">
-                      <span class="json-property-name">moved:</span>
-                      <span class="json-property-type">boolean</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>This flag indicates whether the cardholder changed locations.</p>
-                      <p>It is based purely on the event type. It will be true for &#39;Access granted&#39; and &#39;Operator moved cardholder&#39; events, for example, but false for &#39;Access granted but not taken&#39; and &#39;Access denied&#39;.</p>
-                    </dd>
                     <dt data-property-name="beforeLocation" class="has-description">
                       <span class="json-property-name">beforeLocation:</span>
                       <span class="json-property-type">object</span>
@@ -6652,8 +6677,8 @@
                     </dt>
                     <dd>
                       <p>This is the zone the cardholder was in before this event.</p>
-                      <p>It will be missing if there is no exit zone on the event: when Command Centre does not know what zone they attempted to move out of. That happens when, for example, a person moves into the entry zone of a door that has no exit zone.</p>
-                      <p>It also happens when there is no notion of a &#39;before&#39; zone. When a person logs into an alarm terminal, for example.</p>
+                      <p>It will be missing if there is no exit zone on the event, meaning Command Centre does not know what zone they attempted to move out of. That happens when, for example, a person moves into the entry zone of a door that has no exit zone.</p>
+                      <p>It will also be missing when there is no notion of a &#39;before&#39; zone. When a person logs into an alarm terminal, for example.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -6673,7 +6698,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>The name of the access zone at the time of the event.</p>
+                            <p>The name of the access zone or reception at the time of the event.</p>
                           </dd>
                         </dl>
                       </section>
@@ -6685,7 +6710,7 @@
                     </dt>
                     <dd>
                       <p>This is the access zone or reception the cardholder was in after this event, if known.</p>
-                      <p>It will be missing if there is no entry zone on the event. That happens when, for example, an operator moves a cardholder &quot;outside the system&quot; or when a person badges at an elevator kiosk or a non-Gallagher door.</p>
+                      <p>It will be missing if there is no entry zone on the event. That happens when, for example, an operator moves a cardholder &quot;outside the system&quot; or when a person badges at an elevator kiosk or a non-Gallagher door: we don&#39;t know where they went.</p>
                       <p>When a visitor leaves the system the <code>afterLocation</code> on the event is their visit&#39;s reception item, not an access zone.</p>
                     </dd>
                     <dt class="json-inner-schema">
@@ -6706,7 +6731,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>The name of the access zone at the time of the event.</p>
+                            <p>The name of the access zone or reception at the time of the event.</p>
                           </dd>
                         </dl>
                       </section>
@@ -6754,11 +6779,11 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;moved&quot;</span>,
   <span class="hljs-attr">&quot;cardholder&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Smith, Jane&quot;</span>
   },
-  <span class="hljs-attr">&quot;moved&quot;</span>: <span class="hljs-literal">true</span>,
   <span class="hljs-attr">&quot;beforeLocation&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/333&quot;</span>,
     <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Roswell stairwell&quot;</span>
