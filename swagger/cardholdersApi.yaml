@@ -6,6 +6,7 @@
 ##
 
 swagger: '2.0'
+openapi: '3.0'
 
 schemes:
   - https
@@ -15,6 +16,7 @@ consumes:
   - application/json
 
 info:
+  version: 1.0.0
   title: "Command Centre REST API:  Cardholders"
 
   description: |
@@ -42,8 +44,10 @@ info:
 
     ### Licensing
 
-    All of the API calls described here are available with the RESTCardholders licence.  Lockers and
-    locker banks are also available with the RESTStatus licence, and partially with the
+    All of the API calls described here except visitor management are available with the
+    RESTCardholders licence.  Visitor management calls need both RESTCardholders and
+    VisitorManagement.  Without RESTCardholders, lockers and locker banks are available with the
+    RESTStatus licence, and partially with the
     RESTOverrides licence.
 
     The server will return a 403 if you attempt an operation for which the server is not licensed.
@@ -1473,9 +1477,7 @@ parameters:
     type: array
     items: { type: string }
     default: ['defaults']
-    enum: [href, name, description, division, serverDisplayName, notes,
-    reception, visitorType, host, from, until, location, badgeText, visitorAccessGroups, visitors
-    ]
+    enum: [href, name, description, division, serverDisplayName, notes, reception, visitorType, host, from, until, location, badgeText, visitorAccessGroups, visitors ]
     description: |
       Specifies the fields in the response.  The values you can list are the same in the search and
       details pages.  Using it you can return everything on the search page that you would find on
@@ -2427,8 +2429,7 @@ definitions:
               and add PDF values to alarm and event GETs.
           type:
             type: string
-            enum: [ string, image, strEnum, numeric, date, address,
-              phone, email, mobile ]
+            enum: [ string, image, strEnum, numeric, date, address, phone, email, mobile ]
 
       value:
         type: string
@@ -6097,11 +6098,7 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-        enum:  [href, id, firstName, lastName, shortName, description, authorised,
-          lastSuccessfulAccessZone, division, notes, useExtendedAccessTime, personalDataFields,
-          operatorLoginEnabled, operatorUsername, operatorPassword,
-          operatorPasswordExpired, windowsLoginEnabled, windowsUsername,
-          cards, accessGroups, competencies, notifications, relationships, lockers]
+        enum:  [href, id, firstName, lastName, shortName, description, authorised, lastSuccessfulAccessZone, division, notes, useExtendedAccessTime, personalDataFields, operatorLoginEnabled, operatorUsername, operatorPassword, operatorPasswordExpired, windowsLoginEnabled, windowsUsername, cards, accessGroups, competencies, notifications, relationships, lockers]
 
         description: |
           Limits the search results to the changes that affected these fields, and limits the
@@ -6138,8 +6135,7 @@ paths:
         items: { type: string }
         default: ['defaults']
         enum:
-          [href, operator, operator.href, operator.name, time, type, item, oldValues, newValues,
-          cardholder, cardholder.* ]
+          [href, operator, operator.href, operator.name, time, type, item, oldValues, newValues, cardholder, cardholder.* ]
 
         description: |
           Limits the blocks in the results.
@@ -6235,8 +6231,7 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-        enum: [href, id, name, description, parent, division, children, notes, personalDataDefinitions,
-            cardholders, access, saltoAccess, alarmZones, ...]
+        enum: [href, id, name, description, parent, division, children, notes, personalDataDefinitions, cardholders, access, saltoAccess, alarmZones, ...]
         description: |
           Sets the list of fields to return in the search results.  The values you can list are the
           same as the field names in the [details page](#definition-Access-group-detail).  Using it
@@ -6287,8 +6282,7 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-        enum: [href, id, name, description, parent, division, children, notes,
-          personalDataDefinitions, access, saltoAccess, alarmZones, ...]
+        enum: [href, id, name, description, parent, division, children, notes, personalDataDefinitions, access, saltoAccess, alarmZones, ...]
         description: |
           Sets the list of fields to return.  The values you can list are the same as the field
           names in the [detail results](#definition-Access-group-detail).  Use it to return less
@@ -6445,8 +6439,7 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-        enum: [href, id, name, shortName, description, division, notes, expiryNotify, noticePeriod,
-          defaultExpiry, defaultAccess]
+        enum: [href, id, name, shortName, description, division, notes, expiryNotify, noticePeriod, defaultExpiry, defaultAccess]
         description: |
           Specifies which fields to return in the search results.  The values you can list are the
           same as the field names in the [details page](#definition-Competency-detail).  Using it
@@ -6492,8 +6485,7 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-        enum: [href, id, name, shortName, description, division, notes, expiryNotify, noticePeriod,
-          defaultExpiry, defaultAccess]
+        enum: [href, id, name, shortName, description, division, notes, expiryNotify, noticePeriod, defaultExpiry, defaultAccess]
         description: |
           Specifies which fields to return.  The values you can list are the same as the field names
           in the [details page](#definition-Competency-detail).  Use it to reduce the size of the
@@ -6624,8 +6616,7 @@ paths:
         in: query
         type: array
         items: { type: string }
-        enum: [ href, id, name, division, facilityCode, availableCardStates, credentialClass,
-        minimumNumber, maximumNumber, notes, regex, regexDescription ]
+        enum: [ href, id, name, division, facilityCode, availableCardStates, credentialClass, minimumNumber, maximumNumber, notes, regex, regexDescription ]
 
         description: |
           Specifies which fields to return instead of the default set (which contains
@@ -6689,10 +6680,7 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-        enum: [href, id, name, shortName, description, division, lockers, notes, lockers.defaults,
-        lockers.id, lockers.href, lockers.name, lockers.shortName, lockers.description,
-        lockers.division, lockers.notes, lockers.commands,
-        lockers.assignments]
+        enum: [href, id, name, shortName, description, division, lockers, notes, lockers.defaults, lockers.id, lockers.href, lockers.name, lockers.shortName, lockers.description, lockers.division, lockers.notes, lockers.commands, lockers.assignments]
 
         description: |
           Sets which fields to return.  The values you can list are the same as the
@@ -6746,8 +6734,7 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-        enum: [href, id, name, shortName, description, division, notes, connectedController,
-               lockers, lockers.defaults, lockers.connectedController, ...]
+        enum: [href, id, name, shortName, description, division, notes, connectedController, lockers, lockers.defaults, lockers.connectedController, ...]
         description: |
           Sets which fields to return.  The values you can list are the same as the field names you
           would get in the [details page](#definition-Locker-bank-detail).  Use it to cut back on
@@ -6794,8 +6781,7 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-        enum: [href, id, name, shortName, description, division, assignments, notes, commands,
-               connectedController]
+        enum: [href, id, name, shortName, description, division, assignments, notes, commands, connectedController]
         description: |
           Sets which fields to return.  Use it to cut back on the size of the response for a locker
           with many assignments.  Separate values with commas.
@@ -7301,7 +7287,7 @@ paths:
           description: "Success."
           schema: {$ref: '#/definitions/Visit search'}
         403:
-          description: The site does not have the RESTCardholders licence.
+          description: The site does not have both the RESTCardholders and VisitorManagement licences.
 
     post:
       tags: [ "Visits" ]
@@ -7345,7 +7331,7 @@ paths:
             The body of the POST did not describe a valid visit.  Check the body of the server's
             response for hints.
         403:
-          description: The site does not have the RESTCardholders licence.
+          description: The site does not have both the RESTCardholders and VisitorManagement licences.
 
   /api/visits/{id}:
     get:
@@ -7370,8 +7356,7 @@ paths:
           description: "Success."
           schema: {$ref: '#/definitions/Visit'}
         403:
-          description: |
-            The site does not have the RESTCardholders or RESTEvents licence
+          description: The site does not have both the RESTCardholders and VisitorManagement licences.
         404:
           description: |
             That is not the URL of a visit, or it is a visit but the operator does not have the
@@ -7410,7 +7395,8 @@ paths:
             is valid JSON.
         403:
           description: |
-            The site does not have the RESTCardholders licence, or the operator does not have the
+            The site does not have the RESTCardholders and VisitorManagement licences, or the
+            operator does not have the
             privilege to modify that visit ('Edit Visits'), or you attempted to set a field for
             which you have no privilege, or the visit has expired.  See the descriptions for each
             field for some rules about their use.
@@ -7455,7 +7441,8 @@ paths:
 
         403:
           description: |
-            The site does not have the RESTCardholders licence, or the operator does not have the
+            The site does not have the RESTCardholders and VisitorManagement licences, or the
+            operator does not have the
             privilege to modify that visit ('Edit Visits'), or you attempted to set a field for
             which you have no privilege, or the visit has expired.
         404:

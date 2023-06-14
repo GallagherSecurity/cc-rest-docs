@@ -1,17 +1,18 @@
 ##
 ##         Copyright Gallagher Group Ltd 2020 All Rights Reserved
 ##            THIS IS PROPRIETARY DOCUMENTATION SOURCE CODE OF
-##                Gallagher Group Research and Development
-##                          Hamilton, New Zealand
+##                Gallagher Group, Hamilton, New Zealand
 ##
 
 swagger: '2.0'
+openapi: '3.0'
 
 schemes: [https]
 produces: [application/json]
 consumes: [application/json]
 
 info:
+  version: 1.0.0
   title: "Command Centre REST API:  Non-cardholder items"
 
   description: |
@@ -2166,8 +2167,7 @@ definitions:
             properties:
               type:
                 type: string
-                enum: [ accessZoneSchedule, accessSchedule, alarmZoneSchedule,
-                outputSchedule, notificationSchedule, hVLFSchedule, elevatorKioskControlSchedule ]
+                enum: [ accessZoneSchedule, accessSchedule, alarmZoneSchedule, outputSchedule, notificationSchedule, hVLFSchedule, elevatorKioskControlSchedule ]
                 example: "accessZoneSchedule"
           dayCategories:
             type: array
@@ -2302,8 +2302,7 @@ definitions:
         properties:
           type:
             type: string
-            enum: [ accessZoneSchedule, accessSchedule, alarmZoneSchedule,
-            outputSchedule, notificationSchedule, hVLFSchedule, elevatorKioskControlSchedule ]
+            enum: [ accessZoneSchedule, accessSchedule, alarmZoneSchedule, outputSchedule, notificationSchedule, hVLFSchedule, elevatorKioskControlSchedule ]
             example: "accessZoneSchedule"
       dayCategories:
         type: array
@@ -2436,21 +2435,21 @@ tags:
     ### Use cases
 
     #### Searching for access zones by name
-    1. `GET /api`.
-    2. Follow the link at `features.accessZones.accessZones.href`
-       [↪](#operation--api-access_zones-get), appending a search term such as `name=substring` to
-       filter the access zones, and `fields` to tell the server what to return about each.  The next
-       section covers those query parameters.
-    3. Process the results, following the `next` link until there isn't one.
+     1. `GET /api`.
+     2. Follow the link at `features.accessZones.accessZones.href`
+        [↪](#operation--api-access_zones-get), appending a search term such as `name=substring` to
+        filter the access zones, and `fields` to tell the server what to return about each.  The
+        next section covers those query parameters.
+     3. Process the results, following the `next` link until there isn't one.
 
     #### Changing an access zone's access mode
-    1. Find the href for the access zone using the process above.
-    2. GET it.
-    3. Find the API URL you require in the `commands` structure of the results, such as
-    `free` or `securePin`, from [the detail](#definition-Access-Zone-detail).  Use the
-    `until` variants if you are specifying an end time.
-    4. POST to that URL.  Some require a JSON object (resetting the zone count, and all
-    those with `until` in their command block keys).  The others expect an empty body.
+     1. Find the href for the access zone using the process above.
+     2. GET it.
+     3. Find the API URL you require in the `commands` structure of the results, such as `free` or
+        `securePin`, from [the detail](#definition-Access-Zone-detail).  Use the `until` variants if
+        you are specifying an end time.
+     4. POST to that URL.  Some require a JSON object (resetting the zone count, and all
+         those with `until` in their command block keys).  The others expect an empty body.
 
     #### Finding an access zone's status
     1. Find the href for the access zone using the process above, and GET it.
@@ -3036,8 +3035,7 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *ACZFIELDS
+        <<: [*FIELDSDESC_SUM, *ACZFIELDS]
 
       responses:
         200:
@@ -3080,8 +3078,7 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *ACZFIELDS
+        <<: [*FIELDSDESC_SUM, *ACZFIELDS]
 
       responses:
         200:
@@ -3108,8 +3105,7 @@ paths:
         required: true
         type: string
       - name: "fields"
-        <<: *FIELDSDESC_DET
-        <<: *ACZFIELDS
+        <<: [*FIELDSDESC_DET, *ACZFIELDS]
 
       responses:
         200:
@@ -3388,8 +3384,7 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *ALZFIELDS
+        <<: [*FIELDSDESC_SUM, *ALZFIELDS]
 
       responses:
         200:
@@ -3417,8 +3412,7 @@ paths:
         type: string
         description: The ID of the alarm zone.
       - name: "fields"
-        <<: *FIELDSDESC_DET
-        <<: *ALZFIELDS
+        <<: [*FIELDSDESC_DET, *ALZFIELDS]
 
       responses:
         200:
@@ -3615,8 +3609,7 @@ paths:
         type: string
         description: The ID of the alarm zone.
       - name: "fields"
-        <<: *UPDFIELDS
-        <<: *UPDFIELDSENUM
+        <<: [*UPDFIELDS, *UPDFIELDSENUM]
 
       responses:
         200:
@@ -3714,8 +3707,7 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *DOORFIELDS
+        <<: [*FIELDSDESC_SUM, *DOORFIELDS]
 
       responses:
         200:
@@ -3743,8 +3735,7 @@ paths:
         type: string
         description: The ID of the door.
       - name: "fields"
-        <<: *FIELDSDESC_DET
-        <<: *DOORFIELDS
+        <<: [*FIELDSDESC_DET, *DOORFIELDS]
 
       responses:
         200:
@@ -3790,8 +3781,7 @@ paths:
         type: string
         description: The ID of the door.
       - name: "fields"
-        <<: *UPDFIELDS
-        <<: *UPDFIELDSENUM
+        <<: [*UPDFIELDS, *UPDFIELDSENUM]
 
       responses:
         200:
@@ -3845,8 +3835,7 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *ELEVATORGROUPCARDHOLDERFIELDS
+        <<: [*FIELDSDESC_SUM, *ELEVATORGROUPCARDHOLDERFIELDS]
 
       responses:
         200:
@@ -3902,8 +3891,7 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *ELEVATORGROUPALLFIELDS
+        <<: [*FIELDSDESC_SUM, *ELEVATORGROUPALLFIELDS]
 
       responses:
         200:
@@ -3944,8 +3932,7 @@ paths:
         type: string
         description: The ID of the elevator group.
       - name: "fields"
-        <<: *FIELDSDESC_DET
-        <<: *ELEVATORGROUPALLFIELDS
+        <<: [*FIELDSDESC_DET, *ELEVATORGROUPALLFIELDS]
 
       responses:
         200:
@@ -3991,8 +3978,7 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *FZFIELDS
+        <<: [*FIELDSDESC_SUM, *FZFIELDS]
 
       responses:
         200:
@@ -4020,8 +4006,7 @@ paths:
         type: string
         description: The ID of the fence zone.
       - name: "fields"
-        <<: *FIELDSDESC_DET
-        <<: *MACROFIELDS
+        <<: [*FIELDSDESC_DET, *MACROFIELDS]
 
       responses:
         200:
@@ -4203,8 +4188,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM_810
-        <<: *OUTPUTFIELDS      
+        <<: [*FIELDSDESC_SUM_810,
+             *OUTPUTFIELDS]      
 
       responses:
         200:
@@ -4232,8 +4217,8 @@ paths:
         type: string
         description: The ID of the input.
       - name: "fields"
-        <<: *FIELDSDESC_DET_810
-        <<: *OUTPUTFIELDS      
+        <<: [*FIELDSDESC_DET_810,
+             *OUTPUTFIELDS]      
 
       responses:
         200:
@@ -4322,8 +4307,7 @@ paths:
         type: string
         description: The ID of the input.
       - name: "fields"
-        <<: *UPDFIELDS
-        <<: *UPDFIELDSENUM
+        <<: [*UPDFIELDS, *UPDFIELDSENUM]
 
       responses:
         200:
@@ -4378,8 +4362,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM_810
-        <<: *INTERLOCKFIELDS
+        <<: [*FIELDSDESC_SUM_810,
+             *INTERLOCKFIELDS ]
 
       responses:
         200:
@@ -4411,8 +4395,8 @@ paths:
         type: string
         description: The ID of the interlock group.
       - name: "fields"
-        <<: *FIELDSDESC_DET_810
-        <<: *INTERLOCKFIELDS
+        <<: [*FIELDSDESC_DET_810,
+             *INTERLOCKFIELDS]
 
       responses:
         200:
@@ -4484,8 +4468,7 @@ paths:
         type: string
         description: The ID of the interlock group.
       - name: "fields"
-        <<: *UPDFIELDS
-        <<: *UPDFIELDSENUM
+        <<: [*UPDFIELDS, *UPDFIELDSENUM]
 
       responses:
         200:
@@ -4533,8 +4516,7 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *MACROFIELDS
+        <<: [*FIELDSDESC_SUM, *MACROFIELDS]
 
       responses:
         200:
@@ -4562,8 +4544,7 @@ paths:
         type: string
         description: The ID of the macro.
       - name: "fields"
-        <<: *FIELDSDESC_DET
-        <<: *MACROFIELDS
+        <<: [*FIELDSDESC_DET, *MACROFIELDS]
 
       responses:
         200:
@@ -4617,8 +4598,7 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *OUTPUTFIELDS
+        <<: [*FIELDSDESC_SUM, *OUTPUTFIELDS]
 
       responses:
         200:
@@ -4646,8 +4626,7 @@ paths:
         type: string
         description: The ID of the output.
       - name: "fields"
-        <<: *FIELDSDESC_DET
-        <<: *OUTPUTFIELDS
+        <<: [*FIELDSDESC_DET, *OUTPUTFIELDS]
 
       responses:
         200:
@@ -4762,8 +4741,7 @@ paths:
         type: string
         description: The ID of the output.
       - name: "fields"
-        <<: *UPDFIELDS
-        <<: *UPDFIELDSENUM
+        <<: [*UPDFIELDS, *UPDFIELDSENUM]
 
       responses:
         200:
@@ -4819,8 +4797,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/division"
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
-        <<: *FIELDSDESC_SUM_810
-        <<: *SCHEDULEFIELDS
+        <<: [*FIELDSDESC_SUM_810,
+             *SCHEDULEFIELDS]
 
       responses:
         200:
@@ -4888,8 +4866,7 @@ paths:
         type: string
         description: The ID of the schedule.
       - name: "fields"
-        <<: *FIELDSDESC_DET_810
-        <<: *SCHEDULEFIELDS
+        <<: [*FIELDSDESC_DET_810, *SCHEDULEFIELDS]
 
       responses:
         200:

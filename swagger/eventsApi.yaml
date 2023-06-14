@@ -6,8 +6,10 @@
 ##
 
 swagger: '2.0'
+openapi: '3.0'
 
 info:
+  version: 1.0.0
   title: "Command Centre REST API:  Alarms and Events"
   description: |
     This document describes how you can use the Command Centre REST API to download, monitor, and
@@ -755,9 +757,7 @@ parameters:
     type: string
     required: false
 
-    enum: [ href, id, time, message, source, type, eventType, priority, state, active, division, notePresets,
-    view, comment, acknowledgeWithComment, acknowledge, processWithComment, process, details,
-    history, instruction, cardholder, event ]
+    enum: [ href, id, time, message, source, type, eventType, priority, state, active, division, notePresets, view, comment, acknowledgeWithComment, acknowledge, processWithComment, process, details, history, instruction, cardholder, event ]
 
     description: |
       Sets the fields you want in your results.  Separate fields with commas.
@@ -769,10 +769,7 @@ parameters:
     in: query
     type: string
     required: false
-    enum: [ defaults, details, cardholder.pdf_*, href, id, serverDisplayName, time, message,
-    occurrences, priority, alarm, operator, source, group, type, eventType, division, cardholder,
-    entryAccessZone, exitAccessZone, door, accessGroup, card, modifiedItem, lastOccurrenceTime,
-    previous, next, updates]
+    enum: [ defaults, details, cardholder.pdf_*, href, id, serverDisplayName, time, message, occurrences, priority, alarm, operator, source, group, type, eventType, division, cardholder, entryAccessZone, exitAccessZone, door, accessGroup, card, modifiedItem, lastOccurrenceTime, previous, next, updates]
 
     description: |
       Sets the fields you want in your results.
@@ -1537,8 +1534,7 @@ paths:
         minimum: 1
       - $ref: "cardholdersApi.yaml#/parameters/sort"
       - name: "fields"
-        <<: *DIVFIELDSDESC
-        <<: *DIVFIELDS
+        <<: [*DIVFIELDSDESC, *DIVFIELDS]
       responses:
         200:
           description: Success
@@ -1559,8 +1555,7 @@ paths:
         type: string
         description: The ID of the division.
       - name: "fields"
-        <<: *DIVFIELDSDESC
-        <<: *DIVFIELDS
+        <<: [*DIVFIELDSDESC, *DIVFIELDS]
       responses: 
         200: 
           description: "Success"
@@ -1691,8 +1686,7 @@ paths:
         default: 100
       - $ref: "cardholdersApi.yaml#/parameters/sort"
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *ITEMFIELDS
+        <<: [*FIELDSDESC_SUM, *ITEMFIELDS]
 
       responses:
         200:
@@ -1718,8 +1712,7 @@ paths:
         type: string
         description: The ID of the item.
       - name: "fields"
-        <<: *FIELDSDESC_SUM
-        <<: *ITEMFIELDS
+        <<: [*FIELDSDESC_SUM, *ITEMFIELDS]
 
       responses:
         200:
