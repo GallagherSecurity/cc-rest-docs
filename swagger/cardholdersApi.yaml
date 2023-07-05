@@ -61,6 +61,10 @@ info:
 
     * GovPass cards will reveal two new fields, `visitorContractor` and `ownedBySite`.
 
+    * POTENTIALLY BREAKING CHANGE:  The API route that lets you modify a cardholder by PATCH also
+      works if you send it a POST.  It should not, because POSTs create things, not modify them.
+      Since it was not documented, no clients should be using it.  The fix will break any that are.
+
     * POTENTIALLY BREAKING CHANGE:  PATCH methods may return "200 Success" instead of "204 No
       Content" and will contain a message from the API giving you feedback on your request.  Please
       be aware that all 200-level response codes mean success, not just the ones old versions have
