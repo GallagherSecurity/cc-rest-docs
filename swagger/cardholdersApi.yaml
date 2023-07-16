@@ -63,7 +63,7 @@ info:
 
     * POTENTIALLY BREAKING CHANGE:  The API route that lets you modify a cardholder by PATCH also
       works if you send it a POST.  It should not, because POSTs create things, not modify them.
-      Since it was not documented, no clients should be using it.  The fix will break any that are.
+      The fix will break clients that rely on this, but since it was not documented, none should.
 
     * POTENTIALLY BREAKING CHANGE:  PATCH methods may return "200 Success" instead of "204 No
       Content" and will contain a message from the API giving you feedback on your request.  Please
@@ -89,7 +89,9 @@ info:
 
     #### Cardholder API changes in 9.00
 
-    * You can create and delete competencies, and modify some basic fields.
+    * You can create, delete, and change the the basic configuration of competencies, PDFs, and card types.
+
+    * You can search for cardholders by the access zone they are in.
 
     #### Cardholder API changes in 8.90
 
@@ -7184,8 +7186,20 @@ paths:
 
       responses:
         200:
-          description: An array of redactions and a link to the next page.
-          schema: {$ref: '#/definitions/Redaction'}
+          description: An array of redactions, and a link to the next page if any.
+          schema:
+            type: object
+            properties:
+              results:
+                type: array
+                items: { $ref: '#/definitions/Redaction' }
+              next:
+                type: object
+                properties:
+                  href:
+                    type: string
+                    format: url
+                    example: "https://localhost:8904/cardholders/redactions?top=1&pos=625"
         403:
           description: The site does not have the RESTCardholders licence.
     post:
@@ -7210,6 +7224,7 @@ paths:
         403:
           description: |
             The operator does not have permissions to redact or to delete a cardholder, 
+            or redactions are not enabled on the server,
             or the server is not licensed for cardholder operations.
     delete:
       tags: [ "Redactions" ]

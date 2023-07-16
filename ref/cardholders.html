@@ -314,7 +314,7 @@
                     <p>GovPass cards will reveal two new fields, <code>visitorContractor</code> and <code>ownedBySite</code>.</p>
                   </li>
                   <li>
-                    <p>POTENTIALLY BREAKING CHANGE: The API route that lets you modify a cardholder by PATCH also works if you send it a POST. It should not, because POSTs create things, not modify them. Since it was not documented, no clients should be using it. The fix will break any that are.</p>
+                    <p>POTENTIALLY BREAKING CHANGE: The API route that lets you modify a cardholder by PATCH also works if you send it a POST. It should not, because POSTs create things, not modify them. The fix will break clients that rely on this, but since it was not documented, none should.</p>
                   </li>
                   <li>
                     <p>POTENTIALLY BREAKING CHANGE: PATCH methods may return &quot;200 Success&quot; instead of &quot;204 No Content&quot; and will contain a message from the API giving you feedback on your request. Please be aware that all 200-level response codes mean success, not just the ones old versions have been sending you.</p>
@@ -338,7 +338,12 @@
                 </ul>
                 <h4 id="cardholder-api-changes-in-900">Cardholder API changes in 9.00</h4>
                 <ul>
-                  <li>You can create and delete competencies, and modify some basic fields.</li>
+                  <li>
+                    <p>You can create, delete, and change the the basic configuration of competencies, PDFs, and card types.</p>
+                  </li>
+                  <li>
+                    <p>You can search for cardholders by the access zone they are in.</p>
+                  </li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-890">Cardholder API changes in 8.90</h4>
                 <ul>
@@ -623,13 +628,9 @@
                 </h3>
                 <section class="security-definition-description">
                   <p>Clients authenticate by including a pre-shared API key in the <code>Authorization</code> header of each request. Command Centre generates an API key when you create an endpoint for your clients to connect to. Search the Configuration Client online help for &#39;REST API&#39; for how do do that.</p>
-                  <p>The API key will be in the format <code>XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX</code>. All letters are upper case.</p>
-                  <p>There are two ways you can pass the API key to the server: following an authorisation method of <code>GGL-API-KEY</code>, or (in 9.0 or later) in the style of HTTP Basic authentication: prefixed with a colon, Base64-encoded, and following an authorisation method of <code>Basic</code>.</p>
-                  <p>Examples:</p>
+                  <p>The API key will be in the format <code>XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX</code> and should be in the header following an authorisation method of <code>GGL-API-KEY</code> and a space. Both should be in upper case. For example:</p>
                   <p><code>Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB</code></p>
-                  <p><code>Authorization: Basic OlRPIE9MRFBJTkssIENBUkVPRlRIRUZVTk5ZRkFSTSxDSEFMRk9OVA==</code></p>
-                  <p>The latter form only works in versions 9.0 and later, and only when connecting directly to the server: the API gateway will not accept Basic authentication.</p>
-                  <p>Early versions of Command Centre allowed you to omit the &#39;GGL-API-KEY&#39; from the first form. Later versions of CC and all versions of the API gateway will reject you with a 401 if you do that.</p>
+                  <p>Early versions of Command Centre allowed you to omit the &#39;GGL-API-KEY&#39;. Later versions of CC and all versions of the API gateway will reject you with a 401 if you do that.</p>
                   <p>Depending on Command Centre&#39;s site configuration, its REST API may also require a client certificate with each request. In versions up to and including 8.40 this was controlled by a flag labelled &#39;Do not require pinned client certficates&#39; on the &#39;Web Services&#39; tab of the server properties. In 8.50 that flag&#39;s label changed to &#39;Enable REST Clients with no client certificate&#39;, and its behaviour changed slightly when turned on.</p>
                   <p>If off, for all versions of CC, an incoming request&#39;s certificate has to match the thumbprint on its API key&#39;s REST Client item, and REST Client items with a blank thumbprint field do not work at all. This is how it ships, and it is the recommended way of running a production server.</p>
                   <p>If &#39;Do not require pinned client certificates&#39; was turned on in versions up to and including 8.40, the server did not check any client certificates. If that flag is turned on in 8.50, now relabelled &#39;Enable REST Clients with no client certificate&#39;, it still does not check the client certificate if the thumbprint field of the matching REST Client item is blank, but if the Client item has a thumbprint, the server will reject connections with the wrong certificate.</p>
@@ -693,7 +694,8 @@
                     <td valign=top>
                       <a href=rest.html>Status and overrides</a>
                     </td>
-                    <td> These functions let you monitor and override several Command Centre item types, including access zones, alarm zones, doors, fence zones, inputs, outputs, macros, elevator groups, interlock groups, and schedules. </td>
+                    <td> These functions let you monitor and override several Command Centre item types, including access zones, alarm zones, doors, fence zones, inputs, outputs, macros, elevator groups, interlock groups, and schedules. <pre><code class="hljs">Despite its name this section does not cover [<span class="hljs-string">mass-monitoring item status</span>](<span class="hljs-link">events.html#status-subscriptions</span>).
+</code></pre> </td>
                   </tr>
                   <tr>
                     <td valign=top>
@@ -7328,15 +7330,18 @@
                   <div class="prop-row prop-group">
                     <div class="prop-name">
                       <div class="prop-title">200 OK</div>
-                      <div class="prop-ref">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Redaction">Redaction</a>
-                        </span>
-                      </div>
+                      <div class="prop-ref"></div>
                       <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
                     </div>
                     <div class="prop-value">
-                      <p>An array of redactions and a link to the next page.</p>
+                      <p>An array of redactions, and a link to the next page if any.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-inner">
+                    <div class="prop-name">type</div>
+                    <div class="prop-value">
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -7358,21 +7363,28 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/redactions/625&quot;</span>,
-  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;normalEvents&quot;</span>,
-  <span class="hljs-attr">&quot;when&quot;</span>: <span class="hljs-string">&quot;2023-01-01T00:00:00Z&quot;</span>,
-  <span class="hljs-attr">&quot;before&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>,
-  <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;pending&quot;</span>,
-  <span class="hljs-attr">&quot;redactionOperator&quot;</span>: {
-    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;REST Operator&quot;</span>,
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/100&quot;</span>
-  },
-  <span class="hljs-attr">&quot;cardholder&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/630&quot;</span>
-  },
-  <span class="hljs-attr">&quot;finished&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>,
-  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Invalid cardholder&quot;</span>,
-  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/redactions/625&quot;</span>,
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;normalEvents&quot;</span>,
+      <span class="hljs-attr">&quot;when&quot;</span>: <span class="hljs-string">&quot;2023-01-01T00:00:00Z&quot;</span>,
+      <span class="hljs-attr">&quot;before&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>,
+      <span class="hljs-attr">&quot;status&quot;</span>: <span class="hljs-string">&quot;pending&quot;</span>,
+      <span class="hljs-attr">&quot;redactionOperator&quot;</span>: {
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;REST Operator&quot;</span>,
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/100&quot;</span>
+      },
+      <span class="hljs-attr">&quot;cardholder&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/630&quot;</span>
+      },
+      <span class="hljs-attr">&quot;finished&quot;</span>: <span class="hljs-string">&quot;2022-01-01T00:00:00Z&quot;</span>,
+      <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Invalid cardholder&quot;</span>,
+      <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/cardholders/redactions?top=1&amp;pos=625&quot;</span>
+  }
 }
 </code></pre> </body>
                   </html>
@@ -7471,7 +7483,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have permissions to redact or to delete a cardholder, or the server is not licensed for cardholder operations.</p>
+                      <p>The operator does not have permissions to redact or to delete a cardholder, or redactions are not enabled on the server, or the server is not licensed for cardholder operations.</p>
                     </div>
                   </div>
                 </section>
