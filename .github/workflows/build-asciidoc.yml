@@ -20,7 +20,7 @@ jobs:
       with:
           # If gitignore includes HTML files, it won't add our newly-generated HTML
           # to the gh-pages branch.
-          program: "echo '!index.html' >> training/.gitignore && mkdir -p training2 && asciidoctor -o training2/index.html training/rest_training.adoc"
+          program: "echo '!index.html' >> training/.gitignore && mkdir -p training2 && asciidoctor -o training/index.html training/rest_training.adoc && cp training/index.html training2"
     - name: Deploy to github pages.
       uses: peaceiris/actions-gh-pages@v3
       with: 
