@@ -3667,6 +3667,11 @@ It is controlled by a DWORD value called `LogRESTRequests` inside the registry k
 `HKLM\SOFTWARE\WOW6432Node\Gallagher\Command Centre`, set to one by the installer.  Change its value
 to zero to stop the logging.  You do not need to restart Command Centre.
 
+9.00 servers and later truncate URLs if they are too long.  This is controlled by a DWORD in the
+registry called `LogRESTURLMaxLength`:  if a URL has more characters in it than that, it will be
+truncated.  The default is 200.  Zero suppresses URLs altogether.  If you want your URLs to go into
+the log unmolested, set it to a high value (such as four billion).
+
 The default file name is `RESTAccess.log` and the file will appear in the same folder as the
 server's licence and other logs.  NLog will rotate it once per day by adding a time stamp to its
 name.  After ten days it will delete it.  There is no limit to the size of the file.  Those settings
