@@ -7212,6 +7212,19 @@ paths:
           description: |
             Limits the results to redactions that were scheduled to occur before this time.
 
+        - name: "fields"
+          in: query
+          required: false
+          type: array
+          items: { type: string }
+
+          enum: [before cardholder finishTime href redactionOperator status type when ]
+
+          description: |
+            Specifies the fields you want in the results.
+
+            Treat the string matches as case sensitive:  use `lastName` rather than `lastname`.
+
       responses:
         200:
           description: An array of redactions, and a link to the next page if any.
