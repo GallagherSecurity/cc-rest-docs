@@ -2521,12 +2521,13 @@ definitions:
         example: "1"
       cardSerialNumber:
         description: |
-          The serial number of a physical access card, as a hex string without a leading '0x'.  This
-          may not be not present on older cards.
+          The serial number (CSN) of a physical access card as a hex string without a leading '0x'.
 
           The example in this example shows the byte ordering you can expect in a GET and should use
           in a PATCH or POST.  The card serials (UIDs) of NXP MIFARE cards start with 04 and end
           with 80.
+
+          This may not be not present on older cards.
 
           This field was read-only until 7.90.  It is read-write in 8.00 and later.
 
@@ -2732,11 +2733,11 @@ definitions:
 
           Added in 8.00.
         type: string
-        enum: [ 'card', 'digitalId', 'govPass', 'mobile', 'piv', 'piv-i', 'trackingTag' ]
+        enum: [ 'card', 'digitalId', 'govPass', 'mobile', 'piv', 'pivi', 'trackingTag', 'transact' ]
         example: mobile
       trace:
         description: |
-          If set, badging this card will generate an event.
+          If set, using this credential will generate an event.
 
           This field is not in the default set so you will not see it unless you ask for it using
           the `fields` query parameter.
@@ -2806,6 +2807,12 @@ definitions:
         readOnly: true
         type: boolean
         example: false
+      credentialId:
+        description:  Reserved for use by Gallagher applications.
+        example: "reserved"
+      bleFacilityId:
+        description:  Reserved for use by Gallagher applications.
+        example: "reserved"
 
   Cardholder card mobile example:
     description: |
@@ -4655,7 +4662,7 @@ definitions:
         - "Damaged"
       credentialClass:
         type: string
-        enum: [ "piv", "card", "mobile"]
+        enum: [ "piv", "pivi", "card", "mobile", "digitalId", "govPass", "trackingTag", "transact" ]
         example: card
       minimumNumber:
         description: |
@@ -4679,6 +4686,9 @@ definitions:
         description: Regular expressions often need explaining.
         type: string
         example: "Only alphanumeric characters"
+      defaultExpiry:
+        description: Reserved for internal use.
+        example: "Reserved"
 
 ######################################################################
 

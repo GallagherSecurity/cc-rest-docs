@@ -1634,7 +1634,9 @@
       <span class="hljs-attr">&quot;lastPrintedOrEncodedIssueLevel&quot;</span>: <span class="hljs-number">1</span>,
       <span class="hljs-attr">&quot;pin&quot;</span>: <span class="hljs-string">&quot;153624&quot;</span>,
       <span class="hljs-attr">&quot;visitorContractor&quot;</span>: <span class="hljs-literal">false</span>,
-      <span class="hljs-attr">&quot;ownedBySite&quot;</span>: <span class="hljs-literal">false</span>
+      <span class="hljs-attr">&quot;ownedBySite&quot;</span>: <span class="hljs-literal">false</span>,
+      <span class="hljs-attr">&quot;credentialId&quot;</span>: <span class="hljs-string">&quot;reserved&quot;</span>,
+      <span class="hljs-attr">&quot;bleFacilityId&quot;</span>: <span class="hljs-string">&quot;reserved&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;accessGroups&quot;</span>: [
@@ -5075,7 +5077,8 @@
       <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
       <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
       <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
-      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
+      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>,
+      <span class="hljs-attr">&quot;defaultExpiry&quot;</span>: <span class="hljs-string">&quot;Reserved&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -9339,7 +9342,9 @@
       <span class="hljs-attr">&quot;lastPrintedOrEncodedIssueLevel&quot;</span>: <span class="hljs-number">1</span>,
       <span class="hljs-attr">&quot;pin&quot;</span>: <span class="hljs-string">&quot;153624&quot;</span>,
       <span class="hljs-attr">&quot;visitorContractor&quot;</span>: <span class="hljs-literal">false</span>,
-      <span class="hljs-attr">&quot;ownedBySite&quot;</span>: <span class="hljs-literal">false</span>
+      <span class="hljs-attr">&quot;ownedBySite&quot;</span>: <span class="hljs-literal">false</span>,
+      <span class="hljs-attr">&quot;credentialId&quot;</span>: <span class="hljs-string">&quot;reserved&quot;</span>,
+      <span class="hljs-attr">&quot;bleFacilityId&quot;</span>: <span class="hljs-string">&quot;reserved&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;accessGroups&quot;</span>: [
@@ -10502,8 +10507,9 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The serial number of a physical access card, as a hex string without a leading &#39;0x&#39;. This may not be not present on older cards.</p>
+                      <p>The serial number (CSN) of a physical access card as a hex string without a leading &#39;0x&#39;.</p>
                       <p>The example in this example shows the byte ordering you can expect in a GET and should use in a PATCH or POST. The card serials (UIDs) of NXP MIFARE cards start with 04 and end with 80.</p>
+                      <p>This may not be not present on older cards.</p>
                       <p>This field was read-only until 7.90. It is read-write in 8.00 and later.</p>
                     </dd>
                     <dt data-property-name="issueLevel" class="has-description">
@@ -10706,8 +10712,9 @@
                         <span class="json-property-enum-item">govPass</span>,
                         <span class="json-property-enum-item">mobile</span>,
                         <span class="json-property-enum-item">piv</span>,
-                        <span class="json-property-enum-item">piv-i</span>,
-                        <span class="json-property-enum-item">trackingTag</span>
+                        <span class="json-property-enum-item">pivi</span>,
+                        <span class="json-property-enum-item">trackingTag</span>,
+                        <span class="json-property-enum-item">transact</span>
                       </span>
                       <span class="json-property-range" title="Value limits"></span>
                       <span class="json-property-read-only"></span>
@@ -10722,7 +10729,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>If set, badging this card will generate an event.</p>
+                      <p>If set, using this credential will generate an event.</p>
                       <p>This field is not in the default set so you will not see it unless you ask for it using the <code>fields</code> query parameter.</p>
                       <p>Added in 8.30.</p>
                     </dd>
@@ -10779,6 +10786,22 @@
                       <p>It is a read-only field.</p>
                       <p>It is on the roadmap for verson 9.0. Until its release, its behaviour is subject to change.</p>
                     </dd>
+                    <dt data-property-name="credentialId" class="has-description">
+                      <span class="json-property-name">credentialId:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Reserved for use by Gallagher applications.</p>
+                    </dd>
+                    <dt data-property-name="bleFacilityId" class="has-description">
+                      <span class="json-property-name">bleFacilityId:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Reserved for use by Gallagher applications.</p>
+                    </dd>
                   </dl>
                 </section>
               </div>
@@ -10816,7 +10839,9 @@
   <span class="hljs-attr">&quot;lastPrintedOrEncodedIssueLevel&quot;</span>: <span class="hljs-number">1</span>,
   <span class="hljs-attr">&quot;pin&quot;</span>: <span class="hljs-string">&quot;153624&quot;</span>,
   <span class="hljs-attr">&quot;visitorContractor&quot;</span>: <span class="hljs-literal">false</span>,
-  <span class="hljs-attr">&quot;ownedBySite&quot;</span>: <span class="hljs-literal">false</span>
+  <span class="hljs-attr">&quot;ownedBySite&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;credentialId&quot;</span>: <span class="hljs-string">&quot;reserved&quot;</span>,
+  <span class="hljs-attr">&quot;bleFacilityId&quot;</span>: <span class="hljs-string">&quot;reserved&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -14242,7 +14267,8 @@
       <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
       <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
       <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
-      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
+      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>,
+      <span class="hljs-attr">&quot;defaultExpiry&quot;</span>: <span class="hljs-string">&quot;Reserved&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -14347,8 +14373,13 @@
                       <span class="json-property-type">string</span>
                       <span class="json-property-enum" title="Possible values">
                         <span class="json-property-enum-item">piv</span>,
+                        <span class="json-property-enum-item">pivi</span>,
                         <span class="json-property-enum-item">card</span>,
-                        <span class="json-property-enum-item">mobile</span>
+                        <span class="json-property-enum-item">mobile</span>,
+                        <span class="json-property-enum-item">digitalId</span>,
+                        <span class="json-property-enum-item">govPass</span>,
+                        <span class="json-property-enum-item">trackingTag</span>,
+                        <span class="json-property-enum-item">transact</span>
                       </span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
@@ -14392,6 +14423,14 @@
                     <dd>
                       <p>Regular expressions often need explaining.</p>
                     </dd>
+                    <dt data-property-name="defaultExpiry" class="has-description">
+                      <span class="json-property-name">defaultExpiry:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Reserved for internal use.</p>
+                    </dd>
                   </dl>
                 </section>
               </div>
@@ -14423,7 +14462,8 @@
   <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
   <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
-  <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
+  <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>,
+  <span class="hljs-attr">&quot;defaultExpiry&quot;</span>: <span class="hljs-string">&quot;Reserved&quot;</span>
 }
 </code></pre> </body>
                   </html>

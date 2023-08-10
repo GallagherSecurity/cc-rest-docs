@@ -48,7 +48,12 @@ info:
 
     * You can create and delete divisions, and modify some basic fields.
 
-    * A new `location` block on events greatly simplifies the monitoring of cardholder movements.
+    * A new event type `hasLocation` greatly simplifies the monitoring of cardholder
+      movements ([introduction](#location-events-in-900), [use
+      case](#searching-for-events-that-indicate-location-or-movement) ), and
+
+    * a new `location` block on events greatly simplifies interpreting them
+      ([schema](#definition-Event-detail) ).
 
     #### Alarms and events API changes in 8.90
 
@@ -197,6 +202,22 @@ tags:
     The API only returns events that are still in Command Centre's database.  It will not return
     events that have been removed, even if they are in an archive file.
 
+    ### Location events in 9.00
+
+    Command Centre has about 80 event types that occur when somebody authenticates at a device,
+    usually by badging a card.  Some of those event types also contain the access zones that the
+    person started and finished in.  Version 9.00 introduced some improvements that presented the
+    cardholder and the two zones to API clients in a consistent way:
+
+      * A new `hasLocation` event type lets you filter for only those events that reveal a
+        cardholder's location.  Use it in the `type` query parameter as you would normally use an
+        integer event type.  Gallagher will update this as new versions add more event types.
+
+      * A new `location` block on events of those types that contains fields containing the
+        cardholder and their location.
+
+    For more on using these new features, see the relevant use case below (search for 'location').
+
     ### Event use cases
 
     #### Downloading the entire event database
@@ -301,14 +322,39 @@ tags:
     To further improve the efficiency of your search, filter by event types and a time
     range.
 
-    #### Searching for events that indicate movement
+    #### Searching for events that indicate location or movement
 
-    If your server is running 8.70 or later give your operator the 'View cardholder events'
+    If your server is running 8.60 or earlier, use the search filter
+    `types=20001,20002,20003,20047,20107,42415`.  That is not a complete list of movement event
+    types but it includes the popular ones.
+
+    If your server is running 8.70-8.90 inclusive, give your operator the 'View cardholder events'
     privilege instead of 'View events'.  Then request all events, and the server will only send you
     movements.
 
-    If your server is running 8.60 or earlier, use the search filter
-    `types=20001,20002,20003,20047,20107,42415`.
+    If your server is running 9.00 or later, the 'View cardholder events' privilege is still an
+    excellent idea but you can also use the search filter `types=hasLocation&fields=location` (with
+    a leading `?` or `&` of course, and more fields if you need them).  That will limit the results
+    to location events.  Then look at the `type` field inside the `location` block:
+
+    * If you are simply after a person's location, use the `afterLocation` field inside the
+      `location` block.  That could be an access zone or division if they moved or attempted to
+      move, or a workstation or alarms terminal if they logged into one of those.  Future versions
+      of Command Centre or customisations might add more.
+
+    * If you are after movements, which happen when a door grants a person access or an operator
+      moves them on a tag board or via the API, and happen to some types of visitors when their host
+      moves, ignore all events except those that have `location.type` of `moved`.  Look at the
+      `afterLocation` to see where they landed.  It will be an access zone or (for departing
+      visitors) a reception.  There will also be a `beforeLocation` if the door had two zones
+      configured on it, in case you're interested in where they came from.
+
+    * If you are after denials, which happen when a person authenticates but has their passage
+      blocked, look at the events that have `location.type` of `denied`.  Like 'moved'-type events,
+      `location.afterLocation` will show where they were.  The difference is that they started there
+      too.
+
+    Each of those fields is covered in the [schema definition](#definition-Event-detail).
 
     #### Searching for events coming from other items
 
@@ -1162,6 +1208,12 @@ paths:
 
           Use the [event groups call](#operation--api-events-groups-get) to see all event types and
           groups.
+
+          In version 9.00 and later use the special value `hasLocation` to include all event types
+          that can reveal a cardholder's location or access zone.  In 9.00 it is a set of about 80
+          event types; it may be more in future versions.  If you use `hasLocation` you probably
+          also want to ask for the `location` block using the `fields` query parameter.
+
       - name: "group"
         in: query
         required: false
@@ -2658,6 +2710,92 @@ definitions:
               The full alarm details text.  This may be up to 2048 UTF-8 characters, each of which
               could (theoretically) be four bytes long.
             example: "Originating IP address: 192.168.2.3"
+          location:
+            type: object
+            description: |
+              This block gathers together information that is contained in about 80 different event
+              types that contain a cardholder's location, presenting it in a consistent way.
+
+              The feature allows a client that is interested in movements to extract what it needs
+              without needing to know what event types to look for or how they represent these three
+              fields:
+
+                * The cardholder whose location the event contains,
+                * the access zone that they started in before the event, and
+                * the access zone or reception they ended up in as a result of the event.
+
+              This field will only be in a result if you ask for it.  Use the `fields` query
+              parameter to do that.
+
+              This feature is coming to 9.00.  While it is still in development **this documentation
+              remains subject to change**.
+
+            properties:
+              type:
+                type: string
+                enum: [ moved, observed, denied ]
+                example: "moved"
+                description: |
+
+                  This enum divides location events into three types:
+
+                  `moved` means a cardholder moved through a door from one zone to another.  Whether
+                  they used a plastic card, a mobile credential, biometrics, a QR code, a vehicle
+                  plate, or something implemented by a third-party integration, provided they were
+                  granted access, this field's value will be `moved`.
+
+                  `denied` means the cardholder requested access at a door but failed the access check.
+
+                  `observed` means they did something that indicated their location, such as logging
+                  in to a workstation or an alarms terminal.
+
+              cardholder:
+                type: object
+                description: |
+                  A block describing the cardholder whose location is recorded by the event.
+                properties:
+                  name:
+                    type: string
+                    description: "The cardholder's name at the time of the event."
+                    example: "Jackson"
+                  href:
+                    type: string
+                    format: url
+                    description: |
+                      The cardholder item's href.  This will only be present if your operator has
+                      the right to view the cardholder.
+                    example: "https://localhost:8904/cardholders/325"
+
+              beforeLocation:
+                description: |
+                  The href and name of the access zone or reception that the cardholder was in
+                  before this event occurred.
+
+                  It is only useful (and present) for 'moved'-type events, which happen when a
+                  cardholder changes location.  For 'observed' and 'denied'-type events, which
+                  happen when a cardholder does not move, `afterLocation` shows where they were.
+
+                  The name was correct at the time of the event.  The href will be missing if your
+                  operator does not have the right to view it.
+                example: {
+                  href: "https://localhost:8904/api/access_zones/333",
+                  name: "Lvl 1 lift lobby"}
+
+              afterLocation:
+                description: |
+                  The href and name of the access zone or reception that the cardholder was in after
+                  the event.  For 'observed' and 'denied'-type events, this is also where they
+                  started.
+
+                  If they moved "outside the system" (entering through a door with no entry zone, or
+                  exiting through a door with no exit zone), there will be no href.  The href will
+                  also be missing if your operator does not have the right to view it.
+
+                  The name was correct at the time of the event.
+                example: {
+                  href: "https://localhost:8904/api/access_zones/637",
+                  name: "Lvl 2 lift lobby"}
+
       - $ref: "#/definitions/Event summary"
 
   Event POST body:
