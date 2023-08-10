@@ -5490,6 +5490,21 @@ paths:
       - $ref: "#/parameters/division"
       - $ref: "#/parameters/description"
 
+      - name: accessZone
+        in: query
+        required: false
+        type: array
+        items: { type: string }
+        description: |
+          Limits the results to cardholders who are in one of the access zones with the given IDs.
+          Do not put quotes around the IDs, and separate them with commas.
+
+          To get everyone who is in _any_ access zone or outside the system use `accessZone=*`.
+          This will exclude people who have never badged through a door but will include people who
+          are outside the system.
+
+          This is under developement for 9.00.  Until it is complete, **it is subject to change**.
+
       - name: "fields"
         in: query
         required: false
