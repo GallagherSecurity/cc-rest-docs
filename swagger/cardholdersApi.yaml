@@ -59,6 +59,9 @@ info:
 
     #### Cardholder API changes on the roadmap
 
+    * You will be able to create, delete, and change the the basic configuration of access groups,
+      competencies, PDFs, and card types.
+
     * GovPass cards will reveal two new fields, `visitorContractor` and `ownedBySite`.
 
     * POTENTIALLY BREAKING CHANGE:  The API route that lets you modify a cardholder by PATCH also
@@ -88,8 +91,6 @@ info:
       REST clients.
 
     #### Cardholder API changes in 9.00
-
-    * You can create, delete, and change the the basic configuration of competencies, PDFs, and card types.
 
     * You can search for cardholders by the access zone they are in.
 
@@ -1591,6 +1592,13 @@ definitions:
               movement was to leave the site, this will be their visit's reception, not an access
               zone.  8.50 and later will present only the name of the reception and withhold the
               href in that case.
+
+              ** Change is coming. **
+
+              A future version of Command Centre will add the href field even if the item is a
+              reception.  So you can tell the difference, it will add a field called
+              `canonicalTypeName` which will have one of two values:  `accesszone` or `reception`.
+
             example:
               href: "https://localhost:8904/api/access_zones/333"
               name: "Twilight zone"
@@ -2791,7 +2799,7 @@ definitions:
 
           It is a write-once field.
 
-          It is on the roadmap for verson 9.0.  Until its release, its behaviour is subject to
+          It is on the roadmap for verson 9.00.  Until its release, its behaviour is subject to
           change.
         type: boolean
         example: false
@@ -2802,7 +2810,7 @@ definitions:
 
           It is a read-only field.
 
-          It is on the roadmap for verson 9.0.  Until its release, its behaviour is subject to
+          It is on the roadmap for verson 9.00.  Until its release, its behaviour is subject to
           change.
         readOnly: true
         type: boolean
@@ -5503,7 +5511,7 @@ paths:
           This will exclude people who have never badged through a door but will include people who
           are outside the system.
 
-          This is under developement for 9.00.  Until it is complete, **it is subject to change**.
+          This is under development for 9.00.  Until it is complete, **it is subject to change**.
 
       - name: "fields"
         in: query
