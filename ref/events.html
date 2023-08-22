@@ -2204,7 +2204,7 @@
               <p>Command Centre has about 80 event types that occur when somebody authenticates at a device, usually by badging a card. Some of those event types also contain the access zones that the person started and finished in. Version 9.00 introduced some improvements that presented the cardholder and the two zones to API clients in a consistent way:</p>
               <ul>
                 <li>
-                  <p>A new <code>hasLocation</code> event type lets you filter for only those events that reveal a cardholder&#39;s location. Use it in the <code>type</code> query parameter as you would normally use an integer event type. Gallagher will update this as new versions add more event types.</p>
+                  <p>A new event type <code>hasLocation</code> that lets you filter for only those events that reveal a cardholder&#39;s location. Use it in the <code>type</code> query parameter as you would normally use an integer event type: <code>type=hasLocation</code>. Gallagher will update this as new versions add more event types.</p>
                 </li>
                 <li>
                   <p>A new <code>location</code> block on events of those types that contains fields containing the cardholder and their location.</p>
@@ -2292,13 +2292,13 @@
               <p>If your server is running 9.00 or later, the &#39;View cardholder events&#39; privilege is still an excellent idea but you can also use the search filter <code>types=hasLocation&amp;fields=location</code> (with a leading <code>?</code> or <code>&amp;</code> of course, and more fields if you need them). That will limit the results to location events. Then look at the <code>type</code> field inside the <code>location</code> block:</p>
               <ul>
                 <li>
-                  <p>If you are simply after a person&#39;s location, use the <code>afterLocation</code> field inside the <code>location</code> block. That could be an access zone or division if they moved or attempted to move, or a workstation or alarms terminal if they logged into one of those. Future versions of Command Centre or customisations might add more.</p>
+                  <p>If you are simply after a person&#39;s location, use the <code>afterLocation</code> field inside the <code>location</code> block. That could be an access zone or division if they moved or attempted to move, or a workstation or alarms terminal if they logged into one of those. The <code>canonicalTypeName</code> field inside the block will tell you what kind of item it is. Future versions of Command Centre or customisations might add more.</p>
                 </li>
                 <li>
-                  <p>If you are after movements, which happen when a door grants a person access or an operator moves them on a tag board or via the API, and happen to some types of visitors when their host moves, ignore all events except those that have <code>location.type</code> of <code>moved</code>. Look at the <code>afterLocation</code> to see where they landed. It will be an access zone or (for departing visitors) a reception. There will also be a <code>beforeLocation</code> if the door had two zones configured on it, in case you&#39;re interested in where they came from.</p>
+                  <p>If you are after movements, which happen when a door grants a person access or an operator moves them on a tag board or via the API, and happen to some types of visitors when their host moves, ignore all events except those that have a <code>location.type</code> of <code>moved</code>. Look at the <code>afterLocation</code> to see where they landed. It will be an access zone or (for departing visitors) a reception. There will also be a <code>beforeLocation</code> if the door had two zones configured on it, in case you&#39;re interested in where they came from. The <code>canonicalTypeName</code> field in both blocks will tell you what kind of item it is.</p>
                 </li>
                 <li>
-                  <p>If you are after denials, which happen when a person authenticates but has their passage blocked, look at the events that have <code>location.type</code> of <code>denied</code>. Like &#39;moved&#39;-type events, <code>location.afterLocation</code> will show where they were. The difference is that they started there too.</p>
+                  <p>If you are after denials, which happen when a person authenticates but fails the access check, look at the events that have a <code>location.type</code> of <code>denied</code>. Like &#39;moved&#39;-type events, <code>location.afterLocation</code> will show where they were. The difference is that with &#39;denied&#39;-type events, they started there too.</p>
                 </li>
               </ul>
               <p>Each of those fields is covered in the
@@ -3550,11 +3550,13 @@
     },
     <span class="hljs-attr">&quot;beforeLocation&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/333&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 1 lift lobby&quot;</span>
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 1 lift lobby&quot;</span>,
+      <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;accesszone&quot;</span>
     },
     <span class="hljs-attr">&quot;afterLocation&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/637&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 2 lift lobby&quot;</span>
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 2 lift lobby&quot;</span>,
+      <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;accesszone&quot;</span>
     }
   }
 }
@@ -3900,7 +3902,8 @@
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Brick, Eva&quot;</span>,
       <span class="hljs-attr">&quot;type&quot;</span>: {
         <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>,
+        <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;cardholder&quot;</span>
       }
     },
     {
@@ -3908,7 +3911,8 @@
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Brewer, Amy&quot;</span>,
       <span class="hljs-attr">&quot;type&quot;</span>: {
         <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>,
+        <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;cardholder&quot;</span>
       }
     }
   ],
@@ -4037,10 +4041,12 @@
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Brick, Eva&quot;</span>,
   <span class="hljs-attr">&quot;type&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>,
+    <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;cardholder&quot;</span>
   },
   <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
@@ -4076,7 +4082,7 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>Retrieves the list of all item types in the Command Centre system. There are about 200. This is useful for obtaining type IDs to use in item search filters.</p>
+                  <p>Retrieves the list of all item types in the Command Centre system. There are about 200. This is useful for obtaining type IDs to use in item search filters and (in 9.00) the canonical item type names.</p>
                   <p>Note that some item types have a blank name. These types are vestigial: disregard them.</p>
                   <p>Do not code this URL into your application. Take it from <code>items.itemTypes.href</code> in the results of <code>GET /api</code>.</p>
                 </section>
@@ -6508,7 +6514,7 @@
                           <ul>
                             <li>The cardholder whose location the event contains,</li>
                             <li>the access zone that they started in before the event, and</li>
-                            <li>the access zone or reception they ended up in as a result of the event.</li>
+                            <li>the item that indicates their location after the event.</li>
                           </ul>
                           <p>This field will only be in a result if you ask for it. Use the <code>fields</code> query parameter to do that.</p>
                           <p>This feature is coming to 9.00. While it is still in development
@@ -6530,7 +6536,7 @@
                               <dd>
                                 <p>This enum divides location events into three types:</p>
                                 <p><code>moved</code> means a cardholder moved through a door from one zone to another. Whether they used a plastic card, a mobile credential, biometrics, a QR code, a vehicle plate, or something implemented by a third-party integration, provided they were granted access, this field&#39;s value will be <code>moved</code>.</p>
-                                <p><code>denied</code> means the cardholder requested access at a door but failed the access check.</p>
+                                <p><code>denied</code> means the cardholder authenicated successfully and requested access at a door but failed the access check.</p>
                                 <p><code>observed</code> means they did something that indicated their location, such as logging in to a workstation or an alarms terminal.</p>
                               </dd>
                               <dt data-property-name="cardholder" class="has-description">
@@ -6580,7 +6586,12 @@
                                 <span class="json-property-range" title="Value limits"></span>
                               </dt>
                               <dd>
-                                <p>The href and name of the access zone or reception that the cardholder was in after the event. For &#39;observed&#39; and &#39;denied&#39;-type events, this is also where they started.</p>
+                                <p>The href and name of the item that indicates the cardholder&#39;s location after the event. For &#39;observed&#39; and &#39;denied&#39;-type events, this is also where they started.</p>
+                                <p>For &#39;moved&#39; and &#39;denied&#39; events it will be an access zone or reception.</p>
+                                <p>For &#39;observed&#39; events it could be a workstation or an alarms terminal at which the person authenticated. Future versions might add other types.</p>
+                                <p>So you can tell the difference, this block and <code>beforeLocation</code> contain a field called <code>canonicalTypeName</code>. The values it returns are fixed: it is safe to make decisions based on the value. We will add new values as Command Centre grows, but after its first appearance an item type&#39;s <code>canonicalTypeName</code> will not change.</p>
+                                <p>Common canonical type names are <code>accesszone</code>, <code>workstation</code>, <code>hbusterminal</code>. You can get all items&#39; canonical type names when you
+                                  <a href="#operation--api-items-get">search items</a>.</p>
                                 <p>If they moved &quot;outside the system&quot; (entering through a door with no entry zone, or exiting through a door with no exit zone), there will be no href. The href will also be missing if your operator does not have the right to view it.</p>
                                 <p>The name was correct at the time of the event.</p>
                               </dd>
@@ -6691,11 +6702,13 @@
     },
     <span class="hljs-attr">&quot;beforeLocation&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/333&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 1 lift lobby&quot;</span>
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 1 lift lobby&quot;</span>,
+      <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;accesszone&quot;</span>
     },
     <span class="hljs-attr">&quot;afterLocation&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_zones/637&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 2 lift lobby&quot;</span>
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Lvl 2 lift lobby&quot;</span>,
+      <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;accesszone&quot;</span>
     }
   }
 }
@@ -7776,7 +7789,8 @@
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Brick, Eva&quot;</span>,
       <span class="hljs-attr">&quot;type&quot;</span>: {
         <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>,
+        <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;cardholder&quot;</span>
       }
     },
     {
@@ -7784,7 +7798,8 @@
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Brewer, Amy&quot;</span>,
       <span class="hljs-attr">&quot;type&quot;</span>: {
         <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>,
+        <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;cardholder&quot;</span>
       }
     }
   ],
@@ -7856,6 +7871,15 @@
                             <p>A human-readable name of the item&#39;s type, suitable for display.</p>
                             <p>This string is translated using the installation&#39;s language pack, and Gallagher reserves the right to change item type names in new versions, so you should not do anything with this string except show it to a person.</p>
                           </dd>
+                          <dt data-property-name="canonicalTypeName" class="has-description">
+                            <span class="json-property-name">canonicalTypeName:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>An unchanging, alphanumeric, short, and hopefully descriptive identifier for the item type.</p>
+                            <p>Added in 9.00.</p>
+                          </dd>
                         </dl>
                       </section>
                     </dt>
@@ -7876,6 +7900,14 @@
                       <p>Because of their potential size, notes are only available by request. Use the &#39;fields&#39; parameter:</p>
                       <p><code>?fields=defaults,notes,...</code></p>
                     </dd>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Reserved for internal use. Its value will change in a future version.</p>
+                    </dd>
                   </dl>
                 </section>
               </div>
@@ -7890,10 +7922,12 @@
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Brick, Eva&quot;</span>,
   <span class="hljs-attr">&quot;type&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>,
+    <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;cardholder&quot;</span>
   },
   <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
-  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -7965,10 +7999,12 @@
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Brick, Eva&quot;</span>,
   <span class="hljs-attr">&quot;type&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>,
+    <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;cardholder&quot;</span>
   },
   <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Multi-line text...&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>

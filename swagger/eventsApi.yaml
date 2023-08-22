@@ -210,9 +210,10 @@ tags:
     person started and finished in.  Version 9.00 introduced some improvements that presented the
     cardholder and the two zones to API clients in a consistent way:
 
-      * A new `hasLocation` event type lets you filter for only those events that reveal a
+      * A new event type `hasLocation` that lets you filter for only those events that reveal a
         cardholder's location.  Use it in the `type` query parameter as you would normally use an
-        integer event type.  Gallagher will update this as new versions add more event types.
+        integer event type:  `type=hasLocation`.  Gallagher will update this as new versions add
+        more event types.
 
       * A new `location` block on events of those types that contains fields containing the
         cardholder and their location.
@@ -340,20 +341,22 @@ tags:
 
     * If you are simply after a person's location, use the `afterLocation` field inside the
       `location` block.  That could be an access zone or division if they moved or attempted to
-      move, or a workstation or alarms terminal if they logged into one of those.  Future versions
-      of Command Centre or customisations might add more.
+      move, or a workstation or alarms terminal if they logged into one of those.  The
+      `canonicalTypeName` field inside the block will tell you what kind of item it is.  Future
+      versions of Command Centre or customisations might add more.
 
     * If you are after movements, which happen when a door grants a person access or an operator
       moves them on a tag board or via the API, and happen to some types of visitors when their host
-      moves, ignore all events except those that have `location.type` of `moved`.  Look at the
+      moves, ignore all events except those that have a `location.type` of `moved`.  Look at the
       `afterLocation` to see where they landed.  It will be an access zone or (for departing
       visitors) a reception.  There will also be a `beforeLocation` if the door had two zones
-      configured on it, in case you're interested in where they came from.
+      configured on it, in case you're interested in where they came from.  The `canonicalTypeName`
+      field in both blocks will tell you what kind of item it is.
 
-    * If you are after denials, which happen when a person authenticates but has their passage
-      blocked, look at the events that have `location.type` of `denied`.  Like 'moved'-type events,
-      `location.afterLocation` will show where they were.  The difference is that they started there
-      too.
+    * If you are after denials, which happen when a person authenticates but fails the access check,
+      look at the events that have a `location.type` of `denied`.  Like 'moved'-type events,
+      `location.afterLocation` will show where they were.  The difference is that with 'denied'-type
+      events, they started there too.
 
     Each of those fields is covered in the [schema definition](#definition-Event-detail).
 
@@ -771,6 +774,13 @@ x-common-blocks-this-is-made-up:
         type: string
         description: The name of the event type.
         example: "Forced door"
+
+  canon_ignored: &CANON
+    type: string
+    description: |
+      An unchanging, alphanumeric, short, and hopefully descriptive identifier for the item type.
+
+      Added in 9.00.
 
 security:
   - "API key": []
@@ -1773,7 +1783,8 @@ paths:
       summary: List item types
       description: |
         Retrieves the list of all item types in the Command Centre system.  There are about 200.
-        This is useful for obtaining type IDs to use in item search filters.
+        This is useful for obtaining type IDs to use in item search filters and (in 9.00) the
+        canonical item type names.
 
         Note that some item types have a blank name.  These types are vestigial:  disregard them.
 
@@ -2723,7 +2734,7 @@ definitions:
 
                 * The cardholder whose location the event contains,
                 * the access zone that they started in before the event, and
-                * the access zone or reception they ended up in as a result of the event.
+                * the item that indicates their location after the event.
 
               This field will only be in a result if you ask for it.  Use the `fields` query
               parameter to do that.
@@ -2745,7 +2756,8 @@ definitions:
                   plate, or something implemented by a third-party integration, provided they were
                   granted access, this field's value will be `moved`.
 
-                  `denied` means the cardholder requested access at a door but failed the access check.
+                  `denied` means the cardholder authenicated successfully and requested access at a
+                  door but failed the access check.
 
                   `observed` means they did something that indicated their location, such as logging
                   in to a workstation or an alarms terminal.
@@ -2780,13 +2792,28 @@ definitions:
                   operator does not have the right to view it.
                 example: {
                   href: "https://localhost:8904/api/access_zones/333",
-                  name: "Lvl 1 lift lobby"}
+                  name: "Lvl 1 lift lobby",
+                  canonicalTypeName: "accesszone"}
 
               afterLocation:
                 description: |
-                  The href and name of the access zone or reception that the cardholder was in after
+                  The href and name of the item that indicates the cardholder's location after
                   the event.  For 'observed' and 'denied'-type events, this is also where they
                   started.
+
+                  For 'moved' and 'denied' events it will be an access zone or reception.
+
+                  For 'observed' events it could be a workstation or an alarms terminal at which the
+                  person authenticated.  Future versions might add other types.
+
+                  So you can tell the difference, this block and `beforeLocation` contain a field
+                  called `canonicalTypeName`.  The values it returns are fixed:  it is safe to make
+                  decisions based on the value.  We will add new values as Command Centre grows, but
+                  after its first appearance an item type's `canonicalTypeName` will not change.
+
+                  Common canonical type names are `accesszone`, `workstation`, `hbusterminal`.  You
+                  can get all items' canonical type names when you [search
+                  items](#operation--api-items-get).
 
                   If they moved "outside the system" (entering through a door with no entry zone, or
                   exiting through a door with no exit zone), there will be no href.  The href will
@@ -2795,7 +2822,8 @@ definitions:
                   The name was correct at the time of the event.
                 example: {
                   href: "https://localhost:8904/api/access_zones/637",
-                  name: "Lvl 2 lift lobby"}
+                  name: "Lvl 2 lift lobby",
+                  canonicalTypeName: "accesszone"}
 
       - $ref: "#/definitions/Event summary"
 
@@ -3279,11 +3307,13 @@ definitions:
             type:
               id: "1"
               name: "Cardholder"
+              canonicalTypeName: "cardholder"
           - id: "2707"
             name: "Brewer, Amy"
             type:
               id: "1"
               name: "Cardholder"
+              canonicalTypeName: "cardholder"
       next:
         type: object
         description: An href to the next page of results.  Missing if there are no more results.
@@ -3319,10 +3349,16 @@ definitions:
             example: "1"
           name:
             <<: *TYPE_NAME
+          canonicalTypeName:
+            <<: *CANON
+            example: "cardholder"
       serverDisplayName:
         $ref: "cardholdersApi.yaml#/x-common-blocks/server"
       notes:
         <<: *NOTES
+      href:
+        type: string
+        description:  Reserved for internal use.  Its value will change in a future version.
 
   Item detail:
     type: object
