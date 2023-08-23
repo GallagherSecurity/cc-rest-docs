@@ -780,6 +780,10 @@ x-common-blocks-this-is-made-up:
     description: |
       An unchanging, alphanumeric, short, and hopefully descriptive identifier for the item type.
 
+      The set of possible values will grow as time passes but the strings themselves, unless
+      highlighted as temporary, will never change.  You can count on an access zone always having
+      a canonical type name of 'accesszone', for example.
+
       Added in 9.00.
 
 security:
@@ -2782,11 +2786,14 @@ definitions:
               beforeLocation:
                 description: |
                   The href and name of the access zone or reception that the cardholder was in
-                  before this event occurred.
+                  before this event occurred.  Future versions of Command Centre may add more item
+                  types as "before locations" so check its canonical type name, covered in the
+                  `afterLocation` description below.
 
-                  It is only useful (and present) for 'moved'-type events, which happen when a
-                  cardholder changes location.  For 'observed' and 'denied'-type events, which
-                  happen when a cardholder does not move, `afterLocation` shows where they were.
+                  The before location is only useful (and present) for 'moved'-type events, which
+                  happen when a cardholder changes location.  For 'observed' and 'denied'-type
+                  events, which happen when a cardholder does not move, `afterLocation` shows where
+                  they were.
 
                   The name was correct at the time of the event.  The href will be missing if your
                   operator does not have the right to view it.
@@ -2801,25 +2808,26 @@ definitions:
                   the event.  For 'observed' and 'denied'-type events, this is also where they
                   started.
 
-                  For 'moved' and 'denied' events it will be an access zone or reception.
+                  For 'moved' and 'denied' events in 9.00 it will be an access zone or reception.
 
                   For 'observed' events it could be a workstation or an alarms terminal at which the
-                  person authenticated.  Future versions might add other types.
+                  person authenticated.
 
-                  So you can tell the difference, this block and `beforeLocation` contain a field
-                  called `canonicalTypeName`.  The values it returns are fixed:  it is safe to make
-                  decisions based on the value.  We will add new values as Command Centre grows, but
-                  after its first appearance an item type's `canonicalTypeName` will not change.
+                  Future versions of Command Centre may add more item types.  So you can branch on
+                  them, this block and `beforeLocation` contain a field called `canonicalTypeName`.
+                  The values it returns are fixed:  it is safe to make decisions based on the value.
+                  We will add new values as Command Centre grows, but after its first appearance an
+                  item type's `canonicalTypeName` will not change.
 
-                  Common canonical type names are `accesszone`, `workstation`, `hbusterminal`.  You
-                  can get all items' canonical type names when you [search
-                  items](#operation--api-items-get).
+                  Common canonical type names are `accesszone`, `reception`, `workstation`, and (for
+                  a T20 alarms terminal) `hbusterminal`.  You can get the full list with the [item
+                  types](#operation--api-items-types-get).
 
                   If they moved "outside the system" (entering through a door with no entry zone, or
                   exiting through a door with no exit zone), there will be no href.  The href will
                   also be missing if your operator does not have the right to view it.
 
-                  The name was correct at the time of the event.
+                  The item's name was correct at the time of the event.  It may have changed since.
                 example: {
                   href: "https://localhost:8904/api/access_zones/637",
                   name: "Lvl 2 lift lobby",
@@ -3398,12 +3406,17 @@ definitions:
               type: string
               description: The name of the item type.
               example: "Cardholder"
+            canonicalTypeName:
+              <<: *CANON
+              example: "cardholder"
     example:
       itemTypes:
         - id: "1"
           name: "Cardholder"
+          canonicalTypeName: "cardholder"
         - id: "2"
           name: "Access Group"
+          canonicalTypeName: "accessgroup"
 
   Item update:
     type: object

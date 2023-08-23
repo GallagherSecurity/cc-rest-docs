@@ -4131,11 +4131,13 @@
   <span class="hljs-attr">&quot;itemTypes&quot;</span>: [
     {
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>,
+      <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;cardholder&quot;</span>
     },
     {
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access Group&quot;</span>
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access Group&quot;</span>,
+      <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;accessgroup&quot;</span>
     }
   ]
 }
@@ -6576,8 +6578,8 @@
                                 <span class="json-property-range" title="Value limits"></span>
                               </dt>
                               <dd>
-                                <p>The href and name of the access zone or reception that the cardholder was in before this event occurred.</p>
-                                <p>It is only useful (and present) for &#39;moved&#39;-type events, which happen when a cardholder changes location. For &#39;observed&#39; and &#39;denied&#39;-type events, which happen when a cardholder does not move, <code>afterLocation</code> shows where they were.</p>
+                                <p>The href and name of the access zone or reception that the cardholder was in before this event occurred. Future versions of Command Centre may add more item types as &quot;before locations&quot; so check its canonical type name, covered in the <code>afterLocation</code> description below.</p>
+                                <p>The before location is only useful (and present) for &#39;moved&#39;-type events, which happen when a cardholder changes location. For &#39;observed&#39; and &#39;denied&#39;-type events, which happen when a cardholder does not move, <code>afterLocation</code> shows where they were.</p>
                                 <p>The name was correct at the time of the event. The href will be missing if your operator does not have the right to view it.</p>
                               </dd>
                               <dt data-property-name="afterLocation" class="has-description">
@@ -6587,13 +6589,13 @@
                               </dt>
                               <dd>
                                 <p>The href and name of the item that indicates the cardholder&#39;s location after the event. For &#39;observed&#39; and &#39;denied&#39;-type events, this is also where they started.</p>
-                                <p>For &#39;moved&#39; and &#39;denied&#39; events it will be an access zone or reception.</p>
-                                <p>For &#39;observed&#39; events it could be a workstation or an alarms terminal at which the person authenticated. Future versions might add other types.</p>
-                                <p>So you can tell the difference, this block and <code>beforeLocation</code> contain a field called <code>canonicalTypeName</code>. The values it returns are fixed: it is safe to make decisions based on the value. We will add new values as Command Centre grows, but after its first appearance an item type&#39;s <code>canonicalTypeName</code> will not change.</p>
-                                <p>Common canonical type names are <code>accesszone</code>, <code>workstation</code>, <code>hbusterminal</code>. You can get all items&#39; canonical type names when you
-                                  <a href="#operation--api-items-get">search items</a>.</p>
+                                <p>For &#39;moved&#39; and &#39;denied&#39; events in 9.00 it will be an access zone or reception.</p>
+                                <p>For &#39;observed&#39; events it could be a workstation or an alarms terminal at which the person authenticated.</p>
+                                <p>Future versions of Command Centre may add more item types. So you can branch on them, this block and <code>beforeLocation</code> contain a field called <code>canonicalTypeName</code>. The values it returns are fixed: it is safe to make decisions based on the value. We will add new values as Command Centre grows, but after its first appearance an item type&#39;s <code>canonicalTypeName</code> will not change.</p>
+                                <p>Common canonical type names are <code>accesszone</code>, <code>reception</code>, <code>workstation</code>, and (for a T20 alarms terminal) <code>hbusterminal</code>. You can get the full list with the
+                                  <a href="#operation--api-items-types-get">item types</a>.</p>
                                 <p>If they moved &quot;outside the system&quot; (entering through a door with no entry zone, or exiting through a door with no exit zone), there will be no href. The href will also be missing if your operator does not have the right to view it.</p>
-                                <p>The name was correct at the time of the event.</p>
+                                <p>The item&#39;s name was correct at the time of the event. It may have changed since.</p>
                               </dd>
                             </dl>
                           </section>
@@ -7878,6 +7880,7 @@
                           </dt>
                           <dd>
                             <p>An unchanging, alphanumeric, short, and hopefully descriptive identifier for the item type.</p>
+                            <p>The set of possible values will grow as time passes but the strings themselves, unless highlighted as temporary, will never change. You can count on an access zone always having a canonical type name of &#39;accesszone&#39;, for example.</p>
                             <p>Added in 9.00.</p>
                           </dd>
                         </dl>
@@ -8064,6 +8067,16 @@
                               <dd>
                                 <p>The name of the item type.</p>
                               </dd>
+                              <dt data-property-name="canonicalTypeName" class="has-description">
+                                <span class="json-property-name">canonicalTypeName:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>An unchanging, alphanumeric, short, and hopefully descriptive identifier for the item type.</p>
+                                <p>The set of possible values will grow as time passes but the strings themselves, unless highlighted as temporary, will never change. You can count on an access zone always having a canonical type name of &#39;accesszone&#39;, for example.</p>
+                                <p>Added in 9.00.</p>
+                              </dd>
                             </dl>
                           </section>
                         </div>
@@ -8082,11 +8095,13 @@
   <span class="hljs-attr">&quot;itemTypes&quot;</span>: [
     {
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Cardholder&quot;</span>,
+      <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;cardholder&quot;</span>
     },
     {
       <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access Group&quot;</span>
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Access Group&quot;</span>,
+      <span class="hljs-attr">&quot;canonicalTypeName&quot;</span>: <span class="hljs-string">&quot;accessgroup&quot;</span>
     }
   ]
 }
