@@ -4802,7 +4802,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>Link to the source item.</p>
+                            <p>Link to the source item. Prior to 9.10, this was present even when the item had been deleted since the event.</p>
                           </dd>
                         </dl>
                       </section>
@@ -5866,7 +5866,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>Link to the source item. New in 8.00.</p>
+                            <p>Link to the source item. New in 8.00. 9.10 and later omits this if the item was deleted.</p>
                           </dd>
                         </dl>
                       </section>
@@ -5994,7 +5994,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>The link to the division item.</p>
+                            <p>The link to the division item. 9.10 and later omits this if the division was deleted after the event.</p>
                           </dd>
                           <dt data-property-name="name" class="has-description">
                             <span class="json-property-name">name:</span>
@@ -6025,7 +6025,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>Link to the cardholder entity representing the cardholder of the event. GET the href for full details.</p>
+                            <p>Link to the cardholder entity representing the cardholder of the event. GET the href for full details. Versions earlier than 9.10 will return a 404 if the cardholder was deleted after the event; 9.10 and later won&#39;t send you the URL.</p>
                           </dd>
                           <dt data-property-name="id" class="has-description">
                             <span class="json-property-name">id:</span>
@@ -6083,7 +6083,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>Link to the access zone entity representing the entry access zone related to this event. GET the href for the access zone&#39;s full details. This will be missing if the server lacks the RESTStatus licence, or your operator lacks the necessary privileges (such as &#39;View Site&#39;).</p>
+                            <p>Link to the access zone entity representing the entry access zone related to this event. GET the href for the access zone&#39;s full details. This will be missing if the server lacks the RESTStatus licence, or your operator lacks the necessary privileges (such as &#39;View Site&#39;), or (in 9.10 and later) the item was deleted after the event.</p>
                           </dd>
                           <dt data-property-name="name" class="has-description">
                             <span class="json-property-name">name:</span>
@@ -6125,7 +6125,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>Link to the access zone entity representing the exit access zone related to this event. This will be missing if the server lacks the RESTStatus licence, or your operator lacks the necessary privileges (such as &#39;View Site&#39;).</p>
+                            <p>Link to the access zone entity representing the exit access zone related to this event. This will be missing if the server lacks the RESTStatus licence, or your operator lacks the necessary privileges (such as &#39;View Site&#39;), or (in 9.10 and later) the item was deleted after the event.</p>
                           </dd>
                           <dt data-property-name="name" class="has-description">
                             <span class="json-property-name">name:</span>
@@ -6164,7 +6164,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>Link to the entity representing the door related to this event. This will be missing if the server lacks the RESTStatus licence or your operator lacks the necessary privileges (such as &#39;View Site&#39;).</p>
+                            <p>Link to the entity representing the door related to this event. This will be missing if the server lacks the RESTStatus licence, or your operator lacks the necessary privileges (such as &#39;View Site&#39;), or (in 9.10 and later) the door was deleted after the event.</p>
                           </dd>
                           <dt data-property-name="name" class="has-description">
                             <span class="json-property-name">name:</span>
@@ -6261,7 +6261,7 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>Link to the item that this event modified.</p>
+                            <p>Link to the item that this event modified. Watch for 404s: before 9.10, this link was here even for deleted items.</p>
                           </dd>
                           <dt data-property-name="type">
                             <span class="json-property-name">type:</span>
@@ -6514,7 +6514,7 @@
                         </dt>
                         <dd>
                           <p>This block gathers together information that is contained in about 80 different event types that contain a cardholder&#39;s location, presenting it in a consistent way.</p>
-                          <p>The feature allows a client that is interested in movements to extract what it needs without needing to know what event types to look for or how they represent these three fields:</p>
+                          <p>It allows a client that is interested in movements to extract what it needs without needing to know what event types to look for or how they represent these three fields:</p>
                           <ul>
                             <li>The cardholder whose location the event contains,</li>
                             <li>the access zone that they started in before the event, and</li>
@@ -6540,7 +6540,7 @@
                               <dd>
                                 <p>This enum divides location events into three types:</p>
                                 <p><code>moved</code> means a cardholder moved through a door from one zone to another. Whether they used a plastic card, a mobile credential, biometrics, a QR code, a vehicle plate, or something implemented by a third-party integration, provided they were granted access, this field&#39;s value will be <code>moved</code>.</p>
-                                <p><code>denied</code> means the cardholder authenicated successfully and requested access at a door but failed the access check.</p>
+                                <p><code>denied</code> means the cardholder authenticated successfully and requested access at a door but failed the access check. It also appears on some event types where the cardholder did not authenticate; for those events there will be no <code>cardholder</code> block.</p>
                                 <p><code>observed</code> means they did something that indicated their location, such as logging in to a workstation or an alarms terminal.</p>
                               </dd>
                               <dt data-property-name="cardholder" class="has-description">
@@ -6569,7 +6569,7 @@
                                       <span class="json-property-range" title="Value limits"></span>
                                     </dt>
                                     <dd>
-                                      <p>The cardholder item&#39;s href. This will only be present if your operator has the right to view the cardholder.</p>
+                                      <p>The cardholder item&#39;s href. This will only be present if the cardholder has not been deleted and your operator has the right to view it.</p>
                                     </dd>
                                   </dl>
                                 </section>
@@ -6582,7 +6582,7 @@
                               <dd>
                                 <p>The href and name of the access zone or reception that the cardholder was in before this event occurred. Future versions of Command Centre may add more item types as &quot;before locations&quot; so check its canonical type name, covered in the <code>afterLocation</code> description below.</p>
                                 <p>The before location is only useful (and present) for &#39;moved&#39;-type events, which happen when a cardholder changes location. For &#39;observed&#39; and &#39;denied&#39;-type events, which happen when a cardholder does not move, <code>afterLocation</code> shows where they were.</p>
-                                <p>The name was correct at the time of the event. The href will be missing if your operator does not have the right to view it.</p>
+                                <p>The name was correct at the time of the event. The href will be missing if your operator does not have the right to view it (which also means it must not have been deleted).</p>
                               </dd>
                               <dt data-property-name="afterLocation" class="has-description">
                                 <span class="json-property-name">afterLocation:</span>
