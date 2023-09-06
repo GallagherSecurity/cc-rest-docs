@@ -2017,7 +2017,7 @@ definitions:
           href:
             type: string
             format: url
-            description: Link to the source item.  Prior to 9.10, this was present even when the item had been deleted since the event.
+            description: Link to the source item.
             example: "https://localhost:8904/api/doors/1321"
       type:
         type: string
@@ -2381,7 +2381,7 @@ definitions:
           href:
             type: string
             format: url
-            description: Link to the source item.  New in 8.00.  9.10 and later omits this if the item was deleted.
+            description: Link to the source item.  New in 8.00.
             example: "https://localhost:8904/api/items/321"
       group: 
         type: object
@@ -2438,7 +2438,7 @@ definitions:
           href:
             type: string
             format: url
-            description: The link to the division item.  9.10 and later omits this if the division was deleted after the event.
+            description: The link to the division item.
             example: "https://localhost:8904/api/divisions/2"
           name:
             type: string
@@ -2499,7 +2499,7 @@ definitions:
               Link to the access zone entity representing the entry access zone related to this
               event.  GET the href for the access zone's full details.  This will be missing if the
               server lacks the RESTStatus licence, or your operator lacks the necessary privileges
-              (such as 'View Site'), or (in 9.10 and later) the item was deleted after the event.
+              (such as 'View Site').
             example: "https://localhost:8904/api/access_zones/333"
           name:
             type: string
@@ -2535,8 +2535,7 @@ definitions:
             description: |
               Link to the access zone entity representing the exit access zone related to this
               event.  This will be missing if the server lacks the RESTStatus licence, or your
-              operator lacks the necessary privileges (such as 'View Site'), or (in 9.10 and later)
-              the item was deleted after the event.
+              operator lacks the necessary privileges (such as 'View Site').
             example: "https://localhost:8904/api/access_zones/913"
           name:
             type: string
@@ -2563,8 +2562,7 @@ definitions:
             description: |
               Link to the entity representing the door related to this event.  This will be missing
               if the server lacks the RESTStatus licence, or your operator lacks the necessary
-              privileges (such as 'View Site'), or (in 9.10 and later) the door was deleted after
-              the event.
+              privileges (such as 'View Site').
             example: "https://localhost:8904/api/doors/745"
           name:
             type: string
@@ -2637,8 +2635,8 @@ definitions:
             type: string
             format: url
             description: |
-              Link to the item that this event modified.  Watch for 404s:  before 9.10, this link
-              was here even for deleted items.
+              Link to the item that this event modified.  Watch for 404s:  this link will be here
+              even for deleted items.
             example: "https://localhost:8904/api/cardholders/325"
           type:
             type: object
