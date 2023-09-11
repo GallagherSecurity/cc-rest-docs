@@ -314,9 +314,6 @@
                     <p>You will be able to create, delete, and change the the basic configuration of access groups, competencies, PDFs, and card types.</p>
                   </li>
                   <li>
-                    <p>GovPass cards will reveal two new fields, <code>visitorContractor</code> and <code>ownedBySite</code>.</p>
-                  </li>
-                  <li>
                     <p>POTENTIALLY BREAKING CHANGE: The API route that lets you modify a cardholder by PATCH also works if you send it a POST. It should not, because POSTs create things, not modify them. The fix will break clients that rely on this, but since it was not documented, none should.</p>
                   </li>
                   <li>
@@ -341,7 +338,12 @@
                 </ul>
                 <h4 id="cardholder-api-changes-in-900">Cardholder API changes in 9.00</h4>
                 <ul>
-                  <li>You can search for cardholders by the access zone they are in.</li>
+                  <li>
+                    <p>You can search for cardholders by the access zone they are in.</p>
+                  </li>
+                  <li>
+                    <p>GovPass cards have two new fields, <code>visitorContractor</code> and <code>ownedBySite</code>.</p>
+                  </li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-890">Cardholder API changes in 8.90</h4>
                 <ul>
@@ -10810,8 +10812,7 @@
                     </dt>
                     <dd>
                       <p>This is a credential property only for GovPass, indicating that the enrolled credential is for a visitor / contractor.</p>
-                      <p>It is a write-once field.</p>
-                      <p>It is on the roadmap for verson 9.00. Until its release, its behaviour is subject to change.</p>
+                      <p>It is a write-once field new to 9.00.</p>
                     </dd>
                     <dt data-property-name="ownedBySite" class="has-description">
                       <span class="json-property-name">ownedBySite:</span>
@@ -10821,8 +10822,7 @@
                     </dt>
                     <dd>
                       <p>This is a credential property only for GovPass, indicating if the site is the owner of the card.</p>
-                      <p>It is a read-only field.</p>
-                      <p>It is on the roadmap for verson 9.00. Until its release, its behaviour is subject to change.</p>
+                      <p>It is a read-only field new to 9.00.</p>
                     </dd>
                     <dt data-property-name="credentialId" class="has-description">
                       <span class="json-property-name">credentialId:</span>
