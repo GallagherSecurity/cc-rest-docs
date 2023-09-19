@@ -8386,7 +8386,8 @@
       <span class="hljs-attr">&quot;status&quot;</span>: {
         <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;Expected Back&quot;</span>,
         <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;expectedBack&quot;</span>
-      }
+      },
+      <span class="hljs-attr">&quot;invitation&quot;</span>: <span class="hljs-string">&quot;text to be encoded into a QR code 0xcbfa888&quot;</span>
     },
     {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/visitors/9040&quot;</span>,
@@ -8397,7 +8398,8 @@
       <span class="hljs-attr">&quot;status&quot;</span>: {
         <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;On-Site&quot;</span>,
         <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;onSite&quot;</span>
-      }
+      },
+      <span class="hljs-attr">&quot;invitation&quot;</span>: <span class="hljs-string">&quot;text to be encoded into a QR code 0xbbc2&quot;</span>
     }
   ]
 }
@@ -15979,6 +15981,7 @@
                       <p>When the server sends this array to you, it contains two hrefs for each cardholder due to arrive in this visit. The first, outside the <code>cardholder</code> block, is the URL you
                         <a href="#operation--api-visits--id--visitors--visitorId--patch">PATCH</a> to change their state (new in 8.90). The one inside the <code>cardholder</code> block is simply an href to the cardholder item. You can use either href when removing visitors from a visit with a PATCH.</p>
                       <p>The <code>status</code> block contains two fields. <code>value</code> is a human-readable description of their state in by the server&#39;s language. <code>type</code> comes from a fixed enumeration.</p>
+                      <p>The <code>invitation</code> string is opaque: please do not interpret it.</p>
                       <p>A visit with no visitors on it will not appear in Gallagher&#39;s visitor management application. Why clutter the screen if you&#39;re not expecting anybody, after all.</p>
                       <p>When you send a visitor block to the server in a POST to create a visit, just send an array of hrefs to cardholders. 8.50 does not accept the same kind of visitor hrefs here that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON from a GET. Don&#39;t bother sending a <code>status</code> block: the server will ignore it and set all visitors to &#39;expected&#39;.</p>
                       <p>When you send a visitor block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain cardholder hrefs, exactly as you would send when creating a visit. The <code>remove</code> array should contain either of the hrefs you received for the cardholder in the GET. The PATCH example shows two hrefs removing the same cardholder.</p>
@@ -16008,6 +16011,15 @@
                               <dd>
                                 <p>An href unique to this cardholder on this visit. You can PATCH it to change the visitor&#39;s state.</p>
                                 <p>New to 8.90.</p>
+                              </dd>
+                              <dt data-property-name="invitation" class="has-description">
+                                <span class="json-property-name">invitation:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>A blob of text which, when encoded into a QR code and presented to a Gallagher Visitor Management kiosk, allows the visitor to sign in.</p>
+                                <p>This does not appear unless you ask for it using the <code>fields</code> query parameter.</p>
                               </dd>
                               <dt data-property-name="status" class="has-description">
                                 <span class="json-property-name">status:</span>
@@ -16108,7 +16120,8 @@
       <span class="hljs-attr">&quot;status&quot;</span>: {
         <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;Expected Back&quot;</span>,
         <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;expectedBack&quot;</span>
-      }
+      },
+      <span class="hljs-attr">&quot;invitation&quot;</span>: <span class="hljs-string">&quot;text to be encoded into a QR code 0xcbfa888&quot;</span>
     },
     {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/visits/941/visitors/9040&quot;</span>,
@@ -16119,7 +16132,8 @@
       <span class="hljs-attr">&quot;status&quot;</span>: {
         <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;On-Site&quot;</span>,
         <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;onSite&quot;</span>
-      }
+      },
+      <span class="hljs-attr">&quot;invitation&quot;</span>: <span class="hljs-string">&quot;text to be encoded into a QR code 0xbbc2&quot;</span>
     }
   ]
 }
@@ -16263,6 +16277,7 @@
                       <p>When the server sends this array to you, it contains two hrefs for each cardholder due to arrive in this visit. The first, outside the <code>cardholder</code> block, is the URL you
                         <a href="#operation--api-visits--id--visitors--visitorId--patch">PATCH</a> to change their state (new in 8.90). The one inside the <code>cardholder</code> block is simply an href to the cardholder item. You can use either href when removing visitors from a visit with a PATCH.</p>
                       <p>The <code>status</code> block contains two fields. <code>value</code> is a human-readable description of their state in by the server&#39;s language. <code>type</code> comes from a fixed enumeration.</p>
+                      <p>The <code>invitation</code> string is opaque: please do not interpret it.</p>
                       <p>A visit with no visitors on it will not appear in Gallagher&#39;s visitor management application. Why clutter the screen if you&#39;re not expecting anybody, after all.</p>
                       <p>When you send a visitor block to the server in a POST to create a visit, just send an array of hrefs to cardholders. 8.50 does not accept the same kind of visitor hrefs here that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON from a GET. Don&#39;t bother sending a <code>status</code> block: the server will ignore it and set all visitors to &#39;expected&#39;.</p>
                       <p>When you send a visitor block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain cardholder hrefs, exactly as you would send when creating a visit. The <code>remove</code> array should contain either of the hrefs you received for the cardholder in the GET. The PATCH example shows two hrefs removing the same cardholder.</p>
@@ -16292,6 +16307,15 @@
                               <dd>
                                 <p>An href unique to this cardholder on this visit. You can PATCH it to change the visitor&#39;s state.</p>
                                 <p>New to 8.90.</p>
+                              </dd>
+                              <dt data-property-name="invitation" class="has-description">
+                                <span class="json-property-name">invitation:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>A blob of text which, when encoded into a QR code and presented to a Gallagher Visitor Management kiosk, allows the visitor to sign in.</p>
+                                <p>This does not appear unless you ask for it using the <code>fields</code> query parameter.</p>
                               </dd>
                               <dt data-property-name="status" class="has-description">
                                 <span class="json-property-name">status:</span>
@@ -16514,6 +16538,7 @@
                       <p>When the server sends this array to you, it contains two hrefs for each cardholder due to arrive in this visit. The first, outside the <code>cardholder</code> block, is the URL you
                         <a href="#operation--api-visits--id--visitors--visitorId--patch">PATCH</a> to change their state (new in 8.90). The one inside the <code>cardholder</code> block is simply an href to the cardholder item. You can use either href when removing visitors from a visit with a PATCH.</p>
                       <p>The <code>status</code> block contains two fields. <code>value</code> is a human-readable description of their state in by the server&#39;s language. <code>type</code> comes from a fixed enumeration.</p>
+                      <p>The <code>invitation</code> string is opaque: please do not interpret it.</p>
                       <p>A visit with no visitors on it will not appear in Gallagher&#39;s visitor management application. Why clutter the screen if you&#39;re not expecting anybody, after all.</p>
                       <p>When you send a visitor block to the server in a POST to create a visit, just send an array of hrefs to cardholders. 8.50 does not accept the same kind of visitor hrefs here that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON from a GET. Don&#39;t bother sending a <code>status</code> block: the server will ignore it and set all visitors to &#39;expected&#39;.</p>
                       <p>When you send a visitor block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain cardholder hrefs, exactly as you would send when creating a visit. The <code>remove</code> array should contain either of the hrefs you received for the cardholder in the GET. The PATCH example shows two hrefs removing the same cardholder.</p>
@@ -16543,6 +16568,15 @@
                               <dd>
                                 <p>An href unique to this cardholder on this visit. You can PATCH it to change the visitor&#39;s state.</p>
                                 <p>New to 8.90.</p>
+                              </dd>
+                              <dt data-property-name="invitation" class="has-description">
+                                <span class="json-property-name">invitation:</span>
+                                <span class="json-property-type">string</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dd>
+                                <p>A blob of text which, when encoded into a QR code and presented to a Gallagher Visitor Management kiosk, allows the visitor to sign in.</p>
+                                <p>This does not appear unless you ask for it using the <code>fields</code> query parameter.</p>
                               </dd>
                               <dt data-property-name="status" class="has-description">
                                 <span class="json-property-name">status:</span>

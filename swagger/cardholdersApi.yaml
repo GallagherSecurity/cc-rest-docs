@@ -561,6 +561,8 @@ x-common-blocks:
       The `status` block contains two fields.  `value` is a human-readable description of their
       state in by the server's language.  `type` comes from a fixed enumeration.
 
+      The `invitation` string is opaque:  please do not interpret it.
+
       A visit with no visitors on it will not appear in Gallagher's visitor management
       application.  Why clutter the screen if you're not expecting anybody, after all.
 
@@ -594,6 +596,13 @@ x-common-blocks:
             visitor's state.
 
             New to 8.90.
+        invitation:
+          type: string
+          description: |
+            A blob of text which, when encoded into a QR code and presented to a Gallagher Visitor
+            Management kiosk, allows the visitor to sign in.
+
+            This does not appear unless you ask for it using the `fields` query parameter.
         status:
           type: object
           description: |
@@ -622,6 +631,7 @@ x-common-blocks:
       status:
         value: "Expected Back"
         type: "expectedBack"
+      invitation:  "text to be encoded into a QR code 0xcbfa888"
     - href: "https://localhost:8904/api/visits/941/visitors/9040"
       cardholder:
         name: "James Page"
@@ -629,6 +639,7 @@ x-common-blocks:
       status:
         value: "On-Site"
         type: "onSite"
+      invitation:  "text to be encoded into a QR code 0xbbc2"
 
 #####################################################################################
 #####################################################################################
