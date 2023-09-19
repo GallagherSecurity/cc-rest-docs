@@ -567,8 +567,8 @@ x-common-blocks:
       When you send a visitor block to the server in a POST to create a visit, just send an array of
       hrefs to cardholders.  8.50 does not accept the same kind of visitor hrefs here
       that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON
-      from a GET.  Don't send a `status` block:  the server will ignore it and set all visitors to
-      'expected'.
+      from a GET.  Don't bother sending a `status` block:  the server will ignore it and set all
+      visitors to 'expected'.
 
       When you send a visitor block in a PATCH to edit an existing visit, the server expects it to
       contain one or two arrays called `add` and `remove`.  The `add` array should contain
@@ -2850,7 +2850,7 @@ definitions:
       invitation:
         description: |
           This is a block containing fields that describe how Command Centre should set about
-          registring the mobile device.
+          registering the mobile device.
 
           If you specify `mobile` you must also supply `email`.  If you give neither, Command Centre
           will not send an invitation to the cardholder.
@@ -3553,8 +3553,7 @@ definitions:
             "until": "2020-01-15T04:39:00Z",
             "href": "https://localhost:8904/api/cardholders/525/access_groups/f9cb328b4"
             }
-          ]
-        }
+          ] }
       cardholder:
         description: |
           A block containing the current fields on the cardholder, provided the cardholder has not
@@ -3579,8 +3578,7 @@ definitions:
               "until": "",
               "href": "https://localhost:8904/api/cardholders/525/cards/285f779af1ef49abbba"
             }
-          ]
-        }
+          ] }
 
 ######################################################################
 
@@ -4028,7 +4026,7 @@ definitions:
                 "href": "https://localhost:8904/api/schedules/5",
                 "name": "Default Cardholder Access Granted"
               }
-            }, {
+              }, {
               "accessZone": {
                 "href": "https://localhost:8904/api/access_zones/412",
                 "name": "Server room"
@@ -4087,7 +4085,7 @@ definitions:
                 "href": "https://localhost:8904/api/schedules/5",
                 "name": "Default Cardholder Access Granted"
               }
-            }, {
+              }, {
               "saltoItemType": {
                 "value": "saltoDoor"
               },
@@ -4777,7 +4775,7 @@ definitions:
                 "name": "Contractors",
                 "href": "https://localhost:8904/api/divisions/649"
               }
-            ]
+             ]
 
       - $ref: "#/definitions/Operator group summary"
 
@@ -5505,9 +5503,10 @@ paths:
           Limits the results to cardholders who are in one of the access zones with the given IDs.
           Do not put quotes around the IDs, and separate them with commas.
 
-          To get everyone who is in _any_ access zone use `accessZone=*`.
-
-          This is under development for 9.00.  Until it is complete, **it is subject to change**.
+          To get everyone who is in _any_ access zone use `accessZone=*`.  It will return all
+          cardholders who have badged at least once and who are not currently 'outside the system'.
+          A cardholder is 'outside' if they badge through a door that has no access zone configured,
+          or if an operator manually moves them outside.
 
       - name: "fields"
         in: query

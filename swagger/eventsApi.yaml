@@ -1859,8 +1859,7 @@ paths:
             ],
             "next": {
                 "href": "https://localhost:8904/api/items/updates?bookmark=3ec613a1-de01c6e_0"
-            }
-          }
+                } }
 
         400: { description: The server could not parse the request body.  Check your JSON. }
         401: { description: The operator does not have privilege to view the monitored items.  This will change to 403 in a future version of Command Centre. }
@@ -1929,8 +1928,7 @@ paths:
             ],
             "next": {
                 "href": "https://localhost:8904/api/items/updates?bookmark=3ec613a1-de01c6e_0"
-            }
-          }
+            }          }
         404: { description: "The subscription does not exist, which probably means you waited too long between calls." }
         403: { description: "The site does not have a REST licence." }
 
@@ -2716,8 +2714,8 @@ definitions:
       everything from the event summary results, plus some extra fields that are too expensive to
       compute and return for large result sets.
 
-      Like the example in the [summary](#definition-Alarm-summary), this is somewhat forced:  no
-      actual Command Centre event will contain all of these fields, unless you create one yourself.
+      Like the example in the [summary](#definition-Alarm-summary), this example is forced:  no
+      actual Command Centre event will contain all of these fields.
 
     allOf:
       - type: object
@@ -2750,11 +2748,8 @@ definitions:
                 * the access zone that they started in before the event, and
                 * the item that indicates their location after the event.
 
-              This field will only be in a result if you ask for it.  Use the `fields` query
-              parameter to do that.
-
-              This feature is coming to 9.00.  While it is still in development **this documentation
-              remains subject to change**.
+              The location block will only be in a result if you ask for it using the `fields` query
+              parameter.
 
             properties:
               type:
@@ -2766,22 +2761,30 @@ definitions:
                   This enum divides location events into three types:
 
                   `moved` means a cardholder moved through a door from one zone to another.  Whether
-                  they used a plastic card, a mobile credential, biometrics, a QR code, a vehicle
-                  plate, or something implemented by a third-party integration, provided they were
-                  granted access, this field's value will be `moved`.
+                  an operator moved them using our software, or they did it themselves using a
+                  plastic card, a mobile credential, biometrics, a QR code, a vehicle plate, or
+                  something implemented by a third-party integration, provided they were granted
+                  access, this field's value will be `moved`.
+
+                  `observed` means they did something that indicated their location, such as logging
+                  in to a workstation or an alarms terminal, but they did not move.
 
                   `denied` means the cardholder authenticated successfully and requested access at a
                   door but failed the access check.  It also appears on some event types where the
-                  cardholder did not authenticate; for those events there will be no `cardholder`
-                  block.
-
-                  `observed` means they did something that indicated their location, such as logging
-                  in to a workstation or an alarms terminal.
+                  cardholder did not successfully authenticate; for those events there will be no
+                  `cardholder` block, covered next.
 
               cardholder:
                 type: object
                 description: |
+
                   A block describing the cardholder whose location is recorded by the event.
+
+                  It will be missing if the cardholder did not successfully authenticate:  perhaps
+                  they used their card but did not complete a second factor.  In most cases, though,
+                  if a cardholder does not authenticate properly (gets their PIN wrong, for example)
+                  there will be no `location` block at all.
+
                 properties:
                   name:
                     type: string
@@ -2807,9 +2810,15 @@ definitions:
                   events, which happen when a cardholder does not move, `afterLocation` shows where
                   they were.
 
-                  The name was correct at the time of the event.  The href will be missing if your
-                  operator does not have the right to view it (which also means it must not have
-                  been deleted).
+                  The name was correct at the time of the event.  It may be missing.
+
+                  The href will be missing if your operator does not have the right to view the
+                  location.  That also happens when it is deleted.
+
+                  If the cardholder moved from outside there will be a field in this block called
+                  `outside` with the value `true`, and `canonicaltypeName` and `href` will be
+                  missing.
+
                 example: {
                   href: "https://localhost:8904/api/access_zones/333",
                   name: "Lvl 1 lift lobby",
@@ -2826,25 +2835,29 @@ definitions:
                   For 'observed' events it could be a workstation or an alarms terminal at which the
                   person authenticated.
 
-                  Future versions of Command Centre may add more item types.  So you can branch on
-                  them, this block and `beforeLocation` contain a field called `canonicalTypeName`.
-                  The values it returns are fixed:  it is safe to make decisions based on the value.
-                  We will add new values as Command Centre grows, but after its first appearance an
-                  item type's `canonicalTypeName` will not change.
+                  Future versions of Command Centre may add more item types.  So that you can branch
+                  on them, this block and `beforeLocation` contain a field called
+                  `canonicalTypeName`.  The values it returns are fixed:  it is safe to make
+                  decisions based on the value.  We will add new values as Command Centre grows, but
+                  after its first appearance an item type's `canonicalTypeName` will not change.
 
                   Common canonical type names are `accesszone`, `reception`, `workstation`, and (for
-                  a T20 alarms terminal) `hbusterminal`.  You can get the full list with the [item
-                  types](#operation--api-items-types-get).
+                  a T20 alarms terminal that uses the H-Bus protocol) `hbusterminal`.  You can get
+                  the full list with the [item types](#operation--api-items-types-get).
 
                   If they moved "outside the system" (entering through a door with no entry zone, or
-                  exiting through a door with no exit zone), there will be no href.  The href will
-                  also be missing if your operator does not have the right to view it.
+                  exiting through a door with no exit zone), there will be no href or canonical
+                  type, but there will be a field called `outside` with the value `true`.
 
-                  The item's name was correct at the time of the event.  It may have changed since.
-                example: {
-                  href: "https://localhost:8904/api/access_zones/637",
-                  name: "Lvl 2 lift lobby",
-                  canonicalTypeName: "accesszone"}
+                  The href will also be missing if your operator does not have the right to view
+                  their new location.
+
+                  If present, the item's name was correct at the time of the event.  It may have
+                  changed since.  It will be missing for some event types such as 15583, which
+                  happens when an operator moves a cardholder outside the system using an
+                  operational client.
+
+                example: { outside: true }
 
       - $ref: "#/definitions/Event summary"
 
@@ -3271,8 +3284,7 @@ definitions:
                         "name": "Access group 30",
                         "href": "https://localhost:8904/api/access_groups/927"
                       }
-                    }
-                  ]
+                    }                  ]
 
   Division PATCH and POST example:
     type: object
@@ -3542,8 +3554,7 @@ definitions:
       ],
       "next": {
         "href": "https://localhost:8904/api/items/updates?bookmark=3ec613a1-de01c6e_0"
-      }
-    }
+      }    }
 
   Item update subscription:
     type: object

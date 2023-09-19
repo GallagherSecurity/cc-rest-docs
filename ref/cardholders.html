@@ -1139,9 +1139,7 @@
                     <div class="prop-value">
                       <p>Limits the results to cardholders who are in one of the access zones with the given IDs. Do not put quotes around the IDs, and separate them with commas.</p>
                       <p>To get everyone who is in
-                        <em>any</em> access zone use <code>accessZone=*</code>.</p>
-                      <p>This is under development for 9.00. Until it is complete,
-                        <strong>it is subject to change</strong>.</p>
+                        <em>any</em> access zone use <code>accessZone=*</code>. It will return all cardholders who have badged at least once and who are not currently &#39;outside the system&#39;. A cardholder is &#39;outside&#39; if they badge through a door that has no access zone configured, or if an operator manually moves them outside.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -10950,7 +10948,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This is a block containing fields that describe how Command Centre should set about registring the mobile device.</p>
+                      <p>This is a block containing fields that describe how Command Centre should set about registering the mobile device.</p>
                       <p>If you specify <code>mobile</code> you must also supply <code>email</code>. If you give neither, Command Centre will not send an invitation to the cardholder.</p>
                       <p><code>singleFactorOnly</code> defaults to false, which is the recommended setting. See the
                         <a href="#definition-Cardholder-card">card detail</a> for more.</p>
@@ -15982,7 +15980,7 @@
                         <a href="#operation--api-visits--id--visitors--visitorId--patch">PATCH</a> to change their state (new in 8.90). The one inside the <code>cardholder</code> block is simply an href to the cardholder item. You can use either href when removing visitors from a visit with a PATCH.</p>
                       <p>The <code>status</code> block contains two fields. <code>value</code> is a human-readable description of their state in by the server&#39;s language. <code>type</code> comes from a fixed enumeration.</p>
                       <p>A visit with no visitors on it will not appear in Gallagher&#39;s visitor management application. Why clutter the screen if you&#39;re not expecting anybody, after all.</p>
-                      <p>When you send a visitor block to the server in a POST to create a visit, just send an array of hrefs to cardholders. 8.50 does not accept the same kind of visitor hrefs here that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON from a GET. Don&#39;t send a <code>status</code> block: the server will ignore it and set all visitors to &#39;expected&#39;.</p>
+                      <p>When you send a visitor block to the server in a POST to create a visit, just send an array of hrefs to cardholders. 8.50 does not accept the same kind of visitor hrefs here that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON from a GET. Don&#39;t bother sending a <code>status</code> block: the server will ignore it and set all visitors to &#39;expected&#39;.</p>
                       <p>When you send a visitor block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain cardholder hrefs, exactly as you would send when creating a visit. The <code>remove</code> array should contain either of the hrefs you received for the cardholder in the GET. The PATCH example shows two hrefs removing the same cardholder.</p>
                       <p>Your operator must have a privilege such as &#39;Modify Access Control&#39; that allows both viewing the cardholders and changing their access groups memberships, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;.</p>
                     </dd>
@@ -16266,7 +16264,7 @@
                         <a href="#operation--api-visits--id--visitors--visitorId--patch">PATCH</a> to change their state (new in 8.90). The one inside the <code>cardholder</code> block is simply an href to the cardholder item. You can use either href when removing visitors from a visit with a PATCH.</p>
                       <p>The <code>status</code> block contains two fields. <code>value</code> is a human-readable description of their state in by the server&#39;s language. <code>type</code> comes from a fixed enumeration.</p>
                       <p>A visit with no visitors on it will not appear in Gallagher&#39;s visitor management application. Why clutter the screen if you&#39;re not expecting anybody, after all.</p>
-                      <p>When you send a visitor block to the server in a POST to create a visit, just send an array of hrefs to cardholders. 8.50 does not accept the same kind of visitor hrefs here that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON from a GET. Don&#39;t send a <code>status</code> block: the server will ignore it and set all visitors to &#39;expected&#39;.</p>
+                      <p>When you send a visitor block to the server in a POST to create a visit, just send an array of hrefs to cardholders. 8.50 does not accept the same kind of visitor hrefs here that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON from a GET. Don&#39;t bother sending a <code>status</code> block: the server will ignore it and set all visitors to &#39;expected&#39;.</p>
                       <p>When you send a visitor block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain cardholder hrefs, exactly as you would send when creating a visit. The <code>remove</code> array should contain either of the hrefs you received for the cardholder in the GET. The PATCH example shows two hrefs removing the same cardholder.</p>
                       <p>Your operator must have a privilege such as &#39;Modify Access Control&#39; that allows both viewing the cardholders and changing their access groups memberships, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;.</p>
                     </dd>
@@ -16517,7 +16515,7 @@
                         <a href="#operation--api-visits--id--visitors--visitorId--patch">PATCH</a> to change their state (new in 8.90). The one inside the <code>cardholder</code> block is simply an href to the cardholder item. You can use either href when removing visitors from a visit with a PATCH.</p>
                       <p>The <code>status</code> block contains two fields. <code>value</code> is a human-readable description of their state in by the server&#39;s language. <code>type</code> comes from a fixed enumeration.</p>
                       <p>A visit with no visitors on it will not appear in Gallagher&#39;s visitor management application. Why clutter the screen if you&#39;re not expecting anybody, after all.</p>
-                      <p>When you send a visitor block to the server in a POST to create a visit, just send an array of hrefs to cardholders. 8.50 does not accept the same kind of visitor hrefs here that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON from a GET. Don&#39;t send a <code>status</code> block: the server will ignore it and set all visitors to &#39;expected&#39;.</p>
+                      <p>When you send a visitor block to the server in a POST to create a visit, just send an array of hrefs to cardholders. 8.50 does not accept the same kind of visitor hrefs here that it sends, so this is the other reason you cannot copy a visit by POSTing back the JSON from a GET. Don&#39;t bother sending a <code>status</code> block: the server will ignore it and set all visitors to &#39;expected&#39;.</p>
                       <p>When you send a visitor block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain cardholder hrefs, exactly as you would send when creating a visit. The <code>remove</code> array should contain either of the hrefs you received for the cardholder in the GET. The PATCH example shows two hrefs removing the same cardholder.</p>
                       <p>Your operator must have a privilege such as &#39;Modify Access Control&#39; that allows both viewing the cardholders and changing their access groups memberships, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;.</p>
                     </dd>
