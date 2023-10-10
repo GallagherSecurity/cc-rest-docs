@@ -807,12 +807,29 @@
                   <a href="#operation--api-cardholders-get">↪</a>, appending a search term to narrow the results and the &#39;fields&#39; parameter to add the fields you need.</li>
                 <li>Process the results, following the <code>next</code> link until there isn&#39;t one.</li>
               </ol>
-              <h4 id="synchronising-a-user-directory">Synchronising a user directory</h4>
-              <p>This is the fastest way of synchronising a large body of users on a source system with Command Centre:</p>
+              <h4 id="downloading-all-cardholders">Downloading all cardholders</h4>
               <ol>
-                <li>Get all cardholders from CC, taking note of the efficiency tips in this document. That should take only a few minutes per 100,000 cardholders.</li>
-                <li>Compare them with your upstream user directory and compute a set of deltas: cardholders to create, modify, and delete.</li>
-                <li>Apply those changes to Command Centre.</li>
+                <li>
+                  <p><code>GET /api</code></p>
+                </li>
+                <li>
+                  <p>Follow the link at <code>features.cardholders.cardholders.href</code>
+                    <a href="#operation--api-cardholders-get">↪</a>. This is effectively a cardholder search with no filters. You should add <code>sort</code> and <code>top</code> query parameters to sort by ID and increase the number of cardholders per page: see the efficiency tips!</p>
+                </li>
+                <li>
+                  <p>Process the bundle of cardholders in the result.</p>
+                </li>
+                <li>
+                  <p>Follow the link at <code>next.href</code> if there is one, and repeat.</p>
+                </li>
+              </ol>
+              <h4 id="synchronising-a-user-directory">Synchronising a user directory</h4>
+              <p>This is a common use case, described in the section on
+                <a href="#tag-Cardholder-changes">Cardholder changes</a>. It shows how to:</p>
+              <ol>
+                <li>Get a bookmark at the head of the queue of cardholder changes.</li>
+                <li>Do a one-off sync of all cardholders.</li>
+                <li>Loop to stay up to date, starting with the bookmark.</li>
               </ol>
               <p>That is how Gallagher&#39;s cardholder-synchronising integrations work.</p>
               <h4 id="searching-for-cardholders-by-personal-data-field-value">Searching for cardholders by Personal Data Field value</h4>
@@ -950,22 +967,12 @@
               <ol start="3">
                 <li>For each access zone, GET its href and look in its <code>doors</code> block.</li>
               </ol>
-              <h4 id="downloading-all-cardholders">Downloading all cardholders</h4>
-              <ol>
-                <li>
-                  <p><code>GET /api</code></p>
-                </li>
-                <li>
-                  <p>Follow the link at <code>features.cardholders.cardholders.href</code>
-                    <a href="#operation--api-cardholders-get">↪</a>. This is effectively a cardholder search with no filters. You should add <code>sort</code> and <code>top</code> query parameters to sort by ID and increase the number of cardholders per page: see the efficiency tips!</p>
-                </li>
-                <li>
-                  <p>Process the bundle of cardholders in the result.</p>
-                </li>
-                <li>
-                  <p>Follow the link at <code>next.href</code> if there is one, and repeat.</p>
-                </li>
-              </ol>
+              <h4 id="finding-recently-created-cardholders">Finding recently-created cardholders</h4>
+              <p>This is another function of the
+                <a href="#tag-Cardholder-changes">Cardholder changes</a> call, described there.</p>
+              <p>However to do that you need to make an API call
+                <em>before</em> creating the cardholders. If the cardholders already exist, a workaround is to get a page of cardholders sorted by database ID
+                <em>descending</em> using <code>sort=-id&amp;top=10</code>. Change the ten to the number of cardholders you&#39;d like, obviously. Because Command Centre allocates database IDs to new items in increasing order, the first page you get will be the most-recently created cardholders. This is not suitable for use in a production system! Use the cardholder changes call instead.</p>
               <h2 id="field-names-in-query-parameters">Field names in query parameters</h2>
               <p>The cardholder
                 <a href="#operation--api-cardholders-get">search</a> and
@@ -3168,6 +3175,11 @@
                   <p>Restart your polling loop using the link in <code>next.href</code>.</p>
                 </li>
               </ol>
+              <h3 id="use-case--discovering-recently-created-cardholders">Use case: discovering recently-created cardholders.</h3>
+              <p>The first thing you need to do is get a link from the changes API call
+                <em>before</em> creating the cardholders. If you didn&#39;t do that, there is a workaround described in the cardholder use cases, but it is not suitable for production.</p>
+              <p>When you call this API the second time you will receive all changes made to cardholders since the previous call. To find the new cardholders, discard all the results that do not have <code>type=add</code>.</p>
+              <p>Since you are only interested in new data, you can optimise the call a little by removing everything else with <code>fields=newValues</code>.</p>
               <h3 id="notes">Notes</h3>
               <ul>
                 <li>

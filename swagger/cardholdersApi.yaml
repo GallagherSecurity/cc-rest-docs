@@ -672,16 +672,25 @@ tags:
        'fields' parameter to add the fields you need.
     3. Process the results, following the `next` link until there isn't one.
 
+    #### Downloading all cardholders 
+    1. `GET /api`
+
+    2. Follow the link at `features.cardholders.cardholders.href`
+       [↪](#operation--api-cardholders-get).  This is effectively a cardholder search with no
+       filters.  You should add `sort` and `top` query parameters to sort by ID and increase the
+       number of cardholders per page:  see the efficiency tips!
+
+    3. Process the bundle of cardholders in the result.
+    4. Follow the link at `next.href` if there is one, and repeat.
+
     #### Synchronising a user directory
 
-    This is the fastest way of synchronising a large body of users on a source system with Command
-    Centre:
+    This is a common use case, described in the section on [Cardholder
+    changes](#tag-Cardholder-changes).  It shows how to:
 
-    1. Get all cardholders from CC, taking note of the efficiency tips in this document.  That
-       should take only a few minutes per 100,000 cardholders.
-    2. Compare them with your upstream user directory and compute a set of deltas:  cardholders to
-       create, modify, and delete.
-    3. Apply those changes to Command Centre.
+    1. Get a bookmark at the head of the queue of cardholder changes.
+    2. Do a one-off sync of all cardholders.
+    3. Loop to stay up to date, starting with the bookmark.
 
     That is how Gallagher's cardholder-synchronising integrations work.
 
@@ -837,16 +846,17 @@ tags:
 
     3. For each access zone, GET its href and look in its `doors` block.
 
-    #### Downloading all cardholders 
-    1. `GET /api`
+    #### Finding recently-created cardholders
 
-    2. Follow the link at `features.cardholders.cardholders.href`
-       [↪](#operation--api-cardholders-get).  This is effectively a cardholder search with no
-       filters.  You should add `sort` and `top` query parameters to sort by ID and increase the
-       number of cardholders per page:  see the efficiency tips!
+    This is another function of the [Cardholder changes](#tag-Cardholder-changes) call, described
+    there.
 
-    3. Process the bundle of cardholders in the result.
-    4. Follow the link at `next.href` if there is one, and repeat.
+    However to do that you need to make an API call _before_ creating the cardholders.  If the
+    cardholders already exist, a workaround is to get a page of cardholders sorted by database ID
+    _descending_ using `sort=-id&top=10`.  Change the ten to the number of cardholders you'd like,
+    obviously.  Because Command Centre allocates database IDs to new items in increasing order, the
+    first page you get will be the most-recently created cardholders.  This is not suitable for use
+    in a production system!  Use the cardholder changes call instead.
 
     ## Field names in query parameters
 
@@ -945,6 +955,19 @@ tags:
     your previous call.  The sections below will help you process them.
 
     1. Restart your polling loop using the link in `next.href`.
+
+    ### Use case:  discovering recently-created cardholders.
+
+    The first thing you need to do is get a link from the changes API call _before_ creating the
+    cardholders.  If you didn't do that, there is a workaround described in the cardholder use
+    cases, but it is not suitable for production.
+
+    When you call this API the second time you will receive all changes made to cardholders since
+    the previous call.  To find the new cardholders, discard all the results that do not have
+    `type=add`.
+
+    Since you are only interested in new data, you can optimise the call a little by removing
+    everything else with `fields=newValues`.
 
     ### Notes
 
