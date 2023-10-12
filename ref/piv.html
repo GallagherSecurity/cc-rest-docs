@@ -90,10 +90,10 @@
                 <p>When you assign any card to a cardholder, PIV or otherwise, you need to provide the identifier of the card type. It will vary between Command Centre installations, so you cannot use a value from another installation or these examples. It will not change while Command Centre is running but it may change at upgrade, so your application should follow this process at startup.</p>
                 <p>It takes two queries and a loop:</p>
                 <ol>
-                  <li><code>GET /api</code>,</li>
-                  <li>if running 8.00 or earlier, follow the link at <code>features.cardTypes.cardTypes.href</code> (which will be to <code>/api/card_types</code>), or</li>
-                  <li>if running 8.10 or later, follow the link at <code>features.cardTypes.assign.href</code> (which will probably be to <code>/api/card_types/assign</code>. Both URLs will work in 8.10, but the advantage of this URL is that your operator can access it with fewer privileges),</li>
-                  <li>iterate through the array to find the element with <code>credentialClass:  piv</code>, and</li>
+                  <li><code>GET /api</code>.</li>
+                  <li>If running 8.00 or earlier, follow the link at <code>features.cardTypes.cardTypes.href</code> (which will be to <code>/api/card_types</code>), or</li>
+                  <li>if running 8.10 or later, follow the link at <code>features.cardTypes.assign.href</code> (which will probably be to <code>/api/card_types/assign</code>. Both URLs will work in 8.10, but the advantage of this URL is that your operator can access it at a lower privilege level).</li>
+                  <li>Iterate through the array to find the element with <code>credentialClass:  piv</code>, and</li>
                   <li>note its <code>href</code>.</li>
                 </ol>
                 <p>You can accomplish the last two steps with the JSONPath filter</p>
@@ -106,7 +106,7 @@
                 <p>See the main cardholder documentation, particularly the section on
                   <a href="cardholders.html#operation--api-cardholders-get">searching cardholders</a>.</p>
                 <h3 id="licensing">Licensing</h3>
-                <p>All of the API calls described here require the RESTCardholders licence. If your site is also licensed to use PIV cards, you can access them via REST.</p>
+                <p>All of the API calls described here require the RESTCardholders licence. If your site is also licensed to use PIV cards, you can access those cards via REST.</p>
                 <h3 id="cardholder-api-changes-in-810">Cardholder API changes in 8.10</h3>
                 <ul>
                   <li>Certificates and biometric data are now available without a customisation. They are too large to send to all REST clients so you must ask for them using the <code>fields</code> parameter.</li>
@@ -775,7 +775,7 @@
                 <section class="json-schema-description">
                   <p>In addition to the generic card data the API always returns in the cards section (in the
                     <a href="cardholders.html#definition-Cardholder-card">Cardholders API document</a>) of a cardholder detail page, including <code>href</code>, <code>number</code>, <code>issueLevel</code>, <code>type</code>, and <code>status</code>, PIV cards have a <code>pivData</code> structure.</p>
-                  <p>In version 8.00 and later, <code>credentialClass</code> will be &#39;piv&#39;.</p>
+                  <p>In version 8.00 and later you can check for the value <code>piv</code> on <code>credentialClass</code>.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -786,8 +786,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>There is no difference between the href of a PIV card and any other. DELETE it to delete a card. That is the only verb you can use on this URL. GET will always return a 404.</p>
-                      <p>Do not specify it when creating a card.</p>
+                      <p>This is the same as the href to a card of any other type: you can send an HTTP DELETE to it to delete the card, but that is the only verb that will work. GET will return a 404.</p>
+                      <p>Do not specify it when creating a card, since it is the creation process that generates its href.</p>
                     </dd>
                     <dt data-property-name="number" class="has-description">
                       <span class="json-property-name">number:</span>
@@ -795,7 +795,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>While the card number rules on a PIV card type are different from those on non-PIV card types, card numbers are still strings, and the API will accept them from you and return them to you in the same way.</p>
+                      <p>While the card number rules on a PIV or PIV-I card type are different from those on other types, card numbers are still strings, and the API will accept them from you and return them to you in the same way.</p>
                       <p>PIV card numbers are the FASC-N with hyphens splitting the major components.</p>
                       <p>PIV-I card numbers are the CHUID&#39;s GUID in decimal.</p>
                     </dd>
@@ -980,7 +980,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>All credential types have a set of card states. PIV cards have two.</p>
+                      <p>All credential types have a set of card states. The set assigned to PIV cards contains only two.</p>
+                      <p>If you need this, ask for it using the <code>fields</code> parameter.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-array-items">
@@ -1004,7 +1005,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>You are after the card type with credential class &#39;piv&#39;.</p>
+                      <p>PIV card types have the credential class &#39;piv&#39;.</p>
                     </dd>
                   </dl>
                 </section>
@@ -1045,7 +1046,7 @@
                 <section class="json-schema-description">
                   <p>This example, when placed inside the <code>cards</code> array of a
                     <a href="cardholders.html#operation--api-cardholders-post">POST</a> or the <code>cards.add</code> array of a
-                    <a href="cardholders.html#operation--api-cardholders--id--patch">PATCH</a>, would create a PIV card credential and assign it to the cardholder created by the POST or identified by the address of the PATCH. Consult those methods for the JSON you need to wrap around this example.</p>
+                    <a href="cardholders.html#operation--api-cardholders--id--patch">PATCH</a>, would create a PIV credential and assign it to the cardholder created by the POST or identified by the address of the PATCH. Consult those methods for the JSON you need to wrap around this example.</p>
                   <p>A PIV-I example would have a different style of FASC-N, and a card number to match.</p>
                 </section>
                 <section class="json-schema-properties">
@@ -1089,7 +1090,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This block contains all the PIV-specific fields. Everything outside this block, including the number, status, and type, is common to all Command Centre cards and credentials.</p>
+                      <p>This block contains all the PIV-specific fields. Everything outside this block, including the number, status, and type, is common to all types of Command Centre cards and credentials.</p>
                     </dd>
                   </dl>
                 </section>

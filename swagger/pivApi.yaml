@@ -40,13 +40,13 @@ info:
 
     It takes two queries and a loop:
 
-      1. `GET /api`,
-      2. if running 8.00 or earlier, follow the link at `features.cardTypes.cardTypes.href` (which
+      1. `GET /api`.
+      2. If running 8.00 or earlier, follow the link at `features.cardTypes.cardTypes.href` (which
          will be to `/api/card_types`), or
       2. if running 8.10 or later, follow the link at `features.cardTypes.assign.href` (which will
          probably be to `/api/card_types/assign`.  Both URLs will work in 8.10, but the advantage of
-         this URL is that your operator can access it with fewer privileges),
-      3. iterate through the array to find the element with `credentialClass:  piv`, and
+         this URL is that your operator can access it at a lower privilege level).
+      3. Iterate through the array to find the element with `credentialClass:  piv`, and
       4. note its `href`.
 
     You can accomplish the last two steps with the JSONPath filter
@@ -69,7 +69,7 @@ info:
     ### Licensing
 
     All of the API calls described here require the RESTCardholders licence.  If your site is also
-    licensed to use PIV cards, you can access them via REST.
+    licensed to use PIV cards, you can access those cards via REST.
 
     ### Cardholder API changes in 8.10
 
@@ -328,7 +328,7 @@ definitions:
       detail page, including `href`, `number`, `issueLevel`, `type`, and `status`, PIV cards have a
       `pivData` structure.
 
-      In version 8.00 and later, `credentialClass` will be 'piv'.
+      In version 8.00 and later you can check for the value `piv` on `credentialClass`.
 
     properties:
       href:
@@ -336,15 +336,16 @@ definitions:
         format: url
         example: "https://localhost:8904/api/cardholders/325/cards/6284082f7ba5eb1"
         description: |
-          There is no difference between the href of a PIV card and any other.  DELETE it to delete
-          a card.  That is the only verb you can use on this URL.  GET will always return a 404.
+          This is the same as the href to a card of any other type:  you can send an HTTP DELETE to
+          it to delete the card, but that is the only verb that will work.  GET will return a 404.
 
-          Do not specify it when creating a card.
+          Do not specify it when creating a card, since it is the creation process that generates
+          its href.
       number:
         type: string
         example: "3165-4313-245789-098765432113456799"
         description: |
-          While the card number rules on a PIV card type are different from those on non-PIV card
+          While the card number rules on a PIV or PIV-I card type are different from those on other
           types, card numbers are still strings, and the API will accept them from you and return
           them to you in the same way.
 
@@ -432,7 +433,11 @@ definitions:
       availableCardStates:
         type: array
         items: {type: string, enum: ['Active', 'Disabled (manually)']}
-        description: All credential types have a set of card states.  PIV cards have two.
+        description: |
+          All credential types have a set of card states.  The set assigned to PIV cards contains
+          only two.
+
+          If you need this, ask for it using the `fields` parameter.
         example:
         - "Active"
         - "Disabled (manually)"
@@ -440,13 +445,13 @@ definitions:
         type: string
         enum: [ "piv", "card", "mobile"]
         example: piv
-        description: You are after the card type with credential class 'piv'.
+        description: PIV card types have the credential class 'piv'.
 
   PIV card create example:
     description: |
       This example, when placed inside the `cards` array of a
       [POST](cardholders.html#operation--api-cardholders-post) or the `cards.add` array of a
-      [PATCH](cardholders.html#operation--api-cardholders--id--patch), would create a PIV card
+      [PATCH](cardholders.html#operation--api-cardholders--id--patch), would create a PIV
       credential and assign it to the cardholder created by the POST or identified by the address of
       the PATCH.  Consult those methods for the JSON you need to wrap around this example.
 
@@ -483,7 +488,7 @@ definitions:
       pivData:
         description: |
           This block contains all the PIV-specific fields.  Everything outside this block, including
-          the number, status, and type, is common to all Command Centre cards and credentials.
+          the number, status, and type, is common to all types of Command Centre cards and credentials.
         $ref: '#/definitions/PIV card data'
 
   PIV card update example:
