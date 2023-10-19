@@ -224,6 +224,12 @@
               <li>
                 <a href="#operation--api-visits--id--visitors--visitorId--patch"> Modify a visitor&#x27;s status </a>
               </li>
+              <li>
+                <a href="#operation--api-visits--id--visitors--visitorId--notify_signing_in-post"> Notify that a visitor is signing in </a>
+              </li>
+              <li>
+                <a href="#operation--api-visits--id--visitors--visitorId--notify_onsite-post"> Notify that a visitor is on-site </a>
+              </li>
             </ul>
           </section>
           <h5>Schema Definitions</h5>
@@ -278,6 +284,7 @@
           <a href="#definition-Visit-POST-example"> Visit POST example </a>
           <a href="#definition-Visit-PATCH-example"> Visit PATCH example </a>
           <a href="#definition-Visitor-PATCH-example"> Visitor PATCH example </a>
+          <a href="#definition-Visitor-notification-POST"> Visitor notification POST </a>
         </nav>
       </div>
       <div id="docs" class="row collapse expanded drawer" data-drawer>
@@ -8647,6 +8654,9 @@
                 <section class="swagger-operation-description">
                   <p>Changes a visitor&#39;s state for a visit. This is how you mark a visitor as signing in, signed in, on site, off site again, etc.</p>
                   <p>Doing so will create an event if your visitor was not already in the state you attempted to move them to.</p>
+                  <p>It will not send a notification to the visitor&#39;s host or escort. There are other API calls for notifying that a visitor is
+                    <a href="#operation--api-visits--id--visitors--visitorId--notify_signing_in-post">signing in</a> or
+                    <a href="#operation--api-visits--id--visitors--visitorId--notify_onsite-post">on-site</a>.</p>
                   <p>Note that this URL is different from a normal cardholder href because a cardholder can be a visitor on more than one visit at a time.</p>
                   <p>Take this href from a
                     <a href="#definition-Visit-search">visit search</a> or
@@ -8732,6 +8742,234 @@
                     </div>
                     <div class="prop-value">
                       <p>That is not the URL of a visitor, or it is a visitor on a visit that the operator does not have the privilege to see (&#39;View Visits&#39; or &#39;Edit Visits&#39;).</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-visits--id--visitors--visitorId--notify_signing_in-post" class="operation panel" data-traverse-target="operation--api-visits--id--visitors--visitorId--notify_signing_in-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Visits">Visits</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Notify that a visitor is signing in</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/visits/{id}/visitors/{visitorId}/notify_signing_in</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Sends an email and / or SMS notification to a visit&#39;s host.</p>
+                  <p>The difference between this and
+                    <a href="#operation--api-visits--id--visitors--visitorId--notify_onsite-post">notify_onsite</a> is the type of event that Command Centre puts in the audit trail. In all other ways they are identical.</p>
+                  <p>New to 8.90.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Visitor notification POST">Visitor notification POST</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>The contents of the email or SMS, or both.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;emailSubject&quot;</span>: <span class="hljs-string">&quot;Visitor arriving&quot;</span>,
+  <span class="hljs-attr">&quot;emailMessage&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+  <span class="hljs-attr">&quot;smsMessage&quot;</span>: <span class="hljs-string">&quot;Visitor arriving&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. The response body will contain feedback from the server.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the PATCH did not describe a notification. Check the body of the server&#39;s response for hints.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders and VisitorManagement licences, or the operator does not have sufficient privileges, or the visit has expired.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not a visitor&#39;s notification URL, or it is a notification URL for a visitor on a visit that the operator does not have the privilege to see (&#39;View Visits&#39; or &#39;Edit Visits&#39;).</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-visits--id--visitors--visitorId--notify_onsite-post" class="operation panel" data-traverse-target="operation--api-visits--id--visitors--visitorId--notify_onsite-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Visits">Visits</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Notify that a visitor is on-site</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/visits/{id}/visitors/{visitorId}/notify_onsite</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Sends an email and / or SMS notification to a visit&#39;s host.</p>
+                  <p>The difference between this and
+                    <a href="#operation--api-visits--id--visitors--visitorId--notify_signing_in-post">notify_signing_in</a> is the type of event that Command Centre puts in the audit trail. In all other ways they are identical.</p>
+                  <p>New to 8.90.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Visitor notification POST">Visitor notification POST</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>The contents of the email or SMS, or both.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;emailSubject&quot;</span>: <span class="hljs-string">&quot;Visitor arriving&quot;</span>,
+  <span class="hljs-attr">&quot;emailMessage&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+  <span class="hljs-attr">&quot;smsMessage&quot;</span>: <span class="hljs-string">&quot;Visitor arriving&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. The response body will contain feedback from the server.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the PATCH did not describe a notification. Check the body of the server&#39;s response for hints.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTCardholders and VisitorManagement licences, or the operator does not have sufficient privileges, or the visit has expired.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not a visitor&#39;s notification URL, or it is a notification URL for a visitor on a visit that the operator does not have the privilege to see (&#39;View Visits&#39; or &#39;Edit Visits&#39;).</p>
                     </div>
                   </div>
                 </section>
@@ -16811,6 +17049,68 @@
   <span class="hljs-attr">&quot;status&quot;</span>: {
     <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;signingIn&quot;</span>
   }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Visitor-notification-POST" class="definition panel" data-traverse-target="definition-Visitor-notification-POST">
+            <h2 class="panel-title">
+              <a name="/definitions/Visitor notification POST"></a>Visitor notification POST:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>This is a sample body for the methods that send notifications to a visit&#39;s host. Call them as a visitor moves through their reception process.</p>
+                  <p>Command Centre can send email, an SMS, or both. It will send email if you give it either the subject or a message body. It will send a TXT only if you give it the SMS message.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="emailSubject" class="has-description">
+                      <span class="json-property-name">emailSubject:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>If you wish to send an email notification, put its subject here. Email will go out if you leave it blank but provide a body, but it is generally easier on the recipient the other way around.</p>
+                    </dd>
+                    <dt data-property-name="emailMessage" class="has-description">
+                      <span class="json-property-name">emailMessage:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>If you want your email notification to contain body text, put it here.</p>
+                    </dd>
+                    <dt data-property-name="smsMessage" class="has-description">
+                      <span class="json-property-name">smsMessage:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>If you wish to send an SMS notification (a TXT), put it here. Leave it blank if you only wish to send email.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;emailSubject&quot;</span>: <span class="hljs-string">&quot;Visitor arriving&quot;</span>,
+  <span class="hljs-attr">&quot;emailMessage&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+  <span class="hljs-attr">&quot;smsMessage&quot;</span>: <span class="hljs-string">&quot;Visitor arriving&quot;</span>
 }
 </code></pre> </body>
                   </html>

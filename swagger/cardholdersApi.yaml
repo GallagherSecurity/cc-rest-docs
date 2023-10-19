@@ -5430,6 +5430,33 @@ definitions:
             enum:
               [expected, signingIn, signedIn, onSite, expectedBack, departed, cancelled ]
 
+  Visitor notification POST:
+    description: |
+      This is a sample body for the methods that send notifications to a visit's host.  Call them
+      as a visitor moves through their reception process.
+
+      Command Centre can send email, an SMS, or both.  It will send email if you give it either the
+      subject or a message body.  It will send a TXT only if you give it the SMS message.
+
+    properties:
+      emailSubject:
+        type: string
+        description: |
+          If you wish to send an email notification, put its subject here.  Email will go out if you
+          leave it blank but provide a body, but it is generally easier on the recipient the other
+          way around.
+        example: "Visitor arriving"
+      emailMessage:
+        type: string
+        description: |
+          If you want your email notification to contain body text, put it here.
+        example: ""
+      smsMessage:
+        type: string
+        description: |
+          If you wish to send an SMS notification (a TXT), put it here.  Leave it blank if you only wish to send email.
+        example: "Visitor arriving"
+
 ######################################################################
 ######################################################################
 ######################################################################
@@ -7524,6 +7551,11 @@ paths:
         Doing so will create an event if your visitor was not already in the state you attempted to
         move them to.
 
+        It will not send a notification to the visitor's host or escort.  There are other API calls
+        for notifying that a visitor is [signing
+        in](#operation--api-visits--id--visitors--visitorId--notify_signing_in-post) or
+        [on-site](#operation--api-visits--id--visitors--visitorId--notify_onsite-post).
+
         Note that this URL is different from a normal cardholder href because a cardholder can be a
         visitor on more than one visit at a time.
 
@@ -7558,3 +7590,83 @@ paths:
           description: |
             That is not the URL of a visitor, or it is a visitor on a visit that the operator does
             not have the privilege to see ('View Visits' or 'Edit Visits').
+
+  /api/visits/{id}/visitors/{visitorId}/notify_signing_in:
+    post:
+      tags: [ "Visits" ]
+      summary: Notify that a visitor is signing in
+      description: |
+
+        Sends an email and / or SMS notification to a visit's host.
+
+        The difference between this and
+        [notify_onsite](#operation--api-visits--id--visitors--visitorId--notify_onsite-post) is the
+        type of event that Command Centre puts in the audit trail.  In all other ways they are
+        identical.
+
+        New to 8.90.
+
+      parameters:
+      - name: "this string not rendered"
+        in: body
+        required: true
+        schema: {$ref: '#/definitions/Visitor notification POST'}
+        description: |
+          The contents of the email or SMS, or both.
+      responses:
+        200: { description: "Success.  The response body will contain feedback from the server." }
+        204:
+          description: "Success."
+        400:
+          description: |
+            The body of the PATCH did not describe a notification.  Check the body of the server's
+            response for hints.
+        403:
+          description: |
+            The site does not have the RESTCardholders and VisitorManagement licences, or the
+            operator does not have sufficient privileges, or the visit has expired.
+        404:
+          description: |
+            That is not a visitor's notification URL, or it is a notification URL for a visitor on a
+            visit that the operator does not have the privilege to see ('View Visits' or 'Edit
+            Visits').
+
+  /api/visits/{id}/visitors/{visitorId}/notify_onsite:
+    post:
+      tags: [ "Visits" ]
+      summary: Notify that a visitor is on-site
+      description: |
+
+        Sends an email and / or SMS notification to a visit's host.
+
+        The difference between this and
+        [notify_signing_in](#operation--api-visits--id--visitors--visitorId--notify_signing_in-post)
+        is the type of event that Command Centre puts in the audit trail.  In all other ways they
+        are identical.
+
+        New to 8.90.
+
+      parameters:
+      - name: "this string not rendered"
+        in: body
+        required: true
+        schema: {$ref: '#/definitions/Visitor notification POST'}
+        description: |
+          The contents of the email or SMS, or both.
+      responses:
+        200: { description: "Success.  The response body will contain feedback from the server." }
+        204:
+          description: "Success."
+        400:
+          description: |
+            The body of the PATCH did not describe a notification.  Check the body of the server's
+            response for hints.
+        403:
+          description: |
+            The site does not have the RESTCardholders and VisitorManagement licences, or the
+            operator does not have sufficient privileges, or the visit has expired.
+        404:
+          description: |
+            That is not a visitor's notification URL, or it is a notification URL for a visitor on a
+            visit that the operator does not have the privilege to see ('View Visits' or 'Edit
+            Visits').
