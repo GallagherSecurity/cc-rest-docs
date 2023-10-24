@@ -357,6 +357,8 @@ x-common-blocks:
       If you are running a multi-server installation and this item is homed on a remote server, this
       field will contain the name of that server.  This field is missing from items that are held on
       the machine that served the API request.  Added in 8.40.
+
+      This is a read-only field.  The server will ignore it if you send it.
   409ch: &409CH
     description: |
       The cardholder is locked for editing by another operator.  The body of the response will
@@ -396,7 +398,7 @@ x-common-blocks:
 
   visit_name: &VISIT_NAME
     type: string
-    example: "Greeter, Ginger"
+    example: "Visit hosted by Greta Ginger"
     description: |
       You can name a visit however you like.  Gallagher's in-house applications name them after
       their hosts.
@@ -5274,9 +5276,11 @@ definitions:
         type: string
         format: url
         description: |
-          This is the URL to send a PATCH to when modifying an existing visit.  It comes out of a
-          GET or in the Location header of a POST that creates a visit, and the server will ignore
-          it if you send it in the body of a POST or a PATCH.
+          This is the URL to send a PATCH to when modifying an existing visit.  You can find it in
+          the body of a GET that returns a visit, or in the Location header of a POST that creates
+          one.
+
+          It is not necessary in a POST or PATCH.  The server will ignore it if you send it.
         example: "https://localhost:8904/api/visits/941"
       serverDisplayName:
         <<: *SERVER
@@ -5285,12 +5289,14 @@ definitions:
       division:
         type: object
         description: |
-          The division containing this visit.  This will be the visit's reception's division, or if
-          that division did not have an active visitor management configuration when the visit was
+          The division containing this visit.
+
+          This only comes out of a GET.  It will be the visit's reception's division, or if that
+          division did not have an active visitor management configuration when the visit was
           created, the first ancestor up the division tree that did.
 
-          You cannot change a visit's division directly.  You can affect it indirectly by changing
-          the visit's reception.
+          The server will ignore it if you send it, because you cannot change a visit's division
+          directly.  You can affect it indirectly by changing the visit's reception.
         example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
       reception:
         <<: *VISIT_RECEPTION
@@ -5365,7 +5371,8 @@ definitions:
       array called `add` and / or an array called `remove`.  Each of those should contain hrefs to
       add to or remove from the visit.
 
-      The other big difference is that all fields are optional in a PATCH.
+      The other big difference between a POST and a PATCH is that all fields are optional in a
+      PATCH.
 
     properties:
       name:
