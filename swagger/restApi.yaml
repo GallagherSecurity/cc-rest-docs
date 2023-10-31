@@ -3129,7 +3129,7 @@ paths:
         The same URL with `_pin` on the end will send an override to an access zone to change its
         mode to 'free - PIN', meaning you _will_ need a PIN on a terminal.
 
-        If you do not give it an end time in the body, the override will remain in place until the
+        If you do not give the override an end time in the body it will remain in place until the
         next scheduled change.
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
@@ -3154,7 +3154,7 @@ paths:
         The same URL with `_pin` on the end will send an override to the access zone to change its
         mode to 'secure - PIN', meaning you _will_ need a PIN on the door and on a terminal.
 
-        If you do not give it an end time in the body, the override will remain in place until the
+        If you do not give the override an end time in the body, it will remain in place until the
         next scheduled change.
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
@@ -3180,7 +3180,7 @@ paths:
         The same URL with `_pin` on the end will override the access zone into 'code or card - PIN',
         meaning you _will_ need a PIN when you use a card.
 
-        If you do not give it an end time in the body, the override will remain in place until the
+        If you do not give the override an end time in the body it will remain in place until the
         next scheduled change.
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
@@ -3200,14 +3200,14 @@ paths:
       summary: Set an access zone to dual auth
       description: |
         Sends an override to an access zone to change its mode to 'dual auth - no PIN', meaning you
-        will need two cardholders to open its doors, and they will not need a PIN.  Terminal
-        functions will require a card but no PIN.
+        will need two badges to open its doors (either two different cardholders or two credentials
+        for the same cardholder, depending on the access zone's configuration), and they will not
+        need a PIN.  Terminal functions will require a card but no PIN.
 
         The same URL with `_pin` on the end will override the zone into 'dual auth - PIN' mode,
-        meaning each cardholder will need a PIN for access, and terminal functions will also require
-        a PIN.
+        meaning each badge will need a PIN.
 
-        If you do not give it an end time in the body, the override will remain in place until the
+        If you do not give the override an end time in the body it will remain in place until the
         next scheduled change.
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
