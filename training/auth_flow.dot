@@ -6,6 +6,7 @@ digraph
 
         node [shape=ellipse, style=filled, fillcolor="#ff9090"]
         o_noapikey[label="Raise 'invalid API key' alarm,\nreturn 401"]
+        o_needacert[label="Raise 'client item needs a fingerprint' alarm,\nreturn 401"]
         o_badprint[label="Raise 'incorrect fingerprint' alarm,\nreturn 401"]
         o_badip[label="Raise 'bad source IP' alarm,\nreturn 401"]
         o_disabled[label="Return 403"]
@@ -53,7 +54,7 @@ digraph
         c_clientcertcheck840->c_correctcert [label = "no"]
 
         c_clientcertcheck2->c_sourceip [label = "yes"]
-        c_clientcertcheck2->o_badprint [label = "no"]
+        c_clientcertcheck2->o_needacert [label = "no"]
 
         c_clientcertcheck1->c_correctcert [label = "yes"]
         c_correctcert->o_badprint [label = "no"]
