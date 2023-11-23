@@ -23,6 +23,7 @@
           <a href="#topic-Documentation-suite">Documentation suite</a>
           <a href="#topic-Forward-compatibility--HATEOAS-">Forward compatibility (HATEOAS)</a>
           <a href="#topic-Operator-privileges">Operator privileges</a>
+          <a href="#topic-Text-encoding">Text encoding</a>
           <a href="#topic-Field-specifiers">Field specifiers</a>
           <a href="#topic-Item-status">Item status</a>
           <h5>Operations</h5>
@@ -609,6 +610,15 @@
                       <em>any</em> items or events of that kind. Make sure that one of the operator groups that your operator is in has a &#39;View&#39; privilege such as &#39;View events&#39; or &#39;View cardholders&#39; - whatever is appropriate. If it does, and you have hit the button mentioned above, then check that the divisions on the operator group contain the items you expect. If it is events you are searching for, check the source item on those events either by using a REST operator with &#39;View events&#39; on the root division or by looking at them in one of the thick clients.</p>
                   </li>
                 </ul>
+              </div>
+            </div>
+          </div>
+          <h1 id="topic-Text-encoding" data-traverse-target="topic-Text-encoding">Text encoding</h1>
+          <div class="panel">
+            <div class="doc-row">
+              <div class="doc-copy">
+                <p>Command Centre&#39;s REST API encodes all payloads using UTF-8, and expects clients to do the same. It does not escape special characters in response bodies except where required to embed them in JSON.</p>
+                <p>Specifically, it does not sanitise HTML, XML, or SQL. Your clients should expect to receive strings exactly as they were sent, even if they were sent by a hostile client. Write your clients to resist injection attacks.</p>
               </div>
             </div>
           </div>

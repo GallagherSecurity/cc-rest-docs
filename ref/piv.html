@@ -22,6 +22,7 @@
           <a href="#authentication">Authentication</a>
           <a href="#topic-Documentation-suite">Documentation suite</a>
           <a href="#topic-Forward-compatibility--HATEOAS-">Forward compatibility (HATEOAS)</a>
+          <a href="#topic-Text-encoding">Text encoding</a>
           <h5>Paths</h5>
           <!-- <section>
                 <a href="#path--api">/api</a>
@@ -234,6 +235,15 @@
                 <p>This is a self-referencing REST API that follows the principles of HATEOAS. Other than the initial <code>GET</code> to <code>/api</code> when it first connects, your source code should not contain any URLs, as they are subject to change. You should append the query parameters this document describes for operations such as filtering and searching, but everying in the path should come from the results of <code>/api</code> or pages linked from it.</p>
                 <p><code>/api</code> only shows licensed API calls.</p>
                 <p>Be prepared to append query parameters to URLs that already have their own: do not assume that you can simply add a question mark and your parameters.</p>
+              </div>
+            </div>
+          </div>
+          <h1 id="topic-Text-encoding" data-traverse-target="topic-Text-encoding">Text encoding</h1>
+          <div class="panel">
+            <div class="doc-row">
+              <div class="doc-copy">
+                <p>Command Centre&#39;s REST API encodes all payloads using UTF-8, and expects clients to do the same. It does not escape special characters in response bodies except where required to embed them in JSON.</p>
+                <p>Specifically, it does not sanitise HTML, XML, or SQL. Your clients should expect to receive strings exactly as they were sent, even if they were sent by a hostile client. Write your clients to resist injection attacks.</p>
               </div>
             </div>
           </div>

@@ -633,6 +633,16 @@ x-spectacle-topics:
         events either by using a REST operator with 'View events' on the root division or by looking
         at them in one of the thick clients.
 
+  Text encoding:
+    description: |
+      Command Centre's REST API encodes all payloads using UTF-8, and expects clients to do the
+      same.  It does not escape special characters in response bodies except where required to embed
+      them in JSON.
+
+      Specifically, it does not sanitise HTML, XML, or SQL.  Your clients should expect to receive
+      strings exactly as they were sent, even if they were sent by a hostile client.  Write your
+      clients to resist injection attacks.
+
   Field specifiers (in general):
     $ref: "cardholdersApi.yaml#/x-spectacle-topics/Field specifiers"
 
