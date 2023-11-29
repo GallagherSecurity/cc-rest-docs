@@ -122,23 +122,23 @@ efficient way of monitoring large numbers of items, and PII redactions.
 == Start here
 
 Do you want to learn the bare minimum about Command Centre (Gallagher's access control product) to
-get you started on an integration?  Read <<_useful_background>>.
+get you started on an integration?  Read <<usefulbackground>>.
 
 Do you want to set up Command Centre and try out its API from a REST client?  Read
-<<_training_setup>>.
+<<trainingsetup>>.
 
-Do you want to learn something about HTTP queries in general?  <<_http_requests>> will help.
+Do you want to learn something about HTTP queries in general?  <<httprequests>> will help.
 
 Do you need an introduction to how HTTPS uses certificates?
-<<_authentication_and_encryption_certificates>> is for you.
+<<httpscerts>> is for you.
 
 Do you want to use client-side certificates to authenticate your client?  Very wise.
-<<_client_side_certificates>> has what you need.
+<<Client-side certificates>> has what you need.
 
-Are you more concerned about the security of the API?  Look in <<_the_request_process>> for how the
-server authenticates and authorises requests in general, <<_client_side_certificates>> for how it
-can use certificates to authenticate clients, <<_notes_for_penetration_testers>> for a mini-FAQ
-on pen test findings, and <<_the_api_gateway>> for deep technical information on the API gateway in the cloud.
+Are you more concerned about the security of the API?  Look in <<The request process>> for how the
+server authenticates and authorises requests in general, <<Client-side certificates>> for how it
+can use certificates to authenticate clients, <<Notes for penetration testers>> for a mini-FAQ
+on pen test findings, and <<The API gateway>> for deep technical information on the API gateway in the cloud.
 
 == References
 
@@ -179,7 +179,7 @@ copy the folder to your local drive. Or read it online.
 
 === API gateway technical paper
 
-If you are thinking of using <<_the_api_gateway>> this document will get you started, but if you are
+If you are thinking of using <<The API gateway,the API gateway>> this document will get you started, but if you are
 after a deeper understanding:
 
 https://gallaghersecurity.github.io/docs/Command%20Centre%20Cloud%20Api%20Gateway%20TIP.pdf
@@ -216,6 +216,7 @@ Adobe’s.
 PII:: Personal Identifiable Information.  Any information in Command Centre's database concerning a
 person, including names, PDFs, movement events, group memberships, roles, competencies, etc.
 
+[[trainingsetup]]
 == Training setup
 
 If you wish to try the REST API for yourself, you will require:
@@ -242,6 +243,7 @@ If you wish to try the REST API for yourself, you will require:
 
 * The link:../ref[API developer documentation].
 
+[[usefulbackground]]
 == Useful background
 
 This section contains material you should have aboard before reading on.
@@ -518,8 +520,9 @@ In the interests of security, you should give your REST operators
 (footnote: _all_ operators) the minimum privileges they require to
 achieve their task.
 
-<<_appendix_features_and_licences>> gives examples of privileges you will need for various tasks.
+<<appendix-privtable>> gives examples of privileges you will need for various tasks.
 
+[[httprequests]]
 === HTTP requests
 
 An HTTP request has four parts: a verb, an address, a handful of
@@ -637,6 +640,7 @@ JSON can contain flat fields, objects (structures), and arrays.
 In that example, the array called `an array` shows an array containing two
 more objects, each of which contains two fields of its own.
 
+[[httpscerts]]
 === Authentication and encryption certificates
 
 Before an API call can succeed the client needs to decide to trust the
@@ -692,7 +696,7 @@ bank example) your bank does not care where you are coming from.
 It uses your password to authenticate you.  But APIs should operate more
 securely than web sites so our recommendation is to turn on the feature
 that makes the server check your clients' certificates.
-<<_client_side_certificates>> covers client
+<<Client-side certificates>> covers client
 certificates.
 
 
@@ -728,7 +732,7 @@ Requiring pre-shared certificates from clients is the best protection
 the server has against attackers on its network. If you tick the box to
 turn off that check when you first start your development, come back
 once your application is connecting successfully and untick it again.
-Read <<_client_side_certificates>> to help get your application connecting again
+Read <<Client-side certificates>> to help get your application connecting again
 after doing that.
 
 === Installing a custom server certificate
@@ -746,7 +750,7 @@ and give Command Centre the rights to use it. The online help lays that out step
 
 === Create a REST operator
 
-We will get to the reasons why in <<_why_we_need_an_operator>>.
+We will get to the reasons why in <<Why we need an operator>>.
 
 ==== Create an operator group and give it the necessary privileges
 
@@ -760,7 +764,7 @@ image::op_group_privs.png[Adding privs to an operator group, title="Adding privs
 
 WARNING: Not 'Advanced User'. Never 'Advanced User'.
 
-See link:#_appendix_privilege_table[this appendix] for a table of
+See <<appendix-privtable,this appendix>> for a table of
 privileges an operator needs for common tasks.
 
 One group is enough for experimenting but when it comes to production,
@@ -1256,7 +1260,7 @@ thumbprint of the request’s certificate against the one on the REST
 Client item. If they do not match, it responds with a 401 and raises an
 alarm "A REST connection was attempted with an invalid client
 certificate". The server does not check the client certificate’s chain
-of trust. <<_client_side_certificates>> has all the
+of trust. <<Client-side certificates>> has all the
 details of why you would want your server to check client certificates
 and how to create them.
 . It checks the source host’s IP number against the REST Client item’s
@@ -1670,7 +1674,7 @@ cardholder, because it is a property of that cardholder and serviced by the card
 but do not try to interpret it more. Certainly do not read anything into the number on the end
 (1069), and do not be surprised if you have an item with the same ID.
 
-<<_the_importance_of_api>> and <<_identifiers_in_your_app>> go into what you should not do with
+<<The importance of /api>> and <<Identifiers in your app>> go into what you should not do with
 hrefs.
 
 === Edit an existing group membership
@@ -1768,7 +1772,7 @@ but for today is it safe to assume that the href of the root division is
 
 After changing the `334` and the `342` put the JSON into Postman and POST it to
 `/api/cardholders`. It should return you the href of a new cardholder, as it did in
-<<_create_a_cardholder>>.
+<<Create a cardholder>>.
 
 The `zzz` is in there to stop the REST API trying to add a competency to
 your new cardholder, which would fail because you have not created a
@@ -1808,7 +1812,7 @@ an integration against this API.
 === Recap
 
 * `/api` returns links to summary pages. Why that is important is in
-  <<_the_importance_of_api>>.
+  <<The importance of /api>>.
 
 * At time of writing, the URLs of most summary pages end with the name of the
 link:#_api_controllers[controller], such as `cardholders` or `access_groups`. Others end with their
@@ -1822,7 +1826,7 @@ because it is quicker, and more reliable when operators are changing the databas
 writing a user app and really must have your results sorted by name.
 
 * You can also add filters to summary pages, turning them into search pages. See
-<<_search_for_a_cardholder>> and <<_event_filters>>.
+<<Search for a cardholder>> and <<Event filters>>.
 * In v8.00+ you can add fields from the details page to the summary page
 of items, and in 8.40+, events. Or you can specify the exact fields you
 need, if you want to save traffic.
@@ -2638,7 +2642,7 @@ the database are out of sync.
 
 == Client-side certificates
 
-First see <<_authentication_and_encryption_certificates>> for what certificates are and the
+First see <<httpscerts>> for what certificates are and the
 difference between server certificates and client certificates.
 
 This section deals with the client certificate check that happens if you
@@ -2646,7 +2650,7 @@ left 'Do not require pinned client certificates' off in the 'Web
 Services' property tab of an 8.40 server, or if you entered a thumbprint
 into a REST Client item in 8.50 or later.
 
-The process in <<_the_request_process>> shows that
+The process in <<The request process>> shows that
 if you have not disabled client certificate checking, the server does it
 after extracting the API key. If the server does not have the client’s
 certificate pinned to the REST Client item with that API key, it will
@@ -2834,7 +2838,7 @@ NOTE:  The 20 bytes that come out are what you paste into the REST Client
 item in Command Centre.
 
 Now you need to add the certificate to the clients that need it. If you use Postman,
-see <<_use_the_certificate_in_your_client>>. If you use
+see <<Use the certificate in your client>>. If you use
 Chrome on Windows, you need to add it to the certificate store with
 these two commands:
 
@@ -3554,7 +3558,7 @@ https://gallaghersecurity.github.io/docs/Command%20Centre%20Cloud%20Api%20Gatewa
 
 This section contains answers to questions raised after penetration tests.
 
-Also see <<_the_request_process>> for how the server authenticates and authorises requests.
+Also see <<The request process>> for how the server authenticates and authorises requests.
 
 
 === Item IDs are easily predicted
@@ -3713,6 +3717,7 @@ CAUTION: Contact Gallagher Technical Support with your wishes before editing Com
 configuration file.  It is large and complex and if you get it wrong, the server will not start.
 Worse, it may start but then not behave as you expect.
 
+[#appendix-privtable]
 == Appendix: Privilege table
 
 This is not the complete list of privileges! See the topic 'Which Operator Privileges
@@ -3922,8 +3927,7 @@ is not enough to shunt or unshunt an item.
 
 |===
 
-
-
+[#appendix-features]
 == Appendix: Features and licences
 
 === Alarms and events
