@@ -1,16 +1,3 @@
-REST training document
-======================
-
-This directory contains an Asciidoc (.adoc) document intended to accompany online training.  It
-contains some useful reference material, and general good advice, so it remains online for use by
-Gallagher staff and development partners.  It is not official Gallagher documentation:  no claims
-are made about its suitability or veracity, or even sobriety.
-
-Like the rest of the cc-rest-docs repository, the canonical source is
-https://github.com/GallagherSecurity/cc-rest-docs .  To push changes you will need a Gallagher
-github account and the blessing of one of the GallagerSecurity admins.
-
-
 Editing Asciidoc
 ================
 
@@ -18,6 +5,9 @@ You do not need to preview edits to the .adoc file if you are only changing word
 your change and push it to github.  It will convert it to HTML using asciidoctor and publish it to
 github.io.  Give it a minute then check your work at
 https://gallaghersecurity.github.io/cc-rest-docs/training .
+
+To push changes you will need a Gallagher github account and the blessing of one of the
+GallagerSecurity admins.
 
 However if you are making significant changes, or if you are changing any formatting, you must
 preview your changes before pushing them to github.  Do that using Asciidoctor.
