@@ -1,0 +1,298 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Command Centre REST API URLs and Licensing</title>
+    <link rel="stylesheet" href="ref/stylesheets/foundation.min.css" >
+    <link rel="stylesheet" href="ref/stylesheets/spectacle.min.css" >
+    <style type="text/css">
+        body {
+            margin-left: 24px;
+            margin-right: 24px;
+            margin-top: 32px;
+        }
+        .api-entries div, .legend div {
+            margin: 3px;
+        }
+        .legend {
+            position: fixed;
+            background-color: white;
+            right: 24px;
+            border: 1px solid lightgray;
+            border-radius: 0.3em;
+            padding: 0.5em
+        }
+        .cardholders code {
+            background-color: rgb(219, 233, 255);
+        }
+        .cardholders.visitormanagement code {
+            background-color: rgb(229, 166, 248);
+        }
+        .overrides code {
+            background-color: rgb(250, 223, 189);
+        }
+        .status code {
+            background-color: lightyellow;
+        }
+        .status.overrides code {
+            background-color: rgb(250, 223, 189);
+            background-image: linear-gradient(to right, lightyellow, lightyellow 20px, rgb(250, 223, 189) 10px, rgb(250, 223, 189) );
+            background-size: 40px 100%;
+        }
+        .events code {
+            background-color: rgb(204, 253, 204);
+        }
+        .eventscreate code {
+            background-color: rgb(134, 220, 223);
+        }
+    </style>
+</head>
+<body>
+    <h1 class="doc-title">Command Centre REST API URLs and Licensing</h1>
+    <h3>Command Centre 8.60</h3>
+    <hr noshade="noshade" />
+
+    <div class="legend">
+        <h3>License Required:</h3>
+        <div><code>Any</code></div>
+        <div class="cardholders"><code>RESTCardholders</code></div>
+        <div class="cardholders visitormanagement"><code>RESTCardholders <b>and</b> VisitorManagement</code></div>
+        <div class="status"><code>RESTStatus</code></div>
+        <div class="overrides"><code>RESTOverrides</code></div>
+        <div class="status overrides"><code>RESTStatus <b>or</b> RESTOverrides</code></div>
+        <div class="events"><code>RESTEvents</code></div>
+        <div class="eventscreate"><code>RESTCreateEvents</code></div>
+    </div>
+
+    <div class="api-entries">
+        <div class=""><code>GET /api</code> - API entrypoint</div>
+        
+        <div>&nbsp;</div>
+
+        <div class=""><code>GET /api/items</code> - generic item search</div>
+        <div class=""><code>GET /api/items/{id}</code> - load individual item (generic fields only)</div>
+        <div class=""><code>GET /api/items/types</code> - list item types</div>
+        <div class="status"><code>GET|POST /api/items/updates</code> - bulk status monitoring for multiple items</div>
+        
+        <div>&nbsp;</div>
+
+        <div class=""><code>GET /api/divisions/{id}</code> - load individual item</div>
+        <div class=""><code>GET /api/divisions/view_alarms</code> - list divisions in which we can view alarms</div>
+        <div class=""><code>GET /api/divisions/view_events</code> - list divisions in which we can view events</div>
+        <div class=""><code>GET /api/divisions/view_access_zones</code> - list divisions in which we can view access zones</div>
+        <div class=""><code>GET /api/divisions/view_alarm_zones</code> - list divisions in which we can view alarm zones</div>
+        <div class=""><code>GET /api/divisions/view_doors</code> - list divisions in which we can view doors</div>
+        <div class=""><code>GET /api/divisions/view_fence_zones</code> - list divisions in which we can view fence zones</div>
+        <div class=""><code>GET /api/divisions/view_readers</code> - list divisions in which we can view readers</div>
+        <div class=""><code>GET /api/divisions/view_macros</code> - list divisions in which we can view macros</div>
+        <div class=""><code>GET /api/divisions/view_fence_zones</code> - list divisions in which we can view fence zones</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="cardholders"><code>GET /api/cardholders</code> - search</div>
+        <div class="cardholders"><code>GET /api/cardholders/changes</code> - track changes across multiple cardholders</div>
+        <div class="cardholders"><code>GET /api/cardholders/thumbnails</code> - bulk thumbnail images for cardholder photos </div>
+        <div class="cardholders"><code>POST /api/cardholders</code> - create a cardholder</div>
+        <div class="cardholders"><code>GET /api/cardholders/{id}</code> - load individual item</div>
+        <div class="cardholders"><code>POST|PATCH /api/cardholders/{id}</code> - update individual cardholder</div>
+        <div class="cardholders"><code>DELETE /api/cardholders/{id}</code> - delete individual cardholder</div>
+        <div class="cardholders"><code>POST /api/cardholders/{id}/update_location</code> - update a cardholder's last known location </div>
+        <div class="cardholders"><code>GET /api/cardholders/{id}/edit</code> - metadata for interactive editing </div>
+        <div class="cardholders"><code>GET /api/cardholders/{id}/personal_data/{pdfId}</code> - get an specific personal data item </div>
+        <div class="cardholders"><code>GET /api/cardholders/{id}/updates</code> - monitor for status changes </div>
+        <div class="cardholders"><code>DELETE /api/cardholders/{id}/roles/{roleId}</code> - remove a role from a cardholder </div>
+        <div class="cardholders"><code>DELETE /api/cardholders/{id}/competencies/{competencyId}</code> - remove a competency from a cardholder </div>
+        <div class="cardholders"><code>POST /api/cardholders/{id}/competencies/{competencyId}/credit</code> - adjust competency credit </div>
+        <div class="cardholders"><code>DELETE /api/cardholders/{id}/cards/{cardId}</code> - remove a card from a cardholder </div>
+        <div class="cardholders"><code>DELETE /api/cardholders/{id}/access_groups/{groupId}</code> - remove an access group from a cardholder </div>
+        <div class="cardholders"><code>DELETE /api/cardholders/{id}/operator_groups/{groupId}</code> - remove an operator group from a cardholder </div>
+        <div class="cardholders"><code>DELETE /api/cardholders/{id}/lockers/{assignmentId}</code> - remove a locker assignment from a cardholder </div>
+        <div class="cardholders"><code>DELETE /api/cardholders/{id}/elevator_groups/{groupId}</code> - remove an elevator group assignment from a cardholder </div>
+                
+        <div>&nbsp;</div>
+
+        <div class="cardholders"><code>GET /api/personal_data_fields/view</code> - list pdfs an operator could assign based on view privileges</div>
+        <div class="cardholders"><code>GET /api/personal_data_fields/edit</code> - list pdfs an operator could assign based on edit privileges</div>
+        <div class="cardholders"><code>GET /api/personal_data_fields</code> - search</div>
+        <div class="cardholders"><code>GET /api/personal_data_fields/{id}</code> - load individual item</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="cardholders"><code>GET /api/access_groups</code> - search</div>
+        <div class="cardholders"><code>GET /api/access_groups/{id}</code> - load individual item</div>
+        <div class="cardholders"><code>GET /api/access_groups/tree</code> - load access group tree</div>
+        <div class="cardholders"><code>GET /api/access_groups/{id}/cardholders</code> - list direct cardholder members</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="cardholders"><code>GET /api/card_types</code> - search</div>
+        <div class="cardholders"><code>GET /api/card_types/{id}</code> - load individual item</div>
+        <div class="cardholders"><code>GET /api/card_types/assign</code> - list all assignable card types</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="cardholders"><code>GET /api/competencies</code> - list</div>
+        <div class="cardholders"><code>GET /api/competencies/{id}</code> - load individual item</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="cardholders"><code>GET /api/schedules</code> - list</div>
+        <div class="cardholders"><code>GET /api/schedules/{id}</code> - load individual item</div>
+        <div class="cardholders"><code>PATCH /api/schedules/{id}</code> - update a schedule</div>
+        <div class="cardholders"><code>DELETE /api/schedules/{id}</code> - delete a schedule</div>
+        <div class="cardholders"><code>POST /api/schedules</code> - create a schedule</div>
+
+        <div>&nbsp;</div>
+
+        <div class="cardholders"><code>GET /api/day_categories</code> - list</div>
+        <div class="cardholders"><code>GET /api/day_categories/{id}</code> - load individual item</div>
+
+        <div>&nbsp;</div>
+
+        <div class="cardholders"><code>GET /api/lockers</code> - list</div>
+        <div class="cardholders"><code>GET /api/lockers/{id}</code> - load individual item</div>
+        <div class="overrides"><code>POST /api/lockers/{id}/open</code> - override open a locker</div>
+
+        <div class="cardholders"><code>GET /api/locker_banks</code> - list</div>
+        <div class="cardholders"><code>GET /api/locker_banks/{id}</code> - load individual item</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="cardholders"><code>GET /api/operator_groups</code> - list</div>
+        <div class="cardholders"><code>GET /api/operator_groups/{id}</code> - load individual item</div>
+        <div class="cardholders"><code>GET /api/operator_groups/{id}/cardholders</code> - list cardholders assigned to this group</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="cardholders"><code>GET /api/roles</code> - list</div>
+        <div class="cardholders"><code>GET /api/roles/{id}</code> - load individual item</div>
+
+        <div>&nbsp;</div>
+
+        <div class="cardholders visitormanagement"><code>GET /api/receptions</code> - list</div>
+        <div class="cardholders visitormanagement"><code>GET /api/receptions/{id}</code> - load individual item</div>
+
+        <div>&nbsp;</div>
+
+        <div class="cardholders visitormanagement"><code>GET /api/visits</code> - list</div>
+        <div class="cardholders visitormanagement"><code>GET /api/visits/{id}</code> - load individual item</div>
+        <div class="cardholders visitormanagement"><code>POST /api/visits</code> - create a visit</div>
+        <div class="cardholders visitormanagement"><code>PATCH /api/visits/{id}</code> - update a visit</div>
+
+
+        <div>&nbsp;</div>
+
+        <div class="events"><code>GET /api/alarms</code> - list alarms</div>
+        <div class="events"><code>GET /api/alarms/updates</code> - monitor for alarm changes</div>
+        <div class="events"><code>GET /api/alarms/{id}</code> - load individual item</div>
+        <div class="events"><code>POST /api/alarms/{id}/view</code> - generate audit record that alarm has been viewed</div>
+        <div class="events"><code>POST /api/alarms/{id}/comment</code> - add a note to an alarm</div>
+        <div class="events"><code>POST /api/alarms/{id}/acknowledge</code> - acknowledge an alarm</div>
+        <div class="events"><code>POST /api/alarms/{id}/process</code> - process an alarm</div>
+        <div class="events"><code>POST /api/alarms/{id}/batch</code> - batch update multiple alarms</div>
+        <div class="events"><code>POST /api/alarms/{id}/instructions</code> - load alarm instructions</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="events"><code>GET /api/events</code> - list events</div>
+        <div class="events"><code>GET /api/events/updates</code> - monitor for new events</div>
+        <div class="events"><code>GET /api/events/{id}</code> - load individual item</div>
+        <div class="eventscreate"><code>GET /api/events/groups</code> - list event groups</div>
+        <div class="eventscreate"><code>GET /api/events/groups/{id}</code> - load individual event group</div>
+        <div class="eventscreate"><code>POST /api/events</code> - create new event</div>
+
+        <div>&nbsp;</div>
+        
+        <div class="status overrides"><code>GET /api/access_zones</code> - search</div>
+        <div class="status overrides"><code>GET /api/access_zones/{id}</code> - load individual item</div>
+        <div class="status overrides"><code>GET /api/access_zones/{id}/updates</code> - monitor for status updates</div>
+        <div class="cardholders"><code>GET /api/access_zones/update_cardholder_location</code> - search for zones in which we can update cardholder locations</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/free</code> - override to free access</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/free_pin</code> - override to free-with-pin access</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/secure</code> - override to secure access</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/secure_pin</code> - override to secure-with-pin access</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/code_only</code> - override to code only access</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/code_only_pin</code> - override to code only-with-pin access</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/dual_auth</code> - override to dual auth access</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/dual_auth_pin</code> - override to dual auth-with-pin access</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/cancel</code> - cancel any current override</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/lock_down</code> - lockdown zone</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/cancel_lock_down</code> - cancel lockdown</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/forgive_anti_passback</code> - anti-passback forgive</div>
+        <div class="overrides"><code>POST /api/access_zones/{id}/set_zone_count</code> - override cardholder count</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="status overrides"><code>GET /api/alarm_zones</code> - search</div>
+        <div class="status overrides"><code>GET /api/alarm_zones/{id}</code> - load individual item</div>
+        <div class="status overrides"><code>GET /api/alarm_zones/{id}/updates</code> - monitor for status updates</div>
+        <div class="overrides"><code>POST /api/alarm_zones/{id}/arm</code> - override to armed</div>
+        <div class="overrides"><code>POST /api/alarm_zones/{id}/disarm</code> - override to disarmed</div>
+        <div class="overrides"><code>POST /api/alarm_zones/{id}/user1</code> - override to user1</div>
+        <div class="overrides"><code>POST /api/alarm_zones/{id}/user2</code> - override to user2</div>
+        <div class="overrides"><code>POST /api/alarm_zones/{id}/arm_high_voltage</code> - override fence zones to armed-high-voltage</div>
+        <div class="overrides"><code>POST /api/alarm_zones/{id}/arm_low_feel</code> - override fence zones to armed-low-feel</div>
+        <div class="overrides"><code>POST /api/alarm_zones/{id}/cancel</code> - cancel override</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="status overrides"><code>GET /api/doors</code> - search</div>
+        <div class="status overrides"><code>GET /api/doors/{id}</code> - load individual item</div>
+        <div class="status overrides"><code>GET /api/doors/{id}/updates</code> - monitor for status updates</div>
+        <div class="overrides"><code>POST /api/doors/{id}/open</code> - override open the door</div>
+
+        <div>&nbsp;</div>
+
+        <div class="status overrides"><code>GET /api/elevator_groups</code> - search</div>
+        <div class="status overrides"><code>GET /api/elevator_groups/{id}</code> - load individual item</div>
+        <div class="cardholders"><code>GET /api/elevator_groups/modify_passenger_details</code> - list of elevator groups in which we can modify passenger details</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="status overrides"><code>GET /api/fence_zones</code> - search</div>
+        <div class="status overrides"><code>GET /api/fence_zones/{id}</code> - load individual item</div>
+        <div class="status overrides"><code>GET /api/fence_zones/{id}/updates</code> - monitor for status updates</div>
+        <div class="overrides"><code>GET /api/fence_zones/{id}/on</code> - override to on</div>
+        <div class="overrides"><code>GET /api/fence_zones/{id}/off</code> - override to off</div>
+        <div class="overrides"><code>GET /api/fence_zones/{id}/shunt</code> - override to shunt</div>
+        <div class="overrides"><code>GET /api/fence_zones/{id}/unshunt</code> - override to unshunt</div>
+        <div class="overrides"><code>GET /api/fence_zones/{id}/high_voltage</code> - override to high_voltage</div>
+        <div class="overrides"><code>GET /api/fence_zones/{id}/low_feel</code> - override to low_feel</div>
+        <div class="overrides"><code>GET /api/fence_zones/{id}/cancel</code> - cancel override</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="status overrides"><code>GET /api/inputs</code> - search</div>
+        <div class="status overrides"><code>GET /api/inputs/{id}</code> - load individual item</div>
+        <div class="status overrides"><code>GET /api/inputs/{id}/updates</code> - monitor for status updates</div>
+        <div class="overrides"><code>POST /api/inputs/{id}/shunt</code> - override to shunt</div>
+        <div class="overrides"><code>POST /api/inputs/{id}/unshunt</code> - override to unshunt</div>
+        <div class="overrides"><code>POST /api/inputs/{id}/isolate</code> - override to isolate</div>
+        <div class="overrides"><code>POST /api/inputs/{id}/deisolate</code> - override to deisolate</div>
+                
+        <div>&nbsp;</div>
+
+        <div class="status overrides"><code>GET /api/outputs</code> - search</div>
+        <div class="status overrides"><code>GET /api/outputs/{id}</code> - load individual item</div>
+        <div class="status overrides"><code>GET /api/outputs/{id}/updates</code> - monitor for status updates</div>
+        <div class="overrides"><code>POST /api/outputs/{id}/on</code> - override to on</div>
+        <div class="overrides"><code>POST /api/outputs/{id}/off</code> - override to off</div>
+        <div class="overrides"><code>POST /api/outputs/{id}/pulse</code> - override to pulse</div>
+        <div class="overrides"><code>POST /api/outputs/{id}/cancel</code> - cancel override</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="status overrides"><code>GET /api/macros</code> - search</div>
+        <div class="status overrides"><code>GET /api/macros/{id}</code> - load individual item</div>
+        <div class="status overrides"><code>GET /api/macros/{id}/updates</code> - monitor for status updates</div>
+        <div class="overrides"><code>POST /api/macros/{id}/run</code> - run macro</div>
+        
+        <div>&nbsp;</div>
+
+        <div class="status overrides"><code>GET /api/readers</code> - search</div>
+        <div class="status overrides"><code>GET /api/readers/{id}</code> - load individual item</div>
+        <div class="status overrides"><code>GET /api/readers/{id}/updates</code> - monitor for status updates</div>
+        <div class="overrides"><code>POST /api/readers/{id}/reset</code> - override to reset</div>
+    </div>
+
+</body>
+</html>

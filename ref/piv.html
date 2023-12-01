@@ -1,0 +1,1429 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Command Centre REST API: PIV card supplement | API Reference</title>
+    <link rel="stylesheet" href="stylesheets/foundation.min.css" />
+    <link rel="stylesheet" href="stylesheets/spectacle.min.css" />
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <!-- <script src="javascripts/foundation.js"></script> -->
+    <script src="javascripts/spectacle.min.js"></script>
+  </head>
+  <body id="spectacle">
+    <div id="page" class="drawer-layout drawer-slide-right-large">
+      <div id="sidebar">
+        <button class="close-button" aria-label="Close menu" type="button" data-drawer-close>
+          <span aria-hidden="true">×</span>
+        </button>
+        <nav id="nav" role="navigation">
+          <h5>Topics</h5>
+          <a href="#introduction">Introduction</a>
+          <a href="#authentication">Authentication</a>
+          <a href="#topic-Documentation-suite">Documentation suite</a>
+          <a href="#topic-Forward-compatibility--HATEOAS-">Forward compatibility (HATEOAS)</a>
+          <a href="#topic-Text-encoding">Text encoding</a>
+          <h5>Paths</h5>
+          <!-- <section>
+                <a href="#path--api">/api</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--api-get"> GET /api </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--api-cardholders">/api/cardholders</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--api-cardholders-post"> Create a cardholder </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <!-- <section>
+                <a href="#path--api-cardholders--id-">/api/cardholders/{id}</a>
+                <ul> -->
+          <!-- <li> -->
+          <a href="#operation--api-cardholders--id--patch"> Update a cardholder </a>
+          <!-- </li> -->
+          <!-- <li> -->
+          <a href="#operation--api-cardholders--id--get"> Get details of a cardholder </a>
+          <!-- </li> -->
+          <!-- </ul>
+              </section> -->
+          <h5>Schema Definitions</h5>
+          <a href="#definition-PIV-card-GET"> PIV card GET </a>
+          <a href="#definition-PIV-card-type"> PIV card type </a>
+          <a href="#definition-PIV-card-create-example"> PIV card create example </a>
+          <a href="#definition-PIV-card-update-example"> PIV card update example </a>
+          <a href="#definition-PIV-card-data"> PIV card data </a>
+          <a href="#definition-CHUID"> CHUID </a>
+        </nav>
+      </div>
+      <div id="docs" class="row collapse expanded drawer" data-drawer>
+        <button class="floating-menu-icon" type="button" data-drawer-slide="right">
+          <span class="hamburger"></span>
+        </button>
+        <div class="example-box doc-content">
+          <div id="logo">
+            <img src="images/gallagher.png" title="Command Centre REST API:  PIV card supplement" /> </div>
+        </div>
+        <article>
+          <h1 class="doc-title">Command Centre REST API: PIV card supplement
+            <span>API Reference</span>
+          </h1>
+          <div id="introduction" data-traverse-target="introduction">
+            <div class="doc-row">
+              <div class="doc-copy">
+                <p>This document is a supplement to the
+                  <a href="cardholders.html">Cardholder API documentation</a> (&#39;Cardholder&#39; is the Command Centre term for a user). That documentation describes how to add a card to an existing cardholder in a
+                  <a href="cardholders.html#operation--api-cardholders--id--patch">PATCH</a>, and how to create a cardholder plus cards in a
+                  <a href="cardholders.html#operation--api-cardholders-post">POST</a>, but in the interests of brevity its examples do not cover PIV.</p>
+                <p>The Schema Definitions section gives you the details of the PIV part of a Command Centre card, with examples of what you would submit to
+                  <a href="#definition-PIV-card-create-example">create one</a> or
+                  <a href="#definition-PIV-card-update-example">update one</a>, and what Command Centre will send you when you
+                  <a href="#definition-PIV-card-GET">view one</a>.</p>
+                <p>The Paths section takes those schema examples and wraps them into a sample
+                  <a href="#operation--api-cardholders--id--patch">PATCH</a> and
+                  <a href="#operation--api-cardholders-post">POST</a>. The two differ only in how they wrap the card into the submission body.</p>
+                <p>If your application will be assigning PIV cards to cardholders, however, the first thing it needs to do is learn the value of some constants for your particular installation of Command Centre.</p>
+                <h3 id="finding-the-piv-card-type">Finding the PIV card type</h3>
+                <p>When you assign any card to a cardholder, PIV or otherwise, you need to provide the identifier of the card type. It will vary between Command Centre installations, so you cannot use a value from another installation or these examples. It will not change while Command Centre is running but it may change at upgrade, so your application should follow this process at startup.</p>
+                <p>It takes two queries and a loop:</p>
+                <ol>
+                  <li><code>GET /api</code>.</li>
+                  <li>If running 8.00 or earlier, follow the link at <code>features.cardTypes.cardTypes.href</code> (which will be to <code>/api/card_types</code>), or</li>
+                  <li>if running 8.10 or later, follow the link at <code>features.cardTypes.assign.href</code> (which will probably be to <code>/api/card_types/assign</code>. Both URLs will work in 8.10, but the advantage of this URL is that your operator can access it at a lower privilege level).</li>
+                  <li>Iterate through the array to find the element with <code>credentialClass:  piv</code>, and</li>
+                  <li>note its <code>href</code>.</li>
+                </ol>
+                <p>You can accomplish the last two steps with the JSONPath filter</p>
+                <p><code>$.results[?(@.credentialClass==&#39;piv&#39;)].href</code>.</p>
+                <p>Explanation: Command Centre ships with a handful of card types, and administrators can add more, but the one that Command Centre uses for PIV and PIV-I cards has its own credential class. It will look like
+                  <a href="#definition-PIV-card-type">the example below</a>.</p>
+                <h3 id="finding-the-url-to-create-cardholders">Finding the URL to create cardholders</h3>
+                <p><code>GET /api</code>. The link is at <code>features.cardholders.cardholders.href</code>.</p>
+                <h3 id="finding-the-url-of-a-cardholder">Finding the URL of a cardholder</h3>
+                <p>See the main cardholder documentation, particularly the section on
+                  <a href="cardholders.html#operation--api-cardholders-get">searching cardholders</a>.</p>
+                <h3 id="licensing">Licensing</h3>
+                <p>All of the API calls described here require the RESTCardholders licence. If your site is also licensed to use PIV cards, you can access those cards via REST.</p>
+                <h3 id="cardholder-api-changes-in-810">Cardholder API changes in 8.10</h3>
+                <ul>
+                  <li>Certificates and biometric data are now available without a customisation. They are too large to send to all REST clients so you must ask for them using the <code>fields</code> parameter.</li>
+                </ul>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Response Content-Types:
+                    <span>application/json</span>
+                  </h5>
+                  <h5>Schemes:
+                    <span>https</span>
+                  </h5>
+                  <h5>Version:
+                    <span>8.40.2</span>
+                  </h5>
+                </section>
+              </div>
+            </div>
+          </div>
+          <!-- <h1 id="security" data-traverse-target="security">Security</h1> -->
+          <h1 id="authentication" data-traverse-target="authentication">Authentication</h1>
+          <div id="security-definition-API key" class="panel">
+            <div class="doc-row">
+              <div class="doc-copy">
+                <h3 class="security-definition-title">
+                  <span class="security-name">API key</span>
+                  <span class="swagger-security-definition-apiKey"></span>
+                </h3>
+                <section class="security-definition-description">
+                  <p>Clients authenticate by including a pre-shared API key in the <code>Authorization</code> header of each request. Command Centre generates an API key when you create an endpoint for your clients to connect to. Search the Configuration Client online help for &#39;REST API&#39; for how do do that.</p>
+                  <p>The API key will be in the format <code>XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX</code> and should be in the header following an authorisation method of <code>GGL-API-KEY</code> and a space. Both should be in upper case. For example:</p>
+                  <p><code>Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB</code></p>
+                  <p>Early versions of Command Centre allowed you to omit the &#39;GGL-API-KEY&#39;. Later versions of CC and all versions of the API gateway will reject you with a 401 if you do that.</p>
+                  <p>Depending on Command Centre&#39;s site configuration, its REST API may also require a client certificate with each request. In versions up to and including 8.40 this was controlled by a flag labelled &#39;Do not require pinned client certficates&#39; on the &#39;Web Services&#39; tab of the server properties. In 8.50 that flag&#39;s label changed to &#39;Enable REST Clients with no client certificate&#39;, and its behaviour changed slightly when turned on.</p>
+                  <p>If off, for all versions of CC, an incoming request&#39;s certificate has to match the thumbprint on its API key&#39;s REST Client item, and REST Client items with a blank thumbprint field do not work at all. This is how it ships, and it is the recommended way of running a production server.</p>
+                  <p>If &#39;Do not require pinned client certificates&#39; was turned on in versions up to and including 8.40, the server did not check any client certificates. If that flag is turned on in 8.50, now relabelled &#39;Enable REST Clients with no client certificate&#39;, it still does not check the client certificate if the thumbprint field of the matching REST Client item is blank, but if the Client item has a thumbprint, the server will reject connections with the wrong certificate.</p>
+                  <p>See the Configuration Client help for instructions on where to enter REST Client thumbprints.</p>
+                  <p>Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API will only accept connections from the IP address ranges configurated into that client item.</p>
+                  <p>If a connection attempt fails, the server will return a 401 and raise an event containing its reason for refusing the request. If that happens too often, the server will stop reporting each offence and will instead create a summary alarm at a much lower rate. The details of the alarm tell you how many failed attempts there have been since the start of the flood. The server will stay in this mode of reduced reporting until several minutes pass without a failed connection attempt.</p>
+                  <p>The current failure limit is ten errors inside one minute. After that you will receive one &quot;a large volume of requests has been denied&quot; alarm every minute while the failures continue until five minutes passes without a failure.</p>
+                  <p>The most common queries we receive from our integrators relate to their certificate handling. If your client&#39;s HTTP client library complains about certificates the first thing to check is Command Centre&#39;s alarm list. If there are &#39;invalid client certificate&#39; alarms there, your client is not sending the certificate CC is expecting. If there are no alarms then the client is most likely rejecting the server&#39;s certificate.</p>
+                </section>
+                <section class="swagger-security-definition-properties">
+                  <div class="prop-row security-definition-property">
+                    <div class="prop-name">
+                      <div class="prop-title security-definition-property-name">type</div>
+                    </div>
+                    <div class="prop-value security-definition-property-type"> apiKey </div>
+                  </div>
+                  <div class="prop-row security-definition-property">
+                    <div class="prop-name">
+                      <div class="prop-title security-definition-property-name">name</div>
+                    </div>
+                    <div class="prop-value security-definition-property-type"> Authorization </div>
+                  </div>
+                  <div class="prop-row security-definition-property">
+                    <div class="prop-name">
+                      <div class="prop-title security-definition-property-name">in</div>
+                    </div>
+                    <div class="prop-value security-definition-property-type"> header </div>
+                  </div>
+                  <div class="prop-row security-definition-property">
+                    <div class="prop-name">
+                      <div class="prop-title security-definition-property-name">x-external</div>
+                    </div>
+                    <div class="prop-value security-definition-property-type"> eventsApi.yaml#/securityDefinitions/API key </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+          <h1 id="topic-Documentation-suite" data-traverse-target="topic-Documentation-suite">Documentation suite</h1>
+          <div class="panel">
+            <div class="doc-row">
+              <div class="doc-copy">
+                <p align=center>
+                  <img width=44 src="https://www.google.com/chrome/static/images/chrome-logo-m100.svg">
+                  <img width=44 src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Firefox_logo%2C_2019.svg">
+                  <p>Best viewed in Chrome or Firefox. Microsoft Edge does not render the table of contents correctly in the orange column on the left, making navigation difficult.</p>
+                  <p>The API&#39;s reference documentation divides into:</p>
+                  <table>
+                    <tr>
+                      <td valign=top>
+                        <a href=events.html>Alarms, events, non-cardholder items, and bulk status monitoring</a>
+                      </td>
+                      <td>
+                        <p> The alarms and events APIs let you download, monitor, and create events, and download, monitor, and manage alarms.</p>
+                        <p> The alarms and events documentation also covers API calls that support divisions and items as they relate to events, as well as bulk status monitoring.</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td valign=top>
+                        <a href=cardholders.html>Cardholders and related items</a>
+                      </td>
+                      <td> The cardholder parts of the API let you manage your users, their personal data and credentials (cards), and their links to associated items such as access groups, roles, operator groups, competencies, and lockers. </td>
+                    </tr>
+                    <tr>
+                      <td valign=top>
+                        <a href=rest.html>Status and overrides</a>
+                      </td>
+                      <td>
+                        <p> These functions let you monitor and override the types of Command Centre items that have their own status, including access zones, alarm zones, doors, fence zones, inputs, outputs, macros, elevator groups, interlock groups, and schedules.</p>
+                        <p> Despite its name this section does not cover
+                          <a href="events.html#status-subscriptions">mass-monitoring item status</a>. </td>
+                      </p>
+                    </tr>
+                    <tr>
+                      <td valign=top>
+                        <a href=piv.html>PIV cards</a>
+                      </td>
+                      <td> This supplement describes how to work with PIV and PIV-I cards. It is separate from the main cardholder documentation in the interest of brevity. </td>
+                    </tr>
+                  </table>
+              </div>
+            </div>
+          </div>
+          <h1 id="topic-Forward-compatibility--HATEOAS-" data-traverse-target="topic-Forward-compatibility--HATEOAS-">Forward compatibility (HATEOAS)</h1>
+          <div class="panel">
+            <div class="doc-row">
+              <div class="doc-copy">
+                <p>This is a self-referencing REST API that follows the principles of HATEOAS. Other than the initial <code>GET</code> to <code>/api</code> when it first connects, your source code should not contain any URLs, as they are subject to change. You should append the query parameters this document describes for operations such as filtering and searching, but everying in the path should come from the results of <code>/api</code> or pages linked from it.</p>
+                <p><code>/api</code> only shows licensed API calls.</p>
+                <p>Be prepared to append query parameters to URLs that already have their own: do not assume that you can simply add a question mark and your parameters.</p>
+              </div>
+            </div>
+          </div>
+          <h1 id="topic-Text-encoding" data-traverse-target="topic-Text-encoding">Text encoding</h1>
+          <div class="panel">
+            <div class="doc-row">
+              <div class="doc-copy">
+                <p>Command Centre&#39;s REST API encodes all payloads using UTF-8, and expects clients to do the same. It does not escape special characters in response bodies except where required to embed them in JSON.</p>
+                <p>Specifically, it does not sanitise HTML, XML, or SQL. Your clients should expect to receive strings exactly as they were sent, even if they were sent by a hostile client. Write your clients to resist injection attacks.</p>
+              </div>
+            </div>
+          </div>
+          <h1>Paths</h1>
+          <span id="path--api"></span>
+          <div id="operation--api-get" class="operation panel" data-traverse-target="operation--api-get">
+            <h2 class="operation-title">
+              <span class="operation-summary">GET /api</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This is the first call your application should make. It contains the URLs of every other call. The one you need for creating PIV cards is an href in <code>features.cardTypes.cardTypes</code>.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have a REST licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;version&quot;</span>: <span class="hljs-string">&quot;8.10.0.0&quot;</span>,
+  <span class="hljs-attr">&quot;features&quot;</span>: {
+    <span class="hljs-attr">&quot;cardTypes&quot;</span>: {
+      <span class="hljs-attr">&quot;cardTypes&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types&quot;</span>
+      },
+      <span class="hljs-attr">&quot;assign&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/assign&quot;</span>
+      }
+    },
+    <span class="hljs-attr">&quot;cardHolders&quot;</span>: {
+      <span class="hljs-attr">&quot;cardHolders&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders&quot;</span>
+      }
+    }
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--api-cardholders"></span>
+          <div id="operation--api-cardholders-post" class="operation panel" data-traverse-target="operation--api-cardholders-post">
+            <h2 class="operation-title">
+              <span class="operation-summary">Create a cardholder</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/cardholders</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Creates a new cardholder, including assigned cards.</p>
+                  <p>Part of what you submit is an array called <code>cards</code>, each element of which is a card or credential you want assigned to your new cardholder. This example shows an array containing one PIV card.</p>
+                  <p>See the
+                    <a href="#definition-PIV-card-create-example">PIV card create schema definition</a> for the PIV-specific fields. The fields that are not specific to PIV and PIV-I cards are fully documented
+                    <a href="cardholders.html#operation--api-cardholders-post">in the cardholder API</a>. One, <code>division</code>, is mandatory, and you must also supply either a first or last name for your new cardholder.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <section class="json-schema-properties">
+                    <dl>
+                      <dt data-property-name="division" class="has-description">
+                        <span class="json-property-name">division:</span>
+                        <span class="json-property-type">object</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </dt>
+                      <dd>
+                        <p>Mandatory when creating any cardholder.</p>
+                      </dd>
+                      <dt data-property-name="firstName" class="has-description">
+                        <span class="json-property-name">firstName:</span>
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </dt>
+                      <dd>
+                        <p>Optional. See
+                          <a href="cardholders.html#operation--api-cardholders-post">the cardholder API documentation</a>.</p>
+                      </dd>
+                      <dt data-property-name="cards">
+                        <span class="json-property-name">cards:</span>
+                        <span class="json-property-type">
+                          <span class="json-schema-ref-array">
+                            <a class="json-schema-ref" href="#/definitions/PIV card create example">PIV card create example</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </dt>
+                      <dt class="json-inner-schema">
+                        <section class="json-schema-array-items">
+                          <span class="json-property-type">
+                            <span class="">
+                              <a class="json-schema-ref" href="#/definitions/PIV card create example">PIV card create example</a>
+                            </span>
+                          </span>
+                          <span class="json-property-range" title="Value limits"></span>
+                          <div class="json-inner-schema"> </div>
+                        </section>
+                      </dt>
+                    </dl>
+                  </section>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;firstName&quot;</span>: <span class="hljs-string">&quot;There will be more fields like this&quot;</span>,
+  <span class="hljs-attr">&quot;cards&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
+      <span class="hljs-attr">&quot;status&quot;</span>: {
+        <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;active&quot;</span>
+      },
+      <span class="hljs-attr">&quot;type&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/244&quot;</span>
+      },
+      <span class="hljs-attr">&quot;pivData&quot;</span>: {
+        <span class="hljs-attr">&quot;chuid&quot;</span>: {
+          <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+          <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
+          <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+          <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+        },
+        <span class="hljs-attr">&quot;pivStatus&quot;</span>: {
+          <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Normal&quot;</span>
+        },
+        <span class="hljs-attr">&quot;contentSigningCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]Kltk=&quot;</span>,
+        <span class="hljs-attr">&quot;cardAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]e5mE=&quot;</span>,
+        <span class="hljs-attr">&quot;pivAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]wkrp&quot;</span>,
+        <span class="hljs-attr">&quot;fingerprints&quot;</span>: <span class="hljs-string">&quot;N7[...]Shpd=&quot;</span>
+      }
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Headers
+                    <span>(201 Created)</span>
+                  </h5>
+                  <section class="swagger-response-headers">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="swagger-response-header-name"></th>
+                          <th class="swagger-response-header-description"></th>
+                          <th class="swagger-response-header-data-type"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="swagger-response-header-location">
+                          <td> location
+                            <td>
+                              <p>The href of the new cardholder.</p>
+                            </td>
+                            <td>
+                              <span class="json-property-type">string</span>
+                              <span class="json-property-format">(url)</span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </section>
+                </section>
+              </div>
+            </div>
+          </div>
+          <span id="path--api-cardholders--id-"></span>
+          <div id="operation--api-cardholders--id--patch" class="operation panel" data-traverse-target="operation--api-cardholders--id--patch">
+            <h2 class="operation-title">
+              <span class="operation-summary">Update a cardholder</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">PATCH</span>
+                  <span class="operation-path">/api/cardholders/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Updates an existing cardholder, including adding, removing, and modifying cards.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <p>Part of what you submit is an object called <code>cards</code>, described below.</p>
+                  <p>The other fields you can pass in this call, such as personal information, access rights, and card data such as issue levels, status, and validity to/from dates, are fully documented in the
+                    <a href="cardholders.html#operation--api-cardholders--id--patch">main cardholder API</a>. This example shows how to assign a PIV card to a cardholder, and how to change the two status fields of an existing PIV card.</p>
+                  <section class="json-schema-properties">
+                    <dl>
+                      <dt data-property-name="firstName" class="has-description">
+                        <span class="json-property-name">firstName:</span>
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </dt>
+                      <dd>
+                        <p>See
+                          <a href="cardholders.html#operation--api-cardholders--id--patch">the cardholder API documentation</a>. There is a lot you can do here.</p>
+                      </dd>
+                      <dt data-property-name="cards" class="has-description">
+                        <span class="json-property-name">cards:</span>
+                        <span class="json-property-type">object</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </dt>
+                      <dd>
+                        <p><code>cards</code> can contain three arrays called <code>add</code>, <code>update</code>, and <code>delete</code>.</p>
+                        <p>An element in the <code>add</code> array is the same as you would supply to a
+                          <a href="#operation--api-cardholders-post">POST</a> when creating a cardholder with cards. There is an example here. See the
+                          <a href="#definition-PIV-card-update-example">PIV card update schema definition</a> for the PIV-specific field definitions.</p>
+                        <p>An element in the <code>update</code> array is much smaller, because the only PIV data you can change is the PIV status. This example changes the PIV status of a card card to &#39;notChecked&#39;, which would normally activate it, but in this example we also disable the card. Presumably we do not want this person using the card just yet.</p>
+                        <p>Deleting a PIV card is no different from
+                          <a href="cardholders.html#operation--api-cardholders--id--cards--card_id--delete">deleting any other kind of credential</a>.</p>
+                      </dd>
+                      <dt class="json-inner-schema">
+                        <section class="json-schema-properties">
+                          <dl>
+                            <dt data-property-name="add">
+                              <span class="json-property-name">add:</span>
+                              <span class="json-property-type">
+                                <span class="json-schema-ref-array">
+                                  <a class="json-schema-ref" href="#/definitions/PIV card create example">PIV card create example</a>
+                                </span>
+                              </span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </dt>
+                            <dt class="json-inner-schema">
+                              <section class="json-schema-array-items">
+                                <span class="json-property-type">
+                                  <span class="">
+                                    <a class="json-schema-ref" href="#/definitions/PIV card create example">PIV card create example</a>
+                                  </span>
+                                </span>
+                                <span class="json-property-range" title="Value limits"></span>
+                                <div class="json-inner-schema"> </div>
+                              </section>
+                            </dt>
+                            <dt data-property-name="update">
+                              <span class="json-property-name">update:</span>
+                              <span class="json-property-type">
+                                <span class="json-schema-ref-array">
+                                  <a class="json-schema-ref" href="#/definitions/PIV card update example">PIV card update example</a>
+                                </span>
+                              </span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </dt>
+                            <dt class="json-inner-schema">
+                              <section class="json-schema-array-items">
+                                <span class="json-property-type">
+                                  <span class="">
+                                    <a class="json-schema-ref" href="#/definitions/PIV card update example">PIV card update example</a>
+                                  </span>
+                                </span>
+                                <span class="json-property-range" title="Value limits"></span>
+                                <div class="json-inner-schema"> </div>
+                              </section>
+                            </dt>
+                          </dl>
+                        </section>
+                      </dt>
+                    </dl>
+                  </section>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;firstName&quot;</span>: <span class="hljs-string">&quot;Algernon&quot;</span>,
+  <span class="hljs-attr">&quot;cards&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
+        <span class="hljs-attr">&quot;status&quot;</span>: {
+          <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;active&quot;</span>
+        },
+        <span class="hljs-attr">&quot;type&quot;</span>: {
+          <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/244&quot;</span>
+        },
+        <span class="hljs-attr">&quot;pivData&quot;</span>: {
+          <span class="hljs-attr">&quot;chuid&quot;</span>: {
+            <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+            <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
+            <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+            <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+          },
+          <span class="hljs-attr">&quot;pivStatus&quot;</span>: {
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Normal&quot;</span>
+          },
+          <span class="hljs-attr">&quot;contentSigningCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]Kltk=&quot;</span>,
+          <span class="hljs-attr">&quot;cardAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]e5mE=&quot;</span>,
+          <span class="hljs-attr">&quot;pivAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]wkrp&quot;</span>,
+          <span class="hljs-attr">&quot;fingerprints&quot;</span>: <span class="hljs-string">&quot;N7[...]Shpd=&quot;</span>
+        }
+      }
+    ],
+    <span class="hljs-attr">&quot;update&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/5398/cards/90e5d0d70&quot;</span>,
+        <span class="hljs-attr">&quot;status&quot;</span>: {
+          <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;disabled (manually)&quot;</span>
+        },
+        <span class="hljs-attr">&quot;pivData&quot;</span>: {
+          <span class="hljs-attr">&quot;pivStatus&quot;</span>: {
+            <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;notChecked&quot;</span>
+          }
+        }
+      }
+    ]
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-cardholders--id--get" class="operation panel" data-traverse-target="operation--api-cardholders--id--get">
+            <h2 class="operation-title">
+              <span class="operation-summary">Get details of a cardholder</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/cardholders/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>You will receive this URL from other calls to the API, in a search result or an access group membership list, for example. The URL is the unique identifier of a cardholder, and calling it returns much of what Command Centre holds for that person, including assigned cards.</p>
+                  <p>The result includes an array called <code>cards</code>. Each element of that array is a credential of some type. If it is a PIV card, it will look like the example here.</p>
+                  <p>Note that this example is an array of one.</p>
+                  <p>The
+                    <a href="#definition-PIV-card-GET">PIV card GET schema</a> is below. The
+                    <a href="cardholders.html#operation--api-cardholders--id--get">main documentation</a> covers all the other fields Command Centre holds for a cardholder.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the cardholder.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref"></div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">4xx </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege that allows reading cardholders, or there is no cardholder at that address.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;many other cardholder fields&quot;</span>: <span class="hljs-string">&quot;etc&quot;</span>,
+  <span class="hljs-attr">&quot;cards&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/6284082f7ba5eb1&quot;</span>,
+      <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;3165-4313-245789-098765432113456799&quot;</span>,
+      <span class="hljs-attr">&quot;issueLevel&quot;</span>: <span class="hljs-number">1</span>,
+      <span class="hljs-attr">&quot;status&quot;</span>: {
+        <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;Not Trusted&quot;</span>,
+        <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;inactive&quot;</span>
+      },
+      <span class="hljs-attr">&quot;pivData&quot;</span>: {
+        <span class="hljs-attr">&quot;chuid&quot;</span>: {
+          <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+          <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
+          <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+          <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+        },
+        <span class="hljs-attr">&quot;pivStatus&quot;</span>: {
+          <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Normal&quot;</span>
+        },
+        <span class="hljs-attr">&quot;lastCheckTime&quot;</span>: <span class="hljs-string">&quot;2018-04-26T00:22:05Z&quot;</span>,
+        <span class="hljs-attr">&quot;contentSigningCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]Kltk=&quot;</span>,
+        <span class="hljs-attr">&quot;cardAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]e5mE=&quot;</span>,
+        <span class="hljs-attr">&quot;pivAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]wkrp&quot;</span>,
+        <span class="hljs-attr">&quot;fingerprints&quot;</span>: <span class="hljs-string">&quot;N7[...]Shpd=&quot;</span>
+      }
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <h1>Schema Definitions</h1>
+          <div id="definition-PIV-card-GET" class="definition panel" data-traverse-target="definition-PIV-card-GET">
+            <h2 class="panel-title">
+              <a name="/definitions/PIV card GET"></a>PIV card GET:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>In addition to the generic card data the API always returns in the cards section (in the
+                    <a href="cardholders.html#definition-Cardholder-card">Cardholders API document</a>) of a cardholder detail page, including <code>href</code>, <code>number</code>, <code>issueLevel</code>, <code>type</code>, and <code>status</code>, PIV cards have a <code>pivData</code> structure.</p>
+                  <p>In version 8.00 and later <code>credentialClass</code> will have the value <code>piv</code>.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the same as the href to a card of any other type: you can send an HTTP DELETE to it to delete the card, but that is the only verb that will work. GET will return a 404.</p>
+                      <p>Do not specify it when creating a card, since it is the creation process that generates its href.</p>
+                    </dd>
+                    <dt data-property-name="number" class="has-description">
+                      <span class="json-property-name">number:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>While the card number rules on a PIV or PIV-I card type are different from those on other types, card numbers are still strings, and the API will accept them from you and return them to you in the same way.</p>
+                      <p>PIV card numbers are the FASC-N with hyphens splitting the major components.</p>
+                      <p>PIV-I card numbers are the CHUID&#39;s GUID in decimal.</p>
+                    </dd>
+                    <dt data-property-name="issueLevel" class="has-description">
+                      <span class="json-property-name">issueLevel:</span>
+                      <span class="json-property-type">integer</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A PIV card&#39;s issue level is derived from data in the CHUID block, presented here for convenience.</p>
+                    </dd>
+                    <dt data-property-name="status" class="has-description">
+                      <span class="json-property-name">status:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>PIV cards have more inactive card states than other cards. &#39;Time Invalid (PIV certificate)&#39; or &#39;Not Trusted&#39;, for example. If <code>status.type</code> is &#39;inactive&#39;, <code>status.value</code> will give an indication why.</p>
+                      <p>The status of a new card will be &#39;revoked&#39; if you set the PIV status (which is different from the card status, note) to anything but &#39;normal&#39; or &#39;offline&#39;.</p>
+                    </dd>
+                    <dt data-property-name="pivData" class="has-description">
+                      <span class="json-property-name">pivData:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is much like the
+                        <a href="#definition-PIV-card-data">pivData</a> you send when creating a card, described later, except that:</p>
+                      <ul>
+                        <li>
+                          <p>in certain cases (described below) it does not contain the certificates and biometrics, leaving just the
+                            <a href="#definition-CHUID">CHUID</a> block (a subset of the card&#39;s CHUID), and the PIV status.</p>
+                        </li>
+                        <li>
+                          <p>it adds <code>lastCheckTime</code>, which shows when the card was last validated. That is most useful when Command Centre is performing periodic card validation. If you are doing your own validation, this field will hold the moment you last updated the card.</p>
+                        </li>
+                      </ul>
+                      <p>If the site is running 7.90 and the RESTPIVCardExport customisation, or if it is running a later version and you asked for extra data using the <code>fields</code> query parameter, the pivData section will contain three certificates and the fingerprint templates in the correct format for import into another installation of Command Centre.</p>
+                      <p>The certificates and biometrics are missing from the default result set in the interest of efficiency: those fields are very large, and most of our integrations do not require them. Some are running over cellular networks, where bandwidth is carries a cost. Omitting the large fields by default but sending them on request is a flexible compromise that allows integrators to build a suitable system without wastage.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="chuid">
+                            <span class="json-property-name">chuid:</span>
+                            <span class="json-property-type">
+                              <span class="">
+                                <a class="json-schema-ref" href="#/definitions/CHUID">CHUID</a>
+                              </span>
+                            </span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dt data-property-name="pivStatus" class="has-description">
+                            <span class="json-property-name">pivStatus:</span>
+                            <span class="json-property-type">object</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>The <code>type</code> field in this block contains the PIV-specific status of the card, as opposed to the generic credential state which is in a block called <code>status</code> at the same level as <code>pivData</code>.</p>
+                            <p>The
+                              <a href="#definition-PIV-card-data">schema for PIV card data</a> lists the values it might come back with.</p>
+                          </dd>
+                          <dt data-property-name="lastCheckTime">
+                            <span class="json-property-name">lastCheckTime:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(date-time)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dt data-property-name="contentSigningCert" class="has-description">
+                            <span class="json-property-name">contentSigningCert:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>Required when creating a PIV or PIV-I card. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                            <p>This example is shortened to fit on screen. Real certificates are at least a thousand characters.</p>
+                          </dd>
+                          <dt data-property-name="cardAuthenticationCert" class="has-description">
+                            <span class="json-property-name">cardAuthenticationCert:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>This contains the CAK, which is necessary for the secure use of contactless cards. It is not required for contact cards.</p>
+                            <p>Optional when creating a PIV or PIV-I card. The API will reject your request if this is present and not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                          </dd>
+                          <dt data-property-name="pivAuthenticationCert" class="has-description">
+                            <span class="json-property-name">pivAuthenticationCert:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>Required when creating a PIV or PIV-I card. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                          </dd>
+                          <dt data-property-name="fingerprints" class="has-description">
+                            <span class="json-property-name">fingerprints:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                          <dd>
+                            <p>If you send this when creating a card, it should be the cardholder&#39;s fingerprints contained in the card&#39;s Cardholder Fingerprints data object with the error detection code removed: the whole CBEFF structure including the CBEFF_HEADER, CBEFF_BIOMETRIC_RECORD, and CBEFF_SIGNATURE_BLOCK components. Refer to Section 9 of NIST Special Publication 800-76-2: Biometric Data Specification for Personal Identity Verification.</p>
+                            <p>It is optional. The API will check that this is Base64, but will not verify that it is valid biometric data.</p>
+                          </dd>
+                        </dl>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325/cards/6284082f7ba5eb1&quot;</span>,
+  <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;3165-4313-245789-098765432113456799&quot;</span>,
+  <span class="hljs-attr">&quot;issueLevel&quot;</span>: <span class="hljs-number">1</span>,
+  <span class="hljs-attr">&quot;status&quot;</span>: {
+    <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;Not Trusted&quot;</span>,
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;inactive&quot;</span>
+  },
+  <span class="hljs-attr">&quot;pivData&quot;</span>: {
+    <span class="hljs-attr">&quot;chuid&quot;</span>: {
+      <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+      <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
+      <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+      <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+    },
+    <span class="hljs-attr">&quot;pivStatus&quot;</span>: {
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Normal&quot;</span>
+    },
+    <span class="hljs-attr">&quot;lastCheckTime&quot;</span>: <span class="hljs-string">&quot;2018-04-26T00:22:05Z&quot;</span>,
+    <span class="hljs-attr">&quot;contentSigningCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]Kltk=&quot;</span>,
+    <span class="hljs-attr">&quot;cardAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]e5mE=&quot;</span>,
+    <span class="hljs-attr">&quot;pivAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]wkrp&quot;</span>,
+    <span class="hljs-attr">&quot;fingerprints&quot;</span>: <span class="hljs-string">&quot;N7[...]Shpd=&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-PIV-card-type" class="definition panel" data-traverse-target="definition-PIV-card-type">
+            <h2 class="panel-title">
+              <a name="/definitions/PIV card type"></a>PIV card type:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>When you
+                    <a href="cardholders.html#operation--api-card_types-assign-get">collect card types</a> from Command Centre in preparation for giving a PIV card to someone, the card type you seek will look like this.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The number in this URL may be different on your system.</p>
+                    </dd>
+                    <dt data-property-name="name">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="availableCardStates" class="has-description">
+                      <span class="json-property-name">availableCardStates:</span>
+                      <span class="json-property-type">string[]</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>All credential types have a set of card states. The set assigned to PIV cards contains only two.</p>
+                      <p>If you need this, ask for it using the <code>fields</code> parameter.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">Active</span>,
+                          <span class="json-property-enum-item">Disabled (manually)</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="credentialClass" class="has-description">
+                      <span class="json-property-name">credentialClass:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-enum" title="Possible values">
+                        <span class="json-property-enum-item">piv</span>,
+                        <span class="json-property-enum-item">card</span>,
+                        <span class="json-property-enum-item">mobile</span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>PIV card types have the credential class &#39;piv&#39;.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/243&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;PIV Card&quot;</span>,
+  <span class="hljs-attr">&quot;availableCardStates&quot;</span>: [
+    <span class="hljs-string">&quot;Active&quot;</span>,
+    <span class="hljs-string">&quot;Disabled (manually)&quot;</span>
+  ],
+  <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;piv&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-PIV-card-create-example" class="definition panel" data-traverse-target="definition-PIV-card-create-example">
+            <h2 class="panel-title">
+              <a name="/definitions/PIV card create example"></a>PIV card create example:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>This example, when placed inside the <code>cards</code> array of a
+                    <a href="cardholders.html#operation--api-cardholders-post">POST</a> or the <code>cards.add</code> array of a
+                    <a href="cardholders.html#operation--api-cardholders--id--patch">PATCH</a>, would create a PIV credential and assign it to the cardholder created by the POST or identified by the address of the PATCH. Consult those methods for the JSON you need to wrap around this example.</p>
+                  <p>A PIV-I example would have a different style of FASC-N, and a card number to match.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="number" class="has-description">
+                      <span class="json-property-name">number:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Required.</p>
+                      <p>For a PIV card, this is the FASC-N.</p>
+                      <p>For a PIV-I card, this is the decimal representation of the GUID in the CHUID, and must not be the same as the FASC-N.</p>
+                      <p>The server ignores hyphens here, so you can send back the same number you received from a GET.</p>
+                    </dd>
+                    <dt data-property-name="status" class="has-description">
+                      <span class="json-property-name">status:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Optional, but when controlling physical access you should be explicit rather than relying on a default. Set the <code>value</code> field inside it to either &#39;active&#39; or &#39;disabled (manually)&#39;. Case insensitive.</p>
+                      <p>You will not be able to activate a card if its PIV status (inside the <code>pivdata</code> block) prevents it.</p>
+                    </dd>
+                    <dt data-property-name="type" class="has-description">
+                      <span class="json-property-name">type:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Required. This should be the href of the built-in PIV/PIV-I card type, that your application found using the process
+                        <a href="#finding-the-piv-card-type">in the introduction</a>.</p>
+                    </dd>
+                    <dt data-property-name="pivData" class="has-description">
+                      <span class="json-property-name">pivData:</span>
+                      <span class="json-property-type">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/PIV card data">PIV card data</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This block contains all the PIV-specific fields. Everything outside this block, including the number, status, and type, is common to all types of Command Centre cards and credentials.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;number&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
+  <span class="hljs-attr">&quot;status&quot;</span>: {
+    <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;active&quot;</span>
+  },
+  <span class="hljs-attr">&quot;type&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/244&quot;</span>
+  },
+  <span class="hljs-attr">&quot;pivData&quot;</span>: {
+    <span class="hljs-attr">&quot;chuid&quot;</span>: {
+      <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+      <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
+      <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+      <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+    },
+    <span class="hljs-attr">&quot;pivStatus&quot;</span>: {
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Normal&quot;</span>
+    },
+    <span class="hljs-attr">&quot;contentSigningCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]Kltk=&quot;</span>,
+    <span class="hljs-attr">&quot;cardAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]e5mE=&quot;</span>,
+    <span class="hljs-attr">&quot;pivAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]wkrp&quot;</span>,
+    <span class="hljs-attr">&quot;fingerprints&quot;</span>: <span class="hljs-string">&quot;N7[...]Shpd=&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-PIV-card-update-example" class="definition panel" data-traverse-target="definition-PIV-card-update-example">
+            <h2 class="panel-title">
+              <a name="/definitions/PIV card update example"></a>PIV card update example:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>This example, when placed inside <code>cards.update</code> array of a PATCH, would update a card. The main cardholder API documentation shows where to send the PATCH and what else you can change with it. This example only shows how to update the status (common to all credential types) and the PIV data.</p>
+                  <p>Specifically, the PIV status, because that is the only PIV-specific data you can change on a PIV card. Everything else--the CHUID, certificates, and biometrics--are all fixed, once set.</p>
+                  <p>See the
+                    <a href="#definition-PIV-card-data">PIV data schema</a> for when you should set the PIV status and what you can set it to.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the href of the card you want to update, found in the <code>cards</code> array in the
+                        <a href="cardholders.html#definition-Cardholder-detail">cardholder detail</a>.</p>
+                    </dd>
+                    <dt data-property-name="status" class="has-description">
+                      <span class="json-property-name">status:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Optional. If you omit both this and the PIV status, or omit this and set the PIV status to &#39;normal&#39; or &#39;offline&#39;, the server will set this to &#39;active&#39;. Any other PIV status will cause the card to become inactive, regardless of what you put here.</p>
+                      <p>So you really only need to set this when you are changing the PIV status to &#39;normal&#39; or &#39;offline&#39; but you want the card to remain disabled. In that case, set <code>status.value</code> to &#39;disabled (manually)&#39;.</p>
+                    </dd>
+                    <dt data-property-name="pivData" class="has-description">
+                      <span class="json-property-name">pivData:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This can contain only one field when you are updating a PIV card, <code>pivStatus.type</code>.</p>
+                      <p>The
+                        <a href="#definition-PIV-card-data">PIV card data schema</a> lists the values you can send.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/5398/cards/90e5d0d70&quot;</span>,
+  <span class="hljs-attr">&quot;status&quot;</span>: {
+    <span class="hljs-attr">&quot;value&quot;</span>: <span class="hljs-string">&quot;disabled (manually)&quot;</span>
+  },
+  <span class="hljs-attr">&quot;pivData&quot;</span>: {
+    <span class="hljs-attr">&quot;pivStatus&quot;</span>: {
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;notChecked&quot;</span>
+    }
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-PIV-card-data" class="definition panel" data-traverse-target="definition-PIV-card-data">
+            <h2 class="panel-title">
+              <a name="/definitions/PIV card data"></a>PIV card data:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>This example, when placed inside one of the cards in the <code>cards</code> array of a POST or the <code>cards.add</code> array of a PATCH, would create a PIV card. It contains all the PIV-specific fields on a credential.</p>
+                  <p>It is the same as the block you
+                    <a href="#definition-PIV-card-GET">receive from the API</a> for an existing PIV card, minus <code>lastCheckTime</code>.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="chuid" class="has-description">
+                      <span class="json-property-name">chuid:</span>
+                      <span class="json-property-type">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/CHUID">CHUID</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Required. The FASC-N in the <code>chuid</code> block, and its relationship with the card number, is the only difference between PIV and PIV-I cards in Command Centre.</p>
+                    </dd>
+                    <dt data-property-name="pivStatus" class="has-description">
+                      <span class="json-property-name">pivStatus:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This PIV status is distinct from the card status, which is a different field outside the <code>pivData</code> block.</p>
+                      <p>It is optional. If you omit it when creating a card, the card will be enabled with a status of &quot;NotChecked&quot;, which is a perfectly valid operating status. If Command Centre is doing periodic certificate validation, the status will eventually change (to &#39;normal&#39;, all going well).</p>
+                      <p>You should send this block only if you are doing your own certificate validation. It must contain a field <code>type</code> set to one of these values, based on the result of your validation:</p>
+                      <ul>
+                        <li>Normal</li>
+                        <li>Offline</li>
+                        <li>Revoked</li>
+                        <li>Expired</li>
+                        <li>CertInChainRevoked</li>
+                        <li>CertInChainExpired</li>
+                        <li>IssuerSigCertRevoked</li>
+                        <li>IssuerSigCertExpired</li>
+                        <li>NotTrusted</li>
+                        <li>PolicyError</li>
+                        <li>OtherError</li>
+                        <li>NotChecked</li>
+                      </ul>
+                      <p>If you set it to any value except &#39;NotChecked, &#39;Normal&#39;, or &#39;Offline&#39;, Command Centre will consider the card invalid and deactivate it regardless of what you pass as the card status. You, or Command Centre&#39;s periodic certificate validation, may validate the card again later.</p>
+                    </dd>
+                    <dt data-property-name="contentSigningCert" class="has-description">
+                      <span class="json-property-name">contentSigningCert:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Required when creating a PIV or PIV-I card. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                      <p>This example is shortened to fit on screen. Real certificates are at least a thousand characters.</p>
+                    </dd>
+                    <dt data-property-name="cardAuthenticationCert" class="has-description">
+                      <span class="json-property-name">cardAuthenticationCert:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This contains the CAK, which is necessary for the secure use of contactless cards. It is not required for contact cards.</p>
+                      <p>Optional when creating a PIV or PIV-I card. The API will reject your request if this is present and not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                    </dd>
+                    <dt data-property-name="pivAuthenticationCert" class="has-description">
+                      <span class="json-property-name">pivAuthenticationCert:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Required when creating a PIV or PIV-I card. The API will reject your request if this is missing or not a Base64-encoded certificate, but it will not validate the certificate itself.</p>
+                    </dd>
+                    <dt data-property-name="fingerprints" class="has-description">
+                      <span class="json-property-name">fingerprints:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>If you send this when creating a card, it should be the cardholder&#39;s fingerprints contained in the card&#39;s Cardholder Fingerprints data object with the error detection code removed: the whole CBEFF structure including the CBEFF_HEADER, CBEFF_BIOMETRIC_RECORD, and CBEFF_SIGNATURE_BLOCK components. Refer to Section 9 of NIST Special Publication 800-76-2: Biometric Data Specification for Personal Identity Verification.</p>
+                      <p>It is optional. The API will check that this is Base64, but will not verify that it is valid biometric data.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;chuid&quot;</span>: {
+    <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+    <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
+    <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+    <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+  },
+  <span class="hljs-attr">&quot;pivStatus&quot;</span>: {
+    <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;Normal&quot;</span>
+  },
+  <span class="hljs-attr">&quot;contentSigningCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]Kltk=&quot;</span>,
+  <span class="hljs-attr">&quot;cardAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]e5mE=&quot;</span>,
+  <span class="hljs-attr">&quot;pivAuthenticationCert&quot;</span>: <span class="hljs-string">&quot;MIIE[...]wkrp&quot;</span>,
+  <span class="hljs-attr">&quot;fingerprints&quot;</span>: <span class="hljs-string">&quot;N7[...]Shpd=&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-CHUID" class="definition panel" data-traverse-target="definition-CHUID">
+            <h2 class="panel-title">
+              <a name="/definitions/CHUID"></a>CHUID:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>This is an example CHUID block for a PIV card. The only difference between this and a PIV-I card is the FASC-N.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="hash" class="has-description">
+                      <span class="json-property-name">hash:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the hash of the CHUID object, Base64-encoded. For a 256-bit hash it should be 44 characters long including one <code>=</code> pad. The API will reject a string that is not valid Base64, but it will not verify the hash.</p>
+                      <p>Required in versions up to 8.60. Optional in 8.70 and later.</p>
+                    </dd>
+                    <dt data-property-name="fascn" class="has-description">
+                      <span class="json-property-name">fascn:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The FASC-N identifier. Required.</p>
+                      <p>It must be the same as the card number on a PIV (not PIV-I) card.</p>
+                      <p>On a PIV-I card, it must not be the same as the card number (and for Federal PIV-I cards it will likely begin with fourteen nines).</p>
+                    </dd>
+                    <dt data-property-name="orgIdentifier" class="has-description">
+                      <span class="json-property-name">orgIdentifier:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Optional.</p>
+                    </dd>
+                    <dt data-property-name="duns" class="has-description">
+                      <span class="json-property-name">duns:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Optional.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;hash&quot;</span>: <span class="hljs-string">&quot;NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE=&quot;</span>,
+  <span class="hljs-attr">&quot;fascn&quot;</span>: <span class="hljs-string">&quot;47000256001337111234567890199991&quot;</span>,
+  <span class="hljs-attr">&quot;orgIdentifier&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+  <span class="hljs-attr">&quot;duns&quot;</span>: <span class="hljs-string">&quot;&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div class="doc-row no-margin">
+            <div class="doc-copy doc-separator">
+              <a class="powered-by" href="https://sourcey.com/spectacle">Documentation by
+                <span>Spectacle</span>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
