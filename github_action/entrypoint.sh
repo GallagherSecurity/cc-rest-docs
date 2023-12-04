@@ -26,12 +26,12 @@ asciidoctor-multipage -r asciidoctor-diagram -o paged.html --verbose training/re
 
 echo Putting output into $INPUT_OUTPUT
 ls -al ref
+chmod -c -R +rX ref | while read line; do
+  echo "::warning title=Invalid file permissions automatically fixed::$line"
+done
 tar --dereference -cvf $INPUT_OUTPUT --exclude .asciidoctor --exclude .git --exclude .gitignore ref
 
 echo Artifact: $INPUT_OUTPUT
 ls -l $INPUT_OUTPUT
-chmod -c -R +rX . | while read line; do
-  echo "::warning title=Invalid file permissions automatically fixed::$line"
-done
 tar tvf $INPUT_OUTPUT
 
