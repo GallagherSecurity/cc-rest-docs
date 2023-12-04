@@ -29,6 +29,8 @@ asciidoctor-pdf -r asciidoctor-diagram -o $D/training/rest_training.pdf --verbos
 echo Building multi-page HTML from AsciiDoc
 asciidoctor-multipage -r asciidoctor-diagram -D $D/training -o $D/training/paged.html --verbose training/rest_training.adoc || true
 
+cp -r ref swagger $D
+
 echo Putting output into $INPUT_OUTPUT
 ls -alR $D
 tar --dereference -C $D -cvf $INPUT_OUTPUT --exclude .asciidoctor .
