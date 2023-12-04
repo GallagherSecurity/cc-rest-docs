@@ -15,22 +15,17 @@ sed -i \
     -e "s@%%DATE%%@$(date)@" \
     training/rest_training.adoc
 
-# $$ is probably "1"
-D=${RUNNER_TEMP}/adoc.$$
-rm -rf $D
-mkdir -p $D
-
 echo Building single-page HTML version of AsciiDoc
-asciidoctor -r asciidoctor-diagram -o $D/index.html --verbose training/rest_training.adoc || true
+asciidoctor -r asciidoctor-diagram -o training/index.html --verbose training/rest_training.adoc || true
 
 echo Building PDF from AsciiDoc
-asciidoctor-pdf -r asciidoctor-diagram -o $D/rest_training.pdf --verbose training/rest_training.adoc || true
+asciidoctor-pdf -r asciidoctor-diagram -o training/rest_training.pdf --verbose training/rest_training.adoc || true
 
 echo Building multi-page HTML from AsciiDoc
-asciidoctor-multipage -r asciidoctor-diagram -D $D -o $D/paged.html --verbose training/rest_training.adoc || true
+asciidoctor-multipage -r asciidoctor-diagram -D training -o training/paged.html --verbose training/rest_training.adoc || true
 
 echo Putting output into $INPUT_OUTPUT
-tar --dereference -C $D -cvf $INPUT_OUTPUT --exclude .asciidoctor .
+tar --dereference -cvf $INPUT_OUTPUT --exclude .asciidoctor --exclude .git --exclude .gitignore ref training
 ls -alr $RUNNER_TEMP
 
 echo Artifact: $INPUT_OUTPUT
