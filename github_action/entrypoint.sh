@@ -25,7 +25,7 @@ echo Building multi-page HTML from AsciiDoc
 asciidoctor-multipage -r asciidoctor-diagram -o paged.html --verbose training/rest_training.adoc || true
 
 echo Putting output into $INPUT_OUTPUT
-tar --dereference -cvf $INPUT_OUTPUT --exclude .asciidoctor --exclude .git --exclude .gitignore ref swagger training
+tar --dereference -cvf $INPUT_OUTPUT --exclude .asciidoctor --exclude .git --exclude .gitignore ref
 
 echo Artifact: $INPUT_OUTPUT
 ls -l $INPUT_OUTPUT
