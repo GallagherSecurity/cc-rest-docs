@@ -29,7 +29,7 @@ ls -al ref training swagger
 chmod -c -R +rX ref training swagger | while read line; do
   echo "::warning title=Invalid file permissions automatically fixed::$line"
 done
-tar --dereference -cvf $INPUT_OUTPUT --exclude .asciidoctor --exclude .git --exclude .gitignore training swagger
+tar --dereference -cvf $INPUT_OUTPUT --exclude .asciidoctor --exclude .git --exclude .gitignore training
 
 echo Artifact: $INPUT_OUTPUT
 ls -l $INPUT_OUTPUT
