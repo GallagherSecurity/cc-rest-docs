@@ -25,7 +25,7 @@ echo Building multi-page HTML from AsciiDoc
 asciidoctor-multipage -r asciidoctor-diagram -o paged.html --verbose training/rest_training.adoc || true
 
 echo Putting output into $INPUT_OUTPUT
-ls -al ref training swagger
+ls -alR ref training swagger
 chmod -c -R +rX ref training swagger | while read line; do
   echo "::warning title=Invalid file permissions automatically fixed::$line"
 done
