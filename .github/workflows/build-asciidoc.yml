@@ -1,46 +1,54 @@
-# Many thanks to James Read:
-# https://blog.jread.com/auto-build-and-host-pretty-html-documentation-using-asciidoc-github-pages-github-actions-758a03f93d7d
-
-name: Build asciidocs
+name: "Workflow:  Build from AsciiDoc and publish to GitHub Pages"
 
 on:
   push:
     branches:
-    - master
+    - main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  adoc_build:
+  buildhtmljob:
     runs-on: ubuntu-latest
-    name: Asciidoctoring the docs to pretty HTML!
+    name: "Job:  adoc -> HTML"
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Get build container
-      id: adocbuild
-      uses: avattathil/asciidoctor-action@4feb0f72ff1096f854daa6bb0b2456c2ecab27f9
-      with:
-          # If gitignore includes HTML files, it won't add our newly-generated HTML
-          # to the gh-pages branch.
-          program: "echo '!index.html' >> training/.gitignore && asciidoctor -o training/index.html training/rest_training.adoc && mkdir -p training2 && asciidoctor -o training2/index.html training/test.adoc"
-    - name: Deploy to github pages.
-      uses: peaceiris/actions-gh-pages@v3
-      with: 
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Step:  checkout"
+        uses: actions/checkout@v4
+      - name: "Step:  set up pages"
+        uses: actions/configure-pages@v3
+      - name: "Step:  build HTML tarball from Asciidoc"
+        uses: ./action
+        with:
+          output: artifact.tar
+      - name: "Step:  upload artifact"
+        uses: actions/upload-artifact@v3
+        with:
+          name: github-pages
+          path: artifact.tar
+          retention-days: 1
+          if-no-files-found: error
 
-        # Cannot publish to master from master, otherwise generated files would end up alongside
-        # their source files.  The repo is configured to publish from gh-pages branch
-        # (Settings -> Pages).
-        publish_branch: gh-pages
-
-        # Publish the whole tree.  The default is /public.
-        publish_dir: ./
-
-        # This is the default.  Flush gh-pages branch before publishing.
-        keep_files: false
-
-        # Keep producing an index.html from README.md please.
-        enable_jekyll: true
-        
-        # There is no point in keeping the history of the gh-pages branch.
-        # If you switch to gh-pages locally, you'll later have a problem merging.
-        # Delete your local branch to unblock.
-        force_orphan: true
+  deployjob:
+    name: "Job:  HTML to GitHub Pages"
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: buildhtmljob
+    steps:
+      - name: "Step:  deploy to GitHub Pages"
+        id: deployment
+        uses: actions/deploy-pages@v2

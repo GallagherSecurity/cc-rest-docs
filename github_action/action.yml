@@ -1,0 +1,14 @@
+name: 'Action:  run Asciidoctor and build GitHub Pages tarball'
+description: 'Generates HTML'
+
+inputs:
+  output:
+    description: "Full path of artifact (tarball) to produce."
+    required: true
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.output }}
+
