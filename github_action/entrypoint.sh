@@ -15,21 +15,23 @@ sed -i \
     -e "s@%%DATE%%@$(date)@" \
     training/rest_training.adoc
 
+# $$ is probably "1"
+D=${RUNNER_TEMP}/adoc.$$
+rm -rf $D
+mkdir -p $D/training
+
 echo Building single-page HTML version of AsciiDoc
-asciidoctor -r asciidoctor-diagram -o training/index.html --verbose training/rest_training.adoc || true
+asciidoctor -r asciidoctor-diagram -o $D/training/index.html --verbose training/rest_training.adoc || true
 
 echo Building PDF from AsciiDoc
-asciidoctor-pdf -r asciidoctor-diagram -o training/rest_training.pdf --verbose training/rest_training.adoc || true
+asciidoctor-pdf -r asciidoctor-diagram -o $D/training/rest_training.pdf --verbose training/rest_training.adoc || true
 
 echo Building multi-page HTML from AsciiDoc
-asciidoctor-multipage -r asciidoctor-diagram -o paged.html --verbose training/rest_training.adoc || true
+asciidoctor-multipage -r asciidoctor-diagram -D $D/training -o $D/training/paged.html --verbose training/rest_training.adoc || true
 
 echo Putting output into $INPUT_OUTPUT
-ls -alR ref training swagger
-chmod -c -R +rX ref training swagger | while read line; do
-  echo "::warning title=Invalid file permissions automatically fixed::$line"
-done
-tar --dereference -cvf $INPUT_OUTPUT --exclude .asciidoctor --exclude .git --exclude .gitignore training
+ls -alR $D
+tar --dereference -C $D -cvf $INPUT_OUTPUT --exclude .asciidoctor .
 
 echo Artifact: $INPUT_OUTPUT
 ls -l $INPUT_OUTPUT
