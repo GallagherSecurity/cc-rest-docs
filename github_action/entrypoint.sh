@@ -15,7 +15,7 @@ sed -i \
     -e "s@%%DATE%%@$(date)@" \
     training/rest_training.adoc
 
-# $$ is probably "1"
+# $$ is probably "1" and $RUNNER_TEMP may not exist
 D=${RUNNER_TEMP}/adoc.$$
 rm -rf $D
 mkdir -p $D/training
@@ -27,13 +27,14 @@ echo Building PDF from AsciiDoc
 asciidoctor-pdf -r asciidoctor-diagram -o $D/training/rest_training.pdf --verbose training/rest_training.adoc || true
 
 echo Building multi-page HTML from AsciiDoc
-asciidoctor-multipage -r asciidoctor-diagram -D $D/training -o $D/training/paged.html --verbose training/rest_training.adoc || true
+asciidoctor-multipage -r asciidoctor-diagram -D $D/training/multipage -o $D/training/multipage/index.html --verbose training/rest_training.adoc || true
 
-cp -r ref swagger $D
+# Tarball must be rooted at . otherwise deploy-pages fails, so copy everything in
+cp -r ref training $D
 
 echo Putting output into $INPUT_OUTPUT
-ls -alR $D
-tar --dereference -C $D -cvf $INPUT_OUTPUT --exclude .asciidoctor .
+# No --hard-dereference in busybox
+tar --dereference -C $D -cf $INPUT_OUTPUT --exclude .asciidoctor .
 
 echo Artifact: $INPUT_OUTPUT
 ls -l $INPUT_OUTPUT
