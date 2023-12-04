@@ -30,5 +30,8 @@ tar --dereference -cvf $INPUT_OUTPUT --exclude .asciidoctor --exclude .git --exc
 
 echo Artifact: $INPUT_OUTPUT
 ls -l $INPUT_OUTPUT
+chmod -c -R +rX . | while read line; do
+  echo "::warning title=Invalid file permissions automatically fixed::$line"
+done
 tar tvf $INPUT_OUTPUT
 
