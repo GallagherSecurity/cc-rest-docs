@@ -33,6 +33,11 @@ jobs:
         uses: ./github_action
         with:
           output: artifact.tar
+      - name: Fix permissions
+        run: |
+          chmod -c -R +rX "_site/" | while read line; do
+          echo "::warning title=Invalid file permissions automatically fixed::$line"
+        done
       - name: "Step:  upload artifact"
         uses: actions/upload-artifact@v3
         with:
