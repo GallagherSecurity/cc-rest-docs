@@ -46,6 +46,10 @@ info:
 
     * You will be able to create and delete divisions, and modify some basic fields.
 
+    #### Alarms and events API changes in 9.10
+
+    * You can request the name of an alarm's instruction.
+
     #### Alarms and events API changes in 9.00
 
     * A new event type `hasLocation` greatly simplifies the [monitoring of cardholder
@@ -2180,11 +2184,19 @@ definitions:
             items: { $ref: '#/definitions/Alarm history entry' }
           instruction:
             type: object
-            description: GET this link to retrieve the alarm instruction body inside an HTML document.  Missing if there is no alarm instruction for this alarm.
+            description: |
+              GET the href it contains to retrieve the alarm instruction body inside an HTML document.
+
+              In 9.10 and later you can request the instruction's name using the query parameter
+              `fields=instruction.name`.  If you want the href as well, add `,instruction.href`.
+
+              Missing if there is no alarm instruction for this alarm.
             properties:
               href: { type: string, format: url }
+              name: { type: string}
             example:
               href: "https://localhost:8904/api/alarms/92210/instructions"
+              name: "Forced door instruction"
           cardholder:
             type: object
             description: The cardholder entity associated with this alarm. GET the href for full details. Missing if this alarm does not have an associated cardholder.

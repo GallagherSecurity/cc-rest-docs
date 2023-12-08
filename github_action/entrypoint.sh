@@ -30,7 +30,7 @@ echo Building multi-page HTML from AsciiDoc
 asciidoctor-multipage -r asciidoctor-diagram -D $D/training/multipage -o $D/training/multipage/index.html --verbose training/rest_training.adoc || true
 
 # Tarball must be rooted at . otherwise deploy-pages fails, so copy everything in
-cp -r ref training $D
+cp -r ref $D
 
 echo Putting output into $INPUT_OUTPUT
 # No --hard-dereference in busybox

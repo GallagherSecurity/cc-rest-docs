@@ -170,6 +170,10 @@
                 <ul>
                   <li>You will be able to create and delete divisions, and modify some basic fields.</li>
                 </ul>
+                <h4 id="alarms-and-events-api-changes-in-910">Alarms and events API changes in 9.10</h4>
+                <ul>
+                  <li>You can request the name of an alarm&#39;s instruction.</li>
+                </ul>
                 <h4 id="alarms-and-events-api-changes-in-900">Alarms and events API changes in 9.00</h4>
                 <ul>
                   <li>
@@ -1087,7 +1091,8 @@
     }
   ],
   <span class="hljs-attr">&quot;instruction&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarms/92210/instructions&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarms/92210/instructions&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Forced door instruction&quot;</span>
   },
   <span class="hljs-attr">&quot;cardholder&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,
@@ -5223,7 +5228,9 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>GET this link to retrieve the alarm instruction body inside an HTML document. Missing if there is no alarm instruction for this alarm.</p>
+                          <p>GET the href it contains to retrieve the alarm instruction body inside an HTML document.</p>
+                          <p>In 9.10 and later you can request the instruction&#39;s name using the query parameter <code>fields=instruction.name</code>. If you want the href as well, add <code>,instruction.href</code>.</p>
+                          <p>Missing if there is no alarm instruction for this alarm.</p>
                         </dd>
                         <dt class="json-inner-schema">
                           <section class="json-schema-properties">
@@ -5232,6 +5239,11 @@
                                 <span class="json-property-name">href:</span>
                                 <span class="json-property-type">string</span>
                                 <span class="json-property-format">(url)</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt data-property-name="name">
+                                <span class="json-property-name">name:</span>
+                                <span class="json-property-type">string</span>
                                 <span class="json-property-range" title="Value limits"></span>
                               </dt>
                             </dl>
@@ -5353,7 +5365,8 @@
     }
   ],
   <span class="hljs-attr">&quot;instruction&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarms/92210/instructions&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/alarms/92210/instructions&quot;</span>,
+    <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Forced door instruction&quot;</span>
   },
   <span class="hljs-attr">&quot;cardholder&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/cardholders/325&quot;</span>,

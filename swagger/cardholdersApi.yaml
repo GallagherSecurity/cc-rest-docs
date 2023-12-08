@@ -88,6 +88,11 @@ info:
       view, which is a larger set determined by privileges alone, and not suitable for interactive
       REST clients.
 
+    #### Cardholder API changes in 9.10
+
+    * You can request a locker's status and send an override to quarantine it.  The [use
+      cases](#opening--or-quarantining-a-locker) section shows how.
+
     #### Cardholder API changes in 9.00
 
     * You can search for cardholders by the access zone they are in.
@@ -201,7 +206,7 @@ info:
       location (access zone).
 
     * Lockers and locker banks are now visible with the RESTStatus licence, including whether a
-      locker is available or assigned.  You still need RESTCardholders to see which cardholder/s a
+      locker is available or allocated.  You still need RESTCardholders to see which cardholder/s a
       locker is assigned to.
 
     * Lockers moved from the locker banks controller into their own.  That changed their hrefs.
@@ -219,7 +224,7 @@ info:
     * You can use the `fields` query parameter to select the fields you receive from locker bank
       [summary](#operation--api-locker_banks-get) and
       [details](#operation--api-locker_banks--id--get) GETs.  The [use
-      cases](#opening-a-locker) section shows how.
+      cases](#opening--or-quarantining-a-locker) section shows how.
 
     #### API changes in 8.10
 
@@ -398,6 +403,56 @@ x-common-blocks:
       than the other fields so only ask for it if you need it.
 
       Added in 8.50.
+
+  locker_commands: &LOCKERCOMMANDS
+    type: object
+    description: |
+      Overrideable items return one of these blocks if your operator has the right
+      privilege and the locker is fit to be overridden.  It is a list of commands, each
+      represented by a block containing an href that accepts a POST that will send an
+      override to the locker, changing its state.
+    properties:
+      open:
+        type: object
+        properties:
+          href:
+            example: "https://localhost:8904/api/lockers/3456/open"
+            description: |
+              POST to this URL to send an open override to the locker.  The server will
+              ignore the POST body.
+            type: string
+            format: url
+      quarantine:
+        type: object
+        properties:
+          href:
+            example: "https://localhost:8904/api/lockers/3456/quarantine"
+            description: |
+              POST to this URL to send a quarantine override to the locker.  Do not send a
+              body with the POST since some server versions use the same POST for
+              `quarantineUntil`, which takes a time from the body.
+            type: string
+            format: url
+      quarantineUntil:
+        type: object
+        properties:
+          href:
+            example: "https://localhost:8904/api/lockers/3456/quarantine"
+            description: |
+              POST to this URL to send an override to the locker that will quarantine it
+              until a timestamp you send [in the body](rest.html#definition-Override-end-time).
+            type: string
+            format: url
+      cancelQuarantine:
+        type: object
+        properties:
+          href:
+            example: "https://localhost:8904/api/lockers/3456/quarantine"
+            description: |
+              POST to this URL to send a quarantine cancel override to the locker.  The
+              server will ignore the POST body.
+            type: string
+            format: url
 
   visit_name: &VISIT_NAME
     type: string
@@ -1091,20 +1146,16 @@ tags:
 
     The locker bank API exists for two purposes:  finding a locker to assign a cardholder to, and
     integrating with operational locker management software that expects a bank-centric view rather
-    than the cardholder-centric view available in the cardholder API.
+    than the cardholder-centric view available in the cardholder API.  So a locker bank's detail
+    page shows all its cardholder assignments.
 
-    This means:
-
-      - everything about a locker bank is in one place:  lockers are components of a bank (there is
-        no separate locker API), and its detail page shows all cardholder assignments, and
-
-      - you cannot use the API to create or configure lockers or banks.  There is no mention of the
-        hardware features of a locker such as readers, inputs, and outputs, nor the door-like
-        settings on the bank such as the lock type and unlock time.  The locker configuration tool
-        exists for this purpose.
+    You cannot use the API to create or configure lockers or banks, or to see the
+    hardware features of a locker such as readers, inputs, and outputs, nor the door-like
+    settings on the bank such as the lock type and unlock time.  The locker configuration tool
+    exists for this purpose.
 
     To change the cardholder assignments you should PATCH the cardholder's href, since it is the
-    cardholder you are actually updating.  The locker bank API supplies that URL.
+    cardholder you are updating, not the locker.  The locker bank API supplies that URL.
 
     ### Use cases
 
@@ -1129,11 +1180,11 @@ tags:
        href in a property called `locker` in an element of an array called `lockers.add`.
        Add `from` and `until` properties as you like.
 
-    #### Opening a locker
+    #### Opening or quarantining a locker
 
     Command Centre version 8.10.1112 lets you use the 'fields' parameter on the locker bank search
     to request the 'open' override URLs for lockers, which in prior versions was only available on
-    their details pages.
+    their details pages.  Version 9.10 adds the ability to quarantine lockers.
 
     1. `GET /api`
     2. Follow the link at `features.lockerBanks.lockerBanks.href`
@@ -1142,9 +1193,9 @@ tags:
        thin out the results, if you have a lot of locker banks.
     3. Dig through the results for your locker bank, then through the `lockers` array of that locker
        bank for your locker, then into the `commands` block of that locker for another block called
-       `open`.  If your operator is able to override that locker it will contain a field called
-       `href`, giving the URL you need to [POST](#operation--api-lockers--id--open-post) to open the
-       locker.
+       `open` or `quarantine`, depending on your need.  If your operator is able to override that
+       locker, that block will contain a field called `href` which gives the URL you need to
+       POST to open the locker ([open](#operation--api-lockers--id--open-post), for example).
 
 - name: Operator groups
 
@@ -4233,6 +4284,9 @@ definitions:
       the basic information about a locker bank.  It is the result of a search and could
       return many items, and we did not want the size getting out of hand.
 
+      Also like the other summary pages in this API, you can add all the fields you want using the
+      `fields` query parameter to the API routes that return it.
+
       The most important field is the href to the detail page, covered next.
 
     properties:
@@ -4286,6 +4340,9 @@ definitions:
       connectedController:
         <<: *CONNECTEDCONTROLLER
       lockers:
+        description: |
+          An array of locker objects, each containing the details of the locker and the
+          cardholders who can open it.
         type: array
         items:
           type: object
@@ -4344,9 +4401,12 @@ definitions:
                     description: |
                       If missing, the locker assignment has no end time, meaning the cardholder can
                       open the locker provided the 'from' time is in the past.
-        description: |
-          An array of locker objects, each containing the details of the locker and the
-          cardholders who can open it.
+            commands:
+              <<: *LOCKERCOMMANDS
+            updates:
+              type: object
+              description: For internal use only.  Do not use.
+              example: { "reserved": "for internal use only" }
 
     example:
       name: "Lobby"
@@ -4371,6 +4431,15 @@ definitions:
                 href: "https://localhost:8904/api/cardholders/10135"
               from: "2018-04-01T05:00:00Z"
               until: "2018-04-07T00:00:00Z"
+          commands:
+            open:
+              href: "https://localhost:8904/api/lockers/3456/open"
+            quarantine:
+              href: "https://localhost:8904/api/lockers/3456/quarantine"
+            quarantineUntil:
+              href: "https://localhost:8904/api/lockers/3456/quarantine"
+            cancelQuarantine:
+              href: "https://localhost:8904/api/lockers/3456/cancel_quarantine"
         - name: "Lobby locker 2"
           shortName: "L2"
           description: "Faulty USB charging port"
@@ -4381,6 +4450,15 @@ definitions:
                 href: "https://localhost:8904/api/cardholders/10136"
               from: "1999-11-08T00:00:00Z"
               until: "2002-11-20T00:00:00Z"
+          commands:
+            open:
+              href: "https://localhost:8904/api/lockers/3457/open"
+            quarantine:
+              href: "https://localhost:8904/api/lockers/3457/quarantine"
+            quarantineUntil:
+              href: "https://localhost:8904/api/lockers/3457/quarantine"
+            cancelQuarantine:
+              href: "https://localhost:8904/api/lockers/3457/cancel_quarantine"
 
   Locker detail:
     description: |
@@ -4467,24 +4545,11 @@ definitions:
             from: "2018-04-01T05:00:00Z"
             until: "2018-04-07T00:00:00Z"
       commands:
+        <<: *LOCKERCOMMANDS
+      updates:
         type: object
-        description: |
-          Overrideable items return one of these blocks if your operator has the right privilege
-          ('Override - Open Locker' in this case) and the item is fit to be overridden.
-
-          The only override you can send to a locker is 'open', so that is the only entry this block
-          will contain.
-        properties:
-          open:
-            type: object
-            properties:
-              href:
-                type: string
-                format: url
-                description: |
-                  [POST](#operation--api-lockers--id--open-post) to this to override the locker to
-                  open its door.
-                example: "https://localhost:8904/api/lockers/3456/open"
+        description: For internal use only.  Do not use.
+        example: { "reserved": "for internal use only" }
 
   Competency PATCH and POST example:
     type: object
