@@ -5863,7 +5863,7 @@
     }
   },
   <span class="hljs-attr">&quot;updates&quot;</span>: {
-    <span class="hljs-attr">&quot;reserved&quot;</span>: <span class="hljs-string">&quot;for internal use only&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/lockers/3456/updates&quot;</span>
   }
 }
 </code></pre> </body>
@@ -13902,7 +13902,8 @@
                                 <span class="json-property-range" title="Value limits"></span>
                               </dt>
                               <dd>
-                                <p>For internal use only. Do not use.</p>
+                                <p>This is not a default field: you must ask for it by adding <code>lockers.updates</code> to the <code>fields</code> query parameter. Since it can only monitor one locker at a time we discourage its use in favour of
+                                  <a href="events.html#status-subscriptions">bulk status monitoring</a>.</p>
                               </dd>
                             </dl>
                           </section>
@@ -14262,8 +14263,24 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>For internal use only. Do not use.</p>
+                      <p>Follow the URL in the href inside this block to receive the locker&#39;s current status, then follow the <code>next</code> link in the results to long poll for changes to that status.</p>
+                      <p>Update pages take the same <code>fields</code> parameter as summary and details pages. You should use that to request all the fields you need in the update.</p>
+                      <p><code>updates</code> was added to the lockers controller in 9.10 for consistency with other controllers, but we discourage its use in favour of
+                        <a href="events.html#status-subscriptions">bulk status monitoring</a>.</p>
+                      <p>Although a locker&#39;s status includes &#39;free&#39; or &#39;allocated&#39;, allocating or un-allocating a locker does not cause the API to report a change of status. Opening, closing, quarantining, and unquarantining a locker do.</p>
                     </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
                   </dl>
                 </section>
               </div>
@@ -14323,7 +14340,7 @@
     }
   },
   <span class="hljs-attr">&quot;updates&quot;</span>: {
-    <span class="hljs-attr">&quot;reserved&quot;</span>: <span class="hljs-string">&quot;for internal use only&quot;</span>
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/lockers/3456/updates&quot;</span>
   }
 }
 </code></pre> </body>

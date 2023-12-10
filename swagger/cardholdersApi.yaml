@@ -4404,9 +4404,11 @@ definitions:
             commands:
               <<: *LOCKERCOMMANDS
             updates:
-              type: object
-              description: For internal use only.  Do not use.
-              example: { "reserved": "for internal use only" }
+              description: |
+                This is not a default field:  you must ask for it by adding `lockers.updates` to the
+                `fields` query parameter.  Since it can only monitor one locker at a time we
+                discourage its use in favour of [bulk status monitoring](
+                events.html#status-subscriptions).
 
     example:
       name: "Lobby"
@@ -4548,8 +4550,26 @@ definitions:
         <<: *LOCKERCOMMANDS
       updates:
         type: object
-        description: For internal use only.  Do not use.
-        example: { "reserved": "for internal use only" }
+        properties:
+          href:
+            type: string
+            format: url
+        description: |
+          Follow the URL in the href inside this block to receive the locker's current status, then
+          follow the `next` link in the results to long poll for changes to that status.
+
+          Update pages take the same `fields` parameter as summary and details pages.  You should use
+          that to request all the fields you need in the update.
+
+          `updates` was added to the lockers controller in 9.10 for consistency with other
+          controllers, but we discourage its use in favour of [bulk status monitoring](
+          events.html#status-subscriptions).
+
+          Although a locker's status includes 'free' or 'allocated', allocating or un-allocating a
+          locker does not cause the API to report a change of status.  Opening, closing,
+          quarantining, and unquarantining a locker do.
+
+        example: { href: "https://localhost:8904/api/lockers/3456/updates" }
 
   Competency PATCH and POST example:
     type: object
