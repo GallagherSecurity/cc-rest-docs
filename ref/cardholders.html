@@ -147,6 +147,12 @@
               <li>
                 <a href="#operation--api-lockers--id--open-post"> Open a locker </a>
               </li>
+              <li>
+                <a href="#operation--api-lockers--id--quarantine-post"> Quarantine a locker </a>
+              </li>
+              <li>
+                <a href="#operation--api-lockers--id--cancel_quarantine-post"> Un-quarantine a locker </a>
+              </li>
             </ul>
           </section>
           <section>
@@ -4907,7 +4913,8 @@
               <p>As it does for the other item types, the REST API gives you read access to card types through search and details pages. However the privilege model for card types is more flexible than for other items: the &#39;View site&#39; privilege determines whether you are allowed to view a card type, while the cardholder editing privileges (&#39;Create&#39;, &#39;Edit&#39;, &#39;Create and edit&#39;) determine whether you can assign it to a cardholder, so version 8.10 of the API added a page that returns the card types that your operator is allowed to assign to cardholders. Take its URL from <code>features.cardTypes.assign</code> in the results of <code>GET /api</code>.</p>
               <p>This API uses the term &#39;card&#39; but more broadly we prefer &#39;credential&#39;, because not all card types involve a physical card.</p>
               <p>The API&#39;s coverage of PIV cards is in
-                <a href="piv.html">its own document</a>.</p>
+                <a href="piv.html">its own document</a>
+              </p>
             </div>
           </div>
           <div id="operation--api-card_types-get" class="operation panel" data-traverse-target="operation--api-card_types-get">
@@ -5212,6 +5219,36 @@
               <p>The locker bank API exists for two purposes: finding a locker to assign a cardholder to, and integrating with operational locker management software that expects a bank-centric view rather than the cardholder-centric view available in the cardholder API. So a locker bank&#39;s detail page shows all its cardholder assignments.</p>
               <p>You cannot use the API to create or configure lockers or banks, or to see the hardware features of a locker such as readers, inputs, and outputs, nor the door-like settings on the bank such as the lock type and unlock time. The locker configuration tool exists for this purpose.</p>
               <p>To change the cardholder assignments you should PATCH the cardholder&#39;s href, since it is the cardholder you are updating, not the locker. The locker bank API supplies that URL.</p>
+              <h3 id="status-flags">Status flags</h3>
+              <p>Regardless of whether a locker is online or not, its status may contain these:</p>
+              <ul>
+                <li>
+                  <p><code>quarantined</code> means the locked cannot be allocated to a cardholder. It needs a clean, in other words.</p>
+                </li>
+                <li>
+                  <p><code>allocated</code> means it is allocated to a cardholder, so another cardholder using a T20 reader cannot self-allocate it.</p>
+                </li>
+                <li>
+                  <p><code>free</code> means it is not allocated to a cardholder.</p>
+                </li>
+              </ul>
+              <p>If the locker is online, its <code>statusFlags</code> field may contain one or more of these flags:</p>
+              <ul>
+                <li><code>forced</code>, <code>openTooLong</code>, <code>tamper</code>, <code>closed</code>, <code>open</code>, <code>locked</code>, <code>unlocked</code>, the same as a
+                  <a href="rest.html#tag-Doors">door</a>.</li>
+              </ul>
+              <h3 id="locker-status-flag-rules">Locker status flag rules</h3>
+              <ul>
+                <li>
+                  <p>If <code>quarantined</code> is in the status flags, <code>allocated</code> and <code>free</code> will not.</p>
+                </li>
+                <li>
+                  <p>If not quarantined, a locker will report exactly one of <code>allocated</code> or <code>free</code>.</p>
+                </li>
+                <li>
+                  <p>Like a door, if and only if the door is online, exactly one of the <code>closed</code> or <code>open</code> flags will be there and one of <code>locked</code> or <code>unlocked</code>.</p>
+                </li>
+              </ul>
               <h3 id="use-cases">Use cases</h3>
               <h4 id="displaying-all-banks-and-lockers-and-the-cardholders-assigned-to-them">Displaying all banks and lockers, and the cardholders assigned to them</h4>
               <ol>
@@ -5237,7 +5274,7 @@
                 </li>
               </ol>
               <h4 id="opening-or-quarantining-a-locker">Opening or quarantining a locker</h4>
-              <p>Command Centre version 8.10.1112 lets you use the &#39;fields&#39; parameter on the locker bank search to request the &#39;open&#39; override URLs for lockers, which in prior versions was only available on their details pages. Version 9.10 adds the ability to quarantine lockers.</p>
+              <p>Command Centre version 8.10.1112 lets you use the &#39;fields&#39; parameter on the locker bank search to request the &#39;open&#39; override URLs for lockers, which in prior versions was only available on their details pages. Version 9.10 adds the ability to quarantine lockers, which prevents anyone from allocating them to a cardholder.</p>
               <ol>
                 <li><code>GET /api</code></li>
                 <li>Follow the link at <code>features.lockerBanks.lockerBanks.href</code>
@@ -5897,31 +5934,15 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Sends an override to open a locker.</p>
-                  <p>You should get this href from a
-                    <a href="#definition-Locker-detail">locker detail</a>.</p>
+                  <p>You should get this URL from a
+                    <a href="#definition-Locker-detail">locker detail</a> or
+                    <a href="#definition-Locker-bank-detail">locker bank detail</a> rather than building it yourself.</p>
                   <p>New in 8.10.1112.</p>
                 </section>
               </div>
             </div>
             <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">id</div>
-                      <span class="json-property-required"></span>
-                      <div class="prop-subtitle"> in path </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The ID of the locker to open.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
+              <div class="doc-copy"> </div>
               <div class="doc-examples"></div>
             </div>
             <div class="doc-row">
@@ -5949,6 +5970,182 @@
                     </div>
                     <div class="prop-value">
                       <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or your operator does not have &#39;Override - Open Locker&#39; on the locker&#39;s division.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a locker, or it is the URL of a locker your operator does not have the privilege to see.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-lockers--id--quarantine-post" class="operation panel" data-traverse-target="operation--api-lockers--id--quarantine-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Lockers">Lockers</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Quarantine a locker</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/lockers/{id}/quarantine</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Sends an override to quarantine a locker. If the override succeeds, the locker will not be allocatable until its quarantine ends.</p>
+                  <p>The call will fail if the locker is allocated to a cardholder.</p>
+                  <p>You should get this URL from a
+                    <a href="#definition-Locker-detail">locker detail</a> or
+                    <a href="#definition-Locker-bank-detail">locker bank detail</a> rather than building it yourself.</p>
+                  <p>New in 9.10.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the locker to quarantine.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. The response body will contain feedback from the server.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Check the response body for an error message. A common fault is the locker being allocated.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or your operator does not have &#39;Override&#39; on the locker&#39;s division.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a locker, or it is the URL of a locker your operator does not have the privilege to see.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-lockers--id--cancel_quarantine-post" class="operation panel" data-traverse-target="operation--api-lockers--id--cancel_quarantine-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Lockers">Lockers</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Un-quarantine a locker</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/lockers/{id}/cancel_quarantine</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Sends an override to remove the quarantine from a locker, making it available for allocation.</p>
+                  <p>You should get this URL from a
+                    <a href="#definition-Locker-detail">locker detail</a> or
+                    <a href="#definition-Locker-bank-detail">locker bank detail</a> rather than building it yourself.</p>
+                  <p>New in 9.10.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. The response body will contain feedback from the server.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or your operator does not have &#39;Override&#39; on the locker&#39;s division.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -14264,7 +14461,6 @@
                     </dt>
                     <dd>
                       <p>Follow the URL in the href inside this block to receive the locker&#39;s current status, then follow the <code>next</code> link in the results to long poll for changes to that status.</p>
-                      <p>Update pages take the same <code>fields</code> parameter as summary and details pages. You should use that to request all the fields you need in the update.</p>
                       <p><code>updates</code> was added to the lockers controller in 9.10 for consistency with other controllers, but we discourage its use in favour of
                         <a href="events.html#status-subscriptions">bulk status monitoring</a>.</p>
                       <p>Although a locker&#39;s status includes &#39;free&#39; or &#39;allocated&#39;, allocating or un-allocating a locker does not cause the API to report a change of status. Opening, closing, quarantining, and unquarantining a locker do.</p>

@@ -1139,7 +1139,7 @@ tags:
     This API uses the term 'card' but more broadly we prefer 'credential', because not all card
     types involve a physical card.
 
-    The API's coverage of PIV cards is in [its own document](piv.html).
+    The API's coverage of PIV cards is in [its own document](piv.html)
 
 - name: Lockers
   description: |
@@ -1156,6 +1156,32 @@ tags:
 
     To change the cardholder assignments you should PATCH the cardholder's href, since it is the
     cardholder you are updating, not the locker.  The locker bank API supplies that URL.
+
+    ### Status flags
+
+    Regardless of whether a locker is online or not, its status may contain these:
+
+    - `quarantined` means the locked cannot be allocated to a cardholder.  It needs a clean, in
+      other words.
+
+    - `allocated` means it is allocated to a cardholder, so another cardholder using a T20 reader
+      cannot self-allocate it.
+
+    - `free` means it is not allocated to a cardholder.
+
+    If the locker is online, its `statusFlags` field may contain one or more of these flags:
+
+    - `forced`, `openTooLong`, `tamper`, `closed`, `open`, `locked`, `unlocked`, the same as a
+      [door](rest.html#tag-Doors).
+
+    ### Locker status flag rules
+
+    - If `quarantined` is in the status flags, `allocated` and `free` will not.
+
+    - If not quarantined, a locker will report exactly one of `allocated` or `free`.
+
+    - Like a door, if and only if the door is online, exactly one of the `closed` or `open` flags
+      will be there and one of `locked` or `unlocked`.
 
     ### Use cases
 
@@ -1184,7 +1210,8 @@ tags:
 
     Command Centre version 8.10.1112 lets you use the 'fields' parameter on the locker bank search
     to request the 'open' override URLs for lockers, which in prior versions was only available on
-    their details pages.  Version 9.10 adds the ability to quarantine lockers.
+    their details pages.  Version 9.10 adds the ability to quarantine lockers, which prevents anyone
+    from allocating them to a cardholder.
 
     1. `GET /api`
     2. Follow the link at `features.lockerBanks.lockerBanks.href`
@@ -4558,9 +4585,6 @@ definitions:
           Follow the URL in the href inside this block to receive the locker's current status, then
           follow the `next` link in the results to long poll for changes to that status.
 
-          Update pages take the same `fields` parameter as summary and details pages.  You should use
-          that to request all the fields you need in the update.
-
           `updates` was added to the lockers controller in 9.10 for consistency with other
           controllers, but we discourage its use in favour of [bulk status monitoring](
           events.html#status-subscriptions).
@@ -7011,11 +7035,10 @@ paths:
       description: |
         Sends an override to open a locker.
 
-        You should get this href from a [locker detail](#definition-Locker-detail).
+        You should get this URL from a [locker detail](#definition-Locker-detail) or [locker bank
+        detail](#definition-Locker-bank-detail) rather than building it yourself.
 
         New in 8.10.1112.
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the locker to open.", type: string}
       responses:
         200: { description: "Success.  The response body will contain feedback from the server." }
         204: { description: Success. }
@@ -7024,6 +7047,59 @@ paths:
             The site does not have the RESTOverrides licence (in which case the body of the result
             will say so), or your operator does not have 'Override - Open Locker' on the locker's
             division.
+        404:
+          description: |
+            That is not the URL of a locker, or it is the URL of a locker your operator does not
+            have the privilege to see.
+
+  /api/lockers/{id}/quarantine:
+    post:
+      tags: [ "Lockers" ]
+      summary: Quarantine a locker
+      description: |
+        Sends an override to quarantine a locker.  If the override succeeds, the locker will not be
+        allocatable until its quarantine ends.
+
+        The call will fail if the locker is allocated to a cardholder.
+
+        You should get this URL from a [locker detail](#definition-Locker-detail) or [locker bank
+        detail](#definition-Locker-bank-detail) rather than building it yourself.
+
+        New in 9.10.
+      parameters:
+      - {in: path, name: id, required: true, description: "The ID of the locker to quarantine.", type: string}
+      responses:
+        200: { description: "Success.  The response body will contain feedback from the server." }
+        204: { description: Success. }
+        400: { description: Check the response body for an error message.  A common fault is the locker being allocated. }
+        403:
+          description: |
+            The site does not have the RESTOverrides licence (in which case the body of the result
+            will say so), or your operator does not have 'Override' on the locker's division.
+        404:
+          description: |
+            That is not the URL of a locker, or it is the URL of a locker your operator does not
+            have the privilege to see.
+
+  /api/lockers/{id}/cancel_quarantine:
+    post:
+      tags: [ "Lockers" ]
+      summary: Un-quarantine a locker
+      description: |
+        Sends an override to remove the quarantine from a locker, making it available for
+        allocation.
+
+        You should get this URL from a [locker detail](#definition-Locker-detail) or [locker bank
+        detail](#definition-Locker-bank-detail) rather than building it yourself.
+
+        New in 9.10.
+      responses:
+        200: { description: "Success.  The response body will contain feedback from the server." }
+        204: { description: Success. }
+        403:
+          description: |
+            The site does not have the RESTOverrides licence (in which case the body of the result
+            will say so), or your operator does not have 'Override' on the locker's division.
         404:
           description: |
             That is not the URL of a locker, or it is the URL of a locker your operator does not
