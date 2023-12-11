@@ -31,6 +31,7 @@ asciidoctor-multipage -r asciidoctor-diagram -D $D/training/multipage -o $D/trai
 
 # Tarball must be rooted at . otherwise deploy-pages fails, so copy everything in
 cp -r ref $D
+cp -r training/assets $D/training
 
 echo Putting output into $INPUT_OUTPUT
 # No --hard-dereference in busybox
