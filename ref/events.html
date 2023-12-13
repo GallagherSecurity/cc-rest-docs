@@ -1132,6 +1132,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Mark the alarm as viewed. Follow the <code>view</code> link in the alarm summary to get here.</p>
+                  <p>You can do this for an alarm in any state, even processed, provided you have its URL and sufficient privilege.</p>
                 </section>
               </div>
             </div>
@@ -1233,6 +1234,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Follow the <code>comment</code> link in the alarm summary to get here.</p>
+                  <p>You can comment on an alarm in any state, even processed, provided you have its URL and sufficient privilege.</p>
                 </section>
               </div>
             </div>
@@ -1334,6 +1336,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Follow the <code>acknowledgeWithComment</code> or the <code>acknowledge</code> link in the alarm summary to get here.</p>
+                  <p>You can acknowledge an alarm that is in any state provided you have its URL and sufficient privilege. Doing so will add an entry to the alarm&#39;s history, but will have no other effect if it is already acknowledged or processed.</p>
                 </section>
               </div>
             </div>
@@ -1435,6 +1438,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Follow the <code>processWithComment</code>, <code>forceProcess</code>, or <code>process</code> link in the alarm to get here.</p>
+                  <p>You can process an alarm that is in any state provided you have its URL and sufficient privilege. Doing so will add an entry to the alarm&#39;s history, but will have no other effect if it is already acknowledged or processed. If the alarm is active -- waiting for another event to restore it (such as a &#39;door open too long&#39; waiting for the door to close) -- it will perform a force process.</p>
                 </section>
               </div>
             </div>
@@ -5086,6 +5090,7 @@
                     </dt>
                     <dd>
                       <p>POST an alarm update request JSON object to this href to process an active alarm. Missing if the alarm is not active (in which case you will have <code>process</code> and <code>processWithComment</code> links instead).</p>
+                      <p>This action can take a comment in the body. In fact an explanation is recommended since force-processing an alarm is unusual.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">

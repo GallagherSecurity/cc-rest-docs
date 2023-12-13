@@ -951,7 +951,11 @@ paths:
   /api/alarms/{id}/view:
     post:
       summary: Mark an alarm as viewed
-      description: Mark the alarm as viewed.  Follow the `view` link in the alarm summary to get here.
+      description: |
+        Mark the alarm as viewed.  Follow the `view` link in the alarm summary to get here.
+
+        You can do this for an alarm in any state, even processed, provided you have its URL and
+        sufficient privilege.
       tags:
         - Alarms
       parameters:
@@ -968,7 +972,11 @@ paths:
   /api/alarms/{id}/comment:
     post:
       summary: Add a comment to an alarm
-      description: Follow the `comment` link in the alarm summary to get here.
+      description: |
+        Follow the `comment` link in the alarm summary to get here.
+
+        You can comment on an alarm in any state, even processed, provided you have its URL and
+        sufficient privilege.
       tags:
         - Alarms
       parameters:
@@ -988,6 +996,10 @@ paths:
       description: |
         Follow the `acknowledgeWithComment` or the `acknowledge` link in the alarm summary to get
         here.
+
+        You can acknowledge an alarm that is in any state provided you have its URL and sufficient
+        privilege.  Doing so will add an entry to the alarm's history, but will have no other effect
+        if it is already acknowledged or processed.
       tags:
         - Alarms
       parameters:
@@ -1006,6 +1018,12 @@ paths:
       summary: Mark an alarm as processed
       description: |
         Follow the `processWithComment`, `forceProcess`, or `process` link in the alarm to get here.
+
+        You can process an alarm that is in any state provided you have its URL and sufficient
+        privilege.  Doing so will add an entry to the alarm's history, but will have no other effect
+        if it is already acknowledged or processed.  If the alarm is active -- waiting for another
+        event to restore it (such as a 'door open too long' waiting for the door to close) -- it
+        will perform a force process.
       tags:
         - Alarms
       parameters:
@@ -2158,6 +2176,9 @@ definitions:
           POST an alarm update request JSON object to this href to process an active alarm.  Missing
           if the alarm is not active (in which case you will have `process` and `processWithComment`
           links instead).
+
+          This action can take a comment in the body.  In fact an explanation is recommended since
+          force-processing an alarm is unusual.
         properties:
           href:
             type: string
