@@ -496,14 +496,36 @@ securityDefinitions:
       request.  Command Centre generates an API key when you create an endpoint for your clients to
       connect to.  Search the Configuration Client online help for 'REST API' for how do do that.
 
-      The API key will be in the format `XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX` and should be in
-      the header following an authorisation method of `GGL-API-KEY` and a space.  Both should be in
-      upper case.  For example:
+      In current versions of Command Centre, the API key will be in the format
+      `XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX` with each `X` an uppercase hexadecimal digit.
+      Future versions of Command Centre may use other formats of API key, so treat it as an opaque
+      string.  Tempting as it may be, do not interpret is as a GUID.
+
+      There are two ways you can pass the API key to the server:  following an authorisation method
+      of `GGL-API-KEY`, or (in 9.0 or later) in the style of HTTP Basic authentication:  prefixed
+      with a colon, Base64-encoded, and following an authorisation method of `Basic`.
+
+      Examples:
 
       `Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB`
 
-      Early versions of Command Centre allowed you to omit the 'GGL-API-KEY'.  Later versions of CC
-      and all versions of the API gateway will reject you with a 401 if you do that.
+      `Authorization: Basic OkM3NzQtQjAxRi1ENjk1LUFBNEItMjE1Ri1BMTU4LUFDMjItQURFQg==`
+
+      Early versions of Command Centre allowed you to omit the 'GGL-API-KEY' from the first form.
+      Later versions of CC and all versions of the API gateway will reject you with a 401 if you do
+      that.  The API gateway is especially fussy about case and punctuation.
+
+      #### HTTP Basic authentication
+
+      The two example headers above are equivalent:  prepending a colon to the API key beginning
+      with `C774` then encoding it into Base64 produces the 56 characters beginning with `OkM3`.
+
+      According to the HTTP Basic specification, the colon is a separator between a username and a
+      password.  In our case, the API key is the password and the username is unnecessary.  If you
+      place a username before the colon, before Base64-encoding it, Command Centre will ignore it
+      and authenticate the connection based on the API key alone.
+
+      #### Pinning a client TLS certificate
 
       Depending on Command Centre's site configuration, its REST API may also require a client
       certificate with each request.  In versions up to and including 8.40 this was controlled by a
@@ -525,8 +547,12 @@ securityDefinitions:
 
       See the Configuration Client help for instructions on where to enter REST Client thumbprints.
 
+      #### Source IP filtering
+
       Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API
       will only accept connections from the IP address ranges configurated into that client item.
+
+      #### Symptoms of authentication failures
 
       If a connection attempt fails, the server will return a 401 and raise an event containing its
       reason for refusing the request.  If that happens too often, the server will stop reporting
