@@ -936,6 +936,10 @@ paths:
         between calls to reduce its load.  You will not miss any updates:  each response contains
         everything that happened since the previous call.
 
+        Do not wait if you receive 100 updates or more.  100 is the maximum number of updates
+        current versions of CC will return in one batch, so if that happens you have fallen behind:
+        there are more updates waiting and you can catch up by asking for them immediately.
+
         Command Centre does not tell you which alarms were added, removed, or modified. It is up to
         you to match the incoming alarms against your own internal alarm list and determine the
         differences.
