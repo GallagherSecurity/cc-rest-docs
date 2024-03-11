@@ -2243,7 +2243,7 @@
               <p>Command Centre has about 80 event types that occur when somebody authenticates at a device, usually by badging a card. Some of those event types also contain the access zones that the person started and finished in. Version 9.00 introduced some improvements that presented the cardholder and the two zones to API clients in a consistent way:</p>
               <ul>
                 <li>
-                  <p>A new event type <code>hasLocation</code> that lets you filter for only those events that reveal a cardholder&#39;s location. Use it in the <code>type</code> query parameter as you would normally use an integer event type: <code>type=hasLocation</code>. Gallagher will update this as new versions add more event types.</p>
+                  <p>A new event type <code>hasLocation</code> that lets you filter for only those events that reveal a cardholder&#39;s location. If your server is 9.00 or better, use it in the <code>type</code> query parameter as you would normally use an integer event type: <code>type=hasLocation</code>. Gallagher will update this as new versions add more event types. Do not use it on 8.90 or earlier: those servers will reject it.</p>
                 </li>
                 <li>
                   <p>A new <code>location</code> block on events of those types that contains fields containing the cardholder and their location.</p>
@@ -2698,6 +2698,7 @@
                       <p>Use the
                         <a href="#operation--api-events-groups-get">event groups call</a> to see all event types. The IDs you need for this query parameter are strings but look like small integers. That call shows the event types along with the groups they are in, so do not confuse event types with event groups. They are separated in the results of the API call, but as a general rule you can tell them apart by their integer value: event group IDs are in the hundreds, while most event type IDs are in the thousands.</p>
                       <p>In version 9.00 and later use the special value <code>hasLocation</code> to include all event types that can reveal a cardholder&#39;s location or access zone. In 9.00 it is a set of about 80 event types; it may be more in future versions. If you use <code>hasLocation</code> you probably also want to ask for the <code>location</code> block using the <code>fields</code> query parameter.</p>
+                      <p>Do not send <code>type=hasLocation</code> to a server running 8.90 or earlier: it will reject it.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">

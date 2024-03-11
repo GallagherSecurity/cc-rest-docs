@@ -222,9 +222,10 @@ tags:
     cardholder and the two zones to API clients in a consistent way:
 
       * A new event type `hasLocation` that lets you filter for only those events that reveal a
-        cardholder's location.  Use it in the `type` query parameter as you would normally use an
-        integer event type:  `type=hasLocation`.  Gallagher will update this as new versions add
-        more event types.
+        cardholder's location.  If your server is 9.00 or better, use it in the `type` query
+        parameter as you would normally use an integer event type:  `type=hasLocation`.  Gallagher
+        will update this as new versions add more event types.  Do not use it on 8.90 or earlier:
+        those servers will reject it.
 
       * A new `location` block on events of those types that contains fields containing the
         cardholder and their location.
@@ -1314,6 +1315,8 @@ paths:
           that can reveal a cardholder's location or access zone.  In 9.00 it is a set of about 80
           event types; it may be more in future versions.  If you use `hasLocation` you probably
           also want to ask for the `location` block using the `fields` query parameter.
+
+          Do not send `type=hasLocation` to a server running 8.90 or earlier:  it will reject it.
 
       - name: "group"
         in: query
