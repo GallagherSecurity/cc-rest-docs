@@ -1473,7 +1473,7 @@ parameters:
 
       1. Sorting by name carries a risk of missing or duplicating objects if your result set spans
          multiple pages and another operator is editing the database while your REST client is
-         enumerating them.  Sorting by ID does not carry that risk.
+         enumerating them.  This is known as "page drift."  Sorting by ID does not carry that risk.
       2. Following a `next` link is _dramatically_ quicker when sorting by ID.
 
       We _strongly_ recommend sorting by ID.  In case you were still in doubt, we will do that by
@@ -1554,6 +1554,27 @@ parameters:
       Results are undefined if you provide an ID that is not in the form of a division ID.
 
       Search parameters are ANDed together.
+
+  directDivision:
+    name: "directDivision"
+    in: query
+    required: false
+    type: array
+    items:
+      type: string
+    description: |
+      Restricts items to those whose division is in this list.
+
+      Unlike `division=`, it does not follow ancestry.
+
+      List the IDs of the divisions you are interested in separated by commas.  Item IDs are short
+      alphanumeric strings, not URLs.
+
+      Results are undefined if you provide an ID that is not in the form of a division ID.
+
+      Search parameters are ANDed together.
+
+      Added in 9.20.
 
   description:
     name: "description"
@@ -5685,6 +5706,7 @@ paths:
           cardholders whose PDF 1315 contains the strings 'nanny' and 'paratrooper'.
 
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
 
       - name: accessZone
@@ -6459,6 +6481,7 @@ paths:
           server version;  you should set it appropriately for your application.
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
       - name: "fields"
         in: query
@@ -6667,6 +6690,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
       - name: "fields"
         in: query
@@ -6846,6 +6870,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
       - name: "fields"
         in: query
@@ -6908,6 +6933,7 @@ paths:
           server version;  you should set it appropriately for your application.
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
       - name: "fields"
         in: query
@@ -7157,6 +7183,7 @@ paths:
           server version; you should set it appropriately for your application.
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
       - name: "fields"
         in: query
@@ -7320,6 +7347,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
       - $ref: "#/parameters/pdf_fields"
 
@@ -7380,6 +7408,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
       - $ref: "#/parameters/reception_fields"
 
@@ -7561,6 +7590,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
 
       responses:
@@ -7593,6 +7623,7 @@ paths:
       - $ref: "#/parameters/top"
       - $ref: "#/parameters/name"
       - $ref: "#/parameters/division"
+      - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
       - $ref: "#/parameters/visit_fields"
 

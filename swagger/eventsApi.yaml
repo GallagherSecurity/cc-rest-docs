@@ -1340,7 +1340,12 @@ paths:
         in: query
         required: false
         type: string
-        description: "Restricts events to those in this division (including its child divisions).  Separate multiple IDs with commas.\n\nExample:  `division=2,101`\n\nA more secure option is to set the operator's privileges so that it only has access to those divisions."
+        description: "Restricts events to those in these divisions or their descendants.  Separate IDs with commas.\n\nExample:  `division=201,330`\n\nA more secure option for limiting your client's visibility is to set the operator's privileges so that it only has access to those divisions."
+      - name: "directDivision"
+        in: query
+        required: false
+        type: string
+        description: "Restricts events to those whose division is in this list.  Unlike `division=`, it does not follow ancestry.  Separate IDs with commas.\n\nExample:  `division=2,101`."
       - name: "relatedItem"
         in: query
         required: false
@@ -1809,13 +1814,7 @@ paths:
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/name"
-      - name: "division"
-        in: query
-        required: false
-        type: string
-        description: |
-          Only returns items that are in these divisions or their subdivisions.  Use the divisions'
-          short alphanumeric IDs, separateed by commas.
+      - $ref: "cardholdersApi.yaml#/parameters/division"
       - name: "type"
         in: query
         required: false

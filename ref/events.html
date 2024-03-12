@@ -1743,7 +1743,7 @@
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
-                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. This is known as &quot;page drift.&quot; Sorting by ID does not carry that risk.</li>
                         <li>Following a <code>next</code> link is
                           <em>dramatically</em> quicker when sorting by ID.</li>
                       </ol>
@@ -2741,9 +2741,23 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Restricts events to those in this division (including its child divisions). Separate multiple IDs with commas.</p>
-                      <p>Example: <code>division=2,101</code></p>
-                      <p>A more secure option is to set the operator&#39;s privileges so that it only has access to those divisions.</p>
+                      <p>Restricts events to those in these divisions or their descendants. Separate IDs with commas.</p>
+                      <p>Example: <code>division=201,330</code></p>
+                      <p>A more secure option for limiting your client&#39;s visibility is to set the operator&#39;s privileges so that it only has access to those divisions.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">directDivision</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Restricts events to those whose division is in this list. Unlike <code>division=</code>, it does not follow ancestry. Separate IDs with commas.</p>
+                      <p>Example: <code>division=2,101</code>.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -3808,12 +3822,16 @@
                       <div class="prop-title">division</div>
                       <div class="prop-subtitle"> in query </div>
                       <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
+                        <span class="json-property-type">string[]</span>
                         <span class="json-property-range" title="Value limits"></span>
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Only returns items that are in these divisions or their subdivisions. Use the divisions&#39; short alphanumeric IDs, separateed by commas.</p>
+                      <p>Limits the returned items to those that are in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root division.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                      <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
+                      <p>Search parameters are ANDed together.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -3863,7 +3881,7 @@
                       <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
                       <p>There are two very strong reasons to sort by ID:</p>
                       <ol>
-                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. Sorting by ID does not carry that risk.</li>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. This is known as &quot;page drift.&quot; Sorting by ID does not carry that risk.</li>
                         <li>Following a <code>next</code> link is
                           <em>dramatically</em> quicker when sorting by ID.</li>
                       </ol>
