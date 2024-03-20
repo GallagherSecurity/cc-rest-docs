@@ -328,7 +328,10 @@
                     <p>You will be able to create, delete, and change the the basic configuration of access groups, competencies, PDFs, and card types.</p>
                   </li>
                   <li>
-                    <p>POTENTIALLY BREAKING CHANGE: The API route that lets you modify a cardholder by PATCH also works if you send it a POST. It should not, because POSTs create things, not modify them. The fix will break clients that rely on this, but since it was not documented, none should.</p>
+                    <p>POTENTIALLY BREAKING CHANGE: searching for cardholders using <code>pdf_xxx=&quot;&quot;</code> or <code>pdf_xxx=</code> currently returns no cardholders. That is neither useful nor desired. Instead, a future version of Command Centre will return cardholders with a blank value for that PDF.</p>
+                  </li>
+                  <li>
+                    <p>POTENTIALLY BREAKING CHANGE: the API route that lets you modify a cardholder by PATCH also works if you send it a POST. It should not, because POSTs create things, not modify them. The fix will break clients that rely on this, but since it was not documented, none should.</p>
                   </li>
                   <li>
                     <p>POTENTIALLY BREAKING CHANGE: PATCH methods may return &quot;200 Success&quot; instead of &quot;204 No Content&quot; and will contain a message from the API giving you feedback on your request. Please be aware that all 200-level response codes mean success, not just the ones old versions have been sending you.</p>
@@ -1143,10 +1146,11 @@
                     <div class="prop-value">
                       <p>Limits the results to cardholders with a value for the Personal Data Field with this ID that matches the parameter.</p>
                       <p>It is a substring match by default; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. Tests showed an exact match to be 100x quicker than a substring search on a large database.</p>
-                      <p>Without quotes, <code>_</code> will match any single character and <code>%</code> will match any substring. Having either in your term will anchor the string at both ends. A lone <code>%</code> will return any cardholder with this PDF set to a non-null value.</p>
+                      <p>Without quotes, <code>_</code> will match any single character and <code>%</code> will match any substring. Having either in your term will anchor the string at both ends so it will not be a substring search. A lone <code>%</code> will return any cardholder who has this PDF set to a non-null value.</p>
+                      <p>Searching for a blank value using <code>pdf_xxx=&quot;&quot;</code> or <code>pdf_xxx=</code> currently matches no cardholders, which is not useful. Do not rely on that behaviour since we will change it in a future version of Command Centre to return cardholders with no value for that PDF.</p>
                       <p>Because a plus sign <code>+</code> represents a space in a query string, turn plus signs in your string into <code>%2d</code>.</p>
                       <p>The search is always case-insensitive.</p>
-                      <p>The search parameters form a logical conjunction. They are ANDed together. Therefore the search <code>pdf_1315=nanny&amp;pdf_1315=paratrooper</code> will only return cardholders whose PDF 1315 contains the strings &#39;nanny&#39; and &#39;paratrooper&#39;.</p>
+                      <p>Search parameters form a logical conjunction. They are ANDed together. Therefore the search <code>pdf_1315=nanny&amp;pdf_1315=paratrooper</code> will only return cardholders whose PDF 1315 contains the strings &#39;nanny&#39; and &#39;paratrooper&#39;.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">

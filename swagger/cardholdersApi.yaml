@@ -62,7 +62,11 @@ info:
     * You will be able to create, delete, and change the the basic configuration of access groups,
       competencies, PDFs, and card types.
 
-    * POTENTIALLY BREAKING CHANGE:  The API route that lets you modify a cardholder by PATCH also
+    * POTENTIALLY BREAKING CHANGE:  searching for cardholders using `pdf_xxx=""` or `pdf_xxx=`
+      currently returns no cardholders.  That is neither useful nor desired.  Instead, a future
+      version of Command Centre will return cardholders with a blank value for that PDF.
+
+    * POTENTIALLY BREAKING CHANGE:  the API route that lets you modify a cardholder by PATCH also
       works if you send it a POST.  It should not, because POSTs create things, not modify them.
       The fix will break clients that rely on this, but since it was not documented, none should.
 
@@ -5696,15 +5700,20 @@ paths:
           database.
 
           Without quotes, `_` will match any single character and `%` will match any substring.
-          Having either in your term will anchor the string at both ends.  A lone `%` will return
-          any cardholder with this PDF set to a non-null value.
+          Having either in your term will anchor the string at both ends so it will not be a
+          substring search.  A lone `%` will return any cardholder who has this PDF set to a
+          non-null value.
+
+          Searching for a blank value using `pdf_xxx=""` or `pdf_xxx=` currently matches no
+          cardholders, which is not useful.  Do not rely on that behaviour since we will change it
+          in a future version of Command Centre to return cardholders with no value for that PDF.
 
           Because a plus sign `+` represents a space in a query string, turn plus signs in your
           string into `%2d`.
 
           The search is always case-insensitive.
 
-          The search parameters form a logical conjunction.  They are ANDed
+          Search parameters form a logical conjunction.  They are ANDed
           together.  Therefore the search `pdf_1315=nanny&pdf_1315=paratrooper` will only return
           cardholders whose PDF 1315 contains the strings 'nanny' and 'paratrooper'.
 
