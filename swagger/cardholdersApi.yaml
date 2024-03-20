@@ -146,8 +146,11 @@ info:
     * Image PDFs tell you whether they are the cardholder's profile picture.
     * Image PDFs have a new optional field `contentType` that returns their MIME type.  This
       deprecates the old `imageFormat` field, which is non-standard.
-    * Asking for a particular PDF on a cardholder will cause it to appear even if the cardholder has
-      no value for that PDF.  Previous versions only showed if it had a non-blank value.
+
+    * Asking for a particular PDF on a cardholder (by using the `pdf_XXX` query parameter) will
+      cause it to appear even if the cardholder has no value for that PDF.  Previous versions only
+      showed if it had a non-blank value.
+
     * Attempting to give a cardholder a competency they already have will fail instead of allowing
       it and raising an alarm.  Note that a cardholder having two links to the same competency leads
       to undefined behaviour.
@@ -5688,13 +5691,13 @@ paths:
           Limits the results to cardholders with a value for the Personal Data Field with this ID
           that matches the parameter.
 
-          By default, it is a substring match; surround it with double quotes `"..."` for an exact
+          It is a substring match by default; surround it with double quotes `"..."` for an exact
           match.  Tests showed an exact match to be 100x quicker than a substring search on a large
           database.
 
-          Without quotes, adding a percent sign `%` or underscore `_` will anchor the string
-          at both ends.  A `_` will match any single character, and a `%` will match any substring.
-          A lone `%` will return any cardholder with this PDF set to a non-null value.
+          Without quotes, `_` will match any single character and `%` will match any substring.
+          Having either in your term will anchor the string at both ends.  A lone `%` will return
+          any cardholder with this PDF set to a non-null value.
 
           Because a plus sign `+` represents a space in a query string, turn plus signs in your
           string into `%2d`.
