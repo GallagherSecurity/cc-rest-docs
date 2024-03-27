@@ -70,10 +70,10 @@ info:
       works if you send it a POST.  It should not, because POSTs create things, not modify them.
       The fix will break clients that rely on this, but since it was not documented, none should.
 
-    * POTENTIALLY BREAKING CHANGE:  PATCH methods may return "200 Success" instead of "204 No
-      Content" and will contain a message from the API giving you feedback on your request.  Please
-      be aware that all 200-level response codes mean success, not just the ones old versions have
-      been sending you.
+    * POTENTIALLY BREAKING CHANGE:  in future, PATCH methods will return "200 Success" instead of
+      "204 No Content" and may contain the object you modified plus a message from the API giving
+      you feedback on your request.  Please be aware that all 200-level response codes mean success,
+      not just the ones old versions have been sending you.
 
     * A cardholder's visits and escort.
 
@@ -84,7 +84,7 @@ info:
 
     * Current versions of the API only show a PDF on a cardholder if he or she has a value for that
       PDF.  That makes it difficult to find out which PDFs a cardholder _could_ have, so a future
-      version will allow you to ask for all of them.
+      version will allow you to ask for all of them with `fields=allPdfs`.
 
     * You will be able to request the competencies that your operator has the permission to assign.
       That is determined by privileges, a competency setting, and an operator group setting.
@@ -94,7 +94,7 @@ info:
 
     #### Cardholder API changes in 9.20
 
-    * You can filter by cardholders' direct division.  The current division search is recursive:  it
+    * You can filter by cardholders' direct divisions.  The current division search is recursive:  it
       returns all cardholders that have any of the filter's divisions anywhere in their ancestry.
       The new division search is shallow:  it only returns cardholders that are direct members of
       the filter's divisions.
@@ -2867,6 +2867,7 @@ definitions:
               SDK documentation for how to do that in your own applications.
 
               Only present if 'status' is 'sent'.
+
       from:
         description: |
           The start of the time period during which this card is active.  If this time is in the
@@ -2876,6 +2877,11 @@ definitions:
 
           When modifying a card, send a null string `""` to reset it.
 
+          It must be before midnight on the morning of January 1, 2100 _local_ time (so servers with
+          positive timezone offsets have maximums during December 31 2099), and it must be less than
+          or equal to than the `until` time.  A future version of Command Centre will clamp too-high
+          values to December 31 2099 and return a 200 (success) instead of a 400.
+
           The server will reject timestamps in card updates that are not in an acceptable format.
           But in requests to create a card, rather than modify an existing card, the server will
           ignore such strings and use the card type's defaults.  This is undesirable behaviour and
@@ -2884,6 +2890,7 @@ definitions:
         type: string
         format: date-time
         example: "2017-01-01T00:00:00Z"
+
       until:
         description: |
           The end of the time period during which this card is active.  If this time is in the past,
@@ -2892,6 +2899,11 @@ definitions:
           When it is not set, Command Centre acts as though it is set to a time in the distant future.
 
           When modifying a card, send a null string `""` to reset it.
+
+          It must be before midnight on the morning of January 1, 2100 _local_ time (so servers with
+          positive timezone offsets have maximums during December 31 2099), and it must be greater
+          than or equal to the `from` time.  A future version of Command Centre will clamp too-high
+          values to December 31 2099 and return a 200 (success) instead of a 400.
 
           The server will reject timestamps in card updates that are not in an acceptable format.
           But in requests to create a card, rather than modify an existing card, the server will
