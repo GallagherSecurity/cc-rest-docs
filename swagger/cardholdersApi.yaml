@@ -2880,7 +2880,7 @@ definitions:
           It must be before midnight on the morning of January 1, 2100 _local_ time (so servers with
           positive timezone offsets have maximums during December 31 2099), and it must be less than
           or equal to than the `until` time.  A future version of Command Centre will clamp too-high
-          values to December 31 2099 and return a 200 (success) instead of a 400.
+          values to December 31 2099 and return a 2xx (success) instead of 400 in that case.
 
           The server will reject timestamps in card updates that are not in an acceptable format.
           But in requests to create a card, rather than modify an existing card, the server will
@@ -2903,7 +2903,7 @@ definitions:
           It must be before midnight on the morning of January 1, 2100 _local_ time (so servers with
           positive timezone offsets have maximums during December 31 2099), and it must be greater
           than or equal to the `from` time.  A future version of Command Centre will clamp too-high
-          values to December 31 2099 and return a 200 (success) instead of a 400.
+          values to December 31 2099 and return a 2xx (success) instead of 400 in that case.
 
           The server will reject timestamps in card updates that are not in an acceptable format.
           But in requests to create a card, rather than modify an existing card, the server will
@@ -5965,7 +5965,7 @@ paths:
           description: |
             Success.  Future versions will add feedback from the server about your PATCH.
         204: 
-          description: "Success."
+          description: "Success, with no feedback."
         400:
           description: |
             The parameters are invalid, or other errors prevented the update.
