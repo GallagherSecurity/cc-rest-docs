@@ -784,22 +784,22 @@ tags:
 
     1. `GET /api`.
 
-    2. v8.00 or earlier:  follow the link at `features.items.items.href`
+    2. v8.10 or later:  follow the link at `features.personalDataFields.personalDataFields.href`
+       [↪](#operation--api-personal_data_fields-get), appending the query `name="employee_id"`.
+       This will return every PDF in the system with that name.  There will be more than one, in
+       rare cases.
+
+    2. Earlier versions:  follow the link at `features.items.items.href`
        [↪](events.html#operation--api-items-get), appending the query `name="employee_id"` (after a
        `?` or `&`, of course).  This will return every item in the system with that name.  Pick the
        one with a type name of 'Personal Data Field'.  Or you could append `type=33` to the item
        search:  you will only be shown PDFs.
 
-    2. v8.10 or later:  follow the link at `features.personalDataFields.personalDataFields.href`
-       [↪](#operation--api-personal_data_fields-get), appending the query `name="employee_id"`.
-       This will return every PDF in the system with that name (there should only be one since PDFs
-       must have different names).
-
     3. Note the ID of the item.  It will be a short alphanumeric.
 
     Case does not matter when searching by name but remember the quotes:  Command Centre will
     perform a substring match if you omit them, which is vastly slower and (for the example above)
-    return you the PDFs 'previous_employee_ID' and 'employee_ID_allocated_flag', assuming you had
+    return you the PDFs 'previous_employee_ID' and 'employee_ID_allocated_flag', if you have
     PDFs with those names.
 
     Now you can use that PDF ID in a cardholder search.
