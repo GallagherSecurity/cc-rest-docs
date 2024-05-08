@@ -267,6 +267,14 @@
             </ul>
           </section>
           <section>
+            <a href="#tag-REST-Clients">REST Clients</a>
+            <ul>
+              <li>
+                <a href="#operation--REST-Client-URL--patch"> Set status </a>
+              </li>
+            </ul>
+          </section>
+          <section>
             <a href="#tag-Schedules">Schedules</a>
             <ul>
               <li>
@@ -318,6 +326,7 @@
           <a href="#definition-Output-search"> Output search </a>
           <a href="#definition-Output-summary"> Output summary </a>
           <a href="#definition-Output-detail"> Output detail </a>
+          <a href="#definition-REST-Client-PATCH"> REST Client PATCH </a>
           <a href="#definition-Schedule-search"> Schedule search </a>
           <a href="#definition-Schedule-summary"> Schedule summary </a>
           <a href="#definition-Schedule-detail"> Schedule detail </a>
@@ -356,7 +365,12 @@
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
                 <h4 id="api-changes-on-the-roadmap">API changes on the roadmap</h4>
                 <ul>
-                  <li>A future version will sort its search results differently if you do not use a query parameter to override the default.</li>
+                  <li>
+                    <p>An integration will be able to set its own status text and declare itself faulted, which will raise a Command Centre alarm.</p>
+                  </li>
+                  <li>
+                    <p>A future version will sort by ID instead of name by default, because sorting by ID is more efficient for large lists and more reliable for paged responses. If your appliction does not use the <code>sort</code> query parameter it will start receiving results in a different order.</p>
+                  </li>
                 </ul>
                 <h4 id="changes-in-920">Changes in 9.20</h4>
                 <ul>
@@ -10068,6 +10082,148 @@
               </div>
             </div>
           </div>
+          <h1 id="tag-REST-Clients" class="swagger-summary-tag" data-traverse-target="tag-REST-Clients">REST Clients</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>This lets you make the state of your integration visible to Command Centre operators, and raise alarms if necessary.</p>
+              <p>A client can change its own status, but it can change no other&#39;s, and no other client can change its.</p>
+              <p>Your client&#39;s operator does not need any privileges for this call to succeed.</p>
+              <p>This feature is due in 9.20.</p>
+              <p>
+                <strong>Licensing</strong>
+              </p>
+              <p>Items APIs are available under any licence.</p>
+            </div>
+          </div>
+          <div id="operation--REST-Client-URL--patch" class="operation panel" data-traverse-target="operation--REST-Client-URL--patch">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-REST-Clients">REST Clients</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Set status</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">PATCH</span>
+                  <span class="operation-path">&lt;REST Client URL&gt;</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This allows an integration to make its state visible to Command Centre operators, and raise alarms if necessary.</p>
+                  <p>Intended for 9.20.</p>
+                  <p>Take this URL from <code>me.client.href</code> in the results of <code>GET /api</code>.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/REST Client PATCH">REST Client PATCH</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>The status text and fault condition of your API client.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The ID of the REST Client. This will be in the URL supplied to you from <code>/api</code>.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;hasFault&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;customStatusText&quot;</span>: <span class="hljs-string">&quot;Disk 87% full&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. The server has feedback for you in the body of its response.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The server could not make sense of your payload. Its response will contain feedback.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>You PATCHed the URL of a REST Client item, but not
+                        <em>your</em> REST Client item.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a REST Client item your operator can see.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
           <h1 id="tag-Schedules" class="swagger-summary-tag" data-traverse-target="tag-Schedules">Schedules</h1>
           <div class="tag-description doc-row">
             <div class="doc-copy">
@@ -15656,6 +15812,59 @@
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/outputs/2365/pulse&quot;</span>
     }
   }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-REST-Client-PATCH" class="definition panel" data-traverse-target="definition-REST-Client-PATCH">
+            <h2 class="panel-title">
+              <a name="/definitions/REST Client PATCH"></a>REST Client PATCH:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>
+                    <a href="#operation--REST-Client-URL--patch">/api/items</a> expects one of these in the body of a PATCH.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="hasFault" class="has-description">
+                      <span class="json-property-name">hasFault:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>If true, the server will change the status of this REST Client to include an indication that is has a fault, and will raise an alarm to draw the operators&#39; attention.</p>
+                    </dd>
+                    <dt data-property-name="customStatusText" class="has-description">
+                      <span class="json-property-name">customStatusText:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Whatever text you supply here will be added to the end of the status text Command Centre generates for this item. The API is the only way to modify this text.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;hasFault&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;customStatusText&quot;</span>: <span class="hljs-string">&quot;Disk 87% full&quot;</span>
 }
 </code></pre> </body>
                   </html>

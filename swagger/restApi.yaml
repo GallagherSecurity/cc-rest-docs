@@ -55,8 +55,12 @@ info:
 
     #### API changes on the roadmap
 
-    * A future version will sort its search results differently if you do not use a query parameter to
-      override the default.
+    * An integration will be able to set its own status text and declare itself faulted, which will
+      raise a Command Centre alarm.
+
+    * A future version will sort by ID instead of name by default, because sorting by ID is more
+      efficient for large lists and more reliable for paged responses.  If your appliction does not
+      use the `sort` query parameter it will start receiving results in a different order.
 
     #### Changes in 9.20
 
@@ -2115,6 +2119,27 @@ definitions:
 
 #######################################################################
 #######################################################################
+  REST Client PATCH:
+    description: |
+      [/api/items](#operation--REST-Client-URL--patch) expects one of these in the body of a PATCH.
+
+    properties:
+      hasFault:
+        type: boolean
+        example: false
+        description: |
+          If true, the server will change the status of this REST Client to include an indication
+          that is has a fault, and will raise an alarm to draw the operators' attention.
+
+      customStatusText:
+        type: string
+        example: "Disk 87% full"
+        description: |
+          Whatever text you supply here will be added to the end of the status text Command Centre
+          generates for this item.  The API is the only way to modify this text.
+
+#######################################################################
+#######################################################################
   Schedule search:
     description: An array of schedule summaries, and a `next` link for more.
     properties:
@@ -2368,6 +2393,8 @@ definitions:
 ###################################################################################################
 ###################################################################################################
 ###################################################################################################
+### Operations:
+
 tags:
 - name: "Access Zones"
 
@@ -2991,6 +3018,21 @@ tags:
     4. GET it.
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
+
+- name: "REST Clients"
+  description: |-
+    This lets you make the state of your integration visible to Command Centre operators, and raise
+    alarms if necessary.
+
+    A client can change its own status, but it can change no other's, and no other client can change its.
+
+    Your client's operator does not need any privileges for this call to succeed.
+
+    This feature is due in 9.20.
+
+    **Licensing**
+
+    Items APIs are available under any licence.
 
 - name: "Schedules"
   description: |-
@@ -4803,6 +4845,46 @@ paths:
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
         404: {$ref: "#responses/404output"}
+
+######################################################################
+  <REST Client URL>:
+    patch:
+      tags: [ "REST Clients" ]
+      summary: Set status
+      description: |
+        This allows an integration to make its state visible to Command Centre operators, and raise
+        alarms if necessary.
+
+        Intended for 9.20.
+
+        Take this URL from `me.client.href` in the results of `GET /api`.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: |
+          The ID of the REST Client.  This will be in the URL supplied to you from `/api`.
+      - name: "not rendered"
+        in: body
+        required: true
+        schema: {$ref: '#/definitions/REST Client PATCH'}
+        description: |
+          The status text and fault condition of your API client.
+
+      responses:
+        200:
+          description: |
+            Success.  The server has feedback for you in the body of its response.
+        204:
+          description: Success.
+        400:
+          description: The server could not make sense of your payload.  Its response will contain feedback.
+        403:
+          description: You PATCHed the URL of a REST Client item, but not _your_ REST Client item.
+        404:
+          description: That is not the URL of a REST Client item your operator can see.
 
 ######################################################################
   /api/schedules:
