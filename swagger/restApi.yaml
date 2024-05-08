@@ -2121,7 +2121,8 @@ definitions:
 #######################################################################
   REST Client PATCH:
     description: |
-      [/api/items](#operation--REST-Client-URL--patch) expects one of these in the body of a PATCH.
+      [/api/items](#operation--REST-Client-URL--patch) expects one of these in the body of a PATCH
+      to a REST Client item.
 
     properties:
       hasFault:
@@ -2135,8 +2136,10 @@ definitions:
         type: string
         example: "Disk 87% full"
         description: |
-          Whatever text you supply here will be added to the end of the status text Command Centre
-          generates for this item.  The API is the only way to modify this text.
+          The server will include the text you supply here whenever it generates status text for
+          this item.
+
+          The API is the only way to modify this text.
 
 #######################################################################
 #######################################################################
@@ -3021,18 +3024,8 @@ tags:
 
 - name: "REST Clients"
   description: |-
-    This lets you make the state of your integration visible to Command Centre operators, and raise
-    alarms if necessary.
-
-    A client can change its own status, but it can change no other's, and no other client can change its.
-
-    Your client's operator does not need any privileges for this call to succeed.
-
-    This feature is due in 9.20.
-
-    **Licensing**
-
-    Items APIs are available under any licence.
+    This lets you operate on the REST Client item that represents your application in Command
+    Centre.
 
 - name: "Schedules"
   description: |-
@@ -4852,10 +4845,21 @@ paths:
       tags: [ "REST Clients" ]
       summary: Set status
       description: |
-        This allows an integration to make its state visible to Command Centre operators, and raise
-        alarms if necessary.
+        This allows an integration to add a string to the status text of the REST Client item that
+        represents your application.  That text is visible on a suitably-configured site plan or a
+        Monitor Site viewer in Gallagher's operational client, or any other client that is watching
+        items.
 
-        Intended for 9.20.
+        Your integration can also set a flag indicating that it is in a fault condition and requires
+        attention.  Doing that will raise an alarm, hopefully provoking a response from an operator.
+        The alarm is stateful, restored only by your integration clearing the flag later when it is
+        back in working order.
+
+        A client can change its own status, but it can change no other's, and no other client can change its.
+
+        Your client's operator does not need any privileges for this call.
+
+        This feature is due in 9.20.
 
         Take this URL from `me.client.href` in the results of `GET /api`.
 

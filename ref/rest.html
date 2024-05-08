@@ -10085,14 +10085,7 @@
           <h1 id="tag-REST-Clients" class="swagger-summary-tag" data-traverse-target="tag-REST-Clients">REST Clients</h1>
           <div class="tag-description doc-row">
             <div class="doc-copy">
-              <p>This lets you make the state of your integration visible to Command Centre operators, and raise alarms if necessary.</p>
-              <p>A client can change its own status, but it can change no other&#39;s, and no other client can change its.</p>
-              <p>Your client&#39;s operator does not need any privileges for this call to succeed.</p>
-              <p>This feature is due in 9.20.</p>
-              <p>
-                <strong>Licensing</strong>
-              </p>
-              <p>Items APIs are available under any licence.</p>
+              <p>This lets you operate on the REST Client item that represents your application in Command Centre.</p>
             </div>
           </div>
           <div id="operation--REST-Client-URL--patch" class="operation panel" data-traverse-target="operation--REST-Client-URL--patch">
@@ -10118,8 +10111,11 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This allows an integration to make its state visible to Command Centre operators, and raise alarms if necessary.</p>
-                  <p>Intended for 9.20.</p>
+                  <p>This allows an integration to add a string to the status text of the REST Client item that represents your application. That text is visible on a suitably-configured site plan or a Monitor Site viewer in Gallagher&#39;s operational client, or any other client that is watching items.</p>
+                  <p>Your integration can also set a flag indicating that it is in a fault condition and requires attention. Doing that will raise an alarm, hopefully provoking a response from an operator. The alarm is stateful, restored only by your integration clearing the flag later when it is back in working order.</p>
+                  <p>A client can change its own status, but it can change no other&#39;s, and no other client can change its.</p>
+                  <p>Your client&#39;s operator does not need any privileges for this call.</p>
+                  <p>This feature is due in 9.20.</p>
                   <p>Take this URL from <code>me.client.href</code> in the results of <code>GET /api</code>.</p>
                 </section>
               </div>
@@ -15833,7 +15829,7 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>
-                    <a href="#operation--REST-Client-URL--patch">/api/items</a> expects one of these in the body of a PATCH.</p>
+                    <a href="#operation--REST-Client-URL--patch">/api/items</a> expects one of these in the body of a PATCH to a REST Client item.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -15851,7 +15847,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>Whatever text you supply here will be added to the end of the status text Command Centre generates for this item. The API is the only way to modify this text.</p>
+                      <p>The server will include the text you supply here whenever it generates status text for this item.</p>
+                      <p>The API is the only way to modify this text.</p>
                     </dd>
                   </dl>
                 </section>
