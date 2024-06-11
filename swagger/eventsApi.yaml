@@ -55,7 +55,7 @@ info:
 
     #### Alarms and events API changes in 9.10
 
-    * You can request the name of an alarm's instruction.
+    * You can request the name of an alarm's instruction, and the contents of the instruction itself.
 
     #### Alarms and events API changes in 9.00
 
@@ -73,9 +73,9 @@ info:
       Alarms' privilege in the division of the source item, if your request specifies a source item.
       Current versions only require that the operator has that privilege on at least one division.
 
-    * To improve the symmetry between events and alarms, they now carry a field `eventType`
+    * To improve the symmetry between events and alarms, they both now carry a field `eventType`
       containing the ID and name of their type.  The `type` field, which has different
-      contents for alarms and events, is now obsolete (but still supported).
+      contents for alarms and events, is now obsolete (but still returned in results).
 
     * Alarms contain a new field called `event` containing a link to the corresponding event,
       mirroring the existing `alarm` field coming the other way from an event.
@@ -2959,13 +2959,14 @@ definitions:
     properties:
       type:
         description: |
-          This is a mandatory field in an event.  Without it, the POST will fail.
+          A new event must contain either this or (if your server is running 8.90 or later) `eventType`.
+          Without one of them, the POST will fail.
 
-          It is mandatory because the server cannot assume a reasonable default.  It can for the
-          others.
+          The event type is mandatory because the server cannot assume a reasonable default.  It can
+          for the other fields.
 
-          If your server is running 8.90 or later, `eventType` is a synonym.  If you send both a `type` block
-          and an `eventType` block it will use `eventType`.
+          If you send both a `type` block and an `eventType` block to a server running 8.90 or later
+          it will use `eventType`.
 
         type: object
         properties:
@@ -3153,6 +3154,25 @@ definitions:
             description: |
               This can be the href of any door your operator can see.  Get the href using the
               [doors](rest.html#tag-Doors) or [items](#tag-Items) controller.
+
+  Event POST example:
+    required: [type, eventType]
+    description: |
+      This is an example showing how you could [create a new event](#creating-a-new-event).
+
+      Only `eventType` is required for the API to accept the POST, but an event is not much without
+      a source item and a message string, and it never hurts to add some details.
+
+      See [the schema definition](#definition-Event-POST-body) for a description of each field, and
+      [the POST](#operation--api-events-post) for the rules around event types and items and what
+      happens to your event after you create it.
+
+      To make this example work on a server running 8.80 or earlier change `eventType` to `type`.
+    example:
+      eventType: { "href": "https://localhost:8904/api/events/types/4000" }
+      source: { "href": "https://localhost:8904/api/doors/745" }
+      message: "Glass break detected in southwest sauna"
+      details: "Temperature dropping"
 
   Event groups:
     description:  Calls to `/api/events/groups/` return this object, which is a named array of groups of event types.

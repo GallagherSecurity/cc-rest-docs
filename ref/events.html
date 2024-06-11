@@ -124,6 +124,7 @@
           <a href="#definition-Event-summary"> Event summary </a>
           <a href="#definition-Event-detail"> Event detail </a>
           <a href="#definition-Event-POST-body"> Event POST body </a>
+          <a href="#definition-Event-POST-example"> Event POST example </a>
           <a href="#definition-Event-groups"> Event groups </a>
           <a href="#definition-Divisions"> Divisions </a>
           <a href="#definition-Division"> Division </a>
@@ -176,7 +177,7 @@
                 </ul>
                 <h4 id="alarms-and-events-api-changes-in-910">Alarms and events API changes in 9.10</h4>
                 <ul>
-                  <li>You can request the name of an alarm&#39;s instruction.</li>
+                  <li>You can request the name of an alarm&#39;s instruction, and the contents of the instruction itself.</li>
                 </ul>
                 <h4 id="alarms-and-events-api-changes-in-900">Alarms and events API changes in 9.00</h4>
                 <ul>
@@ -197,7 +198,7 @@
                     <p>BREAKING CHANGE: the operator must have the &#39;Create Events and Alarms&#39; privilege in the division of the source item, if your request specifies a source item. Current versions only require that the operator has that privilege on at least one division.</p>
                   </li>
                   <li>
-                    <p>To improve the symmetry between events and alarms, they now carry a field <code>eventType</code> containing the ID and name of their type. The <code>type</code> field, which has different contents for alarms and events, is now obsolete (but still supported).</p>
+                    <p>To improve the symmetry between events and alarms, they both now carry a field <code>eventType</code> containing the ID and name of their type. The <code>type</code> field, which has different contents for alarms and events, is now obsolete (but still returned in results).</p>
                   </li>
                   <li>
                     <p>Alarms contain a new field called <code>event</code> containing a link to the corresponding event, mirroring the existing <code>alarm</code> field coming the other way from an event.</p>
@@ -6810,9 +6811,9 @@
                       <span class="json-property-required"></span>
                     </dt>
                     <dd>
-                      <p>This is a mandatory field in an event. Without it, the POST will fail.</p>
-                      <p>It is mandatory because the server cannot assume a reasonable default. It can for the others.</p>
-                      <p>If your server is running 8.90 or later, <code>eventType</code> is a synonym. If you send both a <code>type</code> block and an <code>eventType</code> block it will use <code>eventType</code>.</p>
+                      <p>A new event must contain either this or (if your server is running 8.90 or later) <code>eventType</code>. Without one of them, the POST will fail.</p>
+                      <p>The event type is mandatory because the server cannot assume a reasonable default. It can for the other fields.</p>
+                      <p>If you send both a <code>type</code> block and an <code>eventType</code> block to a server running 8.90 or later it will use <code>eventType</code>.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -7132,6 +7133,50 @@
   <span class="hljs-attr">&quot;door&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/745&quot;</span>
   }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Event-POST-example" class="definition panel" data-traverse-target="definition-Event-POST-example">
+            <h2 class="panel-title">
+              <a name="/definitions/Event POST example"></a>Event POST example:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>This is an example showing how you could
+                    <a href="#creating-a-new-event">create a new event</a>.</p>
+                  <p>Only <code>eventType</code> is required for the API to accept the POST, but an event is not much without a source item and a message string, and it never hurts to add some details.</p>
+                  <p>See
+                    <a href="#definition-Event-POST-body">the schema definition</a> for a description of each field, and
+                    <a href="#operation--api-events-post">the POST</a> for the rules around event types and items and what happens to your event after you create it.</p>
+                  <p>To make this example work on a server running 8.80 or earlier change <code>eventType</code> to <code>type</code>.</p>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;eventType&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/events/types/4000&quot;</span>
+  },
+  <span class="hljs-attr">&quot;source&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/745&quot;</span>
+  },
+  <span class="hljs-attr">&quot;message&quot;</span>: <span class="hljs-string">&quot;Glass break detected in southwest sauna&quot;</span>,
+  <span class="hljs-attr">&quot;details&quot;</span>: <span class="hljs-string">&quot;Temperature dropping&quot;</span>
 }
 </code></pre> </body>
                   </html>
