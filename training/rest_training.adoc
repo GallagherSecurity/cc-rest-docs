@@ -570,12 +570,12 @@ and a body.
 
 ==== Response codes
 
-Any response in the 200-299 range means success. GETs return a 200 along
-with their results. DELETEs return 204 ("no content"), which just means they
-succeeded and having nothing more to say.  PATCHes return 200 or 204
-depending on whether they have feedback.
-
-Creating an item or event returns 201 ("created").
+Any response in the 200-299 range means success.  GETs return a 200 along
+with their results.  DELETEs and PATCHes return 204 ("no content") when they
+succeed and having nothing more to say, and 200 when they do.  POSTs return
+201 with a link to the thing they created, if there is one, and 200 or 204
+when there is not.  Methods that can return a 204 "no content" will return
+200 instead if they have feedback for you.
 
 A response in the 400-499 range generally means there was something
 wrong with the request. One exception is 409: it could mean that your
