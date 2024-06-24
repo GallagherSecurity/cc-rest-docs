@@ -2798,6 +2798,7 @@ Before getting into why you want all this checking happening, we should
 cover how to turn it on. Or, since the product ships with it turned on,
 why you should not turn it off.
 
+[[mysteriouscheckbox]]
 ==== The mysterious client certificate checkbox
 
 In 'Server Properties', which you get to in the Configuration Client
@@ -3641,6 +3642,28 @@ reduced.
 
 For a lot more detail about the API gateway, see its technical information paper at
 https://gallaghersecurity.github.io/docs/Command%20Centre%20Cloud%20Api%20Gateway%20TIP.pdf
+
+== Securing your API
+
+* Use a firewall.  The API's default port is 8904.
+
+* Leave link:#mysteriouscheckbox['Enable REST Clients with no client certificate'] turned off in
+  production.  Turning it on means TLS certificate checking is no longer mandatory, which it
+  should be.
+
+* Use IP filtering if you know the addresses of your API clients.
+
+* Create an operator and a REST Client item for each of your integrations, so that you can audit and
+  control them separately.  They can share operator groups, but use a different operator for each
+  integration.
+
+* Do not give your operators the 'Advanced User' privilege.  Limit the power of your clients by
+  using link:#appendix-privtable[lesser privileges].  Using 'Advanced User' can be helpful when
+  diagnosing privilege problems in development phases, but do not use it on a live site.
+
+* If you can, give your operators privileges on subdivisions instead of the root division.  This is
+  not always possible, but if you can manage it you will reduce the damage a client could
+  do.  As an added benefit, the tightened scope will make queries more efficient.
 
 == Notes for penetration testers
 
