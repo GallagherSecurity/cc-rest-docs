@@ -15849,6 +15849,7 @@
                 <section class="json-schema-description">
                   <p>
                     <a href="#operation--REST-Client-URL--patch">/api/items</a> expects one of these in the body of a PATCH to a REST Client item.</p>
+                  <p>Both fields are optional.</p>
                   <p>
                     <strong>
                       <em>This feature is still in development and may change behaviour before release.</em>
@@ -15863,15 +15864,18 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>If true, the server will change the status of this REST Client to include an indication that is has a fault, and will raise an alarm to draw the operators&#39; attention.</p>
+                      <p>If true, the server will change the status of this REST Client to include an indication that is has a fault, and will raise an active alarm to draw the operators&#39; attention. Being active, operators will not be able to process that alarm until you restore it by passing false here.</p>
+                      <p>The API is the only way to modify this flag.</p>
                     </dd>
                     <dt data-property-name="customStatusText" class="has-description">
                       <span class="json-property-name">customStatusText:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-range" title="String length limits"> (up to 1024 chars) </span>
                     </dt>
                     <dd>
                       <p>The server will include the text you supply here whenever it generates status text for this item.</p>
+                      <p>This text field works independently of item&#39;s others states and its fault flag: you can use it purely for information.</p>
                       <p>The API is the only way to modify this text.</p>
                     </dd>
                   </dl>

@@ -2124,6 +2124,8 @@ definitions:
       [/api/items](#operation--REST-Client-URL--patch) expects one of these in the body of a PATCH
       to a REST Client item.
 
+      Both fields are optional.
+
       ***This feature is still in development and may change behaviour before release.***
 
     properties:
@@ -2132,14 +2134,22 @@ definitions:
         example: false
         description: |
           If true, the server will change the status of this REST Client to include an indication
-          that is has a fault, and will raise an alarm to draw the operators' attention.
+          that is has a fault, and will raise an active alarm to draw the operators' attention.
+          Being active, operators will not be able to process that alarm until you restore it by
+          passing false here.
+
+          The API is the only way to modify this flag.
 
       customStatusText:
         type: string
         example: "Disk 87% full"
+        maxLength: 1024
         description: |
           The server will include the text you supply here whenever it generates status text for
           this item.
+
+          This text field works independently of item's others states and its fault flag:  you can
+          use it purely for information.
 
           The API is the only way to modify this text.
 
