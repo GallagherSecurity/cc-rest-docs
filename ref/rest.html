@@ -779,7 +779,7 @@
                 <li>An override without an end time lasts until the next mode change or &#39;cancel untimed overrides&#39; entry in the access zone&#39;s schedule.</li>
                 <li>The end time you set for an override cannot be in the past or more than 24 hours into the future.</li>
               </ol>
-              <h3 id="status-flags">Status flags</h3>
+              <h3 id="access-zone-status-flags">Access Zone status flags</h3>
               <p>If the access zone is online, its <code>statusFlags</code> field may contain one or more of these flags:</p>
               <ul>
                 <li>
@@ -2692,7 +2692,7 @@
                 <li>Overrides you submit via REST are not subject to the &quot;manual unset&quot; timeouts you can set in the Configuration Client. Those only affect readers, terminals, and pushbuttons.</li>
                 <li>The end time you set for an override cannot be in the past or more than 24 hours into the future.</li>
               </ol>
-              <h3 id="status-flags">Status flags</h3>
+              <h3 id="alarm-zone-status-flags">Alarm Zone status flags</h3>
               <p>If the alarm zone is online, its <code>statusFlags</code> field will contain one or more of these flags:</p>
               <ul>
                 <li>
@@ -4342,7 +4342,7 @@
             <div class="doc-copy">
               <p>These methods give you read access to basic data about Doors in the Command Centre database, and let you open them.</p>
               <p>The first use case below introduces the main entry point. It is a paginated search interface that gives you any number of doors, each containing the fields you ask for in the query (including, for example, the URLs to open them).</p>
-              <h3 id="status-flags">Status flags</h3>
+              <h3 id="door-status-flags">Door status flags</h3>
               <p>If the door is online, its <code>statusFlags</code> field will contain one or more of these flags:</p>
               <ul>
                 <li><code>forced</code> means the door was opened or unlocked while secure.</li>
@@ -5649,7 +5649,7 @@
             <div class="doc-copy">
               <p>These methods give you read access to Fence Zones in the Command Centre database, and let you turn them on and off, change their modes, and shunt them.</p>
               <p>The first use case below introduces the main entry point. It is a paginated search interface that gives you any number of fence zones, each containing the fields you ask for in the query.</p>
-              <h3 id="status-flags">Status flags</h3>
+              <h3 id="fence-zone-status-flags">Fence Zone status flags</h3>
               <p>If the fence zone is online, its <code>statusFlags</code> field may contain one or more of these flags:</p>
               <ul>
                 <li><code>notPolled</code> means the fence zone is shunted, which means intentionally ignored, and is essentially offline.</li>
@@ -6860,7 +6860,7 @@
             <div class="doc-copy">
               <p>These methods, introduced in v8.10, give you read and override access to Input items.</p>
               <p>The first use case below introduces the main entry point. It is a paginated search interface that gives you any number of inputs, each containing the fields you ask for in the query. You can, for instance, ask for the URLs you need to shunt or isolate an input.</p>
-              <h3 id="status-flags">Status flags</h3>
+              <h3 id="input-status-flags">Input status flags</h3>
               <p>Even though the Configuration client lets you set your own state names for open, closed, tampered open, and tampered short, status flags will always use &#39;closed&#39; or &#39;open&#39;, and possibly &#39;tamper&#39;.</p>
               <p>Two-state inputs cannot report a tamper, because it is impossible to detect. They can only be open or closed. Hence the name.</p>
               <p>Three-state inputs can report a tamper, but only one of tampered open or tampered closed, depending on their end-of-line resistance settings.</p>
@@ -7804,7 +7804,7 @@
                 <strong>API support for interlocks is still in development and may change in future versions.</strong>
               </p>
               <p>The first use case below introduces the main entry point. It is a paginated search interface that gives you any number of interlock groups, each containing the fields you ask for in the query. You can, for instance, ask for the IDs you need to monitor their status.</p>
-              <h3 id="status-flags">Status flags</h3>
+              <h3 id="interlock-group-status-flags">Interlock Group status flags</h3>
               <p>If an interlock is not in an error state it will return one flag out of the following set:</p>
               <ul>
                 <li>
@@ -9052,7 +9052,7 @@
               </ol>
               <h3 id="overrides-always-use-on-and-off">Overrides always use &#39;on&#39; and &#39;off&#39;</h3>
               <p>The Configuration client allows you to assign different display strings to the two normal output states, on and off. On could be &#39;green&#39;, for example, and off could be &#39;red&#39;. Regardless, the overrides you apply to an output are called &#39;on&#39; and &#39;off&#39;.</p>
-              <h3 id="status-flags">Status flags</h3>
+              <h3 id="output-status-flags">Output status flags</h3>
               <p>Status flags, on the other hand, use the language of the relays on the hardware modules. They will report &#39;closed&#39; for an output that is on, and &#39;open&#39; for one that is off.</p>
               <p>If the output is online, its <code>statusFlags</code> field may contain one or more of these flags:</p>
               <ul>
@@ -10091,7 +10091,7 @@
                   <em>This is still in development and may change behaviour before release.</em>
                 </strong>
               </p>
-              <h3 id="status-flags">Status flags</h3>
+              <h3 id="rest-client-status-flags">REST Client status flags</h3>
               <ul>
                 <li>
                   <p><code>offline</code> means the item is configured with a keepalive time and it has not seen an API request in that time.</p>
@@ -15877,6 +15877,7 @@
                       <p>The server will include the text you supply here whenever it generates status text for this item.</p>
                       <p>This text field works independently of item&#39;s others states and its fault flag: you can use it purely for information.</p>
                       <p>The API is the only way to modify this text.</p>
+                      <p>The integrator is responsibile for any personally identifiable information sent to Command Centre via the API.</p>
                     </dd>
                   </dl>
                 </section>

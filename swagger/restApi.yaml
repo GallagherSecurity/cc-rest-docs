@@ -2153,6 +2153,9 @@ definitions:
 
           The API is the only way to modify this text.
 
+          The integrator is responsibile for any personally identifiable information sent to Command
+          Centre via the API.
+
 #######################################################################
 #######################################################################
   Schedule search:
@@ -2432,7 +2435,7 @@ tags:
     3. The end time you set for an override cannot be in the past or more than 24 hours into
        the future.
 
-    ### Status flags
+    ### Access Zone status flags
 
     If the access zone is online, its `statusFlags` field may contain one or more of these flags:
 
@@ -2542,7 +2545,7 @@ tags:
     3. The end time you set for an override cannot be in the past or more than 24 hours into
        the future.
 
-    ### Status flags
+    ### Alarm Zone status flags
 
     If the alarm zone is online, its `statusFlags` field will contain one or more of these flags:
 
@@ -2625,7 +2628,7 @@ tags:
     that gives you any number of doors, each containing the fields you ask for in the query
     (including, for example, the URLs to open them).
 
-    ### Status flags
+    ### Door status flags
 
     If the door is online, its `statusFlags` field will contain one or more of these flags:
 
@@ -2737,7 +2740,7 @@ tags:
     The first use case below introduces the main entry point.  It is a paginated search interface
     that gives you any number of fence zones, each containing the fields you ask for in the query.
 
-    ### Status flags
+    ### Fence Zone status flags
 
     If the fence zone is online, its `statusFlags` field may contain one or more of these flags:
 
@@ -2815,7 +2818,7 @@ tags:
     that gives you any number of inputs, each containing the fields you ask for in the query.  You
     can, for instance, ask for the URLs you need to shunt or isolate an input.
 
-    ### Status flags
+    ### Input status flags
 
     Even though the Configuration client lets you set your own state names for open, closed,
     tampered open, and tampered short, status flags will always use 'closed' or 'open', and possibly
@@ -2883,7 +2886,7 @@ tags:
     that gives you any number of interlock groups, each containing the fields you ask for in the
     query.  You can, for instance, ask for the IDs you need to monitor their status.
 
-    ### Status flags
+    ### Interlock Group status flags
 
     If an interlock is not in an error state it will return one flag out of the following set:
 
@@ -2987,7 +2990,7 @@ tags:
     states, on and off.  On could be 'green', for example, and off could be 'red'.  Regardless, the
     overrides you apply to an output are called 'on' and 'off'.
 
-    ### Status flags
+    ### Output status flags
 
     Status flags, on the other hand, use the language of the relays on the hardware modules.  They
     will report 'closed' for an output that is on, and 'open' for one that is off.
@@ -3041,7 +3044,7 @@ tags:
 
     ***This is still in development and may change behaviour before release.***
 
-    ### Status flags
+    ### REST Client status flags
 
     - `offline` means the item is configured with a keepalive time and it has not seen an API
     request in that time.
