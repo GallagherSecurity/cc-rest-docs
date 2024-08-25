@@ -79,9 +79,6 @@ info:
 
     * "Revealable" access levels on PDFs.
 
-    * POTENTIALLY BREAKING CHANGE:  a future version will sort its search results differently if your query does
-      not include a parameter to override the default.
-
     * Current versions of the API only show a PDF on a cardholder if he or she has a value for that
       PDF.  That makes it difficult to find out which PDFs a cardholder _could_ have, so a future
       version will allow you to ask for all of them with `fields=allPdfs`.
@@ -91,6 +88,12 @@ info:
       Current versions let you request the competencies that your operator has the permission to
       view, which is a larger set determined by privileges alone, and not suitable for interactive
       REST clients.
+
+    #### Cardholder API changes in 9.30
+
+    * POTENTIALLY BREAKING CHANGE:  for efficiency, 9.30 orders search results differently from 9.20
+      when your query does not include a `sort` parameter.  If you care about the order of your
+      items, tell the server how you want them sorted.
 
     #### Cardholder API changes in 9.20
 
