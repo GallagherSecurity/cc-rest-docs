@@ -95,6 +95,9 @@ info:
       when your query does not include a `sort` parameter.  If you care about the order of your
       items, tell the server how you want them sorted.
 
+    * POTENTIALLY BREAKING CHANGE:  GovPass cards may have a new credentialClass and GovPass card
+      states will have new names, depending on the card type and the site's licences.
+
     #### Cardholder API changes in 9.20
 
     * You can filter by cardholders' direct divisions.  The current division search is recursive:  it
@@ -1073,7 +1076,7 @@ tags:
 
     They also provide the links you need to manage memberships.  Those links are hrefs to
     cardholders, to which you would send [PATCH](#definition-Cardholder-PATCH-example) requests
-    containing your updates.  Your REST operator will need 'Edit Cardholder' privilege on the
+    containing your updates.  Your REST operator will need 'Edit Cardholders' privilege on the
     cardholder for that.
 
     ### Use cases
@@ -2926,6 +2929,8 @@ definitions:
           Added in 8.00.
 
           The experimental `applePass` was added in 9.10.  Its name may change in future versions.
+
+          The `govPass` credential class will change its name in 9.30.
 
         type: string
         enum: [ 'card', 'digitalId', 'govPass', 'mobile', 'piv', 'pivi', 'trackingTag', 'transact' ]
@@ -5933,24 +5938,24 @@ paths:
         clients:
 
           - Disable Card.  This privilege has no effect on the 7.90 REST API.  You need
-            Edit Cardholder to disable cards.
+            Edit Cardholders to disable cards.
 
           - Modify Access Control.  This privilege does not work on its own.  You need
-            Edit Cardholder as well as Modify Access Control to change group memberships.
+            Edit Cardholders as well as Modify Access Control to change group memberships.
 
-          - Add or Edit Cardholder Notes.  You also need Edit Cardholder to change notes
+          - Add or Edit Cardholder Notes.  You also need Edit Cardholders to change notes
             on an existing cardholder via the API.  In the administrative clients, you do
             not.
 
-          - Manage Locker Assignments.  You also need Edit Cardholder to assign and un-assign
+          - Manage Locker Assignments.  You also need Edit Cardholders to assign and un-assign
             lockers on a cardholder via the API.  In the administrative clients, you do not.
 
         The 'De-authorise Cardholder' privilege _is_ implemented.  It allows an operator to set a
         cardholder's 'authorised' field to false (denying all their future access requests) without
-        the Edit Cardholder privilege.
+        the Edit Cardholders privilege.
 
         In short, if your application intends to do more to cardholders than de-authorise them, you
-        will need an operator with Edit Cardholder.
+        will need an operator with Edit Cardholders.
 
         ---
 

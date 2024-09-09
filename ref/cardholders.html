@@ -352,7 +352,12 @@
                 </ul>
                 <h4 id="cardholder-api-changes-in-930">Cardholder API changes in 9.30</h4>
                 <ul>
-                  <li>POTENTIALLY BREAKING CHANGE: for efficiency, 9.30 orders search results differently from 9.20 when your query does not include a <code>sort</code> parameter. If you care about the order of your items, tell the server how you want them sorted.</li>
+                  <li>
+                    <p>POTENTIALLY BREAKING CHANGE: for efficiency, 9.30 orders search results differently from 9.20 when your query does not include a <code>sort</code> parameter. If you care about the order of your items, tell the server how you want them sorted.</p>
+                  </li>
+                  <li>
+                    <p>POTENTIALLY BREAKING CHANGE: GovPass cards may have a new credentialClass and GovPass card states will have new names, depending on the card type and the site&#39;s licences.</p>
+                  </li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-920">Cardholder API changes in 9.20</h4>
                 <ul>
@@ -1902,21 +1907,21 @@
                   <p>Note that the REST API does not implement the full suite of Command Centre privileges. In particular, the following privileges do not have the same effect on an operator&#39;s ability to modify a cardholder that they do in the administrative clients:</p>
                   <ul>
                     <li>
-                      <p>Disable Card. This privilege has no effect on the 7.90 REST API. You need Edit Cardholder to disable cards.</p>
+                      <p>Disable Card. This privilege has no effect on the 7.90 REST API. You need Edit Cardholders to disable cards.</p>
                     </li>
                     <li>
-                      <p>Modify Access Control. This privilege does not work on its own. You need Edit Cardholder as well as Modify Access Control to change group memberships.</p>
+                      <p>Modify Access Control. This privilege does not work on its own. You need Edit Cardholders as well as Modify Access Control to change group memberships.</p>
                     </li>
                     <li>
-                      <p>Add or Edit Cardholder Notes. You also need Edit Cardholder to change notes on an existing cardholder via the API. In the administrative clients, you do not.</p>
+                      <p>Add or Edit Cardholder Notes. You also need Edit Cardholders to change notes on an existing cardholder via the API. In the administrative clients, you do not.</p>
                     </li>
                     <li>
-                      <p>Manage Locker Assignments. You also need Edit Cardholder to assign and un-assign lockers on a cardholder via the API. In the administrative clients, you do not.</p>
+                      <p>Manage Locker Assignments. You also need Edit Cardholders to assign and un-assign lockers on a cardholder via the API. In the administrative clients, you do not.</p>
                     </li>
                   </ul>
                   <p>The &#39;De-authorise Cardholder&#39; privilege
-                    <em>is</em> implemented. It allows an operator to set a cardholder&#39;s &#39;authorised&#39; field to false (denying all their future access requests) without the Edit Cardholder privilege.</p>
-                  <p>In short, if your application intends to do more to cardholders than de-authorise them, you will need an operator with Edit Cardholder.</p>
+                    <em>is</em> implemented. It allows an operator to set a cardholder&#39;s &#39;authorised&#39; field to false (denying all their future access requests) without the Edit Cardholders privilege.</p>
+                  <p>In short, if your application intends to do more to cardholders than de-authorise them, you will need an operator with Edit Cardholders.</p>
                   <hr>
                   <p>The PATCH is best illustrated by example.</p>
                 </section>
@@ -3587,7 +3592,7 @@
               <p>These methods give you read access to the access groups in Command Centre. You can search for groups, see their lineage, list their cardholder members, and (in 8.40 or later) see how they affect those members.</p>
               <p>Your REST operator will need the &#39;View&#39; or &#39;Edit Access Groups&#39; operator privileges for the GETs.</p>
               <p>They also provide the links you need to manage memberships. Those links are hrefs to cardholders, to which you would send
-                <a href="#definition-Cardholder-PATCH-example">PATCH</a> requests containing your updates. Your REST operator will need &#39;Edit Cardholder&#39; privilege on the cardholder for that.</p>
+                <a href="#definition-Cardholder-PATCH-example">PATCH</a> requests containing your updates. Your REST operator will need &#39;Edit Cardholders&#39; privilege on the cardholder for that.</p>
               <h3 id="use-cases">Use cases</h3>
               <h4 id="finding-members-of-an-access-group-and-managing-memberships">Finding members of an access group, and managing memberships.</h4>
               <ol>
@@ -11516,6 +11521,7 @@
                       <p>This indicates the type of the card. It comes from an enumeration, and is a reliable way of determining the credential&#39;s type.</p>
                       <p>Added in 8.00.</p>
                       <p>The experimental <code>applePass</code> was added in 9.10. Its name may change in future versions.</p>
+                      <p>The <code>govPass</code> credential class will change its name in 9.30.</p>
                     </dd>
                     <dt data-property-name="trace" class="has-description">
                       <span class="json-property-name">trace:</span>
