@@ -590,10 +590,10 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns the current list of unprocessed alarms. The result will contain no more than 100 alarms; you should follow the <code>next</code> link, if it is present, to collect more.</p>
-                  <p>You can tell when you have loaded all the current alarms because there will not be a <code>next</code> link. Instead, there will be an <code>updates</code> link, which you may then follow to long-poll for live updates to alarms.</p>
-                  <p>The alarm summary only contains unprocessed alarms, but you can still access processed alarms by finding them in the
-                    <a href="#definition-Event-summary">event summary</a> and following its <code>alarm.href</code> link to the alarm details.</p>
+                  <p>You can tell when you have loaded all the current alarms because there will not be a <code>next</code> link. Instead, there will be an <code>updates</code> link which takes you to a different endpoint that long-polls for live updates to alarms.</p>
                   <p>Unlike the corresponding method that retrieves events, this call does not take query parameters to filter its results. You can limit the fields it returns, but it will always return every alarm that your operator can view. If you wish to restrict it to alarms in certain divisions, give your operator permission to view alarms in only those divisions.</p>
+                  <p>The alarm summary only contains unprocessed alarms. You can access a processed alarm by finding its corresponding event in the
+                    <a href="#definition-Event-summary">event summary</a> and following its <code>alarm.href</code> link to the alarm details.</p>
                   <p>Do not code this URL into your application. Take it from <code>alarms.alarms.href</code> in the results of <code>GET /api</code>.</p>
                 </section>
               </div>
@@ -769,12 +769,12 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>Long poll this link for live updates to alarms. If alarms occurred or changed since the previous call, no matter how long ago that was, it will return them immediately. If there are no updates pending, it will wait until one arrives. If none arrive before a timeout passes (about 30 seconds) the <code>updates</code> array in its response will be empty.</p>
+                  <p>This is a long poll for live updates to alarms. If alarms occurred or changed since the previous call, no matter how long ago that was, it will return them immediately. If there are no updates pending, it will wait until one arrives. If none arrive before a timeout passes (about 30 seconds) it will return an empty <code>updates</code> array and a fresh <code>next</code> link.</p>
                   <p>Whether or not the response contained updates the client should follow the <code>next</code> link to wait for the next updates. If your server receives a lot of alarm updates, wait some time between calls to reduce its load. You will not miss any updates: each response contains everything that happened since the previous call.</p>
                   <p>Do not wait if you receive 100 updates or more. 100 is the maximum number of updates current versions of CC will return in one batch, so if that happens you have fallen behind: there are more updates waiting and you can catch up by asking for them immediately.</p>
                   <p>Command Centre does not tell you which alarms were added, removed, or modified. It is up to you to match the incoming alarms against your own internal alarm list and determine the differences.</p>
                   <p>Do not code this URL into your application. Take it from <code>alarms.updates.href</code> in the results of <code>GET /api</code>, or from <code>updates</code> in the results of <code>GET /api/alarms</code>, or from <code>next</code> in the results of this call. Do not attempt to interpret or set the <code>id</code> query parameter in the URL, as it tracks your progress through the alarm history.</p>
-                  <p>Assuming you got the URL for this call from the response from another call, and your operator therefore has the privileges required to view alarms, this should always complete succesfully.</p>
+                  <p>Assuming you got the URL for this call from the response from another call, and your operator therefore has the privileges required to view alarms, this should always complete successfully.</p>
                 </section>
               </div>
             </div>

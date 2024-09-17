@@ -913,17 +913,17 @@ paths:
         more.
 
         You can tell when you have loaded all the current alarms because there will not be
-        a `next` link.  Instead, there will be an `updates` link, which you may then
-        follow to long-poll for live updates to alarms.
-
-        The alarm summary only contains unprocessed alarms, but you can still access
-        processed alarms by finding them in the [event summary](#definition-Event-summary)
-        and following its `alarm.href` link to the alarm details.
+        a `next` link.  Instead, there will be an `updates` link which takes you to a different
+        endpoint that long-polls for live updates to alarms.
 
         Unlike the corresponding method that retrieves events, this call does not take query
         parameters to filter its results.  You can limit the fields it returns, but it will always
         return every alarm that your operator can view.  If you wish to restrict it to alarms in
         certain divisions, give your operator permission to view alarms in only those divisions.
+
+        The alarm summary only contains unprocessed alarms.  You can access
+        a processed alarm by finding its corresponding event in the [event summary](#definition-Event-summary)
+        and following its `alarm.href` link to the alarm details.
 
         Do not code this URL into your application.  Take it from `alarms.alarms.href` in the
         results of `GET /api`.
@@ -943,10 +943,10 @@ paths:
         - Alarms
       summary: Get changes to alarms (or wait)
       description: |
-        Long poll this link for live updates to alarms.  If alarms occurred or changed since the
+        This is a long poll for live updates to alarms.  If alarms occurred or changed since the
         previous call, no matter how long ago that was, it will return them immediately.  If there
         are no updates pending, it will wait until one arrives.  If none arrive before a timeout
-        passes (about 30 seconds) the `updates` array in its response will be empty.
+        passes (about 30 seconds) it will return an empty `updates` array and a fresh `next` link.
 
         Whether or not the response contained updates the client should follow the `next` link to
         wait for the next updates.  If your server receives a lot of alarm updates, wait some time
@@ -968,7 +968,7 @@ paths:
 
         Assuming you got the URL for this call from the response from another call, and your
         operator therefore has the privileges required to view alarms, this should always complete
-        succesfully.
+        successfully.
 
       parameters:
         - $ref: "#/parameters/alarmfields"
