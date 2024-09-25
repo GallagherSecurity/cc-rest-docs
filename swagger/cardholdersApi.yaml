@@ -6010,8 +6010,13 @@ paths:
             another construct (a personalised notification, for example).
         403:
           description: |
-            There is no such cardholder, or the operator does not have permissions to delete it,
+            The operator does not have permissions to delete that cardholder
             or the server is not licensed for cardholder operations.
+
+            In versions up to and including 9.20 403 also means that there is no such cardholder.
+        404:
+          description: |
+            New in 9.30.  There is no such cardholder.
         409:
           <<: *409CH
 

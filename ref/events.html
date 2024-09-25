@@ -547,6 +547,8 @@
                     </tr>
                   </tbody>
                 </table>
+                <h3 id="per-event-bookmarks">Per-event bookmarks</h3>
+                <p>If you are running 8.70 or later and you put <code>previous</code>, <code>next</code>, or <code>updates</code> in the field list of an event search, the server will add those fields to each event. All server versions include links with those names at the end of results, but they are not useful if you crash out half way through processing a batch. The per-event links, only available in 8.70 and later and only on request, give you a place to pick up from without being re-sent the events you already processed.</p>
               </div>
             </div>
           </div>
@@ -2328,17 +2330,42 @@
               <p>To further improve the efficiency of your search, filter by event types and a time range.</p>
               <h4 id="searching-for-events-that-indicate-location-or-movement">Searching for events that indicate location or movement</h4>
               <p>If your server is running 8.60 or earlier, use the search filter <code>type=20001,20002,20003,20047,20107,42415</code>. That is not a complete list of movement event types but it includes the popular ones.</p>
-              <p>If your server is running 8.70-8.90 inclusive, give your operator the &#39;View cardholder events&#39; privilege instead of &#39;View events&#39;. Then request all events, and the server will only send you movements.</p>
-              <p>If your server is running 9.00 or later, the &#39;View cardholder events&#39; privilege is still an excellent idea but you can also use the search filter <code>type=hasLocation&amp;fields=location</code> (with a leading <code>?</code> or <code>&amp;</code> of course, and more fields if you need them). That will limit the results to location events. Then look at the <code>type</code> field inside the <code>location</code> block:</p>
+              <p>If your server is running 8.70-8.90 inclusive, give your operator the &#39;View cardholder events&#39; privilege instead of &#39;View events&#39;. Then you can request all events, and the server will only send you movements because that is all your operator is permitted to see.</p>
+              <p>If your server is running 9.00 or later, the &#39;View cardholder events&#39; privilege is still an excellent idea to limit your operator&#39;s vision but you can also use the search filter <code>type=hasLocation&amp;fields=location</code> (with a leading <code>?</code> or <code>&amp;</code> of course, and more fields if you need them). That will limit the results to location events.</p>
+              <p>When using a server at version 9.00 or better:</p>
+              <ol>
+                <li>
+                  <p><code>GET /api</code></p>
+                </li>
+                <li>
+                  <p>Get the URL of the head of the event queue by following the link at <code>features.events.updates.href</code>
+                    <a href="#operation--api-events-updates-get">↪</a> appending <code>type=hasLocation&amp;fields=location</code> with the appropriate query separator <code>?</code> or <code>&amp;</code> depending on whether there is a query parameter in the URL already. The call will block until a new location event arrives.</p>
+                </li>
+                <li>
+                  <p>If this is your first time here you will have an array containing one event. If you looped up from a later step, the array may contain many more. In any case, process all the events in the results using the advice immediately below about interpreting the <code>location</code> block. Also follow the advice in
+                    <a href="#downloading-the-entire-event-database">downloading the entire event database</a> about keeping track of your position if you might have to abort mid-batch. Note that that advises using the <code>next</code> field, but if you want long polls you will be using the <code>updates</code> field.</p>
+                </li>
+                <li>
+                  <p>Sleep for a short time to reduce load on the server.</p>
+                </li>
+                <li>
+                  <p>Follow the link at <code>updates.href</code> for a long poll that waits for new events to arrive, or follow <code>next.href</code> for a call that will return immediately even if there are no new events for you.</p>
+                </li>
+                <li>
+                  <p>Loop up to process the events you received.</p>
+                </li>
+              </ol>
+              <p>Interpreting the <code>location</code> block:</p>
               <ul>
                 <li>
-                  <p>If you are simply after a person&#39;s location, use the <code>afterLocation</code> field inside the <code>location</code> block. That could be an access zone or division if they moved or attempted to move, or a workstation or alarms terminal if they logged into one of those. The <code>canonicalTypeName</code> field inside the block will tell you what kind of item it is. Future versions of Command Centre or customisations might add more.</p>
+                  <p>If you are simply after a person&#39;s location and do not care how they arrived there, use the <code>afterLocation</code> block inside <code>location</code>. The <code>canonicalTypeName</code> field in there will tell you what kind of location it is. The
+                    <a href="#definition-Event-detail">schema definition</a> describes <code>afterLocation</code> in more detail.</p>
                 </li>
                 <li>
-                  <p>If you are after movements, which happen when a door grants a person access or an operator moves them on a tag board or via the API, and happen to some types of visitors when their host moves, ignore all events except those that have a <code>location.type</code> of <code>moved</code>. Look at the <code>afterLocation</code> to see where they landed. It will be an access zone or (for departing visitors) a reception. There will also be a <code>beforeLocation</code> if the door had two zones configured on it, in case you&#39;re interested in where they came from. The <code>canonicalTypeName</code> field in both blocks will tell you what kind of item it is.</p>
+                  <p>If you are after movements, which happen when a door grants a person access or an operator moves them on a tag board or via the API, and happen to some types of visitors when their host moves, ignore all events except those that have a <code>location.type</code> of <code>moved</code>. Look at the <code>afterLocation</code> to see where they landed. There will also be a <code>beforeLocation</code> if the door had two zones configured on it, in case you&#39;re interested in where they came from. The <code>canonicalTypeName</code> field in both blocks will tell you what kinds of item they are.</p>
                 </li>
                 <li>
-                  <p>If you are after denials, which happen when a person authenticates but fails the access check, look at the events that have a <code>location.type</code> of <code>denied</code>. Like &#39;moved&#39;-type events, <code>location.afterLocation</code> will show where they were. The difference is that with &#39;denied&#39;-type events, they started there too.</p>
+                  <p>If you are after denials, which happen when a person authenticates but fails the access check, look at the events that have a <code>location.type</code> of <code>denied</code>. Like &#39;moved&#39;-type events, <code>location.afterLocation</code> will show where they ended up. The difference is that with &#39;denied&#39;-type events, they started there too.</p>
                 </li>
               </ul>
               <p>Each of those fields is covered in the
@@ -2823,7 +2850,7 @@
                     </div>
                     <div class="prop-value">
                       <p>Sets the fields you want in your results.</p>
-                      <p>This is the list of valid fields for 8.40, but it is different for older server versions, so check with the topic
+                      <p>This is the list of currently-valid fields, but it is different for older server versions so check with the topic
                         <a href="#topic-Event-field-specifiers">on event field specifiers</a>.</p>
                     </div>
                   </div>
@@ -3221,7 +3248,7 @@
                     </div>
                     <div class="prop-value">
                       <p>Sets the fields you want in your results.</p>
-                      <p>This is the list of valid fields for 8.40, but it is different for older server versions, so check with the topic
+                      <p>This is the list of currently-valid fields, but it is different for older server versions so check with the topic
                         <a href="#topic-Event-field-specifiers">on event field specifiers</a>.</p>
                     </div>
                   </div>
@@ -3468,7 +3495,7 @@
                     </div>
                     <div class="prop-value">
                       <p>Sets the fields you want in your results.</p>
-                      <p>This is the list of valid fields for 8.40, but it is different for older server versions, so check with the topic
+                      <p>This is the list of currently-valid fields, but it is different for older server versions so check with the topic
                         <a href="#topic-Event-field-specifiers">on event field specifiers</a>.</p>
                     </div>
                   </div>

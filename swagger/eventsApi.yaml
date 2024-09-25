@@ -345,32 +345,58 @@ tags:
     types but it includes the popular ones.
 
     If your server is running 8.70-8.90 inclusive, give your operator the 'View cardholder events'
-    privilege instead of 'View events'.  Then request all events, and the server will only send you
-    movements.
+    privilege instead of 'View events'.  Then you can request all events, and the server will only
+    send you movements because that is all your operator is permitted to see.
 
     If your server is running 9.00 or later, the 'View cardholder events' privilege is still an
-    excellent idea but you can also use the search filter `type=hasLocation&fields=location` (with
-    a leading `?` or `&` of course, and more fields if you need them).  That will limit the results
-    to location events.  Then look at the `type` field inside the `location` block:
+    excellent idea to limit your operator's vision but you can also use the search filter
+    `type=hasLocation&fields=location` (with a leading `?` or `&` of course, and more fields if you
+    need them).  That will limit the results to location events.
 
-    * If you are simply after a person's location, use the `afterLocation` field inside the
-      `location` block.  That could be an access zone or division if they moved or attempted to
-      move, or a workstation or alarms terminal if they logged into one of those.  The
-      `canonicalTypeName` field inside the block will tell you what kind of item it is.  Future
-      versions of Command Centre or customisations might add more.
+    When using a server at version 9.00 or better:
+
+    1. `GET /api`
+
+    2. Get the URL of the head of the event queue by following the link at
+       `features.events.updates.href` [↪](#operation--api-events-updates-get) appending
+       `type=hasLocation&fields=location` with the appropriate query separator `?` or `&` depending
+       on whether there is a query parameter in the URL already.  The call will block until a new
+       location event arrives.
+
+    5. If this is your first time here you will have an array containing one event.  If you looped
+       up from a later step, the array may contain many more.  In any case, process all the events
+       in the results using the advice immediately below about interpreting the `location` block.
+       Also follow the advice in [downloading the entire event
+       database](#downloading-the-entire-event-database) about keeping track of your position if you
+       might have to abort mid-batch.  Note that that advises using the `next` field, but if you
+       want long polls you will be using the `updates` field.
+
+    4. Sleep for a short time to reduce load on the server.
+
+    5. Follow the link at `updates.href` for a long poll that waits for new events to arrive, or
+       follow `next.href` for a call that will return immediately even if there are no new events
+       for you.
+
+    6. Loop up to process the events you received.
+
+    Interpreting the `location` block:
+
+    * If you are simply after a person's location and do not care how they arrived there, use the
+      `afterLocation` block inside `location`.  The `canonicalTypeName` field in there will tell you
+      what kind of location it is.  The [schema definition](#definition-Event-detail) describes
+      `afterLocation` in more detail.
 
     * If you are after movements, which happen when a door grants a person access or an operator
       moves them on a tag board or via the API, and happen to some types of visitors when their host
       moves, ignore all events except those that have a `location.type` of `moved`.  Look at the
-      `afterLocation` to see where they landed.  It will be an access zone or (for departing
-      visitors) a reception.  There will also be a `beforeLocation` if the door had two zones
-      configured on it, in case you're interested in where they came from.  The `canonicalTypeName`
-      field in both blocks will tell you what kind of item it is.
+      `afterLocation` to see where they landed.  There will also be a `beforeLocation` if the door
+      had two zones configured on it, in case you're interested in where they came from.  The
+      `canonicalTypeName` field in both blocks will tell you what kinds of item they are.
 
     * If you are after denials, which happen when a person authenticates but fails the access check,
       look at the events that have a `location.type` of `denied`.  Like 'moved'-type events,
-      `location.afterLocation` will show where they were.  The difference is that with 'denied'-type
-      events, they started there too.
+      `location.afterLocation` will show where they ended up.  The difference is that with
+      'denied'-type events, they started there too.
 
     Each of those fields is covered in the [schema definition](#definition-Event-detail).
 
@@ -735,6 +761,15 @@ x-spectacle-topics:
       | 8.20 to 8.30 | defaults,cardholder.pdf_XXXX<br>or<br>defaults,details<br>or<br>defaults,cardholder.pdf_XXXX,details
       | 8.40 and later | any
 
+      ### Per-event bookmarks
+
+      If you are running 8.70 or later and you put `previous`, `next`, or `updates` in the field
+      list of an event search, the server will add those fields to each event.  All server versions
+      include links with those names at the end of results, but they are not useful if you crash out
+      half way through processing a batch.  The per-event links, only available in 8.70 and later
+      and only on request, give you a place to pick up from without being re-sent the events you
+      already processed.
+
 x-common-blocks-this-is-made-up:
   fds_ignored: &FIELDSDESC_SUM
     description: |
@@ -895,7 +930,7 @@ parameters:
     description: |
       Sets the fields you want in your results.
 
-      This is the list of valid fields for 8.40, but it is different for older server versions, so
+      This is the list of currently-valid fields, but it is different for older server versions so
       check with the topic [on event field specifiers](#topic-Event-field-specifiers).
 
 paths:
