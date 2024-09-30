@@ -1294,35 +1294,35 @@ flowchart TD
   %% https://github.com/GallagherSecurity/cc-rest-docs/blob/master/training/rest_training.adoc#the-request-process
   
   classDef red fill:#ff9090
-  o_noapikey([Raise invalid API key alarm,\nreturn 401]):::red
-  o_needacert(["Raise alarm\n'client item needs a thumbprint',\nreturn 401"]):::red
-  o_badprint(["Raise alarm\n'invalid client certificate',\nthumbprint in details,\nreturn 401"]):::red
-  o_badip(["Raise 'bad source IP' alarm,\nreturn 401"]):::red
-  o_disabled(["Return 401 with\nX-Authentication-Message\nheader"]):::red
+  o_noapikey([Raise invalid API key alarm, return 401]):::red
+  o_needacert(["Raise alarm 'client item needs a thumbprint', return 401"]):::red
+  o_badprint(["Raise alarm 'invalid client certificate', thumbprint in details, return 401"]):::red
+  o_badip(["Raise 'bad source IP' alarm, return 401"]):::red
+  o_disabled(["Return 401 with X-Authentication-Message header"]):::red
   o_403(["Return 403"]):::red
-  o_clientquit(["Client faults,\nserver logs all it can\n(which is not much)"]):::red
+  o_clientquit(["Client faults, server logs all it can (which is not much)"]):::red
 
   op1["Client connects, server sends its certificate"]
-  o_reqclientcert["Server requests client certificate.\n(TLS step one)"]
+  o_reqclientcert["Server requests client certificate. (TLS step one)"]
   o_clientsendscert["Client sends its certificate"]
-  o_clientreq["Client sends API request\nincluding API key"]
+  o_clientreq["Client sends API request including API key"]
 
-  o_argcheck(["Proceed to argument checks\nand execution"])
+  o_argcheck(["Proceed to argument checks and execution"])
   style o_argcheck fill:#04ff04
 
-  cond{"Client accepts\nserver cert?"}
-  c_apikeycheck{"Is there a\nREST Client item\nwith that API key?"}
-  c_versioncheck{"What version\nis the server?"}
-  c_clientcertcheck1{"Is there a thumbprint\non that REST Client item?"}
-  c_clientcertcheck2{"Does the server allow clients with no key?\n('Enable REST Clients with no client certificate'\nserver property on)"}
+  cond{"Client accepts server cert?"}
+  c_apikeycheck{"Is there a REST Client item with that API key?"}
+  c_versioncheck{"What version is the server?"}
+  c_clientcertcheck1{"Is there a thumbprint on that REST Client item?"}
+  c_clientcertcheck2{"Does the server allow clients with no key? ('Enable REST Clients with no client certificate' server property on)"}
 
-  c_clientcertcheck840{"Does the server ignore client certs?\n('Require pinned client certificates'\nserver property off)"}
+  c_clientcertcheck840{"Does the server ignore client certs? ('Require pinned client certificates' server property off)"}
 
-  c_correctcert{"Does the client certificate match\nthe client item's thumbprint?"}
-  c_sourceip{"Client item has IP restrictions,\nand the client does not meet them?"}
-  c_disabled{"Client item is disabled\n(8.90 or later)?"}
-  c_licence{"Server has licence\nfor requested operation?"}
-  c_privcheck{"Operator has privilege\nfor requested operation?"}
+  c_correctcert{"Does the client certificate match the client item's thumbprint?"}
+  c_sourceip{"Client item has IP restrictions, and the client does not meet them?"}
+  c_disabled{"Client item is disabled (8.90 or later)?"}
+  c_licence{"Server has licence for requested operation?"}
+  c_privcheck{"Operator has privilege for requested operation?"}
 
 
   start([Start]) --> op1
