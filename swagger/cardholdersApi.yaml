@@ -634,17 +634,18 @@ x-common-blocks:
     description: |
       When the server sends this array to you, it contains two hrefs for each cardholder due to
       arrive in this visit.  The first, outside the `cardholder` block, is the URL you
-      [PATCH](#operation--api-visits--id--visitors--visitorId--patch) to change their state (new in
+      [PATCH](#operation--api-visits--id--visitors--visitorId--patch) to change the state of their visit (new in
       8.90).  The one inside the `cardholder` block is simply an href to the cardholder item.  You
       can use either href when removing visitors from a visit with a PATCH.
 
       The `status` block contains two fields.  `value` is a human-readable description of their
-      state in by the server's language.  `type` comes from a fixed enumeration.
+      state in the server's language.  `type` comes from a fixed enumeration.
 
       The `invitation` string is opaque:  please do not interpret it.
 
-      A visit with no visitors on it will not appear in Gallagher's visitor management
-      application.  Why clutter the screen if you're not expecting anybody, after all.
+      Note that a visit with no visitors on it will come out of the API but will not appear in
+      Gallagher's visitor management application.  Why clutter the screen if you're not expecting
+      anybody, after all.
 
       When you send a visitor block to the server in a POST to create a visit, just send an array of
       hrefs to cardholders.  8.50 does not accept the same kind of visitor hrefs here
@@ -653,7 +654,7 @@ x-common-blocks:
       visitors to 'expected'.
 
       When you send a visitor block in a PATCH to edit an existing visit, the server expects it to
-      contain one or two arrays called `add` and `remove`.  The `add` array should contain
+      contain an array called `add`, an array called `remove`, or both.  The `add` array should contain
       cardholder hrefs, exactly as you would send when creating a visit.  The `remove` array should
       contain either of the hrefs you received for the cardholder in the GET.  The PATCH example
       shows two hrefs removing the same cardholder.
@@ -683,6 +684,7 @@ x-common-blocks:
             Management kiosk, allows the visitor to sign in.
 
             This does not appear unless you ask for it using the `fields` query parameter.
+            Because it is inside the `visitors` block, name it `visitors.invitation` in the field list.
         status:
           type: object
           description: |
