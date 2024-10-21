@@ -1988,8 +1988,16 @@ paths:
                 } }
 
         400: { description: The server could not parse the request body.  Check your JSON. }
-        401: { description: The operator does not have privilege to view the monitored items.  This will change to 403 in a future version of Command Centre. }
-        403: { description: The site does not have the RESTStatus licence. }
+
+        401:
+          description: |
+            In versions prior to 9.30 it means the operator does not have privilege to view the
+            monitored items.
+
+        403:
+          description: |
+            The site does not have the RESTStatus licence or, in 9.30 and later, the operator does
+            not have view privileges on all the monitored items.
 
     get:
       tags: [Items]
