@@ -91,7 +91,16 @@
                 <a href="#operation--api-access_groups-get"> Search access groups </a>
               </li>
               <li>
+                <a href="#operation--api-access_groups-post"> Create an access group [coming soon] </a>
+              </li>
+              <li>
                 <a href="#operation--api-access_groups--id--get"> Get details of an access group </a>
+              </li>
+              <li>
+                <a href="#operation--api-access_groups--id--patch"> Update an access group [coming soon] </a>
+              </li>
+              <li>
+                <a href="#operation--api-access_groups--id--delete"> Remove an access group [coming soon] </a>
               </li>
               <li>
                 <a href="#operation--api-access_groups--id--cardholders-get"> Get membership of an access group </a>
@@ -263,6 +272,8 @@
           <a href="#definition-Access-group-search"> Access group search </a>
           <a href="#definition-Access-group-summary"> Access group summary </a>
           <a href="#definition-Access-group-detail"> Access group detail </a>
+          <a href="#definition-Access-group-POST-example"> Access group POST example </a>
+          <a href="#definition-Access-group-PATCH-example"> Access group PATCH example </a>
           <a href="#definition-Access-group-membership"> Access group membership </a>
           <a href="#definition-Locker-bank-search"> Locker bank search </a>
           <a href="#definition-Locker-bank-summary"> Locker bank summary </a>
@@ -357,6 +368,10 @@
                   </li>
                   <li>
                     <p>POTENTIALLY BREAKING CHANGE: GovPass cards may have a new credentialClass and GovPass card states will have new names, depending on the card type and the site&#39;s licences.</p>
+                  </li>
+                  <li>
+                    <p>You can create, modify, and delete
+                      <a href="#tag-Access-groups">access groups</a>.</p>
                   </li>
                 </ul>
                 <h4 id="cardholder-api-changes-in-920">Cardholder API changes in 9.20</h4>
@@ -2265,6 +2280,14 @@
                 <section class="swagger-responses">
                   <div class="prop-row prop-group">
                     <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
@@ -2490,6 +2513,14 @@
                 <section class="swagger-responses">
                   <div class="prop-row prop-group">
                     <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
                       <div class="prop-title">204 No Content</div>
                     </div>
                     <div class="prop-value">
@@ -2592,6 +2623,14 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
                       <div class="prop-title">204 No Content</div>
@@ -3881,6 +3920,155 @@
               </div>
             </div>
           </div>
+          <div id="operation--api-access_groups-post" class="operation panel" data-traverse-target="operation--api-access_groups-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Access-groups">Access groups</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create an access group [coming soon]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/access_groups</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Creates a new access group, setting its basic fields, parent, PDFs, and some membership defaults.</p>
+                  <p>Take this URL from the <code>href</code> field in the <code>features.accessGroups.accessGroups.href</code> field of <code>GET /api</code>.</p>
+                  <p>The POST expects a document in the same format as
+                    <a href="#operation--api-access_groups--id--get">the access group detail</a>. All fields except <code>division</code> are optional.</p>
+                  <p>You will achieve better performance if you combine all you want to achieve into one POST, rather than creating the access group bare with a POST then refining it with PATCHes later.</p>
+                  <p>When successful it returns a location header containing the address of the new access group.</p>
+                  <p>Note that you can only create one access group per POST.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Access group POST example">Access group POST example</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>This can be a large object as shown, or a tiny one, because the only field you must have in the POST is the division.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;R&amp;D special projects group.&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Deep underground.&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/352&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+  <span class="hljs-attr">&quot;parent&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/100&quot;</span>
+  },
+  <span class="hljs-attr">&quot;membershipAutoRemoveExpired&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;membershipFromDefault&quot;</span>: <span class="hljs-string">&quot;2025-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;membershipUntilDefault&quot;</span>: <span class="hljs-string">&quot;2025-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;personalDataDefinitions&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/personal_data_fields/5516&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/personal_data_fields/9370&quot;</span>
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the POST did not describe a valid access group.</p>
+                      <p>If you see &#39;Invalid Access Group JSON object&#39;, the server could not parse the JSON in the body of your POST. Remember to quote all strings, especially those than contain @ symbols.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege that allows creating access groups.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Headers
+                    <span>(201 Created)</span>
+                  </h5>
+                  <section class="swagger-response-headers">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="swagger-response-header-name"></th>
+                          <th class="swagger-response-header-description"></th>
+                          <th class="swagger-response-header-data-type"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="swagger-response-header-location">
+                          <td> location
+                            <td>
+                              <p>The href of the new access group.</p>
+                            </td>
+                            <td>
+                              <span class="json-property-type">string</span>
+                              <span class="json-property-format">(url)</span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </section>
+                </section>
+              </div>
+            </div>
+          </div>
           <div id="operation--api-access_groups--id--get" class="operation panel" data-traverse-target="operation--api-access_groups--id--get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
@@ -4126,6 +4314,228 @@
                   <!-- </div> -->
                 </section>
               </div>
+            </div>
+          </div>
+          <div id="operation--api-access_groups--id--patch" class="operation panel" data-traverse-target="operation--api-access_groups--id--patch">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Access-groups">Access groups</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Update an access group [coming soon]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">PATCH</span>
+                  <span class="operation-path">/api/access_groups/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>
+                    <strong>
+                      <em>DRAFT DOCUMENTATION</em>
+                    </strong>
+                  </p>
+                  <p>This is the call you use to modify fields on an access group.</p>
+                  <p>The PATCH expects a document in the same format as the
+                    <a href="#definition-Access-group-detail">the access group detail</a> but with fewer fields, given in
+                    <a href="#definition-Access-group-POST-example">this POST example</a>. Note that you cannot change everything on an access group that the API shows you, such as its membership, access, and permissions. You can change its basic fields, PDFs, and membership defaults.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Access group PATCH example">Access group PATCH example</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>There are no mandatory fields.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;personalDataDefinitions&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/personal_data_fields/5516&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/personal_data_fields/9370&quot;</span>
+      }
+    ]
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. Future versions will return feedback from the server about your PATCH.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the PATCH did not describe a valid access group. See the body of the response for help on what went wrong. It may be that you tried to use the name of another access group: no two items of the same type can have the same name. Or you may have tried to set the division to one that is not visible to you, or you may have attempted to create a loop in the access group hierarchy.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has a privilege that allows viewing the item but not modifying it, or you tried to set the division to one you cannot configure, or the server is missing the necessary licence.</p>
+                      <p>You need either the &#39;Edit Access Groups&#39; on the item you are changing, which means you need on it on the item&#39;s current division. You also need it on the new division, if you are changing that.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of an access group or your operator does not have the privilege to view it. This probably means you have built the URL yourself instead of taking it from the results of a
+                        <a href="#operation--api-access-groups--operation--get">GET</a>.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The item is locked for editing by another operator. The body of the response will tell you which operator is holding the lock.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-access_groups--id--delete" class="operation panel" data-traverse-target="operation--api-access_groups--id--delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Access-groups">Access groups</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Remove an access group [coming soon]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/access_groups/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>
+                    <strong>
+                      <em>DRAFT DOCUMENTATION</em>
+                    </strong>
+                  </p>
+                  <p>This call removes an access group from Command Centre.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Deleting the access group failed. This happens when the item is still being used by another item.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has the permission to view the item but not delete it, or the server is not licensed for the operation.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of an access group or the operator is not privileged to view it.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
             </div>
           </div>
           <div id="operation--api-access_groups--id--cardholders-get" class="operation panel" data-traverse-target="operation--api-access_groups--id--cardholders-get">
@@ -4950,6 +5360,14 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
                   <div class="prop-row prop-group">
                     <div class="prop-name">
                       <div class="prop-title">204 No Content</div>
@@ -13556,8 +13974,7 @@
                         </dt>
                         <dd>
                           <p>Names and hrefs of the access zones to which this access group gives access, and the schedules that govern it.</p>
-                          <p>Your operator needs &#39;View Schedules&#39; to see schedule hrefs, and &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39; to see access zone hrefs.</p>
-                          <p>New to 8.40.</p>
+                          <p>Your operator needs &#39;View Schedules&#39; to see schedule hrefs, and &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39; to see access zone hrefs. New to 8.40.</p>
                         </dd>
                         <dt data-property-name="saltoAccess" class="has-description">
                           <span class="json-property-name">saltoAccess:</span>
@@ -13757,6 +14174,206 @@
       }
     }
   ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Access-group-POST-example" class="definition panel" data-traverse-target="definition-Access-group-POST-example">
+            <h2 class="panel-title">
+              <a name="/definitions/Access group POST example"></a>Access group POST example:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>
+                    <strong>
+                      <em>DRAFT DOCUMENTATION</em>
+                    </strong>
+                  </p>
+                  <p>This is an example of a POST you could use to create an access group, containing examples all the settable fields.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="name" class="has-description">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>All items have a name.</p>
+                    </dd>
+                    <dt data-property-name="description">
+                      <span class="json-property-name">description:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="division" class="has-description">
+                      <span class="json-property-name">division:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-required"></span>
+                    </dt>
+                    <dd>
+                      <p>Mandatory when creating any access group. In this example, we want the access group in division 352.</p>
+                    </dd>
+                    <dt data-property-name="notes">
+                      <span class="json-property-name">notes:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="parent" class="has-description">
+                      <span class="json-property-name">parent:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A link to the group&#39;s parent.</p>
+                      <p>This field is optional in a POST because unlike divisions, which must have a parent, an access group can stand alone. But should you wish it to be a member of another, link it here.</p>
+                      <p>An access group may be a member of only one other: multiple inheritance is not possible.</p>
+                      <p>Use the blank string <code>&quot;&quot;</code> to clear a group&#39;s parent in a PATCH.</p>
+                    </dd>
+                    <dt data-property-name="membershipAutoRemoveExpired" class="has-description">
+                      <span class="json-property-name">membershipAutoRemoveExpired:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>If true, memberships will be removed when their <code>until</code> time passes. If false, they will remain on the cardholder, inactive.</p>
+                    </dd>
+                    <dt data-property-name="membershipFromDefault" class="has-description">
+                      <span class="json-property-name">membershipFromDefault:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>When a cardholder is granted membership of this access group without specifying a &#39;from&#39; time, this default will apply. If left blank, such a membership will not have a &#39;from&#39; time (meaning it will be effective immediately, provided its &#39;until&#39; time is blank or in the future).</p>
+                      <p>To clear it, send the blank string <code>&quot;&quot;</code>.</p>
+                    </dd>
+                    <dt data-property-name="membershipUntilDefault" class="has-description">
+                      <span class="json-property-name">membershipUntilDefault:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>When a cardholder is granted membership of this access group without specifying an &#39;until&#39; time, this default will apply. If blank, such a membership will not have an &#39;until&#39; time (meaning it will be effective until removed).</p>
+                      <p>To clear it, send the blank string <code>&quot;&quot;</code>.</p>
+                    </dd>
+                    <dt data-property-name="personalDataDefinitions" class="has-description">
+                      <span class="json-property-name">personalDataDefinitions:</span>
+                      <span class="json-property-type">object[]</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is where you give PDFs to cardholders. All the members of this access group will be able to have values for the PDFs you list in this array.</p>
+                      <p>Each element should contain the href of a PDF definition. You can take those from the PDFs controller or other API routes, including the <code>personalDataDefinitions</code> block of another access group.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">object</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;R&amp;D special projects group.&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Deep underground.&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/352&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;&quot;</span>,
+  <span class="hljs-attr">&quot;parent&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/100&quot;</span>
+  },
+  <span class="hljs-attr">&quot;membershipAutoRemoveExpired&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;membershipFromDefault&quot;</span>: <span class="hljs-string">&quot;2025-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;membershipUntilDefault&quot;</span>: <span class="hljs-string">&quot;2025-01-01T00:00:00Z&quot;</span>,
+  <span class="hljs-attr">&quot;personalDataDefinitions&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/personal_data_fields/5516&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/personal_data_fields/9370&quot;</span>
+    }
+  ]
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Access-group-PATCH-example" class="definition panel" data-traverse-target="definition-Access-group-PATCH-example">
+            <h2 class="panel-title">
+              <a name="/definitions/Access group PATCH example"></a>Access group PATCH example:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>
+                    <strong>
+                      <em>DRAFT DOCUMENTATION</em>
+                    </strong>
+                  </p>
+                  <p>The body you would send to an access group PATCH has the same schema as an
+                    <a href="#definition-Access-group-POST-example">access group POST</a> apart from the <code>personalDataDefinitions</code> block.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="personalDataDefinitions" class="has-description">
+                      <span class="json-property-name">personalDataDefinitions:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This object can contain two arrays named <code>add</code> and <code>remove</code>. Every element you put in those arrays should contain a string called <code>href</code> giving the href of a PDF that you want to add to or remove from the access group.</p>
+                      <p>In this example we are adding PDF 5516 and removing 9370.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;personalDataDefinitions&quot;</span>: {
+    <span class="hljs-attr">&quot;add&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/personal_data_fields/5516&quot;</span>
+      }
+    ],
+    <span class="hljs-attr">&quot;remove&quot;</span>: [
+      {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/personal_data_fields/9370&quot;</span>
+      }
+    ]
+  }
 }
 </code></pre> </body>
                   </html>

@@ -98,6 +98,8 @@ info:
     * POTENTIALLY BREAKING CHANGE:  GovPass cards may have a new credentialClass and GovPass card
       states will have new names, depending on the card type and the site's licences.
 
+    * You can create, modify, and delete [access groups](#tag-Access-groups).
+
     #### Cardholder API changes in 9.20
 
     * You can filter by cardholders' direct divisions.  The current division search is recursive:  it
@@ -4210,7 +4212,6 @@ definitions:
 
               Your operator needs 'View Schedules' to see schedule hrefs, and 'View Site', 'Edit
               Site', or 'Override' to see access zone hrefs.
-
               New to 8.40.
 
             example: [ {
@@ -4313,6 +4314,108 @@ definitions:
               } } ]
 
       - $ref: "#/definitions/Access group summary"
+
+  Access group POST example:
+    description: |
+      ***DRAFT DOCUMENTATION***
+
+      This is an example of a POST you could use to create an access group, containing examples all
+      the settable fields.
+
+    required: [ division ]
+    properties:
+      name:
+        type: string
+        description: All items have a name.
+        example: "R&D special projects group."
+      description:
+        type: string
+        example: "Deep underground."
+      division:
+        type: object
+        description:  |
+          Mandatory when creating any access group.  In this example, we want the access group in
+          division 352.
+        example:
+          href: "https://localhost:8904/api/divisions/352"
+      notes:
+        type: string
+        example: ""
+      parent:
+        type: object
+        description: |
+          A link to the group's parent.
+
+          This field is optional in a POST because unlike divisions, which must have a parent, an
+          access group can stand alone.  But should you wish it to be a member of another, link it
+          here.
+
+          An access group may be a member of only one other:  multiple inheritance is not possible.
+
+          Use the blank string `""` to clear a group's parent in a PATCH.
+        example:
+          href: "https://localhost:8904/api/access_groups/100"
+      membershipAutoRemoveExpired:
+        type: boolean
+        description: |
+          If true, memberships will be removed when their `until` time passes.  If false, they will
+          remain on the cardholder, inactive.
+        example: true
+      membershipFromDefault:
+        type: string
+        description: |
+          When a cardholder is granted membership of this access group without specifying a 'from'
+          time, this default will apply.  If left blank, such a membership will not have a 'from'
+          time (meaning it will be effective immediately, provided its 'until' time is blank or in
+          the future).
+
+          To clear it, send the blank string `""`.
+        formate: date-time
+        example: "2025-01-01T00:00:00Z"
+      membershipUntilDefault:
+        type: string
+        description: |
+          When a cardholder is granted membership of this access group without specifying an 'until'
+          time, this default will apply.  If blank, such a membership will not have an 'until' time
+          (meaning it will be effective until removed).
+
+          To clear it, send the blank string `""`.
+        formate: date-time
+        example: "2025-01-01T00:00:00Z"
+
+      personalDataDefinitions:
+        description: |
+          This is where you give PDFs to cardholders.  All the members of this access group will be
+          able to have values for the PDFs you list in this array.
+
+          Each element should contain the href of a PDF definition.  You can take those from the
+          PDFs controller or other API routes, including the `personalDataDefinitions` block of
+          another access group.
+        type: array
+        items: {type: object}
+        example:
+          - "href": "https://localhost:8904/api/personal_data_fields/5516"
+          - "href": "https://localhost:8904/api/personal_data_fields/9370"
+
+  Access group PATCH example:
+    description: |
+      ***DRAFT DOCUMENTATION***
+
+      The body you would send to an access group PATCH has the same schema as an [access group
+      POST](#definition-Access-group-POST-example) apart from the `personalDataDefinitions` block.
+
+    properties:
+      personalDataDefinitions:
+        description: |
+          This object can contain two arrays named `add` and `remove`.  Every element you put in
+          those arrays should contain a string called `href` giving the href of a PDF that you want
+          to add to or remove from the access group.
+
+          In this example we are adding PDF 5516 and removing 9370.
+        type: object
+        example:
+          "add": [ { "href": "https://localhost:8904/api/personal_data_fields/5516" } ]
+          "remove": [ {"href": "https://localhost:8904/api/personal_data_fields/9370" } ]
 
   Access group membership:
     description: |
@@ -6009,6 +6112,7 @@ paths:
       description: |
         This call removes a cardholder from Command Centre.
       responses: 
+        200: { description: "Success." }
         204: { description: "Success." }
         400:
           description: |
@@ -6086,6 +6190,7 @@ paths:
           type: string
           description: "An opaque identifier for the card."
       responses: 
+        200: { description: "Success." }
         204: { description: "Success." }
         403: { description: "The operator does not have a privilege that allows editing that cardholder." }
         404: { description: "That card is not on that cardholder." }
@@ -6115,6 +6220,7 @@ paths:
           type: string
           description: "An opaque identifier for the link between the cardholder and the competency."
       responses: 
+        200: { description: "Success." }
         204: { description: "Success." }
         403: { description: "The operator does not have a privilege that allows editing that cardholder." }
         404: { description: "That is not the href of a cardholder's competency." }
@@ -6570,6 +6676,56 @@ paths:
           schema: { $ref: '#/definitions/Access group search' }
         403: { description: "The site does not have the RESTCardholders licence." }
 
+    post:
+      tags:
+        - Access groups
+      summary: Create an access group [coming soon]
+      description: |
+        Creates a new access group, setting its basic fields, parent, PDFs, and some membership
+        defaults.
+
+        Take this URL from the `href` field in the `features.accessGroups.accessGroups.href` field
+        of `GET /api`.
+
+        The POST expects a document in the same format as [the access group
+        detail](#operation--api-access_groups--id--get).  All fields except `division` are optional.
+
+        You will achieve better performance if you combine all you want to achieve into one POST,
+        rather than creating the access group bare with a POST then refining it with PATCHes later.
+
+        When successful it returns a location header containing the address of the new access group.
+
+        Note that you can only create one access group per POST.
+
+      parameters:
+        - name: "this string necessary but not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Access group POST example'}
+          description: |
+            This can be a large object as shown, or a tiny one, because the only field you must
+            have in the POST is the division.
+
+      responses: 
+        201: 
+          description: "Success."
+          headers:
+            location:
+              type: string
+              format: url
+              description: The href of the new access group.
+        400:
+          description: |
+            The body of the POST did not describe a valid access group.
+
+            If you see 'Invalid Access Group JSON object', the server could not parse the JSON in
+            the body of your POST.  Remember to quote all strings, especially those than contain @
+            symbols.
+
+        403:
+          description: |
+            The operator does not have a privilege that allows creating access groups.
+
   /api/access_groups/{id}:
     get:
       tags:
@@ -6618,6 +6774,87 @@ paths:
           description: |
             That is not the URL of an access group, or the operator does not have a privilege that
             allows viewing it, such as 'Modify Access Control' or 'View Access Groups'.
+
+    patch:
+      tags:
+        - Access groups
+      summary: Update an access group [coming soon]
+      description: |
+        ***DRAFT DOCUMENTATION***
+
+        This is the call you use to modify fields on an access group.
+
+        The PATCH expects a document in the same format as the [the access group
+        detail](#definition-Access-group-detail) but with fewer fields, given in [this POST
+        example](#definition-Access-group-POST-example).  Note that you cannot change everything on
+        an access group that the API shows you, such as its membership, access, and permissions.
+        You can change its basic fields, PDFs, and membership defaults.
+
+      parameters:
+        - name: "this name not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Access group PATCH example'}
+          description: |
+            There are no mandatory fields.
+
+      responses:
+        200:
+          description: |
+            Success.  Future versions will return feedback from the server about your PATCH.
+        204:
+          description: "Success."
+        400:
+          description: |
+            The body of the PATCH did not describe a valid access group.  See the body of the
+            response for help on what went wrong.  It may be that you tried to use the name of
+            another access group:  no two items of the same type can have the same name.  Or you may
+            have tried to set the division to one that is not visible to you, or you may have
+            attempted to create a loop in the access group hierarchy.
+
+        403:
+          description: |
+            The operator has a privilege that allows viewing the item but not modifying it, or you
+            tried to set the division to one you cannot configure, or the server is missing the
+            necessary licence.
+
+            You need either the 'Edit Access Groups' on the item you are changing, which means you
+            need on it on the item's current division.  You also need it on the new division, if you
+            are changing that.
+
+        404:
+          description: |
+            That is not the URL of an access group or your operator does not have the privilege to view
+            it.  This probably means you have built the URL yourself instead of taking it from the
+            results of a [GET](#operation--api-access-groups--operation--get).
+
+        409:
+          description: |
+            The item is locked for editing by another operator.  The body of the response will
+            tell you which operator is holding the lock.
+
+    delete:
+      tags: [ Access groups ]
+      summary: Remove an access group [coming soon]
+      description: |
+        ***DRAFT DOCUMENTATION***
+
+        This call removes an access group from Command Centre.
+
+      responses: 
+        200: { description: "Success." }
+        204: { description: "Success." }
+        400:
+          description: |
+            Deleting the access group failed.  This happens when the item is still being used by
+            another item.
+        403:
+          description: |
+            The operator has the permission to view the item but not delete it, or the server is not
+            licensed for the operation.
+        404:
+          description: |
+            That is not the URL of an access group or the operator is not privileged to view it.
 
   /api/access_groups/{id}/cardholders:
     get:
@@ -6882,6 +7119,7 @@ paths:
 
         Deleting competencies is coming to a future version of Command Centre.
       responses: 
+        200: { description: "Success." }
         204: { description: "Success." }
         400:
           description: |
