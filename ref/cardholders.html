@@ -5689,8 +5689,7 @@
       <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
       <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
       <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
-      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>,
-      <span class="hljs-attr">&quot;defaultExpiry&quot;</span>: <span class="hljs-string">&quot;Reserved&quot;</span>
+      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -10111,6 +10110,7 @@
                           <span class="json-property-name">serverDisplayName:</span>
                           <span class="json-property-type">string</span>
                           <span class="json-property-range" title="Value limits"></span>
+                          <span class="json-property-read-only"></span>
                         </dt>
                         <dd>
                           <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
@@ -13666,6 +13666,7 @@
                       <span class="json-property-name">serverDisplayName:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
@@ -13979,7 +13980,8 @@
                         </dt>
                         <dd>
                           <p>Names and hrefs of the access zones to which this access group gives access, and the schedules that govern it.</p>
-                          <p>Your operator needs &#39;View Schedules&#39; to see schedule hrefs, and &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39; to see access zone hrefs. New to 8.40.</p>
+                          <p>Your operator needs &#39;View Schedules&#39; to see schedule hrefs, and &#39;View Site&#39;, &#39;Edit Site&#39;, or &#39;Override&#39; to see access zone hrefs.</p>
+                          <p>New to 8.40.</p>
                         </dd>
                         <dt data-property-name="saltoAccess" class="has-description">
                           <span class="json-property-name">saltoAccess:</span>
@@ -15408,7 +15410,7 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>This is an example of a PATCH you could use to update a competency, and a POST you could use to create one.</p>
-                  <p>No fields are mandatory.</p>
+                  <p>No fields are mandatory in a PATCH, but when using a POST to create a competency you must supply a division.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -15418,7 +15420,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The new item&#39;s name. If you supply a name and another item of the same type already exists with that name, the call will fail. If you leave it blank in a POST, Command Centre will pick value for you.</p>
+                      <p>The new item&#39;s name. If you supply a name and another item of the same type already exists with that name, the call will fail. If you leave it blank in a POST, Command Centre will pick a name for you.</p>
                     </dd>
                     <dt data-property-name="shortName" class="has-description">
                       <span class="json-property-name">shortName:</span>
@@ -15931,8 +15933,7 @@
       <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
       <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
       <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
-      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>,
-      <span class="hljs-attr">&quot;defaultExpiry&quot;</span>: <span class="hljs-string">&quot;Reserved&quot;</span>
+      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
     }
   ],
   <span class="hljs-attr">&quot;next&quot;</span>: {
@@ -15990,7 +15991,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The division that contains this card type. New to 8.50.</p>
+                      <p>The division that contains this card type. Required when creating a card type.</p>
+                      <p>New to 8.50.</p>
                     </dd>
                     <dt data-property-name="notes" class="has-description">
                       <span class="json-property-name">notes:</span>
@@ -16009,15 +16011,18 @@
                     <dd>
                       <p>A facility code is a letter (A-P) followed by up to five digits. It is encoded onto cards so that they only work at sites with the correct facility code.</p>
                       <p>PIV cards, PIV-I cards, and mobile credentials do not have a facility code.</p>
+                      <p>A credential&#39;s facility code cannot be changed once set, so this field is ignored in a PATCH.</p>
                     </dd>
                     <dt data-property-name="availableCardStates" class="has-description">
                       <span class="json-property-name">availableCardStates:</span>
                       <span class="json-property-type">string[]</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>All credential types have a set of card states.</p>
                       <p>If you need this, ask for it using the <code>fields</code> parameter.</p>
+                      <p>This field is read-only: it is derived from the card type&#39;s card state set (also known as a workflow). If you send it in a POST or a PATCH, the server will ignore it.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-array-items">
@@ -16033,7 +16038,7 @@
                         <div class="json-inner-schema"> </div>
                       </section>
                     </dt>
-                    <dt data-property-name="credentialClass">
+                    <dt data-property-name="credentialClass" class="has-description">
                       <span class="json-property-name">credentialClass:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-enum" title="Possible values">
@@ -16048,13 +16053,16 @@
                       </span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
+                    <dd>
+                      <p>Required when creating a new card type but ignored when modifying one since a credential&#39;s type cannot be changed once set.</p>
+                    </dd>
                     <dt data-property-name="minimumNumber" class="has-description">
                       <span class="json-property-name">minimumNumber:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>For card types with integer card numbers, this is the minimum.</p>
+                      <p>For card types with integer card numbers, this is the minimum. Must be non-negative.</p>
                     </dd>
                     <dt data-property-name="maximumNumber" class="has-description">
                       <span class="json-property-name">maximumNumber:</span>
@@ -16062,12 +16070,13 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>For card types with integer card numbers, this is the maximum.</p>
+                      <p>For card types with integer card numbers, this is the maximum. Must be non-negative.</p>
                     </dd>
                     <dt data-property-name="serverDisplayName" class="has-description">
                       <span class="json-property-name">serverDisplayName:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
@@ -16079,7 +16088,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This is the regular expression that a Card Type text card number must match before Command Centre will accept it. </p>
+                      <p>This is the regular expression that a text card number must match before Command Centre will accept it. </p>
                     </dd>
                     <dt data-property-name="regexDescription" class="has-description">
                       <span class="json-property-name">regexDescription:</span>
@@ -16088,14 +16097,6 @@
                     </dt>
                     <dd>
                       <p>Regular expressions often need explaining.</p>
-                    </dd>
-                    <dt data-property-name="defaultExpiry" class="has-description">
-                      <span class="json-property-name">defaultExpiry:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>Reserved for internal use.</p>
                     </dd>
                   </dl>
                 </section>
@@ -16128,8 +16129,7 @@
   <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
   <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
-  <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>,
-  <span class="hljs-attr">&quot;defaultExpiry&quot;</span>: <span class="hljs-string">&quot;Reserved&quot;</span>
+  <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -16260,6 +16260,7 @@
                       <span class="json-property-name">serverDisplayName:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
@@ -16577,6 +16578,7 @@
                       <span class="json-property-name">serverDisplayName:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
@@ -16593,7 +16595,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The division containing this PDF definition.</p>
+                      <p>The division containing this PDF definition. Required when creating one.</p>
                     </dd>
                     <dt data-property-name="type" class="has-description">
                       <span class="json-property-name">type:</span>
@@ -16613,6 +16615,7 @@
                     </dt>
                     <dd>
                       <p>The type of PDF: string, image, email address, etc.</p>
+                      <p>Required when creating a new PDF definition, but ignored when PATCHing one since a PDF&#39;s type is fixed once set.</p>
                     </dd>
                     <dt data-property-name="default" class="has-description">
                       <span class="json-property-name">default:</span>
@@ -16621,6 +16624,7 @@
                     </dt>
                     <dd>
                       <p>This field will be missing if there is no default value.</p>
+                      <p>To clear the default, send the blank string <code>&quot;&quot;</code>.</p>
                     </dd>
                     <dt data-property-name="required" class="has-description">
                       <span class="json-property-name">required:</span>
@@ -16690,6 +16694,7 @@
                     </dt>
                     <dd>
                       <p>This is the regular expression that a PDF value must match before Command Centre will accept it.</p>
+                      <p>To remove the requirement that PDF values match a regular expression, send the empty string <code>&quot;&quot;</code>.</p>
                     </dd>
                     <dt data-property-name="regexDescription" class="has-description">
                       <span class="json-property-name">regexDescription:</span>
@@ -16705,7 +16710,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This value is copied to the &#39;notification&#39; flag on a cardholder&#39;s value for this PDF when they first gain membership of one of this PDF&#39;s access groups. It will only appear for PDF types that can receive notifications (email addresses and mobile numbers), and only if you ask for it with the <code>fields</code> parameter.</p>
+                      <p>This value is copied to the &#39;notification&#39; flag on a cardholder&#39;s value for this PDF when they first gain membership of one of this PDF&#39;s access groups. It will only appear for PDF types that can receive notifications (email addresses and mobile numbers), and only if you ask for it with the <code>fields</code> parameter. The server will ignore it if you send it in a POST or PATCH to a PDF that is not email or mobile.</p>
                       <p>New in 8.50.</p>
                     </dd>
                     <dt data-property-name="imageWidth" class="has-description">
@@ -16715,6 +16720,7 @@
                     </dt>
                     <dd>
                       <p>The maximum width of an image stored in this PDF, in pixels, for image PDF types. You will only get this field if you ask for it with the <code>fields</code> parameter.</p>
+                      <p>You can set this on a new PDF definition but not change it on an existing definition.</p>
                       <p>New in 8.50.</p>
                     </dd>
                     <dt data-property-name="imageHeight" class="has-description">
@@ -16724,6 +16730,7 @@
                     </dt>
                     <dd>
                       <p>The maximum height of an image stored in this PDF, in pixels, for image PDF types. You will only get this field if you ask for it with the <code>fields</code> parameter.</p>
+                      <p>You can set this on a new PDF definition but not change it on an existing definition.</p>
                       <p>New in 8.50.</p>
                     </dd>
                     <dt data-property-name="imageFormat" class="has-description">
@@ -16752,6 +16759,7 @@
                     </dt>
                     <dd>
                       <p>Whether this image PDF stores BMPs, JPEGs, or PNGs. You will only get this field if you ask for it with the <code>fields</code> parameter.</p>
+                      <p>You can set this on a new PDF definition but not change it on an existing definition.</p>
                       <p>New in 8.70.</p>
                     </dd>
                     <dt data-property-name="isProfileImage" class="has-description">
@@ -16761,6 +16769,7 @@
                     </dt>
                     <dd>
                       <p>True if and only if this PDF holds images and it is set as a profile image.</p>
+                      <p>Unlike many other properties of an image PDF, this can be changed at will.</p>
                       <p>New in 8.70.</p>
                     </dd>
                   </dl>
@@ -16937,6 +16946,7 @@
                       <span class="json-property-name">serverDisplayName:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
@@ -17294,6 +17304,7 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p><code>/api/roles</code> returns an array of these. Each element gives you enough about a role to identify it and use it in a cardholder PATCH: its href, name, description, and (if you ask for them using the <code>fields</code> parameter) notes.</p>
+                  <p>In 9.10 or later you can send one of these in a POST to create a new role, or in a PATCH to modify an existing one.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -17307,6 +17318,7 @@
                       <span class="json-property-type">string</span>
                       <span class="json-property-format">(url)</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>This is the string to use when creating a relationship between cardholders using this role.</p>
@@ -17315,6 +17327,7 @@
                       <span class="json-property-name">serverDisplayName:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
@@ -17331,12 +17344,13 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The division containing this role.</p>
+                      <p>The division containing this role. Required in a POST, optional in a PATCH.</p>
                     </dd>
                     <dt data-property-name="id" class="has-description">
                       <span class="json-property-name">id:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>An alphanumeric identifier, unique to the server. No API calls use role IDs.</p>
@@ -17500,6 +17514,7 @@
                       <span class="json-property-name">serverDisplayName:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>

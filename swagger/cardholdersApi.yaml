@@ -383,6 +383,7 @@ x-spectacle-topics:
 
 x-common-blocks:
   server: &SERVER
+    readOnly: true
     type: string
     example: "ruatoria.satellite.int"
     description: |
@@ -4214,6 +4215,7 @@ definitions:
 
               Your operator needs 'View Schedules' to see schedule hrefs, and 'View Site', 'Edit
               Site', or 'Override' to see access zone hrefs.
+
               New to 8.40.
 
             example: [ {
@@ -4781,7 +4783,7 @@ definitions:
     description: |
       This is an example of a PATCH you could use to update a competency, and a POST you could use to create one.
 
-      No fields are mandatory.
+      No fields are mandatory in a PATCH, but when using a POST to create a competency you must supply a division.
 
     properties:
       name:
@@ -4789,7 +4791,7 @@ definitions:
         description: |
           The new item's name.  If you supply a name and another item of the same type already
           exists with that name, the call will fail.  If you leave it blank in a POST, Command
-          Centre will pick value for you.
+          Centre will pick a name for you.
 
         example: "New competency"
       shortName:
@@ -4966,7 +4968,10 @@ definitions:
       name: {type: string, example: "Red DESFire visitor badge"}
       division:
         type: object
-        description: The division that contains this card type.  New to 8.50.
+        description: |
+          The division that contains this card type.  Required when creating a card type.
+
+          New to 8.50.
         example:
           id: "2"
           href: "https://localhost:8904/api/divisions/2"
@@ -4985,14 +4990,21 @@ definitions:
           so that they only work at sites with the correct facility code.
 
           PIV cards, PIV-I cards, and mobile credentials do not have a facility code.
+
+          A credential's facility code cannot be changed once set, so this field is ignored in a
+          PATCH.
         example: "A12345"
       availableCardStates:
+        readOnly: true
         type: array
         items: {type: string, enum: ['Active', 'Disabled (manually)', 'Lost', 'Stolen', 'Damaged']}
         description: |
           All credential types have a set of card states.
 
           If you need this, ask for it using the `fields` parameter.
+
+          This field is read-only:  it is derived from the card type's card state set (also known as
+          a workflow).  If you send it in a POST or a PATCH, the server will ignore it.
         example:
         - "Active"
         - "Disabled (manually)"
@@ -5001,23 +5013,27 @@ definitions:
         - "Damaged"
       credentialClass:
         type: string
+        description: |
+          Required when creating a new card type but ignored when modifying one since a credential's
+          type cannot be changed once set.
         enum: [ "piv", "pivi", "card", "mobile", "digitalId", "govPass", "trackingTag", "transact" ]
         example: card
       minimumNumber:
         description: |
-          For card types with integer card numbers, this is the minimum.
+          For card types with integer card numbers, this is the minimum.  Must be non-negative.
         type: string
         example: "1"
       maximumNumber:
         description: |
-          For card types with integer card numbers, this is the maximum.
+          For card types with integer card numbers, this is the maximum.  Must be non-negative.
         type: string
         example: "16777215"
       serverDisplayName:
+        readOnly: true
         <<: *SERVER
       regex:
         description: |
-          This is the regular expression that a Card Type text card number
+          This is the regular expression that a text card number
           must match before Command Centre will accept it. 
         type: string
         example: "^[A-Za-z0-9]+$"
@@ -5025,9 +5041,6 @@ definitions:
         description: Regular expressions often need explaining.
         type: string
         example: "Only alphanumeric characters"
-      defaultExpiry:
-        description: Reserved for internal use.
-        example: "Reserved"
 
 ######################################################################
 
@@ -5198,15 +5211,23 @@ definitions:
         example: "Corporate mailbox"
       division:
         type: object
-        description: The division containing this PDF definition.
+        description: |
+          The division containing this PDF definition.  Required when creating one.
         example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
       type:
         type: string
-        description: "The type of PDF: string, image, email address, etc."
+        description: |
+          The type of PDF: string, image, email address, etc.
+
+          Required when creating a new PDF definition, but ignored when PATCHing one since a PDF's
+          type is fixed once set.
         enum: [string, image, strEnum, numeric, date, address, phone, email, mobile]
         example: "email"
       default:
-        description: This field will be missing if there is no default value.
+        description: |
+          This field will be missing if there is no default value.
+
+          To clear the default, send the blank string `""`.
         type: string
         example: "contact@example.com"
       required:
@@ -5261,6 +5282,9 @@ definitions:
         description: |
           This is the regular expression that a PDF value must match before Command Centre will
           accept it.
+
+          To remove the requirement that PDF values match a regular expression, send the empty
+          string `""`.
         type: string
         example: ".*@.*"
       regexDescription:
@@ -5272,7 +5296,8 @@ definitions:
           This value is copied to the 'notification' flag on a cardholder's value for this PDF when
           they first gain membership of one of this PDF's access groups.  It will only appear for
           PDF types that can receive notifications (email addresses and mobile numbers), and only if
-          you ask for it with the `fields` parameter.
+          you ask for it with the `fields` parameter.  The server will ignore it if you send it in a
+          POST or PATCH to a PDF that is not email or mobile.
 
           New in 8.50.
         type: boolean
@@ -5282,6 +5307,8 @@ definitions:
           The maximum width of an image stored in this PDF, in pixels, for image PDF types.  You
           will only get this field if you ask for it with the `fields` parameter.
 
+          You can set this on a new PDF definition but not change it on an existing definition.
+
           New in 8.50.
         type: integer
         example: 600
@@ -5289,6 +5316,8 @@ definitions:
         description: |
           The maximum height of an image stored in this PDF, in pixels, for image PDF types.  You
           will only get this field if you ask for it with the `fields` parameter.
+
+          You can set this on a new PDF definition but not change it on an existing definition.
 
           New in 8.50.
         type: integer
@@ -5307,6 +5336,8 @@ definitions:
           Whether this image PDF stores BMPs, JPEGs, or PNGs.  You will only get this field if you
           ask for it with the `fields` parameter.
 
+          You can set this on a new PDF definition but not change it on an existing definition.
+
           New in 8.70.
         type: string
         enum: [image/bmp, image/jpeg, image/png]
@@ -5314,6 +5345,8 @@ definitions:
       isProfileImage:
         description: |
           True if and only if this PDF holds images and it is set as a profile image.
+
+          Unlike many other properties of an image PDF, this can be changed at will.
 
           New in 8.70.
         type: boolean
@@ -5504,11 +5537,15 @@ definitions:
       `/api/roles` returns an array of these.  Each element gives you enough about a role to
       identify it and use it in a cardholder PATCH:  its href, name, description, and (if you ask
       for them using the `fields` parameter) notes.
+
+      In 9.10 or later you can send one of these in a POST to create a new role, or in a PATCH to
+      modify an existing one.
     properties:
       name:
         type: string
         example: "Supervisor"
       href:
+        readOnly: true
         type: string
         format: url
         description: |
@@ -5522,9 +5559,11 @@ definitions:
         example: "aka floor manager"
       division:
         type: object
-        description: The division containing this role.
+        description: |
+          The division containing this role.  Required in a POST, optional in a PATCH.
         example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
       id:
+        readOnly: true
         type: string
         description: |
           An alphanumeric identifier, unique to the server.  No API calls use role IDs.
