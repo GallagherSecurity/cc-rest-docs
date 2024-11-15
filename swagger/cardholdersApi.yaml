@@ -109,6 +109,8 @@ info:
 
     #### Cardholder API changes in 9.10
 
+    * You can create, modify, and delete competencies.
+
     * You can request a locker's status and send an override to quarantine it.  The [use
       cases](#opening-or-quarantining-a-locker) section shows how.
 
@@ -6703,8 +6705,8 @@ paths:
           required: true
           schema: {$ref: '#/definitions/Access group POST example'}
           description: |
-            This can be a large object as shown, or a tiny one, because the only field you must
-            have in the POST is the division.
+            This example shows every field that you can set when creating or modifying an access
+            group.  When creating one, `division` is mandatory.
 
       responses: 
         201: 
@@ -6912,7 +6914,7 @@ paths:
     post:
       tags:
       - Competencies
-      summary: Create a competency [coming soon]
+      summary: Create a competency
       description: |
         Creates a new competency.
 
@@ -6926,7 +6928,7 @@ paths:
 
         Do not code this URL into your application.  Take it from the results of `GET /api`.
 
-        Creating a competency is coming in a future version of Command Centre.
+        New to Command Centre 9.10.
 
       parameters:
         - name: "this name not rendered"
@@ -6934,8 +6936,8 @@ paths:
           required: true
           schema: {$ref: '#/definitions/Competency PATCH and POST example'}
           description: |
-            There are no mandatory fields.  If you do not specify a division when creating a
-            competency, or any other item for that matter, the API will put it in the root division.
+            This example shows every field that you can set when creating or modifying a competency,
+            but the only field you must have in a POST is `division`.
 
       responses:
         201:
@@ -7059,7 +7061,7 @@ paths:
     patch:
       tags:
       - Competencies
-      summary: Update a competency [coming soon]
+      summary: Update a competency.
       description: |
         This is the call you use to update a division's name, short name, description, notes, or
         division.
@@ -7068,7 +7070,7 @@ paths:
         detail](#definition-Competency-detail) but with fewer fields.  An example is [this PATCH
         example](#definition-Competency-PATCH-and-POST-example).
 
-        Patching competencies is coming to a future version of Command Centre.
+        New to Command Centre 9.10.
 
       parameters:
         - name: "this name not rendered"
@@ -7076,7 +7078,8 @@ paths:
           required: true
           schema: {$ref: '#/definitions/Competency PATCH and POST example'}
           description: |
-            There are no mandatory fields.
+            There are no mandatory fields when PATCHing a competency, but you must specify a
+            division when creating one.
 
       responses:
         200:
@@ -7113,11 +7116,11 @@ paths:
 
     delete:
       tags: [ Competencies ]
-      summary: Remove a competency [coming soon]
+      summary: Remove a competency
       description: |
         This call removes a competency from Command Centre.
 
-        Deleting competencies is coming to a future version of Command Centre.
+        New to Command Centre 9.10.
       responses: 
         200: { description: "Success." }
         204: { description: "Success." }
