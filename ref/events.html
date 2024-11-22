@@ -4413,7 +4413,7 @@
                   <p>Collects status updates from a subscription created using the
                     <a href="#operation--api-items-updates-post">/api/items/updates POST</a>.</p>
                   <p>This is a long poll, so if there are no updates waiting when you make the call it will block until some arrive or a timeout passes (about 50 seconds).</p>
-                  <p>If you receive a 404 from this call it means that too much time has passed since the server sent the link, or the server has restarted. In either case the server will have dropped your subscription. You will need to create a new one with a fresh POST.</p>
+                  <p>If you receive a 404 from this call it means that more than 30 seconds passed between the server sending you the link and you GETting it, or the server restarted. In either case it will have dropped your subscription: you will need to create a new one with a fresh POST.</p>
                   <p>Therefore your loop can be:</p>
                   <ol>
                     <li>Create a subscription with a
