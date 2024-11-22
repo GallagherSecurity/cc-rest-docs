@@ -1940,10 +1940,11 @@ paths:
         later the server will return the items that changed state between the two calls.
 
         If you do not GET the link within thirty seconds of the POST returning, the server will drop
-        your subscription and free up the resources it had allocated to servicing it.  Then you will
-        need to send this POST again to create a new subscription.
+        your subscription and free up the resources it had allocated to servicing it.  If that
+        happens you will need to send this POST again to create a new subscription.
 
-        Your operator must have view privileges on every item in the subscription.
+        Your operator must have view privileges on every item in the subscription otherwise you will
+        receive a 4xx.
 
         The subscription notices changes in state, not in configuration, so an operator modifying an
         item will not cause anything to come out of this API unless the change in configuration also
@@ -1951,7 +1952,7 @@ paths:
 
         Because this call returns the status of items, this call requires the RESTStatus licence.
 
-        Added in 8.30.
+        Added in 8.30.  9.30 corrected the 401 response to a 403.
 
       parameters:
         - name: "name not rendered for body params"
