@@ -514,14 +514,14 @@ tags:
       get the URL from `items.updates.href` in the results of `GET /api`.
 
       1.  Take the current state of your items from the results of that call.  If that's all you
-      need, terrific.
+      need, terrific.  But if you want to monitor their state, continue.
 
-      1.  But if you want to monitor their state, [GET](#operation--api-items-updates-get) the
+      1.  [GET](#operation--api-items-updates-get) the
       `next.href` link that came in the results of the POST.  The call will block until one of your
       monitored items changes state.  When it returns, the results will be in the same format as the
       result of the POST, including the `next` link.
 
-      1.  Loop.
+      1.  Goto 4.
 
     ### Licensing
 
@@ -1940,7 +1940,8 @@ paths:
         later the server will return the items that changed state between the two calls.
 
         If you do not GET the link within thirty seconds of the POST returning, the server will drop
-        your subscription and free up the resources it had allocated to servicing it.
+        your subscription and free up the resources it had allocated to servicing it.  Then you will
+        need to send this POST again to create a new subscription.
 
         Your operator must have view privileges on every item in the subscription.
 
@@ -3656,9 +3657,9 @@ definitions:
                 A one-line version of the status, with details removed if necessary to keep it short.
       next:
         description: |
-          A link to GET more status updates.  Do not wait longer than thirty seconds before using
-          this link or your subscription will expire and you will need to submit another POST to
-          create a new one.
+          A link to GET more status updates.  Do not wait longer than thirty seconds between
+          receiving this link and using it or your subscription will expire and you will need to
+          submit another POST to create a new one.
     example: {
       "updates": [
         {

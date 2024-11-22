@@ -3783,14 +3783,14 @@
                     <a href="#operation--api-items-updates-post">POST</a> to create a subscription. Your program should get the URL from <code>items.updates.href</code> in the results of <code>GET /api</code>.</p>
                 </li>
                 <li>
-                  <p>Take the current state of your items from the results of that call. If that&#39;s all you need, terrific.</p>
+                  <p>Take the current state of your items from the results of that call. If that&#39;s all you need, terrific. But if you want to monitor their state, continue.</p>
                 </li>
                 <li>
-                  <p>But if you want to monitor their state,
+                  <p>
                     <a href="#operation--api-items-updates-get">GET</a> the <code>next.href</code> link that came in the results of the POST. The call will block until one of your monitored items changes state. When it returns, the results will be in the same format as the result of the POST, including the <code>next</code> link.</p>
                 </li>
                 <li>
-                  <p>Loop.</p>
+                  <p>Goto 4.</p>
                 </li>
               </ol>
               <h3 id="licensing">Licensing</h3>
@@ -4261,7 +4261,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Creates a subscription to status changes. You POST a list of item IDs and the server returns the status flags of those items plus a link. When you GET that link some time later the server will return the items that changed state between the two calls.</p>
-                  <p>If you do not GET the link within thirty seconds of the POST returning, the server will drop your subscription and free up the resources it had allocated to servicing it.</p>
+                  <p>If you do not GET the link within thirty seconds of the POST returning, the server will drop your subscription and free up the resources it had allocated to servicing it. Then you will need to send this POST again to create a new subscription.</p>
                   <p>Your operator must have view privileges on every item in the subscription.</p>
                   <p>The subscription notices changes in state, not in configuration, so an operator modifying an item will not cause anything to come out of this API unless the change in configuration also causes a change in state.</p>
                   <p>Because this call returns the status of items, this call requires the RESTStatus licence.</p>
@@ -8336,7 +8336,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>A link to GET more status updates. Do not wait longer than thirty seconds before using this link or your subscription will expire and you will need to submit another POST to create a new one.</p>
+                      <p>A link to GET more status updates. Do not wait longer than thirty seconds between receiving this link and using it or your subscription will expire and you will need to submit another POST to create a new one.</p>
                     </dd>
                   </dl>
                 </section>
