@@ -667,7 +667,7 @@ definitions:
               type: object
               properties:
                 name: {type: string}
-                href: {type: string, format: url, description: "This is the link to the [door's detail](#definition-Door-detail) (which contains a return link back to this page)."}
+                href: {type: string, format: url, description: "This is the link to the [door's detail](#definition-Door-detail) (which contains a return link back to this page in either its `entryAccessZone` or `exitAccessZone` field)."}
               example:
                 - name: "Front door"
                   href: "https://localhost:8904/api/doors/332"
@@ -1300,10 +1300,28 @@ definitions:
               href:
                 description: |
                   This is the address of the [access zone's detail](#definition-Access-Zone-detail)
-                  page (which includes a link back here).
+                  page (which includes a link back here in its `doors` array).
                 type: string
                 format: url
                 example: "https://localhost:8904/api/access_zones/3280"
+          exitAccessZone:
+            type: object
+            description: |
+              The name and href of the access zone to which this door allows entry in the reverse
+              direction (from its exit reader).
+
+              It will not appear by default.  You need to ask for it with `fields=exitAccessZone`.
+
+              New to 8.50.
+            properties:
+              name: {type: string, example: "Roswell building 2 cafeteria"}
+              href:
+                description: |
+                  This is the address of the [access zone's detail](#definition-Access-Zone-detail)
+                  page (which includes a link back here in its `doors` array).
+                type: string
+                format: url
+                example: "https://localhost:8904/api/access_zones/50"
           notes: {<<: *NOTES}
           shortName: {<<: *SHORTNAME}
           updates:
