@@ -44,11 +44,18 @@ info:
 
     ### Licensing
 
-    All of the API calls described here except visitor management are available with the
-    RESTCardholders licence.  Visitor management calls need both RESTCardholders and
-    VisitorManagement.  Without RESTCardholders, lockers and locker banks are available with the
-    RESTStatus licence, and partially with the
-    RESTOverrides licence.
+    All of the API calls described here are available with the RESTCardholders licence, with the
+    following exceptions and notes:
+
+      * Visitor management calls need both RESTCardholders and VisitorManagement.
+
+      * Creating, modifying, and deleting competencies requires the RESTConfiguration licence.
+
+      * Creating, modifying, and deleting access groups, card types, personal data definitions, and
+        roles will require the RESTConfiguration licence.  These features are coming soon.
+
+      * Lockers and locker banks are also available with the RESTStatus licence, and a subset of
+        their fields (enough to allow overriding them) are available with the RESTOverrides licence.
 
     The server will return a 403 if you attempt an operation for which the server is not licensed.
 
@@ -6739,6 +6746,8 @@ paths:
 
         Note that you can only create one access group per POST.
 
+        This call requires the RESTConfiguration licence.
+
       parameters:
         - name: "this string necessary but not rendered"
           in: body
@@ -6832,6 +6841,8 @@ paths:
         an access group that the API shows you, such as its membership, access, and permissions.
         You can change its basic fields, PDFs, and membership defaults.
 
+        This call requires the RESTConfiguration licence.
+
       parameters:
         - name: "this name not rendered"
           in: body
@@ -6882,6 +6893,8 @@ paths:
         ***DRAFT DOCUMENTATION***
 
         This call removes an access group from Command Centre.
+
+        This call requires the RESTConfiguration licence.
 
       responses: 
         200: { description: "Success." }
@@ -6969,6 +6982,8 @@ paths:
         Do not code this URL into your application.  Take it from the results of `GET /api`.
 
         New to Command Centre 9.10.
+
+        This requires the RESTConfiguration licence.
 
       parameters:
         - name: "this name not rendered"
@@ -7112,6 +7127,8 @@ paths:
 
         New to Command Centre 9.10.
 
+        This call requires the RESTConfiguration licence.
+
       parameters:
         - name: "this name not rendered"
           in: body
@@ -7161,6 +7178,8 @@ paths:
         This call removes a competency from Command Centre.
 
         New to Command Centre 9.10.
+
+        This call requires the RESTConfiguration licence.
       responses: 
         200: { description: "Success." }
         204: { description: "Success." }
@@ -7168,6 +7187,9 @@ paths:
           description: |
             Deleting the competency failed.  This happens when the item is still being used by
             another item.
+
+            This call requires the RESTConfiguration licence.
+
         403:
           description: |
             The operator has the permission to view the item but not delete it, or the server is not

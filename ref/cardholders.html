@@ -329,7 +329,21 @@
                   <a href="events.html#authentication">Authentication section</a> of the accompanying Alarms and Events API documentation to learn how to format your queries, and Command Centre&#39;s Configuration Client online help to learn how to ready the server to receive them (search for &#39;REST API&#39;).</p>
                 <p>Each section contains a list of use cases intended as quick solutions for simple tasks or a how-to to get you started toward your particular goal. However they also serve as a good introduction to the API if you step through them using a web browser, starting at <code>/api</code> on your Command Centre server. To do that, you will need a browser plugin that lets you set an Authorization HTTP header, and a JSON formatter to prettify the results documents. Search the Configuration client&#39;s online help for &#39;test REST API&#39; for guidance. You will also need to prepare Command Centre, as above.</p>
                 <h3 id="licensing">Licensing</h3>
-                <p>All of the API calls described here except visitor management are available with the RESTCardholders licence. Visitor management calls need both RESTCardholders and VisitorManagement. Without RESTCardholders, lockers and locker banks are available with the RESTStatus licence, and partially with the RESTOverrides licence.</p>
+                <p>All of the API calls described here are available with the RESTCardholders licence, with the following exceptions and notes:</p>
+                <ul>
+                  <li>
+                    <p>Visitor management calls need both RESTCardholders and VisitorManagement.</p>
+                  </li>
+                  <li>
+                    <p>Creating, modifying, and deleting competencies requires the RESTConfiguration licence.</p>
+                  </li>
+                  <li>
+                    <p>Creating, modifying, and deleting access groups, card types, personal data definitions, and roles will require the RESTConfiguration licence. These features are coming soon.</p>
+                  </li>
+                  <li>
+                    <p>Lockers and locker banks are also available with the RESTStatus licence, and a subset of their fields (enough to allow overriding them) are available with the RESTOverrides licence.</p>
+                  </li>
+                </ul>
                 <p>The server will return a 403 if you attempt an operation for which the server is not licensed.</p>
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
@@ -3955,6 +3969,7 @@
                   <p>You will achieve better performance if you combine all you want to achieve into one POST, rather than creating the access group bare with a POST then refining it with PATCHes later.</p>
                   <p>When successful it returns a location header containing the address of the new access group.</p>
                   <p>Note that you can only create one access group per POST.</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
                 </section>
               </div>
             </div>
@@ -4353,6 +4368,7 @@
                   <p>The PATCH expects a document in the same format as the
                     <a href="#definition-Access-group-detail">the access group detail</a> but with fewer fields, given in
                     <a href="#definition-Access-group-POST-example">this POST example</a>. Note that you cannot change everything on an access group that the API shows you, such as its membership, access, and permissions. You can change its basic fields, PDFs, and membership defaults.</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
                 </section>
               </div>
             </div>
@@ -4488,6 +4504,7 @@
                     </strong>
                   </p>
                   <p>This call removes an access group from Command Centre.</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
                 </section>
               </div>
             </div>
@@ -4709,6 +4726,7 @@
                   <p>Note that you can only create one competency per POST.</p>
                   <p>Do not code this URL into your application. Take it from the results of <code>GET /api</code>.</p>
                   <p>New to Command Centre 9.10.</p>
+                  <p>This requires the RESTConfiguration licence.</p>
                 </section>
               </div>
             </div>
@@ -5229,6 +5247,7 @@
                     <a href="#definition-Competency-detail">the competency detail</a> but with fewer fields. An example is
                     <a href="#definition-Competency-PATCH-and-POST-example">this PATCH example</a>.</p>
                   <p>New to Command Centre 9.10.</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
                 </section>
               </div>
             </div>
@@ -5355,6 +5374,7 @@
                 <section class="swagger-operation-description">
                   <p>This call removes a competency from Command Centre.</p>
                   <p>New to Command Centre 9.10.</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
                 </section>
               </div>
             </div>
@@ -5387,6 +5407,7 @@
                     </div>
                     <div class="prop-value">
                       <p>Deleting the competency failed. This happens when the item is still being used by another item.</p>
+                      <p>This call requires the RESTConfiguration licence.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
