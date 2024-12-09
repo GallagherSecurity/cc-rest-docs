@@ -1699,7 +1699,7 @@ paths:
           description: |
             The operator does not have a privilege on the parent division that allows creating
             divisions inside it ('Configure Site' or 'Edit Divisions'), or the server has reached
-            its licensed limit of divisions.
+            its licensed limit of divisions or does not have the 'RESTConfiguration' licence.
 
   /api/divisions/{operation}:
     get:
@@ -1799,6 +1799,8 @@ paths:
             You need either the 'Configure Site' or 'Edit Divisions' privilege on the division you
             are changing.  You also need it on the new parent, if you are changing that.
 
+            This is also the response when the server does not have the 'RESTConfiguration' licence.
+
         404:
           description: |
             That is not the URL of a division or the operator does not have the privilege to view
@@ -1829,7 +1831,8 @@ paths:
             not licensed for the operation.
         404:
           description: |
-            That is not the URL of a division, or the operator is not privileged to view it.
+            That is not the URL of a division, or the operator is not privileged to view it, or the
+            server does not have the 'RESTConfiguration' licence.
 
 ######################################################################
 

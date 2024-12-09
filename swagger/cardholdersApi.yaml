@@ -6775,7 +6775,8 @@ paths:
 
         403:
           description: |
-            The operator does not have a privilege that allows creating access groups.
+            The operator does not have a privilege that allows creating access groups, or the server
+            does not have the 'RESTConfiguration' licence.
 
   /api/access_groups/{id}:
     get:
@@ -6875,6 +6876,8 @@ paths:
             need on it on the item's current division.  You also need it on the new division, if you
             are changing that.
 
+            This is also the response when the server does not have the 'RESTConfiguration' licence.
+
         404:
           description: |
             That is not the URL of an access group or your operator does not have the privilege to view
@@ -6905,8 +6908,8 @@ paths:
             another item.
         403:
           description: |
-            The operator has the permission to view the item but not delete it, or the server is not
-            licensed for the operation.
+            The operator has the permission to view the item but not delete it, or the server does
+            not have the 'RESTConfiguration' licence.
         404:
           description: |
             That is not the URL of an access group or the operator is not privileged to view it.
@@ -7013,7 +7016,8 @@ paths:
         403:
           description: |
             The operator does not have a privilege on the division that allows creating items inside
-            it ('Configure Site'), or the server has reached its licensed limit of competencies.
+            it ('Configure Site'), or the server has reached its licensed limit of competencies, or
+            it does not have the 'RESTConfiguration' licence.
 
     get:
       tags:
@@ -7160,6 +7164,8 @@ paths:
             on it on the item's current division.  You also need it on the new division, if you are
             changing that.
 
+            This is also the response when the server does not have the 'RESTConfiguration' licence.
+
         404:
           description: |
             That is not the URL of a competency or your operator does not have the privilege to view
@@ -7188,12 +7194,10 @@ paths:
             Deleting the competency failed.  This happens when the item is still being used by
             another item.
 
-            This call requires the RESTConfiguration licence.
-
         403:
           description: |
-            The operator has the permission to view the item but not delete it, or the server is not
-            licensed for the operation.
+            The operator has the permission to view the item but not delete it, or the server does
+            not have the 'RESTConfiguration' licence.
         404:
           description: |
             That is not the URL of a competency, or the operator is not privileged to view it.
