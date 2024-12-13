@@ -5219,6 +5219,7 @@ definitions:
     properties:
       id:
         type: string
+        readOnly: true
         description: |
           An alphanumeric identifier, unique to the server.  Use it to filter cardholder searches
           and to add your external ID to the results of an event search.
@@ -5246,6 +5247,9 @@ definitions:
         example: "email"
       default:
         description: |
+          This is the value that new cardholders will receive, if not supplied by the creating
+          client.  Required for 'required' PDFs.
+
           This field will be missing if there is no default value.
 
           To clear the default, send the blank string `""`.
@@ -5274,6 +5278,7 @@ definitions:
           operator is not a member of an operator group that overrides it.  Check the operator
           group's 'Personal data' tab in the Configuration Client.
       operatorAccess:
+        readOnly: true
         description: |
           This is the access that your operator has to cardholders' values of this PDF including the
           permissions granted by this cardholder's operator groups.  You will only
@@ -5295,6 +5300,7 @@ definitions:
           Each block contains the group's name, and if the operator has read access to the
           group, its href.
         type: array
+        readOnly: true
         example:
           - 'name': "All Staff"
           - 'name': "R&D Special Projects Group"
@@ -5302,7 +5308,7 @@ definitions:
       regex:
         description: |
           This is the regular expression that a PDF value must match before Command Centre will
-          accept it.
+          accept it on a cardholder.
 
           To remove the requirement that PDF values match a regular expression, send the empty
           string `""`.
@@ -8020,7 +8026,7 @@ paths:
       tags: [ "PDF definitions" ]
       summary: Remove [coming]
       description: |
-        This call removes a role item from Command Centre.
+        This call removes a PDF item from Command Centre.
 
         It requires the RESTConfiguration licence.
       responses: 
@@ -8028,8 +8034,7 @@ paths:
         204: { description: "Success." }
         400:
           description: |
-            Deleting failed.  This happens when the role is in use.  The usual reason is that
-            cardholders are still connected by the role you are attempting to remove.
+            Deleting failed.  This happens when the PDF is in use.
 
         403:
           description: |
@@ -8037,7 +8042,7 @@ paths:
             not have the 'RESTConfiguration' licence.
         404:
           description: |
-            That is not the URL of a role, or the operator is not privileged to view it.
+            That is not the URL of a PDF, or the operator is not privileged to view it.
 
 ######################################################################
   /api/receptions:

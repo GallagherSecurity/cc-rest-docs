@@ -8020,7 +8020,6 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;email&quot;</span>,
   <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Corporate mailbox&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
@@ -8032,17 +8031,7 @@
   <span class="hljs-attr">&quot;required&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;unique&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;defaultAccess&quot;</span>: <span class="hljs-string">&quot;fullAccess&quot;</span>,
-  <span class="hljs-attr">&quot;operatorAccess&quot;</span>: <span class="hljs-string">&quot;fullAccess&quot;</span>,
   <span class="hljs-attr">&quot;sortPriority&quot;</span>: <span class="hljs-number">50</span>,
-  <span class="hljs-attr">&quot;accessGroups&quot;</span>: [
-    {
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;All Staff&quot;</span>
-    },
-    {
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;R&amp;D Special Projects Group&quot;</span>,
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
-    }
-  ],
   <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;.*@.*&quot;</span>,
   <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;@ least&quot;</span>,
   <span class="hljs-attr">&quot;notificationDefault&quot;</span>: <span class="hljs-literal">false</span>,
@@ -8344,7 +8333,6 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;email&quot;</span>,
   <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Corporate mailbox&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
@@ -8356,17 +8344,7 @@
   <span class="hljs-attr">&quot;required&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;unique&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;defaultAccess&quot;</span>: <span class="hljs-string">&quot;fullAccess&quot;</span>,
-  <span class="hljs-attr">&quot;operatorAccess&quot;</span>: <span class="hljs-string">&quot;fullAccess&quot;</span>,
   <span class="hljs-attr">&quot;sortPriority&quot;</span>: <span class="hljs-number">50</span>,
-  <span class="hljs-attr">&quot;accessGroups&quot;</span>: [
-    {
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;All Staff&quot;</span>
-    },
-    {
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;R&amp;D Special Projects Group&quot;</span>,
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
-    }
-  ],
   <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;.*@.*&quot;</span>,
   <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;@ least&quot;</span>,
   <span class="hljs-attr">&quot;notificationDefault&quot;</span>: <span class="hljs-literal">false</span>,
@@ -8464,7 +8442,7 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This call removes a role item from Command Centre.</p>
+                  <p>This call removes a PDF item from Command Centre.</p>
                   <p>It requires the RESTConfiguration licence.</p>
                 </section>
               </div>
@@ -8497,7 +8475,7 @@
                       <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>Deleting failed. This happens when the role is in use. The usual reason is that cardholders are still connected by the role you are attempting to remove.</p>
+                      <p>Deleting failed. This happens when the PDF is in use.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -8513,7 +8491,7 @@
                       <div class="prop-title">404 Not Found</div>
                     </div>
                     <div class="prop-value">
-                      <p>That is not the URL of a role, or the operator is not privileged to view it.</p>
+                      <p>That is not the URL of a PDF, or the operator is not privileged to view it.</p>
                     </div>
                   </div>
                 </section>
@@ -17716,6 +17694,7 @@
                       <span class="json-property-name">id:</span>
                       <span class="json-property-type">string</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>An alphanumeric identifier, unique to the server. Use it to filter cardholder searches and to add your external ID to the results of an event search.</p>
@@ -17774,6 +17753,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
+                      <p>This is the value that new cardholders will receive, if not supplied by the creating client. Required for &#39;required&#39; PDFs.</p>
                       <p>This field will be missing if there is no default value.</p>
                       <p>To clear the default, send the blank string <code>&quot;&quot;</code>.</p>
                     </dd>
@@ -17817,6 +17797,7 @@
                         <span class="json-property-enum-item">fullAccess</span>
                       </span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>This is the access that your operator has to cardholders&#39; values of this PDF including the permissions granted by this cardholder&#39;s operator groups. You will only get this field if you ask for it with the <code>fields</code> parameter.</p>
@@ -17834,6 +17815,7 @@
                       <span class="json-property-name">accessGroups:</span>
                       <span class="json-property-type">array</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>This array contains a block for each access group that gives this PDF to its members. Each block contains the group&#39;s name, and if the operator has read access to the group, its href.</p>
@@ -17844,7 +17826,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This is the regular expression that a PDF value must match before Command Centre will accept it.</p>
+                      <p>This is the regular expression that a PDF value must match before Command Centre will accept it on a cardholder.</p>
                       <p>To remove the requirement that PDF values match a regular expression, send the empty string <code>&quot;&quot;</code>.</p>
                     </dd>
                     <dt data-property-name="regexDescription" class="has-description">
