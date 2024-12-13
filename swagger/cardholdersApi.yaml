@@ -67,7 +67,7 @@ info:
     #### Cardholder API changes on the roadmap
 
     * You will be able to create, delete, and change the the basic configuration of access groups,
-      competencies, PDFs, and card types.
+      roles, PDFs, and card types.
 
     * POTENTIALLY BREAKING CHANGE:  searching for cardholders using `pdf_xxx=""` or `pdf_xxx=`
       currently returns no cardholders.  That is neither useful nor desired.  Instead, a future
@@ -75,7 +75,8 @@ info:
 
     * POTENTIALLY BREAKING CHANGE:  the API route that lets you modify a cardholder by PATCH also
       works if you send it a POST.  It should not, because POSTs create things, not modify them.
-      The fix will break clients that rely on this, but since it was not documented, none should.
+      The fix will break clients that rely on this.  There should be none, since the POST was not
+      documented.
 
     * POTENTIALLY BREAKING CHANGE:  in future, PATCH methods will return "200 Success" instead of
       "204 No Content" and may contain the object you modified plus a message from the API giving
@@ -1128,6 +1129,34 @@ tags:
 
     You can now assemble the groups into a tree.
 
+- name: Card types
+  description: |
+    The main purpose of the card type API is to find the card type you need when assigning a card to
+    a cardholder.
+
+    A card connects a cardholder to a card type.  A new card takes some defaults from its card type
+    (such as its activity period, given by 'from' and 'until'), some limits (on the card number and
+    PIN, for example), and other behaviours (such as how long a card can be inactive before Command
+    Centre disables it).
+
+    The 'Site Installation' chapter of the Configuration Client online help has a section that
+    describes card types.
+
+    As it does for the other item types, the REST API gives you read access to card types through
+    search and details pages.  However the privilege model for card types is more flexible than for
+    other items:  the 'View site' privilege determines whether you are allowed to view a card type,
+    while the cardholder editing privileges ('Create', 'Edit', 'Create and edit') determine whether
+    you can assign cards of that type to a cardholder, so version 8.10 of the API added a page that
+    returns the card types that your operator is allowed to use in that way.  Take its URL from
+    `features.cardTypes.assign` in the results of `GET /api`.
+
+    This API uses the term 'card' but more broadly we prefer 'credential', because not all card
+    types involve a physical card.
+
+    The API's coverage of PIV cards is in [its own document](piv.html).
+
+    API routes that allow creating, modifying, and deleting card types are in development.
+
 - name: Competencies
   description: |
     Competencies are items to which cardholders can be linked, and which access zones may require on
@@ -1148,32 +1177,6 @@ tags:
     delete functions described below.
 
     The Configuration Client online help describes competencies fully.
-
-- name: Card types
-  description: |
-    The card type API exists so that you can find the card type you need when assigning a card to a
-    cardholder.
-
-    A card connects a cardholder to a card type.  A new card takes some defaults from its card type
-    (such as its activity period, given by 'from' and 'until'), some limits (on the card number and
-    PIN, for example), and other behaviours (such as how long a card can be inactive before Command
-    Centre disables it).
-
-    The 'Site Installation' chapter of the Configuration Client online help has a section that
-    describes card types.
-
-    As it does for the other item types, the REST API gives you read access to card types through
-    search and details pages.  However the privilege model for card types is more flexible than for
-    other items:  the 'View site' privilege determines whether you are allowed to view a card type,
-    while the cardholder editing privileges ('Create', 'Edit', 'Create and edit') determine whether
-    you can assign it to a cardholder, so version 8.10 of the API added a page that returns the card
-    types that your operator is allowed to assign to cardholders.  Take its URL from
-    `features.cardTypes.assign` in the results of `GET /api`.
-
-    This API uses the term 'card' but more broadly we prefer 'credential', because not all card
-    types involve a physical card.
-
-    The API's coverage of PIV cards is in [its own document](piv.html)
 
 - name: Lockers
   description: |
@@ -1329,6 +1332,8 @@ tags:
     This API lets you see the definitions and configuration of all the personal data fields in the
     system.
 
+    API routes that allow creating, modifying, and deleting PDF definitions are in development.
+
     ### Use cases
 
     #### Finding all a cardholder's PDF definitions
@@ -1435,8 +1440,11 @@ tags:
     a supervisor for many people but has only one of his or her own.
 
     When you use REST to look up or update a cardholder, you will work on the 'has a' relationships,
-    not the 'is a' relationships.  In other words you can change the cardholder's supervisor but not
-    who the cardholder supervises.
+    not the 'is a' relationships.  In other words, when a role represents a connection between a
+    person and their supervisor, the API lets you change a cardholder's supervisor but not who the
+    cardholder supervises.
+
+    API routes that allow creating, modifying, and deleting roles are in development.
 
     ### Use case:  searching for a role by name and assigning a relationship
 
@@ -4331,8 +4339,8 @@ definitions:
     description: |
       ***DRAFT DOCUMENTATION***
 
-      This is an example of a POST you could use to create an access group, containing examples all
-      the settable fields.
+      This is an example of a POST you could use to create an access group, containing examples of
+      all the settable fields.
 
     required: [ division ]
     properties:
@@ -4465,6 +4473,126 @@ definitions:
         href: "https://localhost:8904/api/cardholders/325"
       from: "2017-01-01T00:00:00Z"
       until: "2017-12-31T11:59:59Z"
+
+######################################################################
+
+  Card type search:
+    description: |
+      An array of card types, and a `next` link for more.  Sites generally have only a handful of
+      card types, so when retrieving them you should set your 'top' parameter high enough that you
+      do not need the 'next' link.
+    properties:
+      results:
+        type: array
+        description: An array of card types.
+        items: { $ref: '#/definitions/Card type' }
+
+      next:
+        type: object
+        description: The link to the next page.  Absent if you have retrieved them all.
+        properties:
+          href: { type: string, format: url }
+        example:
+          href: "https://localhost:8904/api/card_types/assign?skip=1000"
+
+  Card type:
+    description: |
+      This object describes a single Card Type.  "Credential type" would be a better name, as it
+      includes mobile credentials.
+    properties:
+      href:
+        type: string
+        format: url
+        example: "https://localhost:8904/api/card_types/600"
+        description: |-
+          This is the identifier to use when assigning a card to a cardholder in a cardholder
+          [PATCH](#operation--api-cardholders--id--patch) or
+          [POST](#definition-Cardholder-POST-example).
+
+          This is also the URL for the card type's detail page.  GETting it will return you a 404 if
+          you do not have 'View site' or 'Configure site' on the card type's division.
+
+      id:
+        type: string
+        example: "600"
+        description: |
+          The API does not use this field.  Nor should you.
+      name: {type: string, example: "Red DESFire visitor badge"}
+      division:
+        type: object
+        description: |
+          The division that contains this card type.  Required when creating a card type.
+
+          New to 8.50.
+        example:
+          href: "https://localhost:8904/api/divisions/2"
+
+      notes:
+        type: string
+        example: "Disabled after 7d inactivity, 6-char PIN"
+        description: |
+          Free text.
+
+          Because of its potential size, the server does not return the notes field by default.  You
+          need to ask for it with `fields=notes`.
+      facilityCode:
+        type: string
+        description: |
+          A facility code is a letter (A-P) followed by up to five digits.  It is encoded onto cards
+          so that they only work at sites with the correct facility code.
+
+          PIV cards, PIV-I cards, and mobile credentials do not have a facility code.
+
+          Most credential classes require a facility code on creation.  But it cannot be changed
+          once set, so this field is ignored in a PATCH.
+        example: "A12345"
+      availableCardStates:
+        readOnly: true
+        type: array
+        items: {type: string, enum: ['Active', 'Disabled (manually)', 'Lost', 'Stolen', 'Damaged']}
+        description: |
+          All credential types have a set of card states.
+
+          If you need this, ask for it using the `fields` parameter.
+
+          This field is read-only:  it is derived from the card type's card state set (also known as
+          a workflow).  If you send it in a POST or a PATCH, the server will ignore it.
+        example:
+        - "Active"
+        - "Disabled (manually)"
+        - "Lost"
+        - "Stolen"
+        - "Damaged"
+      credentialClass:
+        type: string
+        description: |
+          Required when creating a new card type but ignored when modifying one since a credential's
+          type cannot be changed once set.
+        enum: [ "piv", "pivi", "card", "mobile", "digitalId", "govPass", "trackingTag", "transact" ]
+        example: card
+      minimumNumber:
+        description: |
+          For card types with integer card numbers, this is the minimum.  Must be non-negative.
+        type: string
+        example: "1"
+      maximumNumber:
+        description: |
+          For card types with integer card numbers, this is the maximum.  Must be non-negative.
+        type: string
+        example: "16777215"
+      serverDisplayName:
+        readOnly: true
+        <<: *SERVER
+      regex:
+        description: |
+          This is the regular expression that a text card number
+          must match before Command Centre will accept it. 
+        type: string
+        example: "^[A-Za-z0-9]+$"
+      regexDescription:
+        description: Regular expressions often need explaining to your users.
+        type: string
+        example: "Only alphanumeric characters"
 
 ######################################################################
 
@@ -4934,121 +5062,6 @@ definitions:
           This is the access that operators will have to cardholders' assignments of this competency
           if the operator is not a member of an operator group that overrides it.  Check the
           operator group's 'Competency' tab in the Configuration Client.
-
-  Card type search:
-    description: |
-      An array of card types, and a `next` link for more.  Sites generally have only a handful of
-      card types, so when retrieving them you should set your 'top' parameter high enough that you
-      do not need the 'next' link.
-    properties:
-      results:
-        type: array
-        description: An array of card types.
-        items: { $ref: '#/definitions/Card type' }
-
-      next:
-        type: object
-        description: The link to the next page.  Absent if you have retrieved them all.
-        properties:
-          href: { type: string, format: url }
-        example:
-          href: "https://localhost:8904/api/card_types/assign?skip=1000"
-
-  Card type:
-    description: |
-      This object describes a single Card Type.  "Credential type" would be a better name, as it
-      includes mobile credentials.
-    properties:
-      href:
-        type: string
-        format: url
-        example: "https://localhost:8904/api/card_types/600"
-        description: |-
-          This is the identifier to use when assigning a card to a cardholder in a cardholder
-          [PATCH](#operation--api-cardholders--id--patch) or
-          [POST](#definition-Cardholder-POST-example).
-
-          This is also the URL for the card type's detail page.  That contains nothing of use, so
-          there is no point GETting it.  Doing so will return you a 404 if you do not have 'View
-          site' or 'Configure site' on the card type's division.
-
-      id: {type: string, example: "600"}
-      name: {type: string, example: "Red DESFire visitor badge"}
-      division:
-        type: object
-        description: |
-          The division that contains this card type.  Required when creating a card type.
-
-          New to 8.50.
-        example:
-          id: "2"
-          href: "https://localhost:8904/api/divisions/2"
-      notes:
-        type: string
-        example: "Disabled after 7d inactivity, 6-char PIN"
-        description: |
-          Free text.
-
-          Because of its potential size, the server does not return the notes field by default.  You
-          need to ask for it with `fields=notes`.
-      facilityCode:
-        type: string
-        description: |
-          A facility code is a letter (A-P) followed by up to five digits.  It is encoded onto cards
-          so that they only work at sites with the correct facility code.
-
-          PIV cards, PIV-I cards, and mobile credentials do not have a facility code.
-
-          A credential's facility code cannot be changed once set, so this field is ignored in a
-          PATCH.
-        example: "A12345"
-      availableCardStates:
-        readOnly: true
-        type: array
-        items: {type: string, enum: ['Active', 'Disabled (manually)', 'Lost', 'Stolen', 'Damaged']}
-        description: |
-          All credential types have a set of card states.
-
-          If you need this, ask for it using the `fields` parameter.
-
-          This field is read-only:  it is derived from the card type's card state set (also known as
-          a workflow).  If you send it in a POST or a PATCH, the server will ignore it.
-        example:
-        - "Active"
-        - "Disabled (manually)"
-        - "Lost"
-        - "Stolen"
-        - "Damaged"
-      credentialClass:
-        type: string
-        description: |
-          Required when creating a new card type but ignored when modifying one since a credential's
-          type cannot be changed once set.
-        enum: [ "piv", "pivi", "card", "mobile", "digitalId", "govPass", "trackingTag", "transact" ]
-        example: card
-      minimumNumber:
-        description: |
-          For card types with integer card numbers, this is the minimum.  Must be non-negative.
-        type: string
-        example: "1"
-      maximumNumber:
-        description: |
-          For card types with integer card numbers, this is the maximum.  Must be non-negative.
-        type: string
-        example: "16777215"
-      serverDisplayName:
-        readOnly: true
-        <<: *SERVER
-      regex:
-        description: |
-          This is the regular expression that a text card number
-          must match before Command Centre will accept it. 
-        type: string
-        example: "^[A-Za-z0-9]+$"
-      regexDescription:
-        description: Regular expressions often need explaining.
-        type: string
-        example: "Only alphanumeric characters"
 
 ######################################################################
 
@@ -5569,13 +5582,21 @@ definitions:
         type: object
         description: |
           The division containing this role.  Required in a POST, optional in a PATCH.
-        example: {id: "2", href: "https://localhost:8904/api/divisions/2" }
-      id:
-        readOnly: true
-        type: string
+        example: {href: "https://localhost:8904/api/divisions/2" }
+
+      enableCompetencyExpiryWarnings:
+        type: boolean
         description: |
-          An alphanumeric identifier, unique to the server.  No API calls use role IDs.
-        example: "1383"
+          Controls whether CC sends notifications to a person holding this role when their staff's
+          competencies are about to expire.
+        example: false
+
+      enableCardExpiryWarnings:
+        type: boolean
+        description: |
+          Controls whether CC sends notifications to a person holding this role when their staff's
+          cards are about to expire.
+        example: true
 
 ######################################################################
 
@@ -6088,6 +6109,9 @@ paths:
         operator has no access to PDFs and competencies into one in which it does, first PATCH the
         cardholder into the new division then PATCH it with the other changes.
 
+        You can find this URL in the href in the [cardholder search](#definition-Cardholders) or
+        any of the other calls that return cardholder hrefs.
+
         ---
 
         Note that the REST API does not implement the full suite of Command Centre
@@ -6159,7 +6183,10 @@ paths:
       tags: [ Cardholders ]
       summary: Remove a cardholder
       description: |
-        This call removes a cardholder from Command Centre.
+        This call removes a cardholder from Command Centre.  You can find the URL in the href in the
+        [cardholder search](#definition-Cardholders) or any of the other calls that return
+        cardholder hrefs.
+
       responses: 
         200: { description: "Success." }
         204: { description: "Success." }
@@ -6728,7 +6755,7 @@ paths:
     post:
       tags:
         - Access groups
-      summary: Create an access group [coming soon]
+      summary: Create an access group [coming]
       description: |
         Creates a new access group, setting its basic fields, parent, PDFs, and some membership
         defaults.
@@ -6830,7 +6857,7 @@ paths:
     patch:
       tags:
         - Access groups
-      summary: Update an access group [coming soon]
+      summary: Update an access group [coming]
       description: |
         ***DRAFT DOCUMENTATION***
 
@@ -6841,6 +6868,10 @@ paths:
         example](#definition-Access-group-POST-example).  Note that you cannot change everything on
         an access group that the API shows you, such as its membership, access, and permissions.
         You can change its basic fields, PDFs, and membership defaults.
+
+        You can find the URL for this call in the [access group
+        search](#operation--api-access_groups-get) results and in a cardholder's `accessGroups`
+        array.
 
         This call requires the RESTConfiguration licence.
 
@@ -6872,7 +6903,7 @@ paths:
             tried to set the division to one you cannot configure, or the server is missing the
             necessary licence.
 
-            You need either the 'Edit Access Groups' on the item you are changing, which means you
+            You need the 'Edit Access Groups' privilege on the item you are changing, which means you
             need on it on the item's current division.  You also need it on the new division, if you
             are changing that.
 
@@ -6882,7 +6913,7 @@ paths:
           description: |
             That is not the URL of an access group or your operator does not have the privilege to view
             it.  This probably means you have built the URL yourself instead of taking it from the
-            results of a [GET](#operation--api-access-groups--operation--get).
+            results of a [GET](#operation--api-access_groups-get).
 
         409:
           description: |
@@ -6891,11 +6922,15 @@ paths:
 
     delete:
       tags: [ Access groups ]
-      summary: Remove an access group [coming soon]
+      summary: Remove an access group [coming]
       description: |
         ***DRAFT DOCUMENTATION***
 
         This call removes an access group from Command Centre.
+
+        You can find the URL for this call in the [access group
+        search](#operation--api-access_groups-get) results and in a cardholder's `accessGroups`
+        array.
 
         This call requires the RESTConfiguration licence.
 
@@ -6965,60 +7000,204 @@ paths:
             Check the body of the result for a description of the problem.
 
 ######################################################################
+  /api/card_types:
+    get:
+      tags: [ "Card types" ]
+      summary: Search card types
+      description: |
+        This returns the card types your operator is privileged to view.  They may be different card
+        types from those you are allowed to assign to cardholders, and since that is the only thing
+        that this API does with card types, you should probably be using [that
+        function](#operation--api-card_types-assign-get) instead.
 
-  /api/competencies:
     post:
       tags:
-      - Competencies
-      summary: Create a competency
+        - Card types
+      summary: Create a card type [coming]
       description: |
-        Creates a new competency.
+        Creates a new card type, setting practically everything except the PIV fields.
 
-        The POST expects a document in the same format as the [the competency
-        detail](#definition-Competency) but with far fewer fields.  An example is [this POST
-        example](#definition-Competency-PATCH-and-POST-example).
+        Take this URL from the `href` field in the `features.cardTypes.cardTypes.href` field
+        of `GET /api`.
 
-        When successful it returns a `location` header containing the address of the new competency.
+        The POST expects a document in the same format as [the card type
+        detail](#operation--api-card_types--id--get).
 
-        Note that you can only create one competency per POST.
+        When successful it returns a location header containing the address of the new card type.
 
-        Do not code this URL into your application.  Take it from the results of `GET /api`.
+        Note that you can only create one item per POST.
 
-        New to Command Centre 9.10.
+        This call requires the RESTConfiguration licence.
 
-        This requires the RESTConfiguration licence.
+      parameters:
+        - name: "this string necessary but not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Card type'}
+          description: |
+            This example shows the fields that you can set when creating a card type.
+
+      responses: 
+        201: 
+          description: "Success."
+          headers:
+            location:
+              type: string
+              format: url
+              description: The href of the new card type.
+        400:
+          description: |
+            The body of the POST did not describe a valid card type.
+
+            If you see 'Invalid Access Group JSON object', the server could not parse the JSON in
+            the body of your POST.  Remember to quote all strings, especially those than contain @
+            symbols.
+
+        403:
+          description: |
+            The operator does not have a privilege that allows creating card types, or the server
+            does not have the 'RESTConfiguration' licence.
+
+  /api/card_types/assign:
+    get:
+      tags: [ "Card types" ]
+      summary: Search usable card types
+      description: |
+        This returns the card types you are privileged to assign to a cardholder.
+
+        Since a site usually has only a few card types, and each is small, the search, sorting,
+        field selection, and pagination parameters are probably of little use to you.  But they work.
+
+        If your result set is empty it means your operator does not have the privilege to view any
+        card types.  Your operator needs a privilege that allows assigning cards and credentials to
+        cardholders such as 'Add / Edit Card or Credential' or 'Create / Edit / Create and Edit
+        Cardholders'.
+
+        You can find this URL in `features.cardTypes.assign`in `/api`.  It was new in 8.10.
+
+      parameters:
+      - $ref: "#/parameters/sort"
+      - $ref: "#/parameters/top"
+      - $ref: "#/parameters/name"
+      - $ref: "#/parameters/division"
+      - $ref: "#/parameters/directDivision"
+      - $ref: "#/parameters/description"
+      - name: "fields"
+        in: query
+        type: array
+        items: { type: string }
+        enum: [ href, id, name, division, facilityCode, availableCardStates, credentialClass, minimumNumber, maximumNumber, notes, regex, regexDescription ]
+
+        description: |
+          Specifies which fields to return instead of the default set (which contains
+          nearly every field).  Separate values with commas.
+
+          Treat the string matches as case sensitive:  use 'facilityCode' rather than
+          'facilitycode'.
+
+      responses:
+        200:
+          description: "Success."
+          schema: {$ref: '#/definitions/Card type search'}
+
+        403: { description: "The installation lacks a cardholders licence." }
+
+  /api/card_types/{id}:
+    get:
+      tags: [ "Card types" ]
+      summary: Get one card type
+      description: |
+        This returns some basic data for a card type.  It exists so that clients following card type
+        hrefs from other controllers do not receive a 404.  To find out about card types available
+        for assigning to cardholders, use [card_types/assign](#operation--api-card_types-assign-get)
+        instead.
+
+    patch:
+      tags:
+      - Card types
+      summary: Update a card type [coming]
+      description: |
+        This is the call you use to update a card type.
+
+        The PATCH expects a document in the same format as the [the card type
+        detail](#definition-Card-type) but with fewer fields.
+
+        This call requires the RESTConfiguration licence.
 
       parameters:
         - name: "this name not rendered"
           in: body
           required: true
-          schema: {$ref: '#/definitions/Competency PATCH and POST example'}
+          schema: {$ref: '#/definitions/Card type'}
           description: |
-            This example shows every field that you can set when creating or modifying a competency,
-            but the only field you must have in a POST is `division`.
+            Despite this example containing the `href` field, it is read-only.  If you send in in
+            the body of your PATCH, the server will ignore it.
+
+            The rules for valid field values when modifying a card type depend on its credential
+            class and the site's configuration.
 
       responses:
-        201:
+        200:
           description: |
-            Success.  Check the response body for feedback about your request.
-          headers:
-            location:
-              type: string
-              format: url
-              description: The href of the new competency.
+            Success.  Future versions will return feedback from the server about your PATCH.
+        204:
+          description: "Success."
         400:
           description: |
-            The body of the POST did not describe a valid competency.  You may have tried to give
-            the new competency the same name as an existing one.
-
-            See the body of the response for help.
+            The body of the PATCH did not describe a valid card type.  Card types have many rules,
+            easily enforced in a graphical interface but less so in an API.  See the body of the
+            response for help on what went wrong.
 
         403:
           description: |
-            The operator does not have a privilege on the division that allows creating items inside
-            it ('Configure Site'), or the server has reached its licensed limit of competencies, or
-            it does not have the 'RESTConfiguration' licence.
+            The operator has a privilege that allows viewing the item but not modifying it, or you
+            tried to set the division to one you cannot configure, or the server is missing the
+            necessary licence.
 
+            You need the 'Configure Site' privilege on the item you are changing, which means you need
+            on it on the item's current division.  You also need it on the new division, if you are
+            changing that.
+
+            This is also the response when the server does not have the 'RESTConfiguration' licence.
+
+        404:
+          description: |
+            That is not the URL of a card type or your operator does not have the privilege to view
+            it.  This probably means you have built the URL yourself instead of taking it from the
+            results of a [GET](#operation--api-card_types-get).
+
+        409:
+          description: |
+            The item is locked for editing by another operator.  The body of the response will
+            tell you which operator is holding the lock.
+
+    delete:
+      tags: [ Card types ]
+      summary: Remove a card type [coming]
+      description: |
+        This call removes a card type from Command Centre.
+
+        This call requires the RESTConfiguration licence.
+      responses: 
+        200: { description: "Success." }
+        204: { description: "Success." }
+        400:
+          description: |
+            Deleting the card type failed.  This happens when the card type is in use.  Most often
+            it is because a cardholder still has a card of this type, but card types can also be
+            connected to other items.
+
+        403:
+          description: |
+            The operator has the permission to view the item but not delete it, or the server does
+            not have the 'RESTConfiguration' licence.
+        404:
+          description: |
+            That is not the URL of a card type, or the operator is not privileged to view it.
+
+######################################################################
+
+  /api/competencies:
     get:
       tags:
         - Competencies
@@ -7077,6 +7256,58 @@ paths:
           schema: {$ref: '#/definitions/Competency search'}
         403: { description: "The installation lacks a cardholders licence." }
 
+    post:
+      tags:
+      - Competencies
+      summary: Create a competency
+      description: |
+        Creates a new competency.
+
+        The POST expects a document in the same format as the [the competency
+        detail](#definition-Competency) but with far fewer fields.  An example is [this POST
+        example](#definition-Competency-PATCH-and-POST-example).
+
+        When successful it returns a `location` header containing the address of the new competency.
+
+        Note that you can only create one competency per POST.
+
+        Do not code this URL into your application.  Take it from the results of `GET /api`.
+
+        New to Command Centre 9.10.
+
+        This requires the RESTConfiguration licence.
+
+      parameters:
+        - name: "this name not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Competency PATCH and POST example'}
+          description: |
+            This example shows every field that you can set when creating or modifying a competency,
+            but the only field you must have in a POST is `division`.
+
+      responses:
+        201:
+          description: |
+            Success.  Check the response body for feedback about your request.
+          headers:
+            location:
+              type: string
+              format: url
+              description: The href of the new competency.
+        400:
+          description: |
+            The body of the POST did not describe a valid competency.  You may have tried to give
+            the new competency the same name as an existing one.
+
+            See the body of the response for help.
+
+        403:
+          description: |
+            The operator does not have a privilege on the division that allows creating items inside
+            it ('Configure Site'), or the server has reached its licensed limit of competencies, or
+            it does not have the 'RESTConfiguration' licence.
+
   /api/competencies/{id}:
     get:
       tags:
@@ -7120,7 +7351,7 @@ paths:
     patch:
       tags:
       - Competencies
-      summary: Update a competency.
+      summary: Update a competency
       description: |
         This is the call you use to update a division's name, short name, description, notes, or
         division.
@@ -7160,7 +7391,7 @@ paths:
             tried to set the division to one you cannot configure, or the server is missing the
             necessary licence.
 
-            You need either the 'Configure Site' on the item you are changing, which means you need
+            You need the 'Configure Site' privilege on the item you are changing, which means you need
             on it on the item's current division.  You also need it on the new division, if you are
             changing that.
 
@@ -7170,7 +7401,7 @@ paths:
           description: |
             That is not the URL of a competency or your operator does not have the privilege to view
             it.  This probably means you have built the URL yourself instead of taking it from the
-            results of a [GET](#operation--api-competencies--operation--get).
+            results of a [GET](#operation--api-competencies-get).
 
         409:
           description: |
@@ -7201,71 +7432,6 @@ paths:
         404:
           description: |
             That is not the URL of a competency, or the operator is not privileged to view it.
-
-######################################################################
-  /api/card_types:
-    get:
-      tags: [ "Card types" ]
-      summary: Search card types
-      description: |
-        This returns the card types your operator is privileged to view.  They may be different card
-        types from those you are allowed to assign to cardholders, and since that is the only thing
-        that this API does with card types, you should probably be using [that
-        function](#operation--api-card_types-assign-get) instead.
-
-  /api/card_types/assign:
-    get:
-      tags: [ "Card types" ]
-      summary: Search usable card types
-      description: |
-        This returns the card types you are privileged to assign to a cardholder.
-
-        Since a site usually has only a few card types, and each is small, the search, sorting,
-        field selection, and pagination parameters are probably of little use to you.  But they work.
-
-        If your result set is empty it means your operator does not have the privilege to view any
-        card types.  Your operator needs a privilege that allows assigning cards and credentials to
-        cardholders such as 'Add / Edit Card or Credential' or 'Create / Edit / Create and Edit
-        Cardholders'.
-
-        You can find this URL in `features.cardTypes.assign`in `/api`.  It was new in 8.10.
-
-      parameters:
-      - $ref: "#/parameters/sort"
-      - $ref: "#/parameters/top"
-      - $ref: "#/parameters/name"
-      - $ref: "#/parameters/division"
-      - $ref: "#/parameters/directDivision"
-      - $ref: "#/parameters/description"
-      - name: "fields"
-        in: query
-        type: array
-        items: { type: string }
-        enum: [ href, id, name, division, facilityCode, availableCardStates, credentialClass, minimumNumber, maximumNumber, notes, regex, regexDescription ]
-
-        description: |
-          Specifies which fields to return instead of the default set (which contains
-          nearly every field).  Separate values with commas.
-
-          Treat the string matches as case sensitive:  use 'facilityCode' rather than
-          'facilitycode'.
-
-      responses:
-        200:
-          description: "Success."
-          schema: {$ref: '#/definitions/Card type search'}
-
-        403: { description: "The installation lacks a cardholders licence." }
-
-  /api/card_types/{id}:
-    get:
-      tags: [ "Card types" ]
-      summary: Get one card type
-      description: |
-        This returns some basic data for a card type.  It exists so that clients following card type
-        hrefs from other controllers do not receive a 404.  To find out about card types available
-        for assigning to cardholders, use [card_types/assign](#operation--api-card_types-assign-get)
-        instead.
 
 ######################################################################
   /api/locker_banks:
@@ -7723,6 +7889,50 @@ paths:
         403:
           description: The site does not have the RESTCardholders or RESTEvents licence.
 
+    post:
+      tags: [ "PDF definitions" ]
+      summary: Create [coming]
+      description: |
+        Creates a new personal data definition.
+
+        Take this URL from the `href` field in the `features.personalDataFields.personalDataFields.href` field
+        of `GET /api`.
+
+        When successful it returns a location header containing the address of the new PDF.
+
+        Note that you can only create one per POST.
+
+        This call requires the RESTConfiguration licence.
+
+      parameters:
+        - name: "this string necessary but not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/PDF definition'}
+          description: |
+            This example shows the fields that you can set when creating a PDF.
+
+      responses: 
+        201: 
+          description: "Success."
+          headers:
+            location:
+              type: string
+              format: url
+              description: The href of the new PDF.
+        400:
+          description: |
+            The body of the POST did not describe a valid PDF.
+
+            If you see 'Invalid Personal Data Field JSON object', the server could not parse the
+            JSON in the body of your POST.  Remember to quote all strings, especially those than
+            contain @ symbols.
+
+        403:
+          description: |
+            The operator does not have a privilege that allows creating PDFs or the server does not
+            have the 'RESTConfiguration' licence.
+
   /api/personal_data_fields/{id}:
     get:
       tags: [ "PDF definitions" ]
@@ -7751,6 +7961,83 @@ paths:
             The operator does not have a privilege that allows viewing that PDF's definition ('View'
             or 'Edit Personal Data Definition'), or the PDF's own access control is hiding it from
             the operator.
+
+    patch:
+      tags: [ "PDF definitions" ]
+      summary: Update [coming]
+      description: |
+        This is the call you use to update a PDF.
+
+        The PATCH expects a document in the same format as the [the PDF detail](#definition-PDF
+
+        This call requires the RESTConfiguration licence.
+
+      parameters:
+        - name: "this name not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/PDF definition'}
+          description: |
+            There are no mandatory fields when PATCHing.  There are, however, some fields you cannot
+            change.
+
+      responses:
+        200:
+          description: |
+            Success.  Future versions will return feedback from the server about your PATCH.
+        204:
+          description: "Success."
+        400:
+          description: |
+            The body of the PATCH did not describe a valid PDF.  PDFs have many rules, easily
+            enforced in a graphical interface but less so in an API.  See the body of the response
+            for help on what went wrong.
+
+        403:
+          description: |
+            The operator has a privilege that allows viewing the item but not modifying it, or you
+            tried to set the division to one you cannot configure, or the server is missing the
+            necessary licence.
+
+            You need the 'Edit Personal Data Definitions' privilege on the item you are changing,
+            which means you need on it on its current division.  You also need it on the new
+            division, if you are changing that.
+
+            This is also the response when the server does not have the 'RESTConfiguration' licence.
+
+        404:
+          description: |
+            That is not the URL of a PDF or your operator does not have the privilege to view
+            it.  This probably means you have built the URL yourself instead of taking it from the
+            results of a [GET](#operation--api-personal_data_fields-get).
+
+        409:
+          description: |
+            The item is locked for editing by another operator.  The body of the response will
+            tell you which operator is holding the lock.
+
+    delete:
+      tags: [ "PDF definitions" ]
+      summary: Remove [coming]
+      description: |
+        This call removes a role item from Command Centre.
+
+        It requires the RESTConfiguration licence.
+      responses: 
+        200: { description: "Success." }
+        204: { description: "Success." }
+        400:
+          description: |
+            Deleting failed.  This happens when the role is in use.  The usual reason is that
+            cardholders are still connected by the role you are attempting to remove.
+
+        403:
+          description: |
+            The operator has the permission to view the item but not delete it, or the server does
+            not have the 'RESTConfiguration' licence.
+        404:
+          description: |
+            That is not the URL of a role, or the operator is not privileged to view it.
 
 ######################################################################
   /api/receptions:
@@ -7938,7 +8225,7 @@ paths:
   /api/roles:
     get:
       tags: [ "Roles" ]
-      summary: Search roles
+      summary: Search
       description: |
         This returns the roles you are privileged to view.
 
@@ -7963,7 +8250,132 @@ paths:
           description: "Success."
           schema: {$ref: '#/definitions/Role search'}
         403:
+
           description: The site does not have the RESTCardholders licence.
+
+    post:
+      tags:
+        - Roles
+      summary: Create [coming]
+      description: |
+        Creates a new role.
+
+        Take this URL from the `href` field in the `features.roles.roles.href` field
+        of `GET /api`.
+
+        When successful it returns a location header containing the address of the new role.
+
+        Note that you can only create one per POST.
+
+        This call requires the RESTConfiguration licence.
+
+      parameters:
+        - name: "this string necessary but not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Role'}
+          description: |
+            This example shows the fields that you can set when creating a role.
+
+      responses: 
+        201: 
+          description: "Success."
+          headers:
+            location:
+              type: string
+              format: url
+              description: The href of the new role.
+        400:
+          description: |
+            The body of the POST did not describe a valid role.
+
+            If you see 'Invalid Role JSON object', the server could not parse the JSON in
+            the body of your POST.  Remember to quote all strings, especially those than contain @
+            symbols.
+
+        403:
+          description: |
+            The operator does not have a privilege that allows creating roles, or the server does
+            not have the 'RESTConfiguration' licence.
+
+  /api/roles/{id}:
+    patch:
+      tags:
+      - Roles
+      summary: Update [coming]
+      description: |
+        This is the call you use to update a role.
+
+        The PATCH expects a document in the same format as the [the role detail](#definition-Role).
+
+        This call requires the RESTConfiguration licence.
+
+      parameters:
+        - name: "this name not rendered"
+          in: body
+          required: true
+          schema: {$ref: '#/definitions/Role'}
+          description: |
+            There are no mandatory fields when PATCHing a role, but you must specify a division when
+            creating one.
+
+      responses:
+        200:
+          description: |
+            Success.  Future versions will return feedback from the server about your PATCH.
+        204:
+          description: "Success."
+        400:
+          description: |
+            The body of the PATCH did not describe a valid card type.  Card types have many rules,
+            easily enforced in a graphical interface but less so in an API.  See the body of the
+            response for help on what went wrong.
+
+        403:
+          description: |
+            The operator has a privilege that allows viewing the item but not modifying it, or you
+            tried to set the division to one you cannot configure, or the server is missing the
+            necessary licence.
+
+            You need the 'Configure Site' privilege on the item you are changing, which means you need
+            on it on the item's current division.  You also need it on the new division, if you are
+            changing that.
+
+            This is also the response when the server does not have the 'RESTConfiguration' licence.
+
+        404:
+          description: |
+            That is not the URL of a card type or your operator does not have the privilege to view
+            it.  This probably means you have built the URL yourself instead of taking it from the
+            results of a [GET](#operation--api-card_types-get).
+
+        409:
+          description: |
+            The item is locked for editing by another operator.  The body of the response will
+            tell you which operator is holding the lock.
+
+    delete:
+      tags: [ Roles ]
+      summary: Remove [coming]
+      description: |
+        This call removes a role item from Command Centre.
+
+        It requires the RESTConfiguration licence.
+      responses: 
+        200: { description: "Success." }
+        204: { description: "Success." }
+        400:
+          description: |
+            Deleting failed.  This happens when the role is in use.  The usual reason is that
+            cardholders are still connected by the role you are attempting to remove.
+
+        403:
+          description: |
+            The operator has the permission to view the item but not delete it, or the server does
+            not have the 'RESTConfiguration' licence.
+        404:
+          description: |
+            That is not the URL of a role, or the operator is not privileged to view it.
 
 ######################################################################
   /api/visits:

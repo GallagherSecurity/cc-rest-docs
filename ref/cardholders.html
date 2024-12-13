@@ -91,39 +91,19 @@
                 <a href="#operation--api-access_groups-get"> Search access groups </a>
               </li>
               <li>
-                <a href="#operation--api-access_groups-post"> Create an access group [coming soon] </a>
+                <a href="#operation--api-access_groups-post"> Create an access group [coming] </a>
               </li>
               <li>
                 <a href="#operation--api-access_groups--id--get"> Get details of an access group </a>
               </li>
               <li>
-                <a href="#operation--api-access_groups--id--patch"> Update an access group [coming soon] </a>
+                <a href="#operation--api-access_groups--id--patch"> Update an access group [coming] </a>
               </li>
               <li>
-                <a href="#operation--api-access_groups--id--delete"> Remove an access group [coming soon] </a>
+                <a href="#operation--api-access_groups--id--delete"> Remove an access group [coming] </a>
               </li>
               <li>
                 <a href="#operation--api-access_groups--id--cardholders-get"> Get membership of an access group </a>
-              </li>
-            </ul>
-          </section>
-          <section>
-            <a href="#tag-Competencies">Competencies</a>
-            <ul>
-              <li>
-                <a href="#operation--api-competencies-post"> Create a competency </a>
-              </li>
-              <li>
-                <a href="#operation--api-competencies-get"> Search competencies </a>
-              </li>
-              <li>
-                <a href="#operation--api-competencies--id--get"> Get details of a competency </a>
-              </li>
-              <li>
-                <a href="#operation--api-competencies--id--patch"> Update a competency. </a>
-              </li>
-              <li>
-                <a href="#operation--api-competencies--id--delete"> Remove a competency </a>
               </li>
             </ul>
           </section>
@@ -134,10 +114,39 @@
                 <a href="#operation--api-card_types-get"> Search card types </a>
               </li>
               <li>
+                <a href="#operation--api-card_types-post"> Create a card type [coming] </a>
+              </li>
+              <li>
                 <a href="#operation--api-card_types-assign-get"> Search usable card types </a>
               </li>
               <li>
                 <a href="#operation--api-card_types--id--get"> Get one card type </a>
+              </li>
+              <li>
+                <a href="#operation--api-card_types--id--patch"> Update a card type [coming] </a>
+              </li>
+              <li>
+                <a href="#operation--api-card_types--id--delete"> Remove a card type [coming] </a>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <a href="#tag-Competencies">Competencies</a>
+            <ul>
+              <li>
+                <a href="#operation--api-competencies-get"> Search competencies </a>
+              </li>
+              <li>
+                <a href="#operation--api-competencies-post"> Create a competency </a>
+              </li>
+              <li>
+                <a href="#operation--api-competencies--id--get"> Get details of a competency </a>
+              </li>
+              <li>
+                <a href="#operation--api-competencies--id--patch"> Update a competency </a>
+              </li>
+              <li>
+                <a href="#operation--api-competencies--id--delete"> Remove a competency </a>
               </li>
             </ul>
           </section>
@@ -185,7 +194,16 @@
                 <a href="#operation--api-personal_data_fields-get"> Search PDF definitions </a>
               </li>
               <li>
+                <a href="#operation--api-personal_data_fields-post"> Create [coming] </a>
+              </li>
+              <li>
                 <a href="#operation--api-personal_data_fields--id--get"> Get details of a PDF definition </a>
+              </li>
+              <li>
+                <a href="#operation--api-personal_data_fields--id--patch"> Update [coming] </a>
+              </li>
+              <li>
+                <a href="#operation--api-personal_data_fields--id--delete"> Remove [coming] </a>
               </li>
             </ul>
           </section>
@@ -218,7 +236,16 @@
             <a href="#tag-Roles">Roles</a>
             <ul>
               <li>
-                <a href="#operation--api-roles-get"> Search roles </a>
+                <a href="#operation--api-roles-get"> Search </a>
+              </li>
+              <li>
+                <a href="#operation--api-roles-post"> Create [coming] </a>
+              </li>
+              <li>
+                <a href="#operation--api-roles--id--patch"> Update [coming] </a>
+              </li>
+              <li>
+                <a href="#operation--api-roles--id--delete"> Remove [coming] </a>
               </li>
             </ul>
           </section>
@@ -275,6 +302,8 @@
           <a href="#definition-Access-group-POST-example"> Access group POST example </a>
           <a href="#definition-Access-group-PATCH-example"> Access group PATCH example </a>
           <a href="#definition-Access-group-membership"> Access group membership </a>
+          <a href="#definition-Card-type-search"> Card type search </a>
+          <a href="#definition-Card-type"> Card type </a>
           <a href="#definition-Locker-bank-search"> Locker bank search </a>
           <a href="#definition-Locker-bank-summary"> Locker bank summary </a>
           <a href="#definition-Locker-bank-detail"> Locker bank detail </a>
@@ -283,8 +312,6 @@
           <a href="#definition-Competency-search"> Competency search </a>
           <a href="#definition-Competency-summary"> Competency summary </a>
           <a href="#definition-Competency-detail"> Competency detail </a>
-          <a href="#definition-Card-type-search"> Card type search </a>
-          <a href="#definition-Card-type"> Card type </a>
           <a href="#definition-Operator-group-search"> Operator group search </a>
           <a href="#definition-Operator-group-summary"> Operator group summary </a>
           <a href="#definition-Operator-group-detail"> Operator group detail </a>
@@ -350,13 +377,13 @@
                 <h4 id="cardholder-api-changes-on-the-roadmap">Cardholder API changes on the roadmap</h4>
                 <ul>
                   <li>
-                    <p>You will be able to create, delete, and change the the basic configuration of access groups, competencies, PDFs, and card types.</p>
+                    <p>You will be able to create, delete, and change the the basic configuration of access groups, roles, PDFs, and card types.</p>
                   </li>
                   <li>
                     <p>POTENTIALLY BREAKING CHANGE: searching for cardholders using <code>pdf_xxx=&quot;&quot;</code> or <code>pdf_xxx=</code> currently returns no cardholders. That is neither useful nor desired. Instead, a future version of Command Centre will return cardholders with a blank value for that PDF.</p>
                   </li>
                   <li>
-                    <p>POTENTIALLY BREAKING CHANGE: the API route that lets you modify a cardholder by PATCH also works if you send it a POST. It should not, because POSTs create things, not modify them. The fix will break clients that rely on this, but since it was not documented, none should.</p>
+                    <p>POTENTIALLY BREAKING CHANGE: the API route that lets you modify a cardholder by PATCH also works if you send it a POST. It should not, because POSTs create things, not modify them. The fix will break clients that rely on this. There should be none, since the POST was not documented.</p>
                   </li>
                   <li>
                     <p>POTENTIALLY BREAKING CHANGE: in future, PATCH methods will return &quot;200 Success&quot; instead of &quot;204 No Content&quot; and may contain the object you modified plus a message from the API giving you feedback on your request. Please be aware that all 200-level response codes mean success, not just the ones old versions have been sending you.</p>
@@ -1934,6 +1961,8 @@
                     </li>
                   </ul>
                   <p>When changing a cardholder&#39;s division at the same time as PDFs or competencies, the extra privilege checks required for PDFs and competency changes use the origin division, not the destination division. So if you are moving a cardholder from a division in which your operator has no access to PDFs and competencies into one in which it does, first PATCH the cardholder into the new division then PATCH it with the other changes.</p>
+                  <p>You can find this URL in the href in the
+                    <a href="#definition-Cardholders">cardholder search</a> or any of the other calls that return cardholder hrefs.</p>
                   <hr>
                   <p>Note that the REST API does not implement the full suite of Command Centre privileges. In particular, the following privileges do not have the same effect on an operator&#39;s ability to modify a cardholder that they do in the administrative clients:</p>
                   <ul>
@@ -2269,7 +2298,8 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This call removes a cardholder from Command Centre.</p>
+                  <p>This call removes a cardholder from Command Centre. You can find the URL in the href in the
+                    <a href="#definition-Cardholders">cardholder search</a> or any of the other calls that return cardholder hrefs.</p>
                 </section>
               </div>
             </div>
@@ -3949,7 +3979,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Create an access group [coming soon]</span>
+              <span class="operation-summary">Create an access group [coming]</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -4346,7 +4376,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Update an access group [coming soon]</span>
+              <span class="operation-summary">Update an access group [coming]</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -4368,6 +4398,8 @@
                   <p>The PATCH expects a document in the same format as the
                     <a href="#definition-Access-group-detail">the access group detail</a> but with fewer fields, given in
                     <a href="#definition-Access-group-POST-example">this POST example</a>. Note that you cannot change everything on an access group that the API shows you, such as its membership, access, and permissions. You can change its basic fields, PDFs, and membership defaults.</p>
+                  <p>You can find the URL for this call in the
+                    <a href="#operation--api-access_groups-get">access group search</a> results and in a cardholder&#39;s <code>accessGroups</code> array.</p>
                   <p>This call requires the RESTConfiguration licence.</p>
                 </section>
               </div>
@@ -4450,7 +4482,7 @@
                     </div>
                     <div class="prop-value">
                       <p>The operator has a privilege that allows viewing the item but not modifying it, or you tried to set the division to one you cannot configure, or the server is missing the necessary licence.</p>
-                      <p>You need either the &#39;Edit Access Groups&#39; on the item you are changing, which means you need on it on the item&#39;s current division. You also need it on the new division, if you are changing that.</p>
+                      <p>You need the &#39;Edit Access Groups&#39; privilege on the item you are changing, which means you need on it on the item&#39;s current division. You also need it on the new division, if you are changing that.</p>
                       <p>This is also the response when the server does not have the &#39;RESTConfiguration&#39; licence.</p>
                     </div>
                   </div>
@@ -4460,7 +4492,7 @@
                     </div>
                     <div class="prop-value">
                       <p>That is not the URL of an access group or your operator does not have the privilege to view it. This probably means you have built the URL yourself instead of taking it from the results of a
-                        <a href="#operation--api-access-groups--operation--get">GET</a>.</p>
+                        <a href="#operation--api-access_groups-get">GET</a>.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4486,7 +4518,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Remove an access group [coming soon]</span>
+              <span class="operation-summary">Remove an access group [coming]</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -4505,6 +4537,8 @@
                     </strong>
                   </p>
                   <p>This call removes an access group from Command Centre.</p>
+                  <p>You can find the URL for this call in the
+                    <a href="#operation--api-access_groups-get">access group search</a> results and in a cardholder&#39;s <code>accessGroups</code> array.</p>
                   <p>This call requires the RESTConfiguration licence.</p>
                 </section>
               </div>
@@ -4685,49 +4719,82 @@
               </div>
             </div>
           </div>
-          <h1 id="tag-Competencies" class="swagger-summary-tag" data-traverse-target="tag-Competencies">Competencies</h1>
+          <h1 id="tag-Card-types" class="swagger-summary-tag" data-traverse-target="tag-Card-types">Card types</h1>
           <div class="tag-description doc-row">
             <div class="doc-copy">
-              <p>Competencies are items to which cardholders can be linked, and which access zones may require on a cardholder before allowing them in.</p>
-              <p>They have their own access privileges, so operators can see or edit a cardholder&#39;s competencies based on the competency&#39;s settings as well as the cardholder&#39;s division and the privileges the operator has in that division.</p>
-              <p>Notification settings on the competency cause advance warnings to go to the cardholder and his or her related cardholders (line managers, for example) before the competency expires.</p>
-              <p>Competencies differ from access groups in that a cardholder can have only one link to a given competency. Attempting to create another will either fail or raise a stateful alarm depending on your version of Command Centre.</p>
-              <p>The REST API gives you access to competencies through create, search, dereference, update, and delete functions described below.</p>
-              <p>The Configuration Client online help describes competencies fully.</p>
+              <p>The main purpose of the card type API is to find the card type you need when assigning a card to a cardholder.</p>
+              <p>A card connects a cardholder to a card type. A new card takes some defaults from its card type (such as its activity period, given by &#39;from&#39; and &#39;until&#39;), some limits (on the card number and PIN, for example), and other behaviours (such as how long a card can be inactive before Command Centre disables it).</p>
+              <p>The &#39;Site Installation&#39; chapter of the Configuration Client online help has a section that describes card types.</p>
+              <p>As it does for the other item types, the REST API gives you read access to card types through search and details pages. However the privilege model for card types is more flexible than for other items: the &#39;View site&#39; privilege determines whether you are allowed to view a card type, while the cardholder editing privileges (&#39;Create&#39;, &#39;Edit&#39;, &#39;Create and edit&#39;) determine whether you can assign cards of that type to a cardholder, so version 8.10 of the API added a page that returns the card types that your operator is allowed to use in that way. Take its URL from <code>features.cardTypes.assign</code> in the results of <code>GET /api</code>.</p>
+              <p>This API uses the term &#39;card&#39; but more broadly we prefer &#39;credential&#39;, because not all card types involve a physical card.</p>
+              <p>The API&#39;s coverage of PIV cards is in
+                <a href="piv.html">its own document</a>.</p>
+              <p>API routes that allow creating, modifying, and deleting card types are in development.</p>
             </div>
           </div>
-          <div id="operation--api-competencies-post" class="operation panel" data-traverse-target="operation--api-competencies-post">
+          <div id="operation--api-card_types-get" class="operation panel" data-traverse-target="operation--api-card_types-get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
             <div class="operation-tags">
-              <a class="label" href="#tag-Competencies">Competencies</a>
+              <a class="label" href="#tag-Card-types">Card types</a>
               <!---->
             </div>
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Create a competency</span>
+              <span class="operation-summary">Search card types</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-path">
-                  <span class="operation-method">POST</span>
-                  <span class="operation-path">/api/competencies</span>
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/card_types</span>
                 </section>
               </div>
             </div>
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>Creates a new competency.</p>
-                  <p>The POST expects a document in the same format as the
-                    <a href="#definition-Competency">the competency detail</a> but with far fewer fields. An example is
-                    <a href="#definition-Competency-PATCH-and-POST-example">this POST example</a>.</p>
-                  <p>When successful it returns a <code>location</code> header containing the address of the new competency.</p>
-                  <p>Note that you can only create one competency per POST.</p>
-                  <p>Do not code this URL into your application. Take it from the results of <code>GET /api</code>.</p>
-                  <p>New to Command Centre 9.10.</p>
-                  <p>This requires the RESTConfiguration licence.</p>
+                  <p>This returns the card types your operator is privileged to view. They may be different card types from those you are allowed to assign to cardholders, and since that is the only thing that this API does with card types, you should probably be using
+                    <a href="#operation--api-card_types-assign-get">that function</a> instead.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+          </div>
+          <div id="operation--api-card_types-post" class="operation panel" data-traverse-target="operation--api-card_types-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Card-types">Card types</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create a card type [coming]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/card_types</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Creates a new card type, setting practically everything except the PIV fields.</p>
+                  <p>Take this URL from the <code>href</code> field in the <code>features.cardTypes.cardTypes.href</code> field of <code>GET /api</code>.</p>
+                  <p>The POST expects a document in the same format as
+                    <a href="#operation--api-card_types--id--get">the card type detail</a>.</p>
+                  <p>When successful it returns a location header containing the address of the new card type.</p>
+                  <p>Note that you can only create one item per POST.</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
                 </section>
               </div>
             </div>
@@ -4738,13 +4805,13 @@
                     <div class="prop-name">
                       <div class="swagger-request-model">
                         <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Competency PATCH and POST example">Competency PATCH and POST example</a>
+                          <a class="json-schema-ref" href="#/definitions/Card type">Card type</a>
                         </span>
                       </div>
                     </div>
                     <div class="prop-value columns small-6">
                       <!-- <div class="swagger-request-description"> -->
-                      <p>This example shows every field that you can set when creating or modifying a competency, but the only field you must have in a POST is <code>division</code>.</p>
+                      <p>This example shows the fields that you can set when creating a card type.</p>
                       <!-- </div> -->
                     </div>
                   </div>
@@ -4757,13 +4824,19 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;New competency&quot;</span>,
-  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;C4&quot;</span>,
-  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Translated automatically.&quot;</span>,
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
-  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A very long string.&quot;</span>
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Disabled after 7d inactivity, 6-char PIN&quot;</span>,
+  <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
+  <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
+  <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
+  <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
+  <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
+  <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -4779,7 +4852,7 @@
                       <div class="prop-title">201 Created</div>
                     </div>
                     <div class="prop-value">
-                      <p>Success. Check the response body for feedback about your request.</p>
+                      <p>Success.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4787,8 +4860,8 @@
                       <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>The body of the POST did not describe a valid competency. You may have tried to give the new competency the same name as an existing one.</p>
-                      <p>See the body of the response for help.</p>
+                      <p>The body of the POST did not describe a valid card type.</p>
+                      <p>If you see &#39;Invalid Access Group JSON object&#39;, the server could not parse the JSON in the body of your POST. Remember to quote all strings, especially those than contain @ symbols.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -4796,7 +4869,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have a privilege on the division that allows creating items inside it (&#39;Configure Site&#39;), or the server has reached its licensed limit of competencies, or it does not have the &#39;RESTConfiguration&#39; licence.</p>
+                      <p>The operator does not have a privilege that allows creating card types, or the server does not have the &#39;RESTConfiguration&#39; licence.</p>
                     </div>
                   </div>
                 </section>
@@ -4819,7 +4892,7 @@
                         <tr class="swagger-response-header-location">
                           <td> location
                             <td>
-                              <p>The href of the new competency.</p>
+                              <p>The href of the new card type.</p>
                             </td>
                             <td>
                               <span class="json-property-type">string</span>
@@ -4832,6 +4905,512 @@
                   </section>
                 </section>
               </div>
+            </div>
+          </div>
+          <div id="operation--api-card_types-assign-get" class="operation panel" data-traverse-target="operation--api-card_types-assign-get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Card-types">Card types</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Search usable card types</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/card_types/assign</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns the card types you are privileged to assign to a cardholder.</p>
+                  <p>Since a site usually has only a few card types, and each is small, the search, sorting, field selection, and pagination parameters are probably of little use to you. But they work.</p>
+                  <p>If your result set is empty it means your operator does not have the privilege to view any card types. Your operator needs a privilege that allows assigning cards and credentials to cardholders such as &#39;Add / Edit Card or Credential&#39; or &#39;Create / Edit / Create and Edit Cardholders&#39;.</p>
+                  <p>You can find this URL in <code>features.cardTypes.assign</code>in <code>/api</code>. It was new in 8.10.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">sort</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">-id</span>,
+                          <span class="json-property-enum-item">-name</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Changes the sort field between database ID and name.</p>
+                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
+                      <p>There are two very strong reasons to sort by ID:</p>
+                      <ol>
+                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. This is known as &quot;page drift.&quot; Sorting by ID does not carry that risk.</li>
+                        <li>Following a <code>next</code> link is
+                          <em>dramatically</em> quicker when sorting by ID.</li>
+                      </ol>
+                      <p>We
+                        <em>strongly</em> recommend sorting by ID. In case you were still in doubt, we will do that by default in a future version of Command Centre.</p>
+                      <p>The server silently ignores anything except the options listed here.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">top</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">integer</span>
+                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Limits the results to no more than this many items per page.</p>
+                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">name</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Limits the returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
+                      <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
+                      <p>Search parameters are ANDed together.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">division</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Limits the returned items to those that are in these divisions.</p>
+                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root division.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                      <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
+                      <p>Search parameters are ANDed together.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">directDivision</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Restricts items to those whose division is in this list.</p>
+                      <p>Unlike <code>division=</code>, it does not follow ancestry.</p>
+                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
+                      <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
+                      <p>Search parameters are ANDed together.</p>
+                      <p>Added in 9.20.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">description</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. A <code>_</code> will match any single character, and a <code>%</code> will match any substring. With or without quotes, having either of these wildcards in the string will anchor it at both ends as though you had surrounded it with <code>&quot;</code>.</p>
+                      <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
+                      <p>Search parameters are ANDed together.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">fields</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string[]</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">href</span>,
+                          <span class="json-property-enum-item">id</span>,
+                          <span class="json-property-enum-item">name</span>,
+                          <span class="json-property-enum-item">division</span>,
+                          <span class="json-property-enum-item">facilityCode</span>,
+                          <span class="json-property-enum-item">availableCardStates</span>,
+                          <span class="json-property-enum-item">credentialClass</span>,
+                          <span class="json-property-enum-item">minimumNumber</span>,
+                          <span class="json-property-enum-item">maximumNumber</span>,
+                          <span class="json-property-enum-item">notes</span>,
+                          <span class="json-property-enum-item">regex</span>,
+                          <span class="json-property-enum-item">regexDescription</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Specifies which fields to return instead of the default set (which contains nearly every field). Separate values with commas.</p>
+                      <p>Treat the string matches as case sensitive: use &#39;facilityCode&#39; rather than &#39;facilitycode&#39;.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                      <div class="prop-ref">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Card type search">Card type search</a>
+                        </span>
+                      </div>
+                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The installation lacks a cardholders licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Example
+                    <span>(200 OK)</span>
+                  </h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
+      <span class="hljs-attr">&quot;division&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Disabled after 7d inactivity, 6-char PIN&quot;</span>,
+      <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
+      <span class="hljs-attr">&quot;availableCardStates&quot;</span>: [
+        <span class="hljs-string">&quot;Active&quot;</span>,
+        <span class="hljs-string">&quot;Disabled (manually)&quot;</span>,
+        <span class="hljs-string">&quot;Lost&quot;</span>,
+        <span class="hljs-string">&quot;Stolen&quot;</span>,
+        <span class="hljs-string">&quot;Damaged&quot;</span>
+      ],
+      <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
+      <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
+      <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+      <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
+      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/assign?skip=1000&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-card_types--id--get" class="operation panel" data-traverse-target="operation--api-card_types--id--get">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Card-types">Card types</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Get one card type</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">GET</span>
+                  <span class="operation-path">/api/card_types/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This returns some basic data for a card type. It exists so that clients following card type hrefs from other controllers do not receive a 404. To find out about card types available for assigning to cardholders, use
+                    <a href="#operation--api-card_types-assign-get">card_types/assign</a> instead.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+          </div>
+          <div id="operation--api-card_types--id--patch" class="operation panel" data-traverse-target="operation--api-card_types--id--patch">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Card-types">Card types</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Update a card type [coming]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">PATCH</span>
+                  <span class="operation-path">/api/card_types/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This is the call you use to update a card type.</p>
+                  <p>The PATCH expects a document in the same format as the
+                    <a href="#definition-Card-type">the card type detail</a> but with fewer fields.</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Card type">Card type</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>Despite this example containing the <code>href</code> field, it is read-only. If you send in in the body of your PATCH, the server will ignore it.</p>
+                      <p>The rules for valid field values when modifying a card type depend on its credential class and the site&#39;s configuration.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Disabled after 7d inactivity, 6-char PIN&quot;</span>,
+  <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
+  <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
+  <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
+  <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
+  <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
+  <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. Future versions will return feedback from the server about your PATCH.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the PATCH did not describe a valid card type. Card types have many rules, easily enforced in a graphical interface but less so in an API. See the body of the response for help on what went wrong.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has a privilege that allows viewing the item but not modifying it, or you tried to set the division to one you cannot configure, or the server is missing the necessary licence.</p>
+                      <p>You need the &#39;Configure Site&#39; privilege on the item you are changing, which means you need on it on the item&#39;s current division. You also need it on the new division, if you are changing that.</p>
+                      <p>This is also the response when the server does not have the &#39;RESTConfiguration&#39; licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a card type or your operator does not have the privilege to view it. This probably means you have built the URL yourself instead of taking it from the results of a
+                        <a href="#operation--api-card_types-get">GET</a>.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The item is locked for editing by another operator. The body of the response will tell you which operator is holding the lock.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-card_types--id--delete" class="operation panel" data-traverse-target="operation--api-card_types--id--delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Card-types">Card types</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Remove a card type [coming]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/card_types/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This call removes a card type from Command Centre.</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Deleting the card type failed. This happens when the card type is in use. Most often it is because a cardholder still has a card of this type, but card types can also be connected to other items.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has the permission to view the item but not delete it, or the server does not have the &#39;RESTConfiguration&#39; licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a card type, or the operator is not privileged to view it.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <h1 id="tag-Competencies" class="swagger-summary-tag" data-traverse-target="tag-Competencies">Competencies</h1>
+          <div class="tag-description doc-row">
+            <div class="doc-copy">
+              <p>Competencies are items to which cardholders can be linked, and which access zones may require on a cardholder before allowing them in.</p>
+              <p>They have their own access privileges, so operators can see or edit a cardholder&#39;s competencies based on the competency&#39;s settings as well as the cardholder&#39;s division and the privileges the operator has in that division.</p>
+              <p>Notification settings on the competency cause advance warnings to go to the cardholder and his or her related cardholders (line managers, for example) before the competency expires.</p>
+              <p>Competencies differ from access groups in that a cardholder can have only one link to a given competency. Attempting to create another will either fail or raise a stateful alarm depending on your version of Command Centre.</p>
+              <p>The REST API gives you access to competencies through create, search, dereference, update, and delete functions described below.</p>
+              <p>The Configuration Client online help describes competencies fully.</p>
             </div>
           </div>
           <div id="operation--api-competencies-get" class="operation panel" data-traverse-target="operation--api-competencies-get">
@@ -5069,6 +5648,144 @@
               </div>
             </div>
           </div>
+          <div id="operation--api-competencies-post" class="operation panel" data-traverse-target="operation--api-competencies-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Competencies">Competencies</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create a competency</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/competencies</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Creates a new competency.</p>
+                  <p>The POST expects a document in the same format as the
+                    <a href="#definition-Competency">the competency detail</a> but with far fewer fields. An example is
+                    <a href="#definition-Competency-PATCH-and-POST-example">this POST example</a>.</p>
+                  <p>When successful it returns a <code>location</code> header containing the address of the new competency.</p>
+                  <p>Note that you can only create one competency per POST.</p>
+                  <p>Do not code this URL into your application. Take it from the results of <code>GET /api</code>.</p>
+                  <p>New to Command Centre 9.10.</p>
+                  <p>This requires the RESTConfiguration licence.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Competency PATCH and POST example">Competency PATCH and POST example</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>This example shows every field that you can set when creating or modifying a competency, but the only field you must have in a POST is <code>division</code>.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;New competency&quot;</span>,
+  <span class="hljs-attr">&quot;shortName&quot;</span>: <span class="hljs-string">&quot;C4&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Translated automatically.&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;A very long string.&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. Check the response body for feedback about your request.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the POST did not describe a valid competency. You may have tried to give the new competency the same name as an existing one.</p>
+                      <p>See the body of the response for help.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege on the division that allows creating items inside it (&#39;Configure Site&#39;), or the server has reached its licensed limit of competencies, or it does not have the &#39;RESTConfiguration&#39; licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Headers
+                    <span>(201 Created)</span>
+                  </h5>
+                  <section class="swagger-response-headers">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="swagger-response-header-name"></th>
+                          <th class="swagger-response-header-description"></th>
+                          <th class="swagger-response-header-data-type"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="swagger-response-header-location">
+                          <td> location
+                            <td>
+                              <p>The href of the new competency.</p>
+                            </td>
+                            <td>
+                              <span class="json-property-type">string</span>
+                              <span class="json-property-format">(url)</span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </section>
+                </section>
+              </div>
+            </div>
+          </div>
           <div id="operation--api-competencies--id--get" class="operation panel" data-traverse-target="operation--api-competencies--id--get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
@@ -5230,7 +5947,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Update a competency.</span>
+              <span class="operation-summary">Update a competency</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -5325,7 +6042,7 @@
                     </div>
                     <div class="prop-value">
                       <p>The operator has a privilege that allows viewing the item but not modifying it, or you tried to set the division to one you cannot configure, or the server is missing the necessary licence.</p>
-                      <p>You need either the &#39;Configure Site&#39; on the item you are changing, which means you need on it on the item&#39;s current division. You also need it on the new division, if you are changing that.</p>
+                      <p>You need the &#39;Configure Site&#39; privilege on the item you are changing, which means you need on it on the item&#39;s current division. You also need it on the new division, if you are changing that.</p>
                       <p>This is also the response when the server does not have the &#39;RESTConfiguration&#39; licence.</p>
                     </div>
                   </div>
@@ -5335,7 +6052,7 @@
                     </div>
                     <div class="prop-value">
                       <p>That is not the URL of a competency or your operator does not have the privilege to view it. This probably means you have built the URL yourself instead of taking it from the results of a
-                        <a href="#operation--api-competencies--operation--get">GET</a>.</p>
+                        <a href="#operation--api-competencies-get">GET</a>.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -5430,332 +6147,6 @@
                 </section>
               </div>
               <div class="doc-examples"> </div>
-            </div>
-          </div>
-          <h1 id="tag-Card-types" class="swagger-summary-tag" data-traverse-target="tag-Card-types">Card types</h1>
-          <div class="tag-description doc-row">
-            <div class="doc-copy">
-              <p>The card type API exists so that you can find the card type you need when assigning a card to a cardholder.</p>
-              <p>A card connects a cardholder to a card type. A new card takes some defaults from its card type (such as its activity period, given by &#39;from&#39; and &#39;until&#39;), some limits (on the card number and PIN, for example), and other behaviours (such as how long a card can be inactive before Command Centre disables it).</p>
-              <p>The &#39;Site Installation&#39; chapter of the Configuration Client online help has a section that describes card types.</p>
-              <p>As it does for the other item types, the REST API gives you read access to card types through search and details pages. However the privilege model for card types is more flexible than for other items: the &#39;View site&#39; privilege determines whether you are allowed to view a card type, while the cardholder editing privileges (&#39;Create&#39;, &#39;Edit&#39;, &#39;Create and edit&#39;) determine whether you can assign it to a cardholder, so version 8.10 of the API added a page that returns the card types that your operator is allowed to assign to cardholders. Take its URL from <code>features.cardTypes.assign</code> in the results of <code>GET /api</code>.</p>
-              <p>This API uses the term &#39;card&#39; but more broadly we prefer &#39;credential&#39;, because not all card types involve a physical card.</p>
-              <p>The API&#39;s coverage of PIV cards is in
-                <a href="piv.html">its own document</a>
-              </p>
-            </div>
-          </div>
-          <div id="operation--api-card_types-get" class="operation panel" data-traverse-target="operation--api-card_types-get">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Card-types">Card types</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">Search card types</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">GET</span>
-                  <span class="operation-path">/api/card_types</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>This returns the card types your operator is privileged to view. They may be different card types from those you are allowed to assign to cardholders, and since that is the only thing that this API does with card types, you should probably be using
-                    <a href="#operation--api-card_types-assign-get">that function</a> instead.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy"> </div>
-              <div class="doc-examples"></div>
-            </div>
-          </div>
-          <div id="operation--api-card_types-assign-get" class="operation panel" data-traverse-target="operation--api-card_types-assign-get">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Card-types">Card types</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">Search usable card types</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">GET</span>
-                  <span class="operation-path">/api/card_types/assign</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>This returns the card types you are privileged to assign to a cardholder.</p>
-                  <p>Since a site usually has only a few card types, and each is small, the search, sorting, field selection, and pagination parameters are probably of little use to you. But they work.</p>
-                  <p>If your result set is empty it means your operator does not have the privilege to view any card types. Your operator needs a privilege that allows assigning cards and credentials to cardholders such as &#39;Add / Edit Card or Credential&#39; or &#39;Create / Edit / Create and Edit Cardholders&#39;.</p>
-                  <p>You can find this URL in <code>features.cardTypes.assign</code>in <code>/api</code>. It was new in 8.10.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-request-params">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">sort</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-enum" title="Possible values">
-                          <span class="json-property-enum-item">id</span>,
-                          <span class="json-property-enum-item">name</span>,
-                          <span class="json-property-enum-item">-id</span>,
-                          <span class="json-property-enum-item">-name</span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Changes the sort field between database ID and name.</p>
-                      <p>If you prefix <code>id</code> or <code>name</code> with a minus sign (ASCII 45), the sort order is reversed.</p>
-                      <p>There are two very strong reasons to sort by ID:</p>
-                      <ol>
-                        <li>Sorting by name carries a risk of missing or duplicating objects if your result set spans multiple pages and another operator is editing the database while your REST client is enumerating them. This is known as &quot;page drift.&quot; Sorting by ID does not carry that risk.</li>
-                        <li>Following a <code>next</code> link is
-                          <em>dramatically</em> quicker when sorting by ID.</li>
-                      </ol>
-                      <p>We
-                        <em>strongly</em> recommend sorting by ID. In case you were still in doubt, we will do that by default in a future version of Command Centre.</p>
-                      <p>The server silently ignores anything except the options listed here.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">top</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">integer</span>
-                        <span class="json-property-range" title="Value limits">x ≥ 1</span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Limits the results to no more than this many items per page.</p>
-                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">name</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Limits the returned items to those with a name that matches this string. Without surrounding quotes or a percent sign or underscore, it is a substring match; surround the parameter with double quotes <code>&quot;...&quot;</code> for an exact match. Without quotes, a percent sign <code>%</code> will match any substring and an underscore will match any single character.</p>
-                      <p>The search is always case-insensitive. Results are undefined if you do a substring search for the empty string (<code>name=</code>). You will receive no items if you search for those with no name (<code>name=&quot;&quot;</code>), as all items must have a name.</p>
-                      <p>Search parameters are ANDed together.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">division</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string[]</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Limits the returned items to those that are in these divisions.</p>
-                      <p>That includes all the items in those divisions&#39; child divisions, because Command Centre treats items as though they are also in their division&#39;s parent, and its parent, and so on up to the root division.</p>
-                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
-                      <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
-                      <p>Search parameters are ANDed together.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">directDivision</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string[]</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Restricts items to those whose division is in this list.</p>
-                      <p>Unlike <code>division=</code>, it does not follow ancestry.</p>
-                      <p>List the IDs of the divisions you are interested in separated by commas. Item IDs are short alphanumeric strings, not URLs.</p>
-                      <p>Results are undefined if you provide an ID that is not in the form of a division ID.</p>
-                      <p>Search parameters are ANDed together.</p>
-                      <p>Added in 9.20.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">description</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Limits the returned items to those with a description that matches this string. By default it is a substring match; surround it with double quotes <code>&quot;...&quot;</code> for an exact match. A <code>_</code> will match any single character, and a <code>%</code> will match any substring. With or without quotes, having either of these wildcards in the string will anchor it at both ends as though you had surrounded it with <code>&quot;</code>.</p>
-                      <p>The search is always case-insensitive. Results are undefined if you search for the empty string (<code>description=</code> or <code>description=&quot;&quot;</code>).</p>
-                      <p>Search parameters are ANDed together.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">fields</div>
-                      <div class="prop-subtitle"> in query </div>
-                      <div class="prop-subtitle">
-                        <span class="json-property-type">string[]</span>
-                        <span class="json-property-enum" title="Possible values">
-                          <span class="json-property-enum-item">href</span>,
-                          <span class="json-property-enum-item">id</span>,
-                          <span class="json-property-enum-item">name</span>,
-                          <span class="json-property-enum-item">division</span>,
-                          <span class="json-property-enum-item">facilityCode</span>,
-                          <span class="json-property-enum-item">availableCardStates</span>,
-                          <span class="json-property-enum-item">credentialClass</span>,
-                          <span class="json-property-enum-item">minimumNumber</span>,
-                          <span class="json-property-enum-item">maximumNumber</span>,
-                          <span class="json-property-enum-item">notes</span>,
-                          <span class="json-property-enum-item">regex</span>,
-                          <span class="json-property-enum-item">regexDescription</span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                      </div>
-                    </div>
-                    <div class="prop-value">
-                      <p>Specifies which fields to return instead of the default set (which contains nearly every field). Separate values with commas.</p>
-                      <p>Treat the string matches as case sensitive: use &#39;facilityCode&#39; rather than &#39;facilitycode&#39;.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples"></div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-responses">
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">200 OK</div>
-                      <div class="prop-ref">
-                        <span class="">
-                          <a class="json-schema-ref" href="#/definitions/Card type search">Card type search</a>
-                        </span>
-                      </div>
-                      <!-- <span class="swagger-global"></span> <span class="json-schema-reference"><a href=""></a></span> -->
-                    </div>
-                    <div class="prop-value">
-                      <p>Success.</p>
-                    </div>
-                  </div>
-                  <div class="prop-row prop-group">
-                    <div class="prop-name">
-                      <div class="prop-title">403 Forbidden</div>
-                    </div>
-                    <div class="prop-value">
-                      <p>The installation lacks a cardholders licence.</p>
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Response Example
-                    <span>(200 OK)</span>
-                  </h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;results&quot;</span>: [
-    {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
-      <span class="hljs-attr">&quot;division&quot;</span>: {
-        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
-      },
-      <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Disabled after 7d inactivity, 6-char PIN&quot;</span>,
-      <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
-      <span class="hljs-attr">&quot;availableCardStates&quot;</span>: [
-        <span class="hljs-string">&quot;Active&quot;</span>,
-        <span class="hljs-string">&quot;Disabled (manually)&quot;</span>,
-        <span class="hljs-string">&quot;Lost&quot;</span>,
-        <span class="hljs-string">&quot;Stolen&quot;</span>,
-        <span class="hljs-string">&quot;Damaged&quot;</span>
-      ],
-      <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
-      <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-      <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
-      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
-      <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
-      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
-    }
-  ],
-  <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/assign?skip=1000&quot;</span>
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="operation--api-card_types--id--get" class="operation panel" data-traverse-target="operation--api-card_types--id--get">
-            <!-- <section class="operation-tags row"> -->
-            <!-- <div class="doc-copy"> -->
-            <div class="operation-tags">
-              <a class="label" href="#tag-Card-types">Card types</a>
-              <!---->
-            </div>
-            <!-- </div> -->
-            <!-- </section> -->
-            <h2 class="operation-title">
-              <span class="operation-summary">Get one card type</span>
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-path">
-                  <span class="operation-method">GET</span>
-                  <span class="operation-path">/api/card_types/{id}</span>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="swagger-operation-description">
-                  <p>This returns some basic data for a card type. It exists so that clients following card type hrefs from other controllers do not receive a 404. To find out about card types available for assigning to cardholders, use
-                    <a href="#operation--api-card_types-assign-get">card_types/assign</a> instead.</p>
-                </section>
-              </div>
-            </div>
-            <div class="doc-row">
-              <div class="doc-copy"> </div>
-              <div class="doc-examples"></div>
             </div>
           </div>
           <h1 id="tag-Lockers" class="swagger-summary-tag" data-traverse-target="tag-Lockers">Lockers</h1>
@@ -7308,6 +7699,7 @@
               <p>There is more configuration: image PDFs have a type and size, to which Command Centre will transcode incoming images. All PDFs have their own access level (hidden, read-only, or full access) that applies to operators in operator groups that do not expressly override it.</p>
               <p>Importantly, PDFs are attached to access groups. A cardholder can have a value for a PDF only if he or she is a member of one of the PDF&#39;s access groups.</p>
               <p>This API lets you see the definitions and configuration of all the personal data fields in the system.</p>
+              <p>API routes that allow creating, modifying, and deleting PDF definitions are in development.</p>
               <h3 id="use-cases">Use cases</h3>
               <h4 id="finding-all-a-cardholders-pdf-definitions">Finding all a cardholder&#39;s PDF definitions</h4>
               <p>You can see all a cardholder&#39;s PDF
@@ -7571,6 +7963,164 @@
               </div>
             </div>
           </div>
+          <div id="operation--api-personal_data_fields-post" class="operation panel" data-traverse-target="operation--api-personal_data_fields-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-PDF-definitions">PDF definitions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create [coming]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/personal_data_fields</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Creates a new personal data definition.</p>
+                  <p>Take this URL from the <code>href</code> field in the <code>features.personalDataFields.personalDataFields.href</code> field of <code>GET /api</code>.</p>
+                  <p>When successful it returns a location header containing the address of the new PDF.</p>
+                  <p>Note that you can only create one per POST.</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/PDF definition">PDF definition</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>This example shows the fields that you can set when creating a PDF.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;email&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Corporate mailbox&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;email&quot;</span>,
+  <span class="hljs-attr">&quot;default&quot;</span>: <span class="hljs-string">&quot;contact@example.com&quot;</span>,
+  <span class="hljs-attr">&quot;required&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;unique&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;defaultAccess&quot;</span>: <span class="hljs-string">&quot;fullAccess&quot;</span>,
+  <span class="hljs-attr">&quot;operatorAccess&quot;</span>: <span class="hljs-string">&quot;fullAccess&quot;</span>,
+  <span class="hljs-attr">&quot;sortPriority&quot;</span>: <span class="hljs-number">50</span>,
+  <span class="hljs-attr">&quot;accessGroups&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;All Staff&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;R&amp;D Special Projects Group&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;.*@.*&quot;</span>,
+  <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;@ least&quot;</span>,
+  <span class="hljs-attr">&quot;notificationDefault&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;imageWidth&quot;</span>: <span class="hljs-number">600</span>,
+  <span class="hljs-attr">&quot;imageHeight&quot;</span>: <span class="hljs-number">800</span>,
+  <span class="hljs-attr">&quot;imageFormat&quot;</span>: <span class="hljs-string">&quot;jpg&quot;</span>,
+  <span class="hljs-attr">&quot;contentType&quot;</span>: <span class="hljs-string">&quot;image/jpeg&quot;</span>,
+  <span class="hljs-attr">&quot;isProfileImage&quot;</span>: <span class="hljs-literal">false</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the POST did not describe a valid PDF.</p>
+                      <p>If you see &#39;Invalid Personal Data Field JSON object&#39;, the server could not parse the JSON in the body of your POST. Remember to quote all strings, especially those than contain @ symbols.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege that allows creating PDFs or the server does not have the &#39;RESTConfiguration&#39; licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Headers
+                    <span>(201 Created)</span>
+                  </h5>
+                  <section class="swagger-response-headers">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="swagger-response-header-name"></th>
+                          <th class="swagger-response-header-description"></th>
+                          <th class="swagger-response-header-data-type"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="swagger-response-header-location">
+                          <td> location
+                            <td>
+                              <p>The href of the new PDF.</p>
+                            </td>
+                            <td>
+                              <span class="json-property-type">string</span>
+                              <span class="json-property-format">(url)</span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </section>
+                </section>
+              </div>
+            </div>
+          </div>
           <div id="operation--api-personal_data_fields--id--get" class="operation panel" data-traverse-target="operation--api-personal_data_fields--id--get">
             <!-- <section class="operation-tags row"> -->
             <!-- <div class="doc-copy"> -->
@@ -7737,6 +8287,238 @@
                   <!-- </div> -->
                 </section>
               </div>
+            </div>
+          </div>
+          <div id="operation--api-personal_data_fields--id--patch" class="operation panel" data-traverse-target="operation--api-personal_data_fields--id--patch">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-PDF-definitions">PDF definitions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Update [coming]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">PATCH</span>
+                  <span class="operation-path">/api/personal_data_fields/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This is the call you use to update a PDF.</p>
+                  <p>The PATCH expects a document in the same format as the [the PDF detail](#definition-PDF</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/PDF definition">PDF definition</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>There are no mandatory fields when PATCHing. There are, however, some fields you cannot change.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;email&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Corporate mailbox&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;email&quot;</span>,
+  <span class="hljs-attr">&quot;default&quot;</span>: <span class="hljs-string">&quot;contact@example.com&quot;</span>,
+  <span class="hljs-attr">&quot;required&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;unique&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;defaultAccess&quot;</span>: <span class="hljs-string">&quot;fullAccess&quot;</span>,
+  <span class="hljs-attr">&quot;operatorAccess&quot;</span>: <span class="hljs-string">&quot;fullAccess&quot;</span>,
+  <span class="hljs-attr">&quot;sortPriority&quot;</span>: <span class="hljs-number">50</span>,
+  <span class="hljs-attr">&quot;accessGroups&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;All Staff&quot;</span>
+    },
+    {
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;R&amp;D Special Projects Group&quot;</span>,
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;.*@.*&quot;</span>,
+  <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;@ least&quot;</span>,
+  <span class="hljs-attr">&quot;notificationDefault&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;imageWidth&quot;</span>: <span class="hljs-number">600</span>,
+  <span class="hljs-attr">&quot;imageHeight&quot;</span>: <span class="hljs-number">800</span>,
+  <span class="hljs-attr">&quot;imageFormat&quot;</span>: <span class="hljs-string">&quot;jpg&quot;</span>,
+  <span class="hljs-attr">&quot;contentType&quot;</span>: <span class="hljs-string">&quot;image/jpeg&quot;</span>,
+  <span class="hljs-attr">&quot;isProfileImage&quot;</span>: <span class="hljs-literal">false</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. Future versions will return feedback from the server about your PATCH.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the PATCH did not describe a valid PDF. PDFs have many rules, easily enforced in a graphical interface but less so in an API. See the body of the response for help on what went wrong.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has a privilege that allows viewing the item but not modifying it, or you tried to set the division to one you cannot configure, or the server is missing the necessary licence.</p>
+                      <p>You need the &#39;Edit Personal Data Definitions&#39; privilege on the item you are changing, which means you need on it on its current division. You also need it on the new division, if you are changing that.</p>
+                      <p>This is also the response when the server does not have the &#39;RESTConfiguration&#39; licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a PDF or your operator does not have the privilege to view it. This probably means you have built the URL yourself instead of taking it from the results of a
+                        <a href="#operation--api-personal_data_fields-get">GET</a>.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The item is locked for editing by another operator. The body of the response will tell you which operator is holding the lock.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-personal_data_fields--id--delete" class="operation panel" data-traverse-target="operation--api-personal_data_fields--id--delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-PDF-definitions">PDF definitions</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Remove [coming]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/personal_data_fields/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This call removes a role item from Command Centre.</p>
+                  <p>It requires the RESTConfiguration licence.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Deleting failed. This happens when the role is in use. The usual reason is that cardholders are still connected by the role you are attempting to remove.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has the permission to view the item but not delete it, or the server does not have the &#39;RESTConfiguration&#39; licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a role, or the operator is not privileged to view it.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
             </div>
           </div>
           <h1 id="tag-Receptions" class="swagger-summary-tag" data-traverse-target="tag-Receptions">Receptions</h1>
@@ -8521,7 +9303,8 @@
             <div class="doc-copy">
               <p>The roles API gives you basic information about Command Centre&#39;s role items so that you can use them to form relationships between cardholders.</p>
               <p>A role defines a relationship between two cardholders. One cardholder can perform a role for many others but can have it performed for them by only one other. For example, a person can be a supervisor for many people but has only one of his or her own.</p>
-              <p>When you use REST to look up or update a cardholder, you will work on the &#39;has a&#39; relationships, not the &#39;is a&#39; relationships. In other words you can change the cardholder&#39;s supervisor but not who the cardholder supervises.</p>
+              <p>When you use REST to look up or update a cardholder, you will work on the &#39;has a&#39; relationships, not the &#39;is a&#39; relationships. In other words, when a role represents a connection between a person and their supervisor, the API lets you change a cardholder&#39;s supervisor but not who the cardholder supervises.</p>
+              <p>API routes that allow creating, modifying, and deleting roles are in development.</p>
               <h3 id="use-case--searching-for-a-role-by-name-and-assigning-a-relationship">Use case: searching for a role by name and assigning a relationship</h3>
               <ol>
                 <li><code>GET /api</code></li>
@@ -8546,7 +9329,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Search roles</span>
+              <span class="operation-summary">Search</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -8740,6 +9523,349 @@
                   <!-- </div> -->
                 </section>
               </div>
+            </div>
+          </div>
+          <div id="operation--api-roles-post" class="operation panel" data-traverse-target="operation--api-roles-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Roles">Roles</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Create [coming]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/roles</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Creates a new role.</p>
+                  <p>Take this URL from the <code>href</code> field in the <code>features.roles.roles.href</code> field of <code>GET /api</code>.</p>
+                  <p>When successful it returns a location header containing the address of the new role.</p>
+                  <p>Note that you can only create one per POST.</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Role">Role</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>This example shows the fields that you can set when creating a role.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Supervisor&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;aka floor manager&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;enableCompetencyExpiryWarnings&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;enableCardExpiryWarnings&quot;</span>: <span class="hljs-literal">true</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">201 Created</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the POST did not describe a valid role.</p>
+                      <p>If you see &#39;Invalid Role JSON object&#39;, the server could not parse the JSON in the body of your POST. Remember to quote all strings, especially those than contain @ symbols.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator does not have a privilege that allows creating roles, or the server does not have the &#39;RESTConfiguration&#39; licence.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Response Headers
+                    <span>(201 Created)</span>
+                  </h5>
+                  <section class="swagger-response-headers">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="swagger-response-header-name"></th>
+                          <th class="swagger-response-header-description"></th>
+                          <th class="swagger-response-header-data-type"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="swagger-response-header-location">
+                          <td> location
+                            <td>
+                              <p>The href of the new role.</p>
+                            </td>
+                            <td>
+                              <span class="json-property-type">string</span>
+                              <span class="json-property-format">(url)</span>
+                              <span class="json-property-range" title="Value limits"></span>
+                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </section>
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="operation--api-roles--id--patch" class="operation panel" data-traverse-target="operation--api-roles--id--patch">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Roles">Roles</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Update [coming]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">PATCH</span>
+                  <span class="operation-path">/api/roles/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This is the call you use to update a role.</p>
+                  <p>The PATCH expects a document in the same format as the
+                    <a href="#definition-Role">the role detail</a>.</p>
+                  <p>This call requires the RESTConfiguration licence.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-body">
+                  <div class="prop-row">
+                    <div class="prop-name">
+                      <div class="swagger-request-model">
+                        <span class="">
+                          <a class="json-schema-ref" href="#/definitions/Role">Role</a>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="prop-value columns small-6">
+                      <!-- <div class="swagger-request-description"> -->
+                      <p>There are no mandatory fields when PATCHing a role, but you must specify a division when creating one.</p>
+                      <!-- </div> -->
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Request Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Supervisor&quot;</span>,
+  <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;aka floor manager&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;enableCompetencyExpiryWarnings&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;enableCardExpiryWarnings&quot;</span>: <span class="hljs-literal">true</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success. Future versions will return feedback from the server about your PATCH.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The body of the PATCH did not describe a valid card type. Card types have many rules, easily enforced in a graphical interface but less so in an API. See the body of the response for help on what went wrong.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has a privilege that allows viewing the item but not modifying it, or you tried to set the division to one you cannot configure, or the server is missing the necessary licence.</p>
+                      <p>You need the &#39;Configure Site&#39; privilege on the item you are changing, which means you need on it on the item&#39;s current division. You also need it on the new division, if you are changing that.</p>
+                      <p>This is also the response when the server does not have the &#39;RESTConfiguration&#39; licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a card type or your operator does not have the privilege to view it. This probably means you have built the URL yourself instead of taking it from the results of a
+                        <a href="#operation--api-card_types-get">GET</a>.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">409 Conflict</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The item is locked for editing by another operator. The body of the response will tell you which operator is holding the lock.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-roles--id--delete" class="operation panel" data-traverse-target="operation--api-roles--id--delete">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Roles">Roles</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Remove [coming]</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">DELETE</span>
+                  <span class="operation-path">/api/roles/{id}</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>This call removes a role item from Command Centre.</p>
+                  <p>It requires the RESTConfiguration licence.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy"> </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">200 OK</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">400 Bad Request</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Deleting failed. This happens when the role is in use. The usual reason is that cardholders are still connected by the role you are attempting to remove.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The operator has the permission to view the item but not delete it, or the server does not have the &#39;RESTConfiguration&#39; licence.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">404 Not Found</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>That is not the URL of a role, or the operator is not privileged to view it.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
             </div>
           </div>
           <h1 id="tag-Visits" class="swagger-summary-tag" data-traverse-target="tag-Visits">Visits</h1>
@@ -14230,7 +15356,7 @@
                       <em>DRAFT DOCUMENTATION</em>
                     </strong>
                   </p>
-                  <p>This is an example of a POST you could use to create an access group, containing examples all the settable fields.</p>
+                  <p>This is an example of a POST you could use to create an access group, containing examples of all the settable fields.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -14481,6 +15607,304 @@
   },
   <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;2017-01-01T00:00:00Z&quot;</span>,
   <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2017-12-31T11:59:59Z&quot;</span>
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Card-type-search" class="definition panel" data-traverse-target="definition-Card-type-search">
+            <h2 class="panel-title">
+              <a name="/definitions/Card type search"></a>Card type search:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>An array of card types, and a <code>next</code> link for more. Sites generally have only a handful of card types, so when retrieving them you should set your &#39;top&#39; parameter high enough that you do not need the &#39;next&#39; link.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="results" class="has-description">
+                      <span class="json-property-name">results:</span>
+                      <span class="json-property-type">
+                        <span class="json-schema-ref-array">
+                          <a class="json-schema-ref" href="#/definitions/Card type">Card type</a>
+                        </span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>An array of card types.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">
+                          <span class="">
+                            <a class="json-schema-ref" href="#/definitions/Card type">Card type</a>
+                          </span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="next" class="has-description">
+                      <span class="json-property-name">next:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The link to the next page. Absent if you have retrieved them all.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-properties">
+                        <dl>
+                          <dt data-property-name="href">
+                            <span class="json-property-name">href:</span>
+                            <span class="json-property-type">string</span>
+                            <span class="json-property-format">(url)</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                          </dt>
+                        </dl>
+                      </section>
+                    </dt>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;results&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
+      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
+      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
+      <span class="hljs-attr">&quot;division&quot;</span>: {
+        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+      },
+      <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Disabled after 7d inactivity, 6-char PIN&quot;</span>,
+      <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
+      <span class="hljs-attr">&quot;availableCardStates&quot;</span>: [
+        <span class="hljs-string">&quot;Active&quot;</span>,
+        <span class="hljs-string">&quot;Disabled (manually)&quot;</span>,
+        <span class="hljs-string">&quot;Lost&quot;</span>,
+        <span class="hljs-string">&quot;Stolen&quot;</span>,
+        <span class="hljs-string">&quot;Damaged&quot;</span>
+      ],
+      <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
+      <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
+      <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
+      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+      <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
+      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
+    }
+  ],
+  <span class="hljs-attr">&quot;next&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/assign?skip=1000&quot;</span>
+  }
+}
+</code></pre> </body>
+                  </html>
+                  <!-- </div> -->
+                </section>
+              </div>
+            </div>
+          </div>
+          <div id="definition-Card-type" class="definition panel" data-traverse-target="definition-Card-type">
+            <h2 class="panel-title">
+              <a name="/definitions/Card type"></a>Card type:
+              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
+              <span class="json-property-range" title="Value limits"></span>
+              
+              
+              </span> -->
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="json-schema-description">
+                  <p>This object describes a single Card Type. &quot;Credential type&quot; would be a better name, as it includes mobile credentials.</p>
+                </section>
+                <section class="json-schema-properties">
+                  <dl>
+                    <dt data-property-name="href" class="has-description">
+                      <span class="json-property-name">href:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-format">(url)</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the identifier to use when assigning a card to a cardholder in a cardholder
+                        <a href="#operation--api-cardholders--id--patch">PATCH</a> or
+                        <a href="#definition-Cardholder-POST-example">POST</a>.</p>
+                      <p>This is also the URL for the card type&#39;s detail page. GETting it will return you a 404 if you do not have &#39;View site&#39; or &#39;Configure site&#39; on the card type&#39;s division.</p>
+                    </dd>
+                    <dt data-property-name="id" class="has-description">
+                      <span class="json-property-name">id:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The API does not use this field. Nor should you.</p>
+                    </dd>
+                    <dt data-property-name="name">
+                      <span class="json-property-name">name:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dt data-property-name="division" class="has-description">
+                      <span class="json-property-name">division:</span>
+                      <span class="json-property-type">object</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>The division that contains this card type. Required when creating a card type.</p>
+                      <p>New to 8.50.</p>
+                    </dd>
+                    <dt data-property-name="notes" class="has-description">
+                      <span class="json-property-name">notes:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Free text.</p>
+                      <p>Because of its potential size, the server does not return the notes field by default. You need to ask for it with <code>fields=notes</code>.</p>
+                    </dd>
+                    <dt data-property-name="facilityCode" class="has-description">
+                      <span class="json-property-name">facilityCode:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>A facility code is a letter (A-P) followed by up to five digits. It is encoded onto cards so that they only work at sites with the correct facility code.</p>
+                      <p>PIV cards, PIV-I cards, and mobile credentials do not have a facility code.</p>
+                      <p>Most credential classes require a facility code on creation. But it cannot be changed once set, so this field is ignored in a PATCH.</p>
+                    </dd>
+                    <dt data-property-name="availableCardStates" class="has-description">
+                      <span class="json-property-name">availableCardStates:</span>
+                      <span class="json-property-type">string[]</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
+                    </dt>
+                    <dd>
+                      <p>All credential types have a set of card states.</p>
+                      <p>If you need this, ask for it using the <code>fields</code> parameter.</p>
+                      <p>This field is read-only: it is derived from the card type&#39;s card state set (also known as a workflow). If you send it in a POST or a PATCH, the server will ignore it.</p>
+                    </dd>
+                    <dt class="json-inner-schema">
+                      <section class="json-schema-array-items">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-enum" title="Possible values">
+                          <span class="json-property-enum-item">Active</span>,
+                          <span class="json-property-enum-item">Disabled (manually)</span>,
+                          <span class="json-property-enum-item">Lost</span>,
+                          <span class="json-property-enum-item">Stolen</span>,
+                          <span class="json-property-enum-item">Damaged</span>
+                        </span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <div class="json-inner-schema"> </div>
+                      </section>
+                    </dt>
+                    <dt data-property-name="credentialClass" class="has-description">
+                      <span class="json-property-name">credentialClass:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-enum" title="Possible values">
+                        <span class="json-property-enum-item">piv</span>,
+                        <span class="json-property-enum-item">pivi</span>,
+                        <span class="json-property-enum-item">card</span>,
+                        <span class="json-property-enum-item">mobile</span>,
+                        <span class="json-property-enum-item">digitalId</span>,
+                        <span class="json-property-enum-item">govPass</span>,
+                        <span class="json-property-enum-item">trackingTag</span>,
+                        <span class="json-property-enum-item">transact</span>
+                      </span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Required when creating a new card type but ignored when modifying one since a credential&#39;s type cannot be changed once set.</p>
+                    </dd>
+                    <dt data-property-name="minimumNumber" class="has-description">
+                      <span class="json-property-name">minimumNumber:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>For card types with integer card numbers, this is the minimum. Must be non-negative.</p>
+                    </dd>
+                    <dt data-property-name="maximumNumber" class="has-description">
+                      <span class="json-property-name">maximumNumber:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>For card types with integer card numbers, this is the maximum. Must be non-negative.</p>
+                    </dd>
+                    <dt data-property-name="serverDisplayName" class="has-description">
+                      <span class="json-property-name">serverDisplayName:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
+                    </dt>
+                    <dd>
+                      <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
+                      <p>This is a read-only field. The server will ignore it if you send it.</p>
+                    </dd>
+                    <dt data-property-name="regex" class="has-description">
+                      <span class="json-property-name">regex:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>This is the regular expression that a text card number must match before Command Centre will accept it. </p>
+                    </dd>
+                    <dt data-property-name="regexDescription" class="has-description">
+                      <span class="json-property-name">regexDescription:</span>
+                      <span class="json-property-type">string</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Regular expressions often need explaining to your users.</p>
+                    </dd>
+                  </dl>
+                </section>
+              </div>
+              <div class="doc-examples">
+                <section>
+                  <h5>Example</h5>
+                  <!-- <div class="hljs"> -->
+                  <html>
+                  <head></head>
+                  <body><pre><code class="hljs language-json">{
+  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
+  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
+  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
+  <span class="hljs-attr">&quot;division&quot;</span>: {
+    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
+  },
+  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Disabled after 7d inactivity, 6-char PIN&quot;</span>,
+  <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
+  <span class="hljs-attr">&quot;availableCardStates&quot;</span>: [
+    <span class="hljs-string">&quot;Active&quot;</span>,
+    <span class="hljs-string">&quot;Disabled (manually)&quot;</span>,
+    <span class="hljs-string">&quot;Lost&quot;</span>,
+    <span class="hljs-string">&quot;Stolen&quot;</span>,
+    <span class="hljs-string">&quot;Damaged&quot;</span>
+  ],
+  <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
+  <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
+  <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
+  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
+  <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
+  <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
 }
 </code></pre> </body>
                   </html>
@@ -15865,303 +17289,6 @@
               </div>
             </div>
           </div>
-          <div id="definition-Card-type-search" class="definition panel" data-traverse-target="definition-Card-type-search">
-            <h2 class="panel-title">
-              <a name="/definitions/Card type search"></a>Card type search:
-              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
-              <span class="json-property-range" title="Value limits"></span>
-              
-              
-              </span> -->
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="json-schema-description">
-                  <p>An array of card types, and a <code>next</code> link for more. Sites generally have only a handful of card types, so when retrieving them you should set your &#39;top&#39; parameter high enough that you do not need the &#39;next&#39; link.</p>
-                </section>
-                <section class="json-schema-properties">
-                  <dl>
-                    <dt data-property-name="results" class="has-description">
-                      <span class="json-property-name">results:</span>
-                      <span class="json-property-type">
-                        <span class="json-schema-ref-array">
-                          <a class="json-schema-ref" href="#/definitions/Card type">Card type</a>
-                        </span>
-                      </span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>An array of card types.</p>
-                    </dd>
-                    <dt class="json-inner-schema">
-                      <section class="json-schema-array-items">
-                        <span class="json-property-type">
-                          <span class="">
-                            <a class="json-schema-ref" href="#/definitions/Card type">Card type</a>
-                          </span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                        <div class="json-inner-schema"> </div>
-                      </section>
-                    </dt>
-                    <dt data-property-name="next" class="has-description">
-                      <span class="json-property-name">next:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>The link to the next page. Absent if you have retrieved them all.</p>
-                    </dd>
-                    <dt class="json-inner-schema">
-                      <section class="json-schema-properties">
-                        <dl>
-                          <dt data-property-name="href">
-                            <span class="json-property-name">href:</span>
-                            <span class="json-property-type">string</span>
-                            <span class="json-property-format">(url)</span>
-                            <span class="json-property-range" title="Value limits"></span>
-                          </dt>
-                        </dl>
-                      </section>
-                    </dt>
-                  </dl>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;results&quot;</span>: [
-    {
-      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
-      <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
-      <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
-      <span class="hljs-attr">&quot;division&quot;</span>: {
-        <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-        <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
-      },
-      <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Disabled after 7d inactivity, 6-char PIN&quot;</span>,
-      <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
-      <span class="hljs-attr">&quot;availableCardStates&quot;</span>: [
-        <span class="hljs-string">&quot;Active&quot;</span>,
-        <span class="hljs-string">&quot;Disabled (manually)&quot;</span>,
-        <span class="hljs-string">&quot;Lost&quot;</span>,
-        <span class="hljs-string">&quot;Stolen&quot;</span>,
-        <span class="hljs-string">&quot;Damaged&quot;</span>
-      ],
-      <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
-      <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-      <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
-      <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
-      <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
-      <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
-    }
-  ],
-  <span class="hljs-attr">&quot;next&quot;</span>: {
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/assign?skip=1000&quot;</span>
-  }
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
-          <div id="definition-Card-type" class="definition panel" data-traverse-target="definition-Card-type">
-            <h2 class="panel-title">
-              <a name="/definitions/Card type"></a>Card type:
-              <!-- <span class="json-property-type"><span class="json-property-type">object</span>
-              <span class="json-property-range" title="Value limits"></span>
-              
-              
-              </span> -->
-            </h2>
-            <div class="doc-row">
-              <div class="doc-copy">
-                <section class="json-schema-description">
-                  <p>This object describes a single Card Type. &quot;Credential type&quot; would be a better name, as it includes mobile credentials.</p>
-                </section>
-                <section class="json-schema-properties">
-                  <dl>
-                    <dt data-property-name="href" class="has-description">
-                      <span class="json-property-name">href:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-format">(url)</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>This is the identifier to use when assigning a card to a cardholder in a cardholder
-                        <a href="#operation--api-cardholders--id--patch">PATCH</a> or
-                        <a href="#definition-Cardholder-POST-example">POST</a>.</p>
-                      <p>This is also the URL for the card type&#39;s detail page. That contains nothing of use, so there is no point GETting it. Doing so will return you a 404 if you do not have &#39;View site&#39; or &#39;Configure site&#39; on the card type&#39;s division.</p>
-                    </dd>
-                    <dt data-property-name="id">
-                      <span class="json-property-name">id:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dt data-property-name="name">
-                      <span class="json-property-name">name:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dt data-property-name="division" class="has-description">
-                      <span class="json-property-name">division:</span>
-                      <span class="json-property-type">object</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>The division that contains this card type. Required when creating a card type.</p>
-                      <p>New to 8.50.</p>
-                    </dd>
-                    <dt data-property-name="notes" class="has-description">
-                      <span class="json-property-name">notes:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>Free text.</p>
-                      <p>Because of its potential size, the server does not return the notes field by default. You need to ask for it with <code>fields=notes</code>.</p>
-                    </dd>
-                    <dt data-property-name="facilityCode" class="has-description">
-                      <span class="json-property-name">facilityCode:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>A facility code is a letter (A-P) followed by up to five digits. It is encoded onto cards so that they only work at sites with the correct facility code.</p>
-                      <p>PIV cards, PIV-I cards, and mobile credentials do not have a facility code.</p>
-                      <p>A credential&#39;s facility code cannot be changed once set, so this field is ignored in a PATCH.</p>
-                    </dd>
-                    <dt data-property-name="availableCardStates" class="has-description">
-                      <span class="json-property-name">availableCardStates:</span>
-                      <span class="json-property-type">string[]</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                      <span class="json-property-read-only"></span>
-                    </dt>
-                    <dd>
-                      <p>All credential types have a set of card states.</p>
-                      <p>If you need this, ask for it using the <code>fields</code> parameter.</p>
-                      <p>This field is read-only: it is derived from the card type&#39;s card state set (also known as a workflow). If you send it in a POST or a PATCH, the server will ignore it.</p>
-                    </dd>
-                    <dt class="json-inner-schema">
-                      <section class="json-schema-array-items">
-                        <span class="json-property-type">string</span>
-                        <span class="json-property-enum" title="Possible values">
-                          <span class="json-property-enum-item">Active</span>,
-                          <span class="json-property-enum-item">Disabled (manually)</span>,
-                          <span class="json-property-enum-item">Lost</span>,
-                          <span class="json-property-enum-item">Stolen</span>,
-                          <span class="json-property-enum-item">Damaged</span>
-                        </span>
-                        <span class="json-property-range" title="Value limits"></span>
-                        <div class="json-inner-schema"> </div>
-                      </section>
-                    </dt>
-                    <dt data-property-name="credentialClass" class="has-description">
-                      <span class="json-property-name">credentialClass:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-enum" title="Possible values">
-                        <span class="json-property-enum-item">piv</span>,
-                        <span class="json-property-enum-item">pivi</span>,
-                        <span class="json-property-enum-item">card</span>,
-                        <span class="json-property-enum-item">mobile</span>,
-                        <span class="json-property-enum-item">digitalId</span>,
-                        <span class="json-property-enum-item">govPass</span>,
-                        <span class="json-property-enum-item">trackingTag</span>,
-                        <span class="json-property-enum-item">transact</span>
-                      </span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>Required when creating a new card type but ignored when modifying one since a credential&#39;s type cannot be changed once set.</p>
-                    </dd>
-                    <dt data-property-name="minimumNumber" class="has-description">
-                      <span class="json-property-name">minimumNumber:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>For card types with integer card numbers, this is the minimum. Must be non-negative.</p>
-                    </dd>
-                    <dt data-property-name="maximumNumber" class="has-description">
-                      <span class="json-property-name">maximumNumber:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>For card types with integer card numbers, this is the maximum. Must be non-negative.</p>
-                    </dd>
-                    <dt data-property-name="serverDisplayName" class="has-description">
-                      <span class="json-property-name">serverDisplayName:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                      <span class="json-property-read-only"></span>
-                    </dt>
-                    <dd>
-                      <p>If you are running a multi-server installation and this item is homed on a remote server, this field will contain the name of that server. This field is missing from items that are held on the machine that served the API request. Added in 8.40.</p>
-                      <p>This is a read-only field. The server will ignore it if you send it.</p>
-                    </dd>
-                    <dt data-property-name="regex" class="has-description">
-                      <span class="json-property-name">regex:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>This is the regular expression that a text card number must match before Command Centre will accept it. </p>
-                    </dd>
-                    <dt data-property-name="regexDescription" class="has-description">
-                      <span class="json-property-name">regexDescription:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>Regular expressions often need explaining.</p>
-                    </dd>
-                  </dl>
-                </section>
-              </div>
-              <div class="doc-examples">
-                <section>
-                  <h5>Example</h5>
-                  <!-- <div class="hljs"> -->
-                  <html>
-                  <head></head>
-                  <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
-  <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
-  <span class="hljs-attr">&quot;division&quot;</span>: {
-    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
-    <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
-  },
-  <span class="hljs-attr">&quot;notes&quot;</span>: <span class="hljs-string">&quot;Disabled after 7d inactivity, 6-char PIN&quot;</span>,
-  <span class="hljs-attr">&quot;facilityCode&quot;</span>: <span class="hljs-string">&quot;A12345&quot;</span>,
-  <span class="hljs-attr">&quot;availableCardStates&quot;</span>: [
-    <span class="hljs-string">&quot;Active&quot;</span>,
-    <span class="hljs-string">&quot;Disabled (manually)&quot;</span>,
-    <span class="hljs-string">&quot;Lost&quot;</span>,
-    <span class="hljs-string">&quot;Stolen&quot;</span>,
-    <span class="hljs-string">&quot;Damaged&quot;</span>
-  ],
-  <span class="hljs-attr">&quot;credentialClass&quot;</span>: <span class="hljs-string">&quot;card&quot;</span>,
-  <span class="hljs-attr">&quot;minimumNumber&quot;</span>: <span class="hljs-string">&quot;1&quot;</span>,
-  <span class="hljs-attr">&quot;maximumNumber&quot;</span>: <span class="hljs-string">&quot;16777215&quot;</span>,
-  <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
-  <span class="hljs-attr">&quot;regex&quot;</span>: <span class="hljs-string">&quot;^[A-Za-z0-9]+$&quot;</span>,
-  <span class="hljs-attr">&quot;regexDescription&quot;</span>: <span class="hljs-string">&quot;Only alphanumeric characters&quot;</span>
-}
-</code></pre> </body>
-                  </html>
-                  <!-- </div> -->
-                </section>
-              </div>
-            </div>
-          </div>
           <div id="definition-Operator-group-search" class="definition panel" data-traverse-target="definition-Operator-group-search">
             <h2 class="panel-title">
               <a name="/definitions/Operator group search"></a>Operator group search:
@@ -17370,14 +18497,21 @@
                     <dd>
                       <p>The division containing this role. Required in a POST, optional in a PATCH.</p>
                     </dd>
-                    <dt data-property-name="id" class="has-description">
-                      <span class="json-property-name">id:</span>
-                      <span class="json-property-type">string</span>
+                    <dt data-property-name="enableCompetencyExpiryWarnings" class="has-description">
+                      <span class="json-property-name">enableCompetencyExpiryWarnings:</span>
+                      <span class="json-property-type">boolean</span>
                       <span class="json-property-range" title="Value limits"></span>
-                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
-                      <p>An alphanumeric identifier, unique to the server. No API calls use role IDs.</p>
+                      <p>Controls whether CC sends notifications to a person holding this role when their staff&#39;s competencies are about to expire.</p>
+                    </dd>
+                    <dt data-property-name="enableCardExpiryWarnings" class="has-description">
+                      <span class="json-property-name">enableCardExpiryWarnings:</span>
+                      <span class="json-property-type">boolean</span>
+                      <span class="json-property-range" title="Value limits"></span>
+                    </dt>
+                    <dd>
+                      <p>Controls whether CC sends notifications to a person holding this role when their staff&#39;s cards are about to expire.</p>
                     </dd>
                   </dl>
                 </section>
@@ -17394,10 +18528,10 @@
   <span class="hljs-attr">&quot;serverDisplayName&quot;</span>: <span class="hljs-string">&quot;ruatoria.satellite.int&quot;</span>,
   <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;aka floor manager&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
-    <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;2&quot;</span>,
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2&quot;</span>
   },
-  <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;1383&quot;</span>
+  <span class="hljs-attr">&quot;enableCompetencyExpiryWarnings&quot;</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">&quot;enableCardExpiryWarnings&quot;</span>: <span class="hljs-literal">true</span>
 }
 </code></pre> </body>
                   </html>
