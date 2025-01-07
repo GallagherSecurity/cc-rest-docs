@@ -91,16 +91,16 @@
                 <a href="#operation--api-access_groups-get"> Search access groups </a>
               </li>
               <li>
-                <a href="#operation--api-access_groups-post"> Create an access group [coming] </a>
+                <a href="#operation--api-access_groups-post"> Create an access group </a>
               </li>
               <li>
                 <a href="#operation--api-access_groups--id--get"> Get details of an access group </a>
               </li>
               <li>
-                <a href="#operation--api-access_groups--id--patch"> Update an access group [coming] </a>
+                <a href="#operation--api-access_groups--id--patch"> Update an access group </a>
               </li>
               <li>
-                <a href="#operation--api-access_groups--id--delete"> Remove an access group [coming] </a>
+                <a href="#operation--api-access_groups--id--delete"> Remove an access group </a>
               </li>
               <li>
                 <a href="#operation--api-access_groups--id--cardholders-get"> Get membership of an access group </a>
@@ -377,7 +377,7 @@
                 <h4 id="cardholder-api-changes-on-the-roadmap">Cardholder API changes on the roadmap</h4>
                 <ul>
                   <li>
-                    <p>You will be able to create, delete, and change the the basic configuration of access groups, roles, PDFs, and card types.</p>
+                    <p>You will be able to create, delete, and change the the basic configuration of roles, PDFs, and card types.</p>
                   </li>
                   <li>
                     <p>POTENTIALLY BREAKING CHANGE: searching for cardholders using <code>pdf_xxx=&quot;&quot;</code> or <code>pdf_xxx=</code> currently returns no cardholders. That is neither useful nor desired. Instead, a future version of Command Centre will return cardholders with a blank value for that PDF.</p>
@@ -3683,9 +3683,9 @@
           <h1 id="tag-Access-groups" class="swagger-summary-tag" data-traverse-target="tag-Access-groups">Access groups</h1>
           <div class="tag-description doc-row">
             <div class="doc-copy">
-              <p>These methods give you read access to the access groups in Command Centre. You can search for groups, see their lineage, list their cardholder members, and (in 8.40 or later) see how they affect those members.</p>
-              <p>Your REST operator will need the &#39;View&#39; or &#39;Edit Access Groups&#39; operator privileges for the GETs.</p>
-              <p>They also provide the links you need to manage memberships. Those links are hrefs to cardholders, to which you would send
+              <p>These methods give you read access to the access groups in Command Centre. You can search for groups, see their lineage, and list their cardholder members. In 8.40 or later you can see how they affect those members. In 9.30 and later you can create, modify, and delete them.</p>
+              <p>Your REST operator will need the &#39;View&#39; or &#39;Edit Access Groups&#39; operator privileges for the GETs, and &#39;Edit Access Groups&#39; for the POST and PATCH.</p>
+              <p>These methods also provide the links you need to manage memberships. Those links are hrefs to cardholders, to which you would send
                 <a href="#definition-Cardholder-PATCH-example">PATCH</a> requests containing your updates. Your REST operator will need &#39;Edit Cardholders&#39; privilege on the cardholder for that.</p>
               <h3 id="use-cases">Use cases</h3>
               <h4 id="finding-members-of-an-access-group-and-managing-memberships">Finding members of an access group, and managing memberships.</h4>
@@ -3979,7 +3979,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Create an access group [coming]</span>
+              <span class="operation-summary">Create an access group</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -3999,7 +3999,7 @@
                   <p>You will achieve better performance if you combine all you want to achieve into one POST, rather than creating the access group bare with a POST then refining it with PATCHes later.</p>
                   <p>When successful it returns a location header containing the address of the new access group.</p>
                   <p>Note that you can only create one access group per POST.</p>
-                  <p>This call requires the RESTConfiguration licence.</p>
+                  <p>This call requires the RESTConfiguration licence and a server running 9.30 or later.</p>
                 </section>
               </div>
             </div>
@@ -4376,7 +4376,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Update an access group [coming]</span>
+              <span class="operation-summary">Update an access group</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -4389,18 +4389,13 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>
-                    <strong>
-                      <em>DRAFT DOCUMENTATION</em>
-                    </strong>
-                  </p>
                   <p>This is the call you use to modify fields on an access group.</p>
                   <p>The PATCH expects a document in the same format as the
                     <a href="#definition-Access-group-detail">the access group detail</a> but with fewer fields, given in
                     <a href="#definition-Access-group-POST-example">this POST example</a>. Note that you cannot change everything on an access group that the API shows you, such as its membership, access, and permissions. You can change its basic fields, PDFs, and membership defaults.</p>
                   <p>You can find the URL for this call in the
                     <a href="#operation--api-access_groups-get">access group search</a> results and in a cardholder&#39;s <code>accessGroups</code> array.</p>
-                  <p>This call requires the RESTConfiguration licence.</p>
+                  <p>This call requires the RESTConfiguration licence and a server running 9.30 or later.</p>
                 </section>
               </div>
             </div>
@@ -4518,7 +4513,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Remove an access group [coming]</span>
+              <span class="operation-summary">Remove an access group</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -4531,15 +4526,10 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>
-                    <strong>
-                      <em>DRAFT DOCUMENTATION</em>
-                    </strong>
-                  </p>
                   <p>This call removes an access group from Command Centre.</p>
                   <p>You can find the URL for this call in the
                     <a href="#operation--api-access_groups-get">access group search</a> results and in a cardholder&#39;s <code>accessGroups</code> array.</p>
-                  <p>This call requires the RESTConfiguration licence.</p>
+                  <p>This call requires the RESTConfiguration licence and a server running 9.30 or later.</p>
                 </section>
               </div>
             </div>
@@ -13621,16 +13611,16 @@
                       <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
-                      <p>This object contains two strings. Both are read-only, so do not specify them when assigning or updating a cardholder&#39;s competency. &#39;Value&#39; is taken from the site&#39;s language pack, suitable for display. &#39;Type&#39; comes from a fixed enumeration. It will be &#39;expiryDue&#39; or &#39;active&#39; when the cardholder carries this competency; anything else means no. A fuller explanation follows.</p>
+                      <p>This object contains two strings. Both are read-only, so do not specify them when assigning or updating a cardholder&#39;s competency. <code>value</code> is taken from the site&#39;s language pack, suitable for display. <code>type</code> comes from a fixed enumeration. It will be <code>expiryDue</code> or <code>active</code> when the cardholder carries this competency; anything else means no. A fuller explanation follows.</p>
                       <p>A competency can be disabled, expired, both, or neither. Whether it is
-                        <em>enabled</em> is a flag on the competency. Whether it is
+                        <em>enabled</em> is a flag on the cardholder&#39;s competency. Whether it is
                         <em>expired</em> is derived from an expiry date (actually a timestamp accurate to the second): if it is in the past, Command Centre considers the competency expired.</p>
-                      <p>A competency can also have an &#39;enable&#39; date. If that date (timestamp) passes while the competency is disabled, Command Centre will enable it. It will leave the enable date on the item for future reference, though it will not affect the competency again.</p>
-                      <p>If the competency is disabled, the status &#39;type&#39; will be &#39;inactive&#39; when there is no enable date or it is in the past, and &#39;pending&#39; when the enable date is in the future (i.e., there is an automatic re-enablement coming).</p>
-                      <p>If the competency is not disabled, the &#39;expires&#39; time is important. If it is in the past, &#39;type&#39; will be &#39;expired&#39;.</p>
-                      <p>All of those cases are negative. Two remain, when our cardholder is blessed with an enabled and active competency. &#39;Type&#39; will be &#39;expiryDue&#39; if the &#39;expires&#39; time is in the future but within the competency&#39;s advance notice period, or &#39;active&#39; if the &#39;expires&#39; time is beyond the advance notice period or not set at all.</p>
+                      <p>A competency can also have an <code>enablement</code> date. If that date (timestamp) passes while the competency is disabled, Command Centre will enable it. It will leave the date on the item for future reference, though it will not affect the competency again.</p>
+                      <p>If the competency is disabled, the status <code>type</code> will be <code>inactive</code> when there is no enable date or it is in the past, and <code>pending</code> when the enable date is in the future (i.e., there is an automatic re-enablement coming).</p>
+                      <p>If the competency is not disabled, the <code>expiry</code> time is important. If it is in the past, <code>type</code> will be <code>expired</code>.</p>
+                      <p>All of those cases are negative. Two remain, when our cardholder is blessed with an enabled and active competency. <code>type</code> will be <code>expiryDue</code> if the <code>expires</code> time is in the future but within the competency&#39;s advance notice period, or <code>active</code> if the <code>expires</code> time is beyond the advance notice period or not set at all.</p>
                       <p>You can see and set the enabled flag, the enable date, and the expiry date via this API.</p>
-                      <p>When creating a cardholder or updating a competency on an existing cardholder, you should set the &#39;enabled&#39; field one way or the other, and the &#39;enablement&#39; and &#39;expiry&#39; dates if you wish. They will determine the contents of this status block.</p>
+                      <p>When creating a cardholder or updating a competency on an existing cardholder, you should set the <code>enabled</code> field one way or the other, and the <code>enablement</code> and <code>expiry</code> dates if you wish. They will determine the contents of this status block.</p>
                       <p>Here it is in table form. The first two rows are the positive cases, when Command Centre would grant access to a competency-enforced zone.</p>
                       <table>
                         <thead>
@@ -13689,7 +13679,7 @@
                       <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
-                      <p>The time at which the cardholder will (or did) receive a warning about the competency expiring. If this time is set and in the past but the competency has not yet expired and is still enabled, the status type will be &#39;expiryDue&#39;.</p>
+                      <p>The time at which the cardholder will (or did) receive a warning about the competency expiring. If this time is set and in the past but the competency has not yet expired and is still enabled, the status type will be <code>expiryDue</code>.</p>
                     </dd>
                     <dt data-property-name="expiry" class="has-description">
                       <span class="json-property-name">expiry:</span>
@@ -13698,7 +13688,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The time at which the competency will expire. If this time is set, in the past, and the competency is enabled, status type will be &#39;expired&#39;.</p>
+                      <p>The time at which the competency will expire. If this time is set, in the past, and the competency is enabled, status type will be <code>expired</code>.</p>
                     </dd>
                     <dt data-property-name="enablement" class="has-description">
                       <span class="json-property-name">enablement:</span>
@@ -13707,7 +13697,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The time at which the competency will be re-enabled. If set and in the future, and the competency is disabled, the status type will be &#39;pending&#39;.</p>
+                      <p>The time at which the competency will be re-enabled. If set and in the future, and the competency is disabled, the status type will be <code>pending</code>.</p>
                     </dd>
                     <dt data-property-name="comment" class="has-description">
                       <span class="json-property-name">comment:</span>
@@ -13780,7 +13770,7 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="json-schema-description">
-                  <p>This is a description of the fields you would supply when updating a cardholder&#39;s holding of a competency. It is slightly different from what you receive in a cardholder GET: you do not send read-only blocks such the status and the competency, and there is a write-only field &#39;enabled&#39; that you can supply to change the status.</p>
+                  <p>This is a description of the fields you would supply when updating a cardholder&#39;s holding of a competency. It is slightly different from what you receive in a cardholder GET: you do not send read-only blocks such the status and the competency, and there is a write-only field <code>enabled</code> that you can supply to change the status.</p>
                   <p>You cannot change the competency to which the status, times, comment, and credit applies. If you need to do that, delete the cardholder&#39;s existing competency and give them a new one. You can do that in one PATCH.</p>
                   <p>A cardholder can have only one link to a given competency. Attempting to give a cardholder a competency a second time will either fail or raise a stateful alarm depending on your version of Command Centre.</p>
                 </section>
@@ -13802,7 +13792,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This is a write-only field. You will not receive it from the GET. It changes the competency between enabled (status type &#39;expired&#39;, &#39;expiryDue&#39;, or &#39;active&#39;) and disabled (status type &#39;inactive&#39; or &#39;pending&#39;). Set it to false in a PATCH if you to disable the competency now, particularly if you are setting a future enablement date.</p>
+                      <p>This is a write-only field. You will not receive it from the GET. It changes the competency between enabled (status type <code>expired</code>, <code>expiryDue</code>, or <code>active</code>) and disabled (status type <code>inactive</code> or <code>pending</code>). Set it to false in a PATCH if you to disable the competency now, particularly if you are setting a future enablement date.</p>
                     </dd>
                     <dt data-property-name="expiry" class="has-description">
                       <span class="json-property-name">expiry:</span>
@@ -13821,7 +13811,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The time at which you want to re-enable the competency. You can set this on an enabled competency but it has no effect there, so with this field you would generally also set enabled to false. See the full description
+                      <p>The time at which you want to re-enable the competency. You can set this on an enabled competency but it has no effect there, so with this field you would generally also set <code>enabled: false</code>. See the full description
                         <a href="#definition-Cardholder-competency">above</a>.</p>
                     </dd>
                     <dt data-property-name="comment">
