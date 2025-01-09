@@ -1770,13 +1770,21 @@ definitions:
             type: string
             format: date-time
             readOnly: true
-            description: The date and time of the last successful card event.
+            description: |
+              The date and time of the last successful card event or operator-initiated movement
+              (using a tag board or [this API](#operation--api-cardholders--id--update_location-post)).
             example: "2004-11-18T19:21:52Z"
           lastSuccessfulAccessZone:
             type: object
             readOnly: true
             description: |
-              The last zone the cardholder entered.  If the cardholder is a visitor and their last
+              The last zone the cardholder entered.
+
+              If their last movement was to the 'outside' (through a door that has no access zone
+              configured for that direction of travel) this field will be missing but
+              `lastSuccessfulAccessTime` will be present.
+
+              If the cardholder is a visitor and their last
               movement was to leave the site, this will be their visit's reception, not an access
               zone.  8.50 and later will present only the name of the reception and withhold the
               href in that case.
@@ -1999,15 +2007,19 @@ definitions:
             description: |-
               This block shows the cardholder's notification settings.  It deserves some explanation.
 
-              The 'enabled' bool is correct at the time of your call.  If false, CC will not be
+              The `enabled` bool is correct at the time of your call.  If false, CC will not be
               sending your cardholder any notifications.
 
-              The 'from' and 'until' date-times show if and when 'enabled' will change.  When the
-              'from' date-time passes, 'enabled' will flip, the 'from' date-time will take the
-              'until' value, and 'until' will become null.  This continues until 'from' is null.
+              The `from` and `until` date-times show if and when `enabled` will change.  When the
+              `from` date-time passes, `enabled` will flip, the `from` date-time will take the
+              `until` value, and `until` will become null.  This continues until `from` is null.
 
-              You can set 'from' with a null 'until', but not 'until' with a null 'from'.  They must
-              both be in the future or null, and 'from' must be before 'until'.
+              You can set `from` with a null `until`, but not `until` with a null `from`.  They must
+              both be in the future or null, and `from` must be before `until`.
+
+              If you want to simply turn a person's notifications on or off without any changes
+              scheduled for the future, set `enabled` true or false and both `from` and `until`
+              null.
             example:
               enabled: true
               from: "2017-10-10T14:59:00Z"

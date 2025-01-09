@@ -11207,7 +11207,8 @@
                           <span class="json-property-read-only"></span>
                         </dt>
                         <dd>
-                          <p>The date and time of the last successful card event.</p>
+                          <p>The date and time of the last successful card event or operator-initiated movement (using a tag board or
+                            <a href="#operation--api-cardholders--id--update_location-post">this API</a>).</p>
                         </dd>
                         <dt data-property-name="lastSuccessfulAccessZone" class="has-description">
                           <span class="json-property-name">lastSuccessfulAccessZone:</span>
@@ -11216,7 +11217,9 @@
                           <span class="json-property-read-only"></span>
                         </dt>
                         <dd>
-                          <p>The last zone the cardholder entered. If the cardholder is a visitor and their last movement was to leave the site, this will be their visit&#39;s reception, not an access zone. 8.50 and later will present only the name of the reception and withhold the href in that case.</p>
+                          <p>The last zone the cardholder entered.</p>
+                          <p>If their last movement was to the &#39;outside&#39; (through a door that has no access zone configured for that direction of travel) this field will be missing but <code>lastSuccessfulAccessTime</code> will be present.</p>
+                          <p>If the cardholder is a visitor and their last movement was to leave the site, this will be their visit&#39;s reception, not an access zone. 8.50 and later will present only the name of the reception and withhold the href in that case.</p>
                           <p>
                             <strong>Change is coming.</strong>
                           </p>
@@ -11483,9 +11486,10 @@
                         </dt>
                         <dd>
                           <p>This block shows the cardholder&#39;s notification settings. It deserves some explanation.</p>
-                          <p>The &#39;enabled&#39; bool is correct at the time of your call. If false, CC will not be sending your cardholder any notifications.</p>
-                          <p>The &#39;from&#39; and &#39;until&#39; date-times show if and when &#39;enabled&#39; will change. When the &#39;from&#39; date-time passes, &#39;enabled&#39; will flip, the &#39;from&#39; date-time will take the &#39;until&#39; value, and &#39;until&#39; will become null. This continues until &#39;from&#39; is null.</p>
-                          <p>You can set &#39;from&#39; with a null &#39;until&#39;, but not &#39;until&#39; with a null &#39;from&#39;. They must both be in the future or null, and &#39;from&#39; must be before &#39;until&#39;.</p>
+                          <p>The <code>enabled</code> bool is correct at the time of your call. If false, CC will not be sending your cardholder any notifications.</p>
+                          <p>The <code>from</code> and <code>until</code> date-times show if and when <code>enabled</code> will change. When the <code>from</code> date-time passes, <code>enabled</code> will flip, the <code>from</code> date-time will take the <code>until</code> value, and <code>until</code> will become null. This continues until <code>from</code> is null.</p>
+                          <p>You can set <code>from</code> with a null <code>until</code>, but not <code>until</code> with a null <code>from</code>. They must both be in the future or null, and <code>from</code> must be before <code>until</code>.</p>
+                          <p>If you want to simply turn a person&#39;s notifications on or off without any changes scheduled for the future, set <code>enabled</code> true or false and both <code>from</code> and <code>until</code> null.</p>
                         </dd>
                         <dt data-property-name="relationships" class="has-description">
                           <span class="json-property-name">relationships:</span>
