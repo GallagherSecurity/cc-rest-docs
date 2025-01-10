@@ -433,6 +433,9 @@ x-common-blocks-this-is-made-up:
       Treat the string matches as case-sensitive.
 
   fdso_ignored: &FIELDSDESC_SUMONLY
+    in: query
+    required: false
+    type: string
     description: |
       Return these fields in the search results.  The values you can list are the field names in the
       schema definitions in this document.  Separate values with commas.
@@ -2150,8 +2153,7 @@ definitions:
 #######################################################################
   REST Client PATCH:
     description: |
-      [/api/items](#operation--REST-Client-URL--patch) expects one of these in the body of a PATCH
-      to a REST Client item.
+      The [REST Client PATCH](#operation--REST-Client-URL--patch) expects one of these in its body.
 
       Both fields are optional.
 
@@ -2167,8 +2169,6 @@ definitions:
           Being active, operators will not be able to process that alarm until you restore it by
           passing false here.
 
-          The API is the only way to modify this flag.
-
       customStatusText:
         type: string
         example: "Disk 87% full"
@@ -2177,10 +2177,8 @@ definitions:
           The server will include the text you supply here whenever it generates status text for
           this item.
 
-          This text field works independently of item's others states and its fault flag:  you can
+          This text field works independently of the item's other states and its fault flag:  you can
           use it purely for information.
-
-          The API is the only way to modify this text.
 
           The integrator is responsibile for any personally identifiable information sent to Command
           Centre via the API.
@@ -3080,6 +3078,10 @@ tags:
 
     - `faulty` means the item has used the endpoint in this section to declare itself in trouble.
 
+    Because this feature is intended for REST integrations needing to indicate their status, this
+    API is the only way to change a REST Client item's status fields.  Humans using Gallagher's
+    operational and configuration clients can see it, but not change it.
+
 - name: "Schedules"
   description: |-
     These methods give you read/write access to seven types of schedules.  Avigilon Engage schedules
@@ -3135,6 +3137,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
         <<: [*FIELDSDESC_SUM, *ACZFIELDS]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -3180,6 +3184,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
         <<: [*FIELDSDESC_SUM, *ACZFIELDS]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -3488,6 +3494,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
         <<: [*FIELDSDESC_SUM, *ALZFIELDS]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -3769,10 +3777,9 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/name"
       - name: "fields"
         <<: *FIELDSDESC_SUMONLY
-        in: query
-        required: false
-        type: string
         enum: [href, name, description, notes]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -3815,6 +3822,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
         <<: [*FIELDSDESC_SUM, *DOORFIELDS]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -3947,6 +3956,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
         <<: [*FIELDSDESC_SUM, *ELEVATORGROUPCARDHOLDERFIELDS]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -4004,6 +4015,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
         <<: [*FIELDSDESC_SUM, *ELEVATORGROUPALLFIELDS]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -4093,6 +4106,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
         <<: [*FIELDSDESC_SUM, *FZFIELDS]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -4308,6 +4323,8 @@ paths:
       - name: "fields"
         <<: [*FIELDSDESC_SUM_810,
              *OUTPUTFIELDS]      
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -4486,6 +4503,8 @@ paths:
       - name: "fields"
         <<: [*FIELDSDESC_SUM_810,
              *INTERLOCKFIELDS ]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -4641,6 +4660,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
         <<: [*FIELDSDESC_SUM, *MACROFIELDS]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -4726,6 +4747,8 @@ paths:
       - $ref: "cardholdersApi.yaml#/parameters/description"
       - name: "fields"
         <<: [*FIELDSDESC_SUM, *OUTPUTFIELDS]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:
@@ -4983,6 +5006,8 @@ paths:
       - name: "fields"
         <<: [*FIELDSDESC_SUM_810,
              *SCHEDULEFIELDS]
+      - $ref: "cardholdersApi.yaml#/parameters/pos"
+      - $ref: "cardholdersApi.yaml#/parameters/skip"
 
       responses:
         200:

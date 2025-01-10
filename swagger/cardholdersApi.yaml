@@ -1583,7 +1583,7 @@ parameters:
       items as though they are also in their division's parent, and its parent, and so on up to the
       root division.
 
-      List the IDs of the divisions you are interested in separated by commas.  Item IDs are short
+      Separate the IDs of the divisions you are interested with commas.  Item IDs are short
       alphanumeric strings, not URLs.
 
       Results are undefined if you provide an ID that is not in the form of a division ID.
@@ -1682,6 +1682,20 @@ parameters:
       given the parameter at all.  Add more after a comma.
 
       Treat the string matches as case sensitive.
+
+  pos:
+    name: "pos"
+    in: query
+    required: false
+    type: integer
+    description: Reserved for internal use.  Do not add it to your queries.
+
+  skip:
+    name: "skip"
+    in: query
+    required: false
+    type: integer
+    description: Reserved for internal use.  Do not add it to your queries.
 
 ####################################################################################################
 ####################################################################################################
@@ -5994,6 +6008,9 @@ paths:
           8.10 you will not.  If you are going to send the fields parameter and need the href or ID,
           include them.
 
+      - $ref: "#/parameters/pos"
+      - $ref: "#/parameters/skip"
+
       responses:
         200:
           description: |
@@ -6763,6 +6780,9 @@ paths:
           8.10 you will not.  If you are going to send the fields parameter and need the href or ID,
           include them.
 
+      - $ref: "#/parameters/pos"
+      - $ref: "#/parameters/skip"
+
       responses: 
         200:
           description: |
@@ -7109,6 +7129,9 @@ paths:
           Treat the string matches as case sensitive:  use 'facilityCode' rather than
           'facilitycode'.
 
+      - $ref: "#/parameters/pos"
+      - $ref: "#/parameters/skip"
+
       responses:
         200:
           description: "Success."
@@ -7262,6 +7285,9 @@ paths:
           In v8.00 you will receive the href and internal ID even if you did not ask for them.  In
           8.10 you will not.  If you are going to send the fields parameter and need the href or ID,
           be explicit.
+
+      - $ref: "#/parameters/pos"
+      - $ref: "#/parameters/skip"
 
       responses:
         200:
@@ -7511,6 +7537,9 @@ paths:
 
           Treat the string matches as case sensitive.
 
+      - $ref: "#/parameters/pos"
+      - $ref: "#/parameters/skip"
+
       responses:
         200: 
           description: "Success."
@@ -7747,6 +7776,8 @@ paths:
           given the parameter at all.  Add more after a comma.
 
           Treat the string matches as case sensitive.
+      - $ref: "#/parameters/pos"
+      - $ref: "#/parameters/skip"
 
       responses: 
         200:
@@ -7895,6 +7926,8 @@ paths:
       - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
       - $ref: "#/parameters/pdf_fields"
+      - $ref: "#/parameters/pos"
+      - $ref: "#/parameters/skip"
 
       responses:
         200: 
@@ -8076,6 +8109,8 @@ paths:
       - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
       - $ref: "#/parameters/reception_fields"
+      - $ref: "#/parameters/pos"
+      - $ref: "#/parameters/skip"
 
       responses:
         200:
@@ -8173,6 +8208,8 @@ paths:
 
             Treat the string matches as case sensitive:  use `lastName` rather than `lastname`.
 
+        - $ref: "#/parameters/pos"
+
       responses:
         200:
           description: An array of redactions, and a link to the next page if any.
@@ -8257,6 +8294,8 @@ paths:
       - $ref: "#/parameters/division"
       - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
+      - $ref: "#/parameters/pos"
+      - $ref: "#/parameters/skip"
 
       responses:
         200:
@@ -8416,6 +8455,8 @@ paths:
       - $ref: "#/parameters/directDivision"
       - $ref: "#/parameters/description"
       - $ref: "#/parameters/visit_fields"
+      - $ref: "#/parameters/pos"
+      - $ref: "#/parameters/skip"
 
       responses:
         200:
