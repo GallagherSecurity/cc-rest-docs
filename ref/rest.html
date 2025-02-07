@@ -8842,8 +8842,16 @@
               <p>These methods give you read access to basic data about the Macros in the Command Centre database, and let you run them.</p>
               <p>Reading the section &#39;Understanding Macros&#39; in the Configuration client help is an excellent way to do exactly that.</p>
               <p>The first use case below introduces the main entry point. It is a paginated search interface that gives you any number of macros, each containing the fields you ask for in the query, including (for example) the URL you need to run the macro.</p>
-              <h3 id="overrides">Overrides</h3>
               <p>You cannot use the REST API to change a macro&#39;s schedule. You must use the Command Centre or Configuration client for that.</p>
+              <h3 id="overrides">Overrides</h3>
+              <p>You can use this API to run a macro. That is the only override they accept.</p>
+              <h3 id="macro-status-flags">Macro status flags</h3>
+              <p>Being very simple creatures macros normally bear no flags of status, but an experimental addition to version 9.30 adds the flag <code>closed</code> while a macro is running. If you have subscribed to status updates you will see this flag flash past, but if you simply ask for a macro&#39;s status on your own schedule you are very unlikely to strike it during the extremely brief time it is active.</p>
+              <p>This is a feature meant for Gallagher clients only. A future version may change the flag&#39;s name so we suggest avoiding it for now.</p>
+              <h3 id="macro-flag-rules">Macro flag rules</h3>
+              <ul>
+                <li>Do not rely on <code>closed</code> meaning that the macro is running.</li>
+              </ul>
               <h3 id="use-cases">Use cases</h3>
               <h4 id="listing-macros">Listing Macros</h4>
               <ol>

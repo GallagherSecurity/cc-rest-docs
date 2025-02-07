@@ -2973,10 +2973,27 @@ tags:
     that gives you any number of macros, each containing the fields you ask for in the query,
     including (for example) the URL you need to run the macro.
 
-    ### Overrides
-
     You cannot use the REST API to change a macro's schedule.  You must use the Command
     Centre or Configuration client for that.
+
+    ### Overrides
+
+    You can use this API to run a macro.  That is the only override they accept.
+
+    ### Macro status flags
+
+    Being very simple creatures macros normally bear no flags of status, but an experimental
+    addition to version 9.30 adds the flag `closed` while a macro is running.  If you have
+    subscribed to status updates you will see this flag flash past, but if you simply ask for a
+    macro's status on your own schedule you are very unlikely to strike it during the extremely
+    brief time it is active.
+
+    This is a feature meant for Gallagher clients only.  A future version may change the flag's
+    name so we suggest avoiding it for now.
+
+    ### Macro flag rules
+
+    * Do not rely on `closed` meaning that the macro is running.
 
     ### Use cases
 
