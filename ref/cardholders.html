@@ -12669,8 +12669,8 @@
                       <p>Like the &#39;cards&#39; object, this can contain three arrays named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;. Every element you send in those arrays should be in the
                         <a href="#definition-Cardholder-access-group">access group schema</a>.</p>
                       <p>This operation does not modify access groups in Command Centre; it works on a cardholder&#39;s memberships to those groups.</p>
-                      <p>Each element of the &#39;add&#39; array will need an &#39;accessGroup&#39; member containing an href identifying the group to which you wish to add the cardholder. The other fields are optional.</p>
-                      <p>Each element of the &#39;update&#39; array will need an href identifying the membership to update, and one or both of the &#39;from&#39; and &#39;until&#39; date-times containing new values (you cannot change the group--just the dates). The example removes the until date, effectively making the group membership unending.</p>
+                      <p>Each element of the &#39;add&#39; array will need an &#39;accessGroup&#39; member containing an href identifying the group to which you wish to add the cardholder. The other fields are optional. If you omit &#39;from&#39;, the membership will take effect immediately. If you omit &#39;until&#39;, it will be unending.</p>
+                      <p>Each element of the &#39;update&#39; array will need an href identifying the membership (not the group!) to update, and one or both of the &#39;from&#39; and &#39;until&#39; date-times with new values. You cannot change the group: just the activity period. The example removes the until date, effectively making the group membership unending.</p>
                       <p>In version 7.90.883 or earlier, &#39;from&#39; and &#39;until&#39; should be in UTC with a trailing &#39;Z&#39;. Releases after 883 understand different timezones here.</p>
                       <p>Note that updating a cardholder&#39;s group membership will change its href, so do not cache it.</p>
                       <p>The only field that makes sense in an element of the &#39;remove&#39; array is the href.</p>
@@ -13664,10 +13664,11 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>An
-                    <em>access group</em> is an object in Command Centre. The connection between an access group and a cardholder is a
+                    <em>access group</em> is an object in Command Centre. This section is about a connection between an access group and a cardholder, called a
                     <em>membership</em>. A cardholder can be a member of many groups, and groups can have any number of members.</p>
                   <p>Less obvious is that a cardholder can have many memberships to the same group. This is useful because a membership has a validity period, expressed with <code>from</code> and <code>until</code> date-times. Outside those moments Command Centre does not regard the cardholder as being a member of the group. If there exists one membership with <code>from</code> in the past or unset and <code>until</code> in the future or unset, the cardholder is a member.</p>
                   <p>Presence in an access group affects physical access rights and possession of PDFs, among other things.</p>
+                  <p>The membership object can come from the server in a cardholder&#39;s details, and you send it to the server when modifying a cardholder&#39;s group memberships. All uses are described below.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -13679,16 +13680,15 @@
                     <dd>
                       <p>DELETE this URL to remove this group membership, and use it in the body of a PATCH to a cardholder to identify memberships you want to modify.</p>
                       <p>Note that changing an access group membership with a PATCH will change this href. Do not cache it.</p>
-                      <p>DELETE is the only verb you can use on this URL. GET will always return a 404.</p>
+                      <p>DELETE is the only verb you can use on this URL. GET returns a 404.</p>
                     </dd>
                     <dt data-property-name="accessGroup" class="has-description">
                       <span class="json-property-name">accessGroup:</span>
                       <span class="json-property-type">object</span>
                       <span class="json-property-range" title="Value limits"></span>
-                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
-                      <p>An object containing a link to this group&#39;s detail page and its name. It is read-only because you cannot change a group membership&#39;s group.</p>
+                      <p>An object containing a link to this group&#39;s detail page and (when sent by the the server) its name. You should not send it when modifying a group membership because you cannot change a group membership&#39;s group; you can only change its dates. But you must send it when adding a new group membership, of course, because it identifies the cardholder&#39;s new group. Just send the href: don&#39;t bother with the name.</p>
                       <p>8.70 and later will not return the link if your operator does not have the privilege to view the access group (given by &#39;View access groups&#39;, for example).</p>
                     </dd>
                     <dt data-property-name="status" class="has-description">
@@ -13737,7 +13737,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The start of the time period during which this group membership is active. If this time is in the future, the card will be inactive. In 7.90.883 or earlier, this should always be in UTC with a trailing &#39;Z&#39;.</p>
+                      <p>The start of the time period during which this group membership is active. If this time is in the future, the card will be inactive.</p>
+                      <p>When sending this to a server of version 7.90.883 or earlier, use UTC with a trailing &#39;Z&#39;. More recent versions understand timezone offsets.</p>
                     </dd>
                     <dt data-property-name="until" class="has-description">
                       <span class="json-property-name">until:</span>
@@ -13746,7 +13747,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The end of the time period during which this group membership is active. If this time is in the past, the card will be inactive. In 7.90.883 or earlier, this should always be in UTC with a trailing &#39;Z&#39;.</p>
+                      <p>The end of the time period during which this group membership is active. If this time is in the past, the card will be inactive.</p>
+                      <p>When sending this to a server of version 7.90.883 or earlier, use UTC with a trailing &#39;Z&#39;. More recent versions understand timezone offsets.</p>
                     </dd>
                   </dl>
                 </section>
