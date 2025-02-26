@@ -953,7 +953,7 @@ tags:
     first page you get will be the most-recently created cardholders.  This is not suitable for use
     in a production system!  Use the cardholder changes call instead.
 
-    ## Field names in query parameters
+    ### Field names in query parameters
 
     The cardholder [search](#operation--api-cardholders-get) and
     [details](#operation--api-cardholders--id--get) operations' `fields` parameter and the [change
@@ -1600,10 +1600,16 @@ parameters:
     description: |
       Restricts items to those whose division is in this list.
 
-      Unlike `division=`, it does not follow ancestry.
+      Unlike `division=`, it does not follow ancestry.  That means it will limit the search to items
+      that are directly assigned to the divisions you list, whereas `division` (without the
+      `direct`) will also include items that are assigned to their descendants.
 
       List the IDs of the divisions you are interested in separated by commas.  Item IDs are short
       alphanumeric strings, not URLs.
+
+      Because this is the first query parameter we added that contains a capital letter, this will
+      be the first time you have had to think about case sensitivity.  `directDivision` works,
+      `directdivision` does not.
 
       Results are undefined if you provide an ID that is not in the form of a division ID.
 

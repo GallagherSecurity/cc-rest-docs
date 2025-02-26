@@ -343,7 +343,7 @@ tags:
     #### Searching for events that indicate location or movement
 
     If your server is running 8.60 or earlier, use the search filter
-    `type=20001,20002,20003,20047,20107,42415`.  That is not a complete list of movement event
+    `type=20001,20002,20003,20047,20107,15582,15583,15800,15808,42415`.  That is not a complete list of movement event
     types but it includes the popular ones.
 
     If your server is running 8.70-8.90 inclusive, give your operator the 'View cardholder events'
@@ -385,7 +385,7 @@ tags:
 
     * If you are simply after a person's location and do not care how they arrived there, use the
       `afterLocation` block inside `location`.  The `canonicalTypeName` field in there will tell you
-      what kind of location it is.  The [schema definition](#definition-Event-detail) describes
+      what kind of location it is (reception or access zone).  The [schema definition](#definition-Event-detail) describes
       `afterLocation` in more detail.
 
     * If you are after movements, which happen when a door grants a person access or an operator
@@ -1391,7 +1391,7 @@ paths:
         in: query
         required: false
         type: string
-        description: "Restricts events to those whose division is in this list.  Unlike `division=`, it does not follow ancestry.  Separate IDs with commas.\n\nExample:  `division=2,101`."
+        description: "Restricts events to those whose division is in this list.  Unlike `division=`, it does not follow ancestry.  The name `directDivision` is case-sensitive.  Separate IDs with commas.\n\nExample:  `division=2,101`."
       - name: "relatedItem"
         in: query
         required: false
@@ -1861,6 +1861,7 @@ paths:
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/name"
       - $ref: "cardholdersApi.yaml#/parameters/division"
+      - $ref: "cardholdersApi.yaml#/parameters/directDivision"
       - name: "type"
         in: query
         required: false
@@ -2883,12 +2884,11 @@ definitions:
               types that contain a cardholder's location, presenting it in a consistent way.
 
               It allows a client that is interested in movements to extract what it needs
-              without needing to know what event types to look for or how they represent these three
-              fields:
+              without needing to know what event types to look for or how they represent:
 
-                * The cardholder whose location the event contains,
+                * the cardholder whose location the event contains,
                 * the access zone that they started in before the event, and
-                * the item that indicates their location after the event.
+                * the access zone or reception where they ended up.
 
               The location block will only be in a result if you ask for it using the `fields` query
               parameter.
