@@ -2637,7 +2637,10 @@ definitions:
           that he or she attempted to access.
 
           For example, for 'Card entry granted' events this field will contain the door's entry
-          zone, but for 'Card exit granted' events this field will contain the door's _exit_ zone.
+          zone, but for 'Card exit granted' events this field will contain the door's _exit_ zone,
+          because 'exit granted' means the cardholder was in the door's entry zone, badged at its
+          exit reader, and was granted access to its exit zone.  Think of it as going through a door
+          in its reverse direction.
 
         properties:
           href:
@@ -2701,7 +2704,9 @@ definitions:
         description: |
           The name and href of the door related to the event.  These are not as common as you may
           think, because when a door is relevant (to card events, for example) it is usually the
-          event's source.  New in 8.10.
+          event's source, not its door, so it will be in the `source` block.
+
+          New in 8.10.
 
         properties:
           href:

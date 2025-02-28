@@ -6191,7 +6191,7 @@
                       <p>The name and href of the entry access zone related to the event. In the case of card events, it is the zone into which a cardholder was attempting to gain access.</p>
                       <p>That is true for successful entries, successful exits, and access denials. Regardless of whether the cardholder badged at the entry or exit reader, this field refers to the zone that he or she attempted to access.</p>
                       <p>For example, for &#39;Card entry granted&#39; events this field will contain the door&#39;s entry zone, but for &#39;Card exit granted&#39; events this field will contain the door&#39;s
-                        <em>exit</em> zone.</p>
+                        <em>exit</em> zone, because &#39;exit granted&#39; means the cardholder was in the door&#39;s entry zone, badged at its exit reader, and was granted access to its exit zone. Think of it as going through a door in its reverse direction.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -6272,7 +6272,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The name and href of the door related to the event. These are not as common as you may think, because when a door is relevant (to card events, for example) it is usually the event&#39;s source. New in 8.10.</p>
+                      <p>The name and href of the door related to the event. These are not as common as you may think, because when a door is relevant (to card events, for example) it is usually the event&#39;s source, not its door, so it will be in the <code>source</code> block.</p>
+                      <p>New in 8.10.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
