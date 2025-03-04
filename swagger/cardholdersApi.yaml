@@ -6636,7 +6636,7 @@ paths:
         type: integer
         minimum: 0
         default: null
-        description: Reserved for internal use.
+        description: Reserved for internal use.  You may see it in URLs you receive from the server, but you must never add it yourself.
 
       - name: "filter"
         in: query
@@ -6714,6 +6714,12 @@ paths:
           Sets the number of seconds after which the server will abort the query and return a 500.
           If that happens, you should try again later when the server (particularly the database
           server) is not so busy.
+
+          Using this can be dangerous.  When the server aborts a query it discards all the work it
+          did up to that point.  If you send the same query again later, with the same deadline, you
+          may end up stuck in a loop, never making progress, and effectively DoSing your server.
+
+          If your server is struggling, try reducing the size of each result set by using `top`.
 
           Added in 8.80.
 
