@@ -3255,7 +3255,7 @@ definitions:
       period.  Its purpose is to allow a site to refuse access to cardholders who do not meet a
       special requirement.
 
-      The REST API allows you to link a cardholder and a competency.  The status of that link
+      This section describes the link between a cardholder and a competency.  The status of that link
       determines whether they "hold" the competency for the purposes of access control decisions at
       the door.  When we talk about updating, adding, or deleting a competency in the cardholder
       API, we do not mean the competency object itself, but rather the link a cardholder has to the
@@ -3264,7 +3264,7 @@ definitions:
       The link is a block in the cardholder detail.  You can also put it in the results of a
       cardholder search by putting `competencies` in the `fields` parameter.
 
-      This section describes what you receive from a GET.  The [Cardholder competency
+      This particular section describes what you receive from a GET.  The [Cardholder competency
       update](#definition-Cardholder-competency-update) describes what you should send in a POST or
       PATCH to set or update a cardholder's link to a competency.
 
@@ -3299,8 +3299,8 @@ definitions:
           no.  A fuller explanation follows.
 
           A competency can be disabled, expired, both, or neither.  Whether it is _enabled_ is a
-          flag on the cardholder's competency.  Whether it is _expired_ is derived from an expiry date (actually
-          a timestamp accurate to the second):  if it is in the past, Command Centre considers the
+          flag on the cardholder's holding of the competency.  Whether it is _expired_ is derived from an expiry
+          timestamp (accurate to the second):  if it is in the past, Command Centre considers the
           competency expired.
 
           A competency can also have an `enablement` date.  If that date (timestamp) passes while the
@@ -3336,7 +3336,7 @@ definitions:
           | true | - | Past | expired |
           | false | Future | - | pending |
           | false | Past | - | inactive |
-          | false | null | - | inactive |
+          | false | Unset | - | inactive |
 
         type: object
         example:
@@ -3395,7 +3395,7 @@ definitions:
       send read-only blocks such the status and the competency, and there is a write-only field
       `enabled` that you can supply to change the status.
 
-      You cannot change the competency to which the status, times, comment, and credit applies.  If
+      You cannot use a PATCH to change the competency to which the status, times, comment, and credit apply.  If
       you need to do that, delete the cardholder's existing competency and give them a new one.  You
       can do that in one PATCH.
 

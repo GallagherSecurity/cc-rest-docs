@@ -13868,9 +13868,9 @@
                 <section class="json-schema-description">
                   <p>A
                     <em>competency</em> is an object in Command Centre with some basic fields like a name and a notice period. Its purpose is to allow a site to refuse access to cardholders who do not meet a special requirement.</p>
-                  <p>The REST API allows you to link a cardholder and a competency. The status of that link determines whether they &quot;hold&quot; the competency for the purposes of access control decisions at the door. When we talk about updating, adding, or deleting a competency in the cardholder API, we do not mean the competency object itself, but rather the link a cardholder has to the competency.</p>
+                  <p>This section describes the link between a cardholder and a competency. The status of that link determines whether they &quot;hold&quot; the competency for the purposes of access control decisions at the door. When we talk about updating, adding, or deleting a competency in the cardholder API, we do not mean the competency object itself, but rather the link a cardholder has to the competency.</p>
                   <p>The link is a block in the cardholder detail. You can also put it in the results of a cardholder search by putting <code>competencies</code> in the <code>fields</code> parameter.</p>
-                  <p>This section describes what you receive from a GET. The
+                  <p>This particular section describes what you receive from a GET. The
                     <a href="#definition-Cardholder-competency-update">Cardholder competency update</a> describes what you should send in a POST or PATCH to set or update a cardholder&#39;s link to a competency.</p>
                 </section>
                 <section class="json-schema-properties">
@@ -13904,8 +13904,8 @@
                     <dd>
                       <p>This object contains two strings. Both are read-only, so do not specify them when assigning or updating a cardholder&#39;s competency. <code>value</code> is taken from the site&#39;s language pack, suitable for display. <code>type</code> comes from a fixed enumeration. It will be <code>expiryDue</code> or <code>active</code> when the cardholder carries this competency; anything else means no. A fuller explanation follows.</p>
                       <p>A competency can be disabled, expired, both, or neither. Whether it is
-                        <em>enabled</em> is a flag on the cardholder&#39;s competency. Whether it is
-                        <em>expired</em> is derived from an expiry date (actually a timestamp accurate to the second): if it is in the past, Command Centre considers the competency expired.</p>
+                        <em>enabled</em> is a flag on the cardholder&#39;s holding of the competency. Whether it is
+                        <em>expired</em> is derived from an expiry timestamp (accurate to the second): if it is in the past, Command Centre considers the competency expired.</p>
                       <p>A competency can also have an <code>enablement</code> date. If that date (timestamp) passes while the competency is disabled, Command Centre will enable it. It will leave the date on the item for future reference, though it will not affect the competency again.</p>
                       <p>If the competency is disabled, the status <code>type</code> will be <code>inactive</code> when there is no enable date or it is in the past, and <code>pending</code> when the enable date is in the future (i.e., there is an automatic re-enablement coming).</p>
                       <p>If the competency is not disabled, the <code>expiry</code> time is important. If it is in the past, <code>type</code> will be <code>expired</code>.</p>
@@ -13955,7 +13955,7 @@
                           </tr>
                           <tr>
                             <td>false</td>
-                            <td>null</td>
+                            <td>Unset</td>
                             <td>-</td>
                             <td>inactive</td>
                           </tr>
@@ -14062,7 +14062,7 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>This is a description of the fields you would supply when updating a cardholder&#39;s holding of a competency. It is slightly different from what you receive in a cardholder GET: you do not send read-only blocks such the status and the competency, and there is a write-only field <code>enabled</code> that you can supply to change the status.</p>
-                  <p>You cannot change the competency to which the status, times, comment, and credit applies. If you need to do that, delete the cardholder&#39;s existing competency and give them a new one. You can do that in one PATCH.</p>
+                  <p>You cannot use a PATCH to change the competency to which the status, times, comment, and credit apply. If you need to do that, delete the cardholder&#39;s existing competency and give them a new one. You can do that in one PATCH.</p>
                   <p>A cardholder can have only one link to a given competency. Attempting to give a cardholder a competency a second time will either fail or raise a stateful alarm depending on your version of Command Centre.</p>
                 </section>
                 <section class="json-schema-properties">
