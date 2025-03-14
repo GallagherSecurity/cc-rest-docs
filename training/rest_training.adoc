@@ -294,8 +294,8 @@ away.
 Access groups are not operator groups. When this document refers to a
 group it means an access group.
 
-A cardholder must be a member of an access group before he or she can
-have personal data, next.
+A cardholder must be a member of an access group before Command Centre
+will reveal his or her personal data (see next).
 
 === Personal data fields (PDFs)
 
@@ -314,11 +314,13 @@ SMS and email notifications. All PDFs have their own access level
 (hidden, read-only, or full access) that applies to operators in
 operator groups that do not expressly override it.
 
-Importantly, PDFs are attached to access groups. A cardholder can have a
+Importantly, PDFs are attached to access groups. Clients can see a cardholder's
 value for a PDF only if he or she is a member of one of the PDF’s access
 groups (Footnote: direct or inherited. Unless otherwise noted, all
 Command Centre’s access group membership tests treat inherited members
-just like direct members).
+just like direct members).  The API will let you set a cardholder's
+PDF value even if they are not a member of the correct group, but it
+would be unwise to rely on that behaviour.
 
 The REST API allows you to manage a cardholder’s group memberships (so
 that he or she has the PDF) as well as see and set PDF values. It does
@@ -3852,11 +3854,11 @@ fields.
 division.
 
 |View all cardholder data
-|'View Cardholder' or any of the cardholder editing privileges on the cardholder’s division, plus
+|'View Cardholder' or any of the cardholder-editing privileges on the cardholder’s division, plus
 'View Cardholder Notes' reveals notes, and 'View Lockers and Assignments' adds locker detail.
 
 |View cardholder PDF values
-|'View Cardholder' or any of the cardholder editing privileges on the cardholder’s division, plus
+|'View Cardholder' or any of the cardholder-editing privileges on the cardholder’s division, plus
 your operator group needs to give you 'view' or 'edit' access to the PDF, or the PDF's default
 privilege must be 'view' or 'edit'.
 
