@@ -112,7 +112,7 @@ x-common-blocks-this-is-made-up:
   contentSigningCert_ignored: &CSC
     type: string
     description: |
-      Required when creating a PIV or PIV-I card.  The API will reject your request if this is
+      This is required when creating a PIV or PIV-I card.  The API will reject your request if this is
       missing or not a Base64-encoded certificate, but it will not validate the certificate itself.
 
       This example is shortened to fit on screen.  Real certificates are at least a thousand
@@ -133,7 +133,7 @@ x-common-blocks-this-is-made-up:
   pivAuthenticationCert_etc: &PAC
     type: string
     description: |
-      Required when creating a PIV or PIV-I card.  The API will reject your request if this is
+      This is required when creating a PIV or PIV-I card.  The API will reject your request if this is
       missing or not a Base64-encoded certificate, but it will not validate the certificate itself.
     example: "MIIE[...]wkrp"
 
@@ -183,7 +183,7 @@ paths:
     post:
       summary: Create a cardholder
       description: |
-        Creates a new cardholder, including assigned cards.
+        This API call creates a new cardholder, including assigned cards.
 
         Part of what you submit is an array called `cards`, each element of which is a card or
         credential you want assigned to your new cardholder.  This example shows an array containing
@@ -224,13 +224,13 @@ paths:
             location:
               type: string
               format: url
-              description: The href of the new cardholder.
+              description: This is the href of the new cardholder.
 
   /api/cardholders/{id}:
     patch:
       summary: Update a cardholder
       description: |
-        Updates an existing cardholder, including adding, removing, and modifying cards.
+        This updates an existing cardholder, including adding, removing, and modifying cards.
 
       parameters:
         - name: "not rendered"
@@ -315,7 +315,7 @@ paths:
           description: "Success."
           schema:
             properties:
-              "many other cardholder fields":
+              "many other cardholder fields": 
                 type: string
                 example: "etc"
               cards:
@@ -608,7 +608,7 @@ definitions:
       fascn:
         type: string
         description: |
-          The FASC-N identifier.  Required.
+          This is the FASC-N identifier.  You must supply it when creating a card.
 
           It must be the same as the card number on a PIV (not PIV-I) card.
 

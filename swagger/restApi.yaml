@@ -388,7 +388,7 @@ x-common-blocks-this-is-made-up:
 
   fds_ignored: &FIELDSDESC_SUM
     description: |
-      Return these fields in the search results.  The values you can list are the same as the field
+      This instructs the server to return only these fields in the search results.  The values you can list are the same as the field
       names in the details page.  Using this you can return everything on the summary page that you
       would find on the details page.  Separate values with commas.
 
@@ -403,7 +403,7 @@ x-common-blocks-this-is-made-up:
 
   fds_ignored2: &FIELDSDESC_SUM_810
     description: |
-      Return these fields in the search results.  The values you can list are the same as the field
+      This instructs the server to return only these fields in the search results.  The values you can list are the same as the field
       names in the details page.  Using this you can return everything on the summary page that you
       would find on the details page.  Separate values with commas.
 
@@ -414,7 +414,7 @@ x-common-blocks-this-is-made-up:
 
   fdd_ignored: &FIELDSDESC_DET
     description: |
-      Return these fields in the details page instead of the default set.  The values you can list
+      This instructs the server to return only these fields in the details page instead of the default set.  The values you can list
       are the same as the field names you would see in the results.  Use it to cut back on the size
       of the response.  Separate values with commas.
 
@@ -426,7 +426,7 @@ x-common-blocks-this-is-made-up:
 
   fdd_ignored2: &FIELDSDESC_DET_810
     description: |
-      Return these fields in the details page instead of the default set.  The values you can list
+      This instructs the server to return only these fields in the details page instead of the default set.  The values you can list
       are the same as the field names you would see in the results.  Use it to cut back on the size
       of the response.  Separate values with commas.
 
@@ -437,7 +437,7 @@ x-common-blocks-this-is-made-up:
     required: false
     type: string
     description: |
-      Return these fields in the search results.  The values you can list are the field names in the
+      This instructs the server to return only these fields in the search results.  The values you can list are the field names in the
       schema definitions in this document.  Separate values with commas.
 
       Use the special value `defaults` to return the fields you would have received had you not given
@@ -478,7 +478,7 @@ x-common-blocks-this-is-made-up:
     required: false
     type: string
     description: |
-      Returns these fields in the update, instead of the default set.  Note that removing fields also
+      This instructs the server to return these fields in the update, instead of the default set.  Note that removing fields also
       saves you from updates to those fields.
 
   update_fields_ignore: &UPDFIELDSENUM
@@ -576,7 +576,7 @@ definitions:
   Access Zone search:
     tags:
       - "Access Zones"
-    description: An array of access zone summaries, and a `next` link for more.
+    description: This contains an array of access zone summaries, and a `next` link to get more.
     properties:
       results:
         type: array
@@ -595,14 +595,15 @@ definitions:
     tags:
       - "Access Zones"
     description: |
-      An array of access zones, and a link to a special 'outside the system' access zone.  This is
-      the list of access zones into which your operator has the privilege to move cardholders.
+      This contains an array of access zones, and a link to a special 'outside the system' access
+      zone.  These are the access zones into which your operator has the privilege to move
+      cardholders.
     properties:
       results:
         type: array
         description: |
-          An array of Access Zone summaries, just as you would receive from the Access Zone search
-          GET.
+          This is the same array of Access Zone summaries you would receive from the Access Zone
+          search GET.
         items: { $ref: '#/definitions/Access Zone summary' }
       outsideOfSystem:
         type: object
@@ -614,7 +615,7 @@ definitions:
           href: "https://localhost:8904/api/access_zones/0"
       next:
         type: object
-        description: The link to the next page.  Absent if you have retrieved them all.
+        description: Follow this link to get the next page.  Absent if you have retrieved them all.
         properties:
           href: { type: string, format: url }
         example:
@@ -631,8 +632,8 @@ definitions:
         format: url
         description: |
           A link to an [access zone detail](#definition-Access-Zone-detail) object for this access
-          zone.  This is Command Centre's identifier for this access zone:  use it whenever you need
-          to specify an access zone in REST operations.
+          zone.  It is also Command Centre's identifier for this access zone:  use it whenever you
+          need to specify an access zone in REST operations.
         example: "https://localhost:8904/api/access_zones/3280"
       id:
         type: string

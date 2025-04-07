@@ -1130,7 +1130,7 @@
                   <p>When you have loaded all the cardholders there will be no <code>next</code> link.</p>
                   <p>If your result set is empty it means your operator does not have the privilege to view any cardholders. Perhaps there are none in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
                   <p>Adding or modifying cardholders between calls to this API will not affect the pagination of its results if you sort by ID.</p>
-                  <p>Take this URL from the &#39;href&#39; field in the <code>features.cardholders.cardholders</code> section of <code>/api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the &#39;href&#39; field in the <code>features.cardholders.cardholders</code> section of <code>/api</code>.</p>
                 </section>
               </div>
             </div>
@@ -1422,7 +1422,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Creates a new cardholder, including his or her cards, group memberships, personal data, competencies, and roles.</p>
-                  <p>Take this URL from the &#39;href&#39; field in the <code>features.cardholders.cardholders</code> section of <code>/api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the &#39;href&#39; field in the <code>features.cardholders.cardholders</code> section of <code>/api</code>.</p>
                   <p>The POST expects a document in the same format as the
                     <a href="#definition-Cardholder-detail">the cardholder detail</a>. Many fields are optional, of course, and some (like the last successful access time) do not make sense when creating a cardholder. See the
                     <a href="#definition-Cardholder-POST-example">cardholder POST example</a> for details.</p>
@@ -3207,7 +3207,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This call updates a cardholder&#39;s location (moves them) to a target access zone. Added in 8.20.</p>
-                  <p>Take this URL from the &#39;updateLocation.href&#39; field in a
+                  <p>Do not code this URL into your application. Take it from the &#39;updateLocation.href&#39; field in a
                     <a href="#definition-Cardholder-detail">cardholder response</a>.</p>
                   <p>The POST expects a document which contains an href to the target access zone. The recommended way of getting access zone hrefs is through an
                     <a href="rest.html#operation--api-access_zones-update_cardholder_location-get">access zones call</a> added in 8.20 that returns you the access zones to which you are allowed to move cardholders, according to your operator privileges.</p>
@@ -3354,7 +3354,7 @@
           <h1 id="tag-Cardholder-changes" class="swagger-summary-tag" data-traverse-target="tag-Cardholder-changes">Cardholder changes</h1>
           <div class="tag-description doc-row">
             <div class="doc-copy">
-              <p>This feature keeps you up to date with cardholder changes. It works for changes coming from all sources, including Gallagher&#39;s clients, EDI, Active Directory, remote servers, and the other cardholder APIs.</p>
+              <p>This feature keeps you up to date with cardholders by telling you the changes that happened since the last time you called. It works for creations, modifications, and deletions coming from all sources, including Gallagher&#39;s clients, EDI, Active Directory, remote servers, and the other cardholder APIs.</p>
               <p>It first appeared in version 8.30.</p>
               <p>Because it also reports changes made through the REST API, it will tell you about your own changes. If you are using this API both for managing cardholders and as a source of truth, you should be careful not to get yourself into a loop.</p>
               <p>This API was built to synchronise a second system with Command Centre&#39;s cardholder directory, not for auditing or reporting. You will find the
@@ -3438,7 +3438,7 @@
                   <p>There will be no more than 1000 changes, or as many as you asked for using the <code>top</code> query parameter.</p>
                   <p>When you are up to date with all the cardholder changes, the <code>results</code> array will be empty. When it comes time to check again, don&#39;t just re-use the same URL: get a new one from the <code>next</code> block. It can change even when there are no results.</p>
                   <p>This is a polled interface: it will return immediately, whether or not there are results. Therefore you should wait for a time between calls if the <code>results</code> array was empty.</p>
-                  <p>Take this URL from the href field in the <code>features.cardholders.changes</code> section of <code>/api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the href field in the <code>features.cardholders.changes</code> section of <code>/api</code>.</p>
                   <h3 id="efficiency-tips-when-collecting-cardholder-changes">Efficiency tips when collecting cardholder changes</h3>
                   <ul>
                     <li>
@@ -4049,7 +4049,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Creates a new access group, setting its basic fields, parent, PDFs, and some membership defaults.</p>
-                  <p>Take this URL from the <code>href</code> field in the <code>features.accessGroups.accessGroups.href</code> field of <code>GET /api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the <code>href</code> field in the <code>features.accessGroups.accessGroups.href</code> field of <code>GET /api</code>.</p>
                   <p>The POST expects a document in the same format as
                     <a href="#operation--api-access_groups--id--get">the access group detail</a>. All fields except <code>division</code> are optional.</p>
                   <p>You will achieve better performance if you combine all you want to achieve into one POST, rather than creating the access group bare with a POST then refining it with PATCHes later.</p>
@@ -4835,7 +4835,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Creates a new card type, setting practically everything except the PIV fields.</p>
-                  <p>Take this URL from the <code>href</code> field in the <code>features.cardTypes.cardTypes.href</code> field of <code>GET /api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the <code>href</code> field in the <code>features.cardTypes.cardTypes.href</code> field of <code>GET /api</code>.</p>
                   <p>The POST expects a document in the same format as
                     <a href="#operation--api-card_types--id--get">the card type detail</a>.</p>
                   <p>When successful it returns a location header containing the address of the new card type.</p>
@@ -6347,7 +6347,7 @@
                   <p>The result will contain no more than 100 or 100 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more.</p>
                   <p>If the result set is empty it means there are no locker banks in the divisions in which the operator has a privilege that allows listing them, such as &#39;View lockers and assignments&#39;.</p>
                   <p>When you have loaded all the locker banks there will no <code>next</code> link.</p>
-                  <p>Take this URL from the &#39;href&#39; field in the <code>features.lockerBanks.lockerBanks</code> section of <code>/api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the &#39;href&#39; field in the <code>features.lockerBanks.lockerBanks</code> section of <code>/api</code>.</p>
                 </section>
               </div>
             </div>
@@ -7902,7 +7902,7 @@
                 <section class="swagger-operation-description">
                   <p>This returns the PDF definitions you are privileged to view. You will need the &#39;View Personal Data Definitions&#39; privilege, or its &#39;Edit&#39; equivalent, on a PDF&#39;s division in order to see it.</p>
                   <p>The result will contain no more than 100 or 1000 objects, depending on your version; you should follow the <code>next</code> link, if it is present, to collect more. When you have loaded all the PDF definitions there will no <code>next</code> link.</p>
-                  <p>Take this URL from the href in the <code>features.personalDataFields.personalDataFields</code> section of <code>/api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the href in the <code>features.personalDataFields.personalDataFields</code> section of <code>/api</code>.</p>
                 </section>
               </div>
             </div>
@@ -8168,7 +8168,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Creates a new personal data definition.</p>
-                  <p>Take this URL from the <code>href</code> field in the <code>features.personalDataFields.personalDataFields.href</code> field of <code>GET /api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the <code>href</code> field in the <code>features.personalDataFields.personalDataFields.href</code> field of <code>GET /api</code>.</p>
                   <p>When successful it returns a location header containing the address of the new PDF.</p>
                   <p>Note that you can only create one per POST.</p>
                   <p>This call requires the RESTConfiguration licence.</p>
@@ -8721,7 +8721,7 @@
                   <p>This returns the receptions you are privileged to view.</p>
                   <p>The result will contain no more than 100 or 1000 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Receptions are small, so setting a limit of 1000 is sensible.</p>
                   <p>When you have loaded all the receptions there will no <code>next</code> link.</p>
-                  <p>Take this URL from the href in the <code>features.receptions.receptions</code> section of <code>/api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the href in the <code>features.receptions.receptions</code> section of <code>/api</code>.</p>
                 </section>
               </div>
             </div>
@@ -9544,7 +9544,7 @@
                   <p>This returns the roles you are privileged to view.</p>
                   <p>The result will contain no more than 100 or 1000 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Roles are small, so a limit of 1000 is sensible.</p>
                   <p>When you have loaded all the roles there will no <code>next</code> link.</p>
-                  <p>Take this URL from the href in the <code>features.roles.roles</code> section of <code>/api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the href in the <code>features.roles.roles</code> section of <code>/api</code>.</p>
                 </section>
               </div>
             </div>
@@ -9775,7 +9775,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Creates a new role.</p>
-                  <p>Take this URL from the <code>href</code> field in the <code>features.roles.roles.href</code> field of <code>GET /api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the <code>href</code> field in the <code>features.roles.roles.href</code> field of <code>GET /api</code>.</p>
                   <p>When successful it returns a location header containing the address of the new role.</p>
                   <p>Note that you can only create one per POST.</p>
                   <p>This call requires the RESTConfiguration licence.</p>
@@ -10146,7 +10146,7 @@
                   <p>This returns the visits you are privileged to view.</p>
                   <p>The result will contain no more than 100 or 1000 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page.</p>
                   <p>When you have loaded all the visits there will no <code>next</code> link.</p>
-                  <p>Take this URL from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
                   <p>Visits are new to 8.50.</p>
                 </section>
               </div>
@@ -10427,7 +10427,7 @@
                     <li>start time (<code>from</code>)</li>
                     <li>end time (<code>until</code>)</li>
                   </ul>
-                  <p>Take this URL from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
+                  <p>Do not code this URL into your application. Take it from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
                   <p>Like all the visit endpoints, this one is new to 8.50.</p>
                 </section>
               </div>
@@ -10950,7 +10950,7 @@
                     <a href="#operation--api-visits--id--visitors--visitorId--notify_signing_in-post">signing in</a> or
                     <a href="#operation--api-visits--id--visitors--visitorId--notify_onsite-post">on-site</a>.</p>
                   <p>Note that this URL is different from a normal cardholder href because a cardholder can be a visitor on more than one visit at a time.</p>
-                  <p>Take this href from a
+                  <p>Do not code this URL into your application. Take itf from a
                     <a href="#definition-Visit-search">visit search</a> or
                     <a href="#definition-Visit">visit</a>.</p>
                   <p>New to 8.90.</p>
