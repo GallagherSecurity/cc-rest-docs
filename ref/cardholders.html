@@ -1130,7 +1130,8 @@
                   <p>When you have loaded all the cardholders there will be no <code>next</code> link.</p>
                   <p>If your result set is empty it means your operator does not have the privilege to view any cardholders. Perhaps there are none in the divisions in which your operator has privileges, or your operator has no privileges at all.</p>
                   <p>Adding or modifying cardholders between calls to this API will not affect the pagination of its results if you sort by ID.</p>
-                  <p>Do not code this URL into your application. Take it from the &#39;href&#39; field in the <code>features.cardholders.cardholders</code> section of <code>/api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the &#39;href&#39; field in the <code>features.cardholders.cardholders</code> section of <code>/api</code>.</p>
                 </section>
               </div>
             </div>
@@ -1421,8 +1422,9 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>Creates a new cardholder, including his or her cards, group memberships, personal data, competencies, and roles.</p>
-                  <p>Do not code this URL into your application. Take it from the &#39;href&#39; field in the <code>features.cardholders.cardholders</code> section of <code>/api</code>.</p>
+                  <p>This creates a new cardholder, including his or her cards, group memberships, personal data, competencies, and roles.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the &#39;href&#39; field in the <code>features.cardholders.cardholders</code> section of <code>/api</code>.</p>
                   <p>The POST expects a document in the same format as the
                     <a href="#definition-Cardholder-detail">the cardholder detail</a>. Many fields are optional, of course, and some (like the last successful access time) do not make sense when creating a cardholder. See the
                     <a href="#definition-Cardholder-POST-example">cardholder POST example</a> for details.</p>
@@ -1656,7 +1658,9 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>Full details for a cardholder. Follow the href in the
+                  <p>This retrieves one cardholder from Command Centre. It does not return all the fields available (there are too many) so, much like the cardholder search, it accepts a <code>fields</code> parameter where you specify the fields you need.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not use</a> a cardholder&#39;s ID to build the URL yourself: follow the href in the
                     <a href="#definition-Cardholders">cardholder search</a> to get here.</p>
                 </section>
               </div>
@@ -1989,7 +1993,8 @@
                   </ul>
                   <p>When changing a cardholder&#39;s division at the same time as PDFs or competencies, the extra privilege checks required for PDFs and competency changes use the origin division, not the destination division. So if you are moving a cardholder from a division in which your operator has no access to PDFs and competencies into one in which it does, first PATCH the cardholder into the new division then PATCH it with the other changes.</p>
                   <p>You can find this URL in the href in the
-                    <a href="#definition-Cardholders">cardholder search</a> or any of the other calls that return cardholder hrefs.</p>
+                    <a href="#definition-Cardholders">cardholder search</a> or any of the other calls that return cardholder hrefs.
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not build it yourself</a>.</p>
                   <hr>
                   <p>Note that the REST API does not implement the full suite of Command Centre privileges. In particular, the following privileges do not have the same effect on an operator&#39;s ability to modify a cardholder that they do in the administrative clients:</p>
                   <ul>
@@ -2326,7 +2331,8 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This call removes a cardholder from Command Centre. You can find the URL in the href in the
-                    <a href="#definition-Cardholders">cardholder search</a> or any of the other calls that return cardholder hrefs.</p>
+                    <a href="#definition-Cardholders">cardholder search</a> or any of the other calls that return cardholder hrefs.
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -2433,7 +2439,8 @@
                 <section class="swagger-operation-description">
                   <p>This call removes a cardholder&#39;s membership in an access group. Note that a cardholder may have more than one membership in a group.</p>
                   <p>You can find this URL in the
-                    <a href="#definition-Cardholder-detail">cardholder object</a>.</p>
+                    <a href="#definition-Cardholder-detail">cardholder object</a>.
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -2545,7 +2552,8 @@
                 <section class="swagger-operation-description">
                   <p>This call removes a card from a cardholder.</p>
                   <p>You can find this URL in the
-                    <a href="#definition-Cardholder-detail">cardholder object</a>.</p>
+                    <a href="#definition-Cardholder-detail">cardholder object</a>.
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -2657,7 +2665,8 @@
                 <section class="swagger-operation-description">
                   <p>This call removes a competency from a cardholder.</p>
                   <p>You can find this URL in the
-                    <a href="#definition-Cardholder-detail">cardholder object</a>.</p>
+                    <a href="#definition-Cardholder-detail">cardholder object</a>.
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -2878,7 +2887,8 @@
                 <section class="swagger-operation-description">
                   <p>This call removes a default floor assignment and passenger types from a cardholder for one elevator group.</p>
                   <p>You will find this URL in the <code>elevatorGroups</code> block of a
-                    <a href="#definition-Cardholder-detail">cardholder object</a>.</p>
+                    <a href="#definition-Cardholder-detail">cardholder object</a>.
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -2943,7 +2953,8 @@
                 <section class="swagger-operation-description">
                   <p>This call removes a locker assignment from a cardholder. If the cardholder has no other assignments for this locker after this operation he or she will not be able to open it.</p>
                   <p>You will find this URL in the <code>lockers</code> block of a
-                    <a href="#definition-Cardholder-detail">cardholder object</a>.</p>
+                    <a href="#definition-Cardholder-detail">cardholder object</a>. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -3008,7 +3019,8 @@
                 <section class="swagger-operation-description">
                   <p>This call removes a cardholder&#39;s membership in an operator group. Operator group memberships do not have start and end dates, so a cardholder can only have one membership in a given operator group.</p>
                   <p>You can find this URL in the
-                    <a href="#definition-Cardholder-detail">cardholder object</a>.</p>
+                    <a href="#definition-Cardholder-detail">cardholder object</a>. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -3113,6 +3125,8 @@
                   <p>This call severs a relationship between two cardholders.</p>
                   <p>You can find the URL in the <code>relationships</code> block in the
                     <a href="#definition-Cardholder-detail">cardholder object</a> of the cardholder who has the relationship, not the cardholder who holds the role. For example if you have a &#39;supervisor&#39; role you would find the URL to delete by looking up the supervised cardholder, not the supervisor.</p>
+                  <p>In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build the URL yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -3207,7 +3221,8 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This call updates a cardholder&#39;s location (moves them) to a target access zone. Added in 8.20.</p>
-                  <p>Do not code this URL into your application. Take it from the &#39;updateLocation.href&#39; field in a
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the &#39;updateLocation.href&#39; field in a
                     <a href="#definition-Cardholder-detail">cardholder response</a>.</p>
                   <p>The POST expects a document which contains an href to the target access zone. The recommended way of getting access zone hrefs is through an
                     <a href="rest.html#operation--api-access_zones-update_cardholder_location-get">access zones call</a> added in 8.20 that returns you the access zones to which you are allowed to move cardholders, according to your operator privileges.</p>
@@ -3438,7 +3453,8 @@
                   <p>There will be no more than 1000 changes, or as many as you asked for using the <code>top</code> query parameter.</p>
                   <p>When you are up to date with all the cardholder changes, the <code>results</code> array will be empty. When it comes time to check again, don&#39;t just re-use the same URL: get a new one from the <code>next</code> block. It can change even when there are no results.</p>
                   <p>This is a polled interface: it will return immediately, whether or not there are results. Therefore you should wait for a time between calls if the <code>results</code> array was empty.</p>
-                  <p>Do not code this URL into your application. Take it from the href field in the <code>features.cardholders.changes</code> section of <code>/api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the href field in the <code>features.cardholders.changes</code> section of <code>/api</code>.</p>
                   <h3 id="efficiency-tips-when-collecting-cardholder-changes">Efficiency tips when collecting cardholder changes</h3>
                   <ul>
                     <li>
@@ -3779,7 +3795,8 @@
                   <p>If your result set is empty it means your operator does not have the privilege to view any access groups. Perhaps there are none in the divisions in which your operator has &#39;View access groups&#39; or &#39;Edit access groups&#39;, or your operator has no privileges at all.</p>
                   <p>This request does not return the group&#39;s cardholders. That would make the results unwieldy. Instead, it provides a separate link.</p>
                   <p>Adding, deleting, or modifying access groups between calls to this API will not affect the pagination of its results if you sort by ID.</p>
-                  <p>You can find the URL for this call in the <code>features.accessGroups.accessGroups.href</code> field of <code>/api</code>.</p>
+                  <p>You can find the URL for this call in the <code>features.accessGroups.accessGroups.href</code> field of <code>/api</code>. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -4049,7 +4066,9 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Creates a new access group, setting its basic fields, parent, PDFs, and some membership defaults.</p>
-                  <p>Do not code this URL into your application. Take it from the <code>href</code> field in the <code>features.accessGroups.accessGroups.href</code> field of <code>GET /api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the <code>href</code> field in the <code>features.accessGroups.accessGroups.href</code> field of <code>GET
+                  /api</code>.</p>
                   <p>The POST expects a document in the same format as
                     <a href="#operation--api-access_groups--id--get">the access group detail</a>. All fields except <code>division</code> are optional.</p>
                   <p>You will achieve better performance if you combine all you want to achieve into one POST, rather than creating the access group bare with a POST then refining it with PATCHes later.</p>
@@ -4201,7 +4220,8 @@
                   <p>In addition to the group&#39;s vitals and a link to the membership document in the access group search results, this call lists the group&#39;s child groups.</p>
                   <p>Note that you can obtain the same results by adding a <code>fields</code> query parameter to a
                     <a href="#operation--api-access_groups-get">search</a>.</p>
-                  <p>You can find the URL for this call in the access group search results and in a cardholder&#39;s <code>accessGroups</code> array.</p>
+                  <p>You can find the URL for this call in the access group search results and in a cardholder&#39;s <code>accessGroups</code> array. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -4450,7 +4470,8 @@
                     <a href="#definition-Access-group-detail">the access group detail</a> but with fewer fields, given in
                     <a href="#definition-Access-group-POST-example">this POST example</a>. Note that you cannot change everything on an access group that the API shows you, such as its membership, access, and permissions. You can change its basic fields, PDFs, and membership defaults.</p>
                   <p>You can find the URL for this call in the
-                    <a href="#operation--api-access_groups-get">access group search</a> results and in a cardholder&#39;s <code>accessGroups</code> array.</p>
+                    <a href="#operation--api-access_groups-get">access group search</a> results and in a cardholder&#39;s <code>accessGroups</code> array. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                   <p>This call requires the RESTConfiguration licence and a server running 9.30 or later.</p>
                 </section>
               </div>
@@ -4584,7 +4605,8 @@
                 <section class="swagger-operation-description">
                   <p>This call removes an access group from Command Centre.</p>
                   <p>You can find the URL for this call in the
-                    <a href="#operation--api-access_groups-get">access group search</a> results and in a cardholder&#39;s <code>accessGroups</code> array.</p>
+                    <a href="#operation--api-access_groups-get">access group search</a> results and in a cardholder&#39;s <code>accessGroups</code> array. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                   <p>This call requires the RESTConfiguration licence and a server running 9.30 or later.</p>
                 </section>
               </div>
@@ -4667,7 +4689,8 @@
                   <p>This lists all cardholders who are direct members of a particular group. It does not paginate the results, so there is no <code>next</code> link. That can make for a large document, so it omits the group&#39;s child groups and their cardholder members. It is not recursive, in other words.</p>
                   <p>There may be more than one entry per cardholder, because any one cardholder can have many memberships to a group, each with different from and until date-times.</p>
                   <p>If your operator does not have the privilege to view a cardholder item you will receive its name but not its href (since following it would 404).</p>
-                  <p>You can find the URL in the <code>cardholders</code> block of an access group&#39;s search results or detail pages.</p>
+                  <p>You can find the URL in the <code>cardholders</code> block of an access group&#39;s search results or detail pages. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -4835,7 +4858,8 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Creates a new card type, setting practically everything except the PIV fields.</p>
-                  <p>Do not code this URL into your application. Take it from the <code>href</code> field in the <code>features.cardTypes.cardTypes.href</code> field of <code>GET /api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the <code>href</code> field in the <code>features.cardTypes.cardTypes.href</code> field of <code>GET /api</code>.</p>
                   <p>The POST expects a document in the same format as
                     <a href="#operation--api-card_types--id--get">the card type detail</a>.</p>
                   <p>When successful it returns a location header containing the address of the new card type.</p>
@@ -4979,7 +5003,8 @@
                   <p>This returns the card types you are privileged to assign to a cardholder.</p>
                   <p>Since a site usually has only a few card types, and each is small, the search, sorting, field selection, and pagination parameters are probably of little use to you. But they work.</p>
                   <p>If your result set is empty it means your operator does not have the privilege to view any card types. Your operator needs a privilege that allows assigning cards and credentials to cardholders such as &#39;Add / Edit Card or Credential&#39; or &#39;Create / Edit / Create and Edit Cardholders&#39;.</p>
-                  <p>You can find this URL in <code>features.cardTypes.assign</code>in <code>/api</code>. It was new in 8.10.</p>
+                  <p>You can find this URL in <code>features.cardTypes.assign</code>in <code>/api</code>. It was new in 8.10. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -5282,7 +5307,8 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This is the call you use to update a card type.</p>
+                  <p>This is the call you use to update a card type. Take the URL from the results of a card type search. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                   <p>The PATCH expects a document in the same format as the
                     <a href="#definition-Card-type">the card type detail</a> but with fewer fields.</p>
                   <p>This call requires the RESTConfiguration licence.</p>
@@ -5418,7 +5444,8 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This call removes a card type from Command Centre.</p>
+                  <p>This call removes a card type from Command Centre. In the interest of forward compability, take the URL from the results of a card type search rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building it yourself</a>.</p>
                   <p>This call requires the RESTConfiguration licence.</p>
                 </section>
               </div>
@@ -5513,7 +5540,8 @@
                   <p>The result will contain no more than 100 or 1000 competencies depending on your version; you should follow the <code>next</code> link (if present) for the next batch.</p>
                   <p>If your result set is empty it means your operator does not have the privilege to view any competencies. Perhaps there are none in the divisions in which your operator has &#39;View site&#39; or &#39;Edit site&#39;, or your operator has no privileges at all.</p>
                   <p>A bug in 7.90 meant that this call did not provide <code>next</code> links for sites that had more than 100 competencies. If this is you, set the &#39;top&#39; parameter as high as you can (as recommended in the efficiency tips). Command Centre clamps that to a maximum of ten thousand. If that is not enough competencies for you, you are probably already in contact with Gallagher technical support.</p>
-                  <p>Get this URL from <code>features.competencies.competencies.href</code> in <code>/api</code>.</p>
+                  <p>Get this URL from <code>features.competencies.competencies.href</code> in <code>/api</code>. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -5777,7 +5805,8 @@
                     <a href="#definition-Competency-PATCH-and-POST-example">this POST example</a>.</p>
                   <p>When successful it returns a <code>location</code> header containing the address of the new competency.</p>
                   <p>Note that you can only create one competency per POST.</p>
-                  <p>Do not code this URL into your application. Take it from the results of <code>GET /api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the results of <code>GET /api</code>.</p>
                   <p>New to Command Centre 9.10.</p>
                   <p>This requires the RESTConfiguration licence.</p>
                 </section>
@@ -5909,7 +5938,8 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>You get this URL from a cardholder or from a competency search.</p>
+                  <p>You get this URL from a cardholder or from a competency search. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                   <p>The results document gives everything Command Centre has on a competency except the warning messages that appear on a reader when a cardholder needs to take action.</p>
                 </section>
               </div>
@@ -6060,7 +6090,8 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This is the call you use to update a division&#39;s name, short name, description, notes, or division.</p>
+                  <p>This is the call you use to update a division&#39;s name, short name, description, notes, or division. In the interest of forward compability, take the URL from the results of a division search rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building it yourself</a>.</p>
                   <p>The PATCH expects a document in the same format as the
                     <a href="#definition-Competency-detail">the competency detail</a> but with fewer fields. An example is
                     <a href="#definition-Competency-PATCH-and-POST-example">this PATCH example</a>.</p>
@@ -6191,7 +6222,8 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This call removes a competency from Command Centre.</p>
+                  <p>This call removes a competency from Command Centre. You get this URL from a cardholder or from a competency search. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                   <p>New to Command Centre 9.10.</p>
                   <p>This call requires the RESTConfiguration licence.</p>
                 </section>
@@ -6347,7 +6379,8 @@
                   <p>The result will contain no more than 100 or 100 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more.</p>
                   <p>If the result set is empty it means there are no locker banks in the divisions in which the operator has a privilege that allows listing them, such as &#39;View lockers and assignments&#39;.</p>
                   <p>When you have loaded all the locker banks there will no <code>next</code> link.</p>
-                  <p>Do not code this URL into your application. Take it from the &#39;href&#39; field in the <code>features.lockerBanks.lockerBanks</code> section of <code>/api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the &#39;href&#39; field in the <code>features.lockerBanks.lockerBanks</code> section of <code>/api</code>.</p>
                 </section>
               </div>
             </div>
@@ -6622,8 +6655,9 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This returns details for a locker bank. Follow the href in the
-                    <a href="#definition-Locker-bank-summary">locker bank summary</a> to get here.</p>
+                  <p>This returns details for a locker bank. In the interest of forward compatibility follow the href in the
+                    <a href="#definition-Locker-bank-summary">locker bank summary</a> to get here rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building the URL yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -6835,7 +6869,8 @@
                 <section class="swagger-operation-description">
                   <p>This returns details for a locker. Follow the href in the
                     <a href="#definition-Locker-bank-summary">locker bank summary</a> or
-                    <a href="#definition-Locker-bank-detail">locker bank detail</a> to get here.</p>
+                    <a href="#definition-Locker-bank-detail">locker bank detail</a> to get here rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building the URL yourself</a>.</p>
                   <p>Prior to v8.20 this endpoint was at <code>/api/locker_banks/{locker_bank_id}/lockers/{id}</code> .</p>
                 </section>
               </div>
@@ -7017,7 +7052,8 @@
                   <p>Sends an override to open a locker.</p>
                   <p>You should get this URL from a
                     <a href="#definition-Locker-detail">locker detail</a> or
-                    <a href="#definition-Locker-bank-detail">locker bank detail</a> rather than building it yourself.</p>
+                    <a href="#definition-Locker-bank-detail">locker bank detail</a> rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building it yourself</a>.</p>
                   <p>New in 8.10.1112.</p>
                 </section>
               </div>
@@ -7093,7 +7129,8 @@
                   <p>The call will fail if the locker is allocated to a cardholder.</p>
                   <p>You should get this URL from a
                     <a href="#definition-Locker-detail">locker detail</a> or
-                    <a href="#definition-Locker-bank-detail">locker bank detail</a> rather than building it yourself.</p>
+                    <a href="#definition-Locker-bank-detail">locker bank detail</a> rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building it yourself</a>.</p>
                   <p>New in 9.10.</p>
                 </section>
               </div>
@@ -7193,7 +7230,8 @@
                   <p>Sends an override to remove the quarantine from a locker, making it available for allocation.</p>
                   <p>You should get this URL from a
                     <a href="#definition-Locker-detail">locker detail</a> or
-                    <a href="#definition-Locker-bank-detail">locker bank detail</a> rather than building it yourself.</p>
+                    <a href="#definition-Locker-bank-detail">locker bank detail</a> rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building it yourself</a>.</p>
                   <p>New in 9.10.</p>
                 </section>
               </div>
@@ -7321,7 +7359,8 @@
                   <p>If your result set is empty it means either your search terms were too tight or your operator does not have the privilege to view any operator groups. Perhaps there are none in the divisions in which your operator has &#39;View operators&#39; or &#39;Edit operators&#39;, or your operator does not have those privileges at all.</p>
                   <p>This request does not return the group&#39;s cardholders. That would make the results unwieldy. Instead, it provides a separate link.</p>
                   <p>Adding, deleting, or modifying operator groups between calls to this API will not affect the pagination of its results if you sort by ID.</p>
-                  <p>You can find the URL for this call in the <code>features.operatorGroups.operatorGroups.href</code> field of <code>/api</code>.</p>
+                  <p>You can find the URL for this call in the <code>features.operatorGroups.operatorGroups.href</code> field of <code>/api</code>. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                   <p>Added in 8.50.</p>
                 </section>
               </div>
@@ -7574,7 +7613,8 @@
                   <p>In addition to the group&#39;s vitals and a link to the membership document, this call returns the divisions in which the operator groups grants its privileges.</p>
                   <p>Note that you can obtain the same results by adding <code>fields=defaults,description,division,divisions,cardholders</code> to a
                     <a href="#operation--api-operator_groups-get">search</a>.</p>
-                  <p>You can find the URL for this call in the operator group search results and in a cardholder&#39;s <code>operatorGroups</code> array.</p>
+                  <p>You can find the URL for this call in the operator group search results and in a cardholder&#39;s <code>operatorGroups</code> array. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                   <p>Added in 8.50.</p>
                 </section>
               </div>
@@ -7730,7 +7770,8 @@
                   <p>This lists all cardholders who are members of the group identified by the request URL. It does not paginate the results, so there is no <code>next</code> link.</p>
                   <p>Operator groups cannot contain other operator groups, so every cardholder benefiting from this operator group comes out of this call.</p>
                   <p>If your operator does not have the privilege to view a cardholder item you will receive its name but not its href (since following the href would 404).</p>
-                  <p>You can find this call&#39;s URL in the <code>cardholders</code> block of an operator group.</p>
+                  <p>You can find this call&#39;s URL in the <code>cardholders</code> block of an operator group. In the interest of forward compability,
+                    <a href="#topic-Forward-compatibility--HATEOAS-">do not build it yourself</a>.</p>
                   <p>Added in 8.50.</p>
                   <p>There are two hrefs per cardholder. The lower-level href is the identifier for the cardholder, found throughout this API. The higher-level <code>href</code> field only appears if you ask for it using the <code>fields</code> query parameter, and only if the server is 8.70 or later. It refers to the cardholder&#39;s membership in the operator group. If you DELETE it, you will remove the cardholder from this operator group (which will demote them from an operator to a regular cardholder if this was their last remaining operator group).</p>
                 </section>
@@ -7902,7 +7943,8 @@
                 <section class="swagger-operation-description">
                   <p>This returns the PDF definitions you are privileged to view. You will need the &#39;View Personal Data Definitions&#39; privilege, or its &#39;Edit&#39; equivalent, on a PDF&#39;s division in order to see it.</p>
                   <p>The result will contain no more than 100 or 1000 objects, depending on your version; you should follow the <code>next</code> link, if it is present, to collect more. When you have loaded all the PDF definitions there will no <code>next</code> link.</p>
-                  <p>Do not code this URL into your application. Take it from the href in the <code>features.personalDataFields.personalDataFields</code> section of <code>/api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the href in the <code>features.personalDataFields.personalDataFields</code> section of <code>/api</code>.</p>
                 </section>
               </div>
             </div>
@@ -8168,7 +8210,8 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Creates a new personal data definition.</p>
-                  <p>Do not code this URL into your application. Take it from the <code>href</code> field in the <code>features.personalDataFields.personalDataFields.href</code> field of <code>GET /api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the <code>href</code> field in the <code>features.personalDataFields.personalDataFields.href</code> field of <code>GET /api</code>.</p>
                   <p>When successful it returns a location header containing the address of the new PDF.</p>
                   <p>Note that you can only create one per POST.</p>
                   <p>This call requires the RESTConfiguration licence.</p>
@@ -8315,7 +8358,8 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns details for a PDF definition. Follow the href in the
-                    <a href="#definition-PDF-definition">summary</a> to get here.</p>
+                    <a href="#definition-PDF-definition">summary</a> to get here, rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -8482,9 +8526,12 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This is the call you use to update a PDF.</p>
-                  <p>The PATCH expects a document in the same format as the [the PDF detail](#definition-PDF</p>
-                  <p>This call requires the RESTConfiguration licence.</p>
+                  <p>This is the call you use to update a PDF. Follow the href in the
+                    <a href="#definition-PDF-definition">summary</a> to get here, rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building it yourself</a>.</p>
+                  <p>The PATCH expects a document in the same format as the
+                    <a href="#definition-PDF-definition">the PDF detail</a>.</p>
+                  <p>It requires the RESTConfiguration licence.</p>
                 </section>
               </div>
             </div>
@@ -8623,7 +8670,9 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This call removes a PDF item from Command Centre.</p>
+                  <p>This call removes a PDF item from Command Centre. Follow the href in the
+                    <a href="#definition-PDF-definition">summary</a> to get here, rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building it yourself</a>.</p>
                   <p>It requires the RESTConfiguration licence.</p>
                 </section>
               </div>
@@ -8721,7 +8770,8 @@
                   <p>This returns the receptions you are privileged to view.</p>
                   <p>The result will contain no more than 100 or 1000 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Receptions are small, so setting a limit of 1000 is sensible.</p>
                   <p>When you have loaded all the receptions there will no <code>next</code> link.</p>
-                  <p>Do not code this URL into your application. Take it from the href in the <code>features.receptions.receptions</code> section of <code>/api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the href in the <code>features.receptions.receptions</code> section of <code>/api</code>.</p>
                 </section>
               </div>
             </div>
@@ -8974,7 +9024,8 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns details for a reception. Follow the href in the
-                    <a href="#definition-Reception-search">summary</a> to get here.</p>
+                    <a href="#definition-Reception-search">summary</a> to get here, rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building it yourself</a>.</p>
                 </section>
               </div>
             </div>
@@ -9147,7 +9198,7 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>All the cardholders&#39; redactions. Paginated.</p>
+                  <p>This returns all cardholders&#39; redactions. Paginated.</p>
                 </section>
               </div>
             </div>
@@ -9456,8 +9507,8 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>Deletes a redaction record. Has to be pending.</p>
-                  <p>Note that the only way to modify a redaction is to delete it and create a new one for the same cardholder. This is due to concerns about redaction&#39;s effect on auditing.</p>
+                  <p>This deletes a redaction record. It must be pending. Take the URL from the results of a redaction search.</p>
+                  <p>Note that the only way to modify a redaction is to delete it and create a new one for the same cardholder. This is due to concerns about a redaction&#39;s effect on auditing.</p>
                 </section>
               </div>
             </div>
@@ -9544,7 +9595,8 @@
                   <p>This returns the roles you are privileged to view.</p>
                   <p>The result will contain no more than 100 or 1000 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page. Roles are small, so a limit of 1000 is sensible.</p>
                   <p>When you have loaded all the roles there will no <code>next</code> link.</p>
-                  <p>Do not code this URL into your application. Take it from the href in the <code>features.roles.roles</code> section of <code>/api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the href in the <code>features.roles.roles</code> section of <code>/api</code>.</p>
                 </section>
               </div>
             </div>
@@ -9775,7 +9827,8 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>Creates a new role.</p>
-                  <p>Do not code this URL into your application. Take it from the <code>href</code> field in the <code>features.roles.roles.href</code> field of <code>GET /api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the <code>href</code> field in the <code>features.roles.roles.href</code> field of <code>GET /api</code>.</p>
                   <p>When successful it returns a location header containing the address of the new role.</p>
                   <p>Note that you can only create one per POST.</p>
                   <p>This call requires the RESTConfiguration licence.</p>
@@ -9908,7 +9961,8 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This is the call you use to update a role.</p>
+                  <p>This is the call you use to update a role. Take its URL from a cardholder or a role search rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building it yourself</a>.</p>
                   <p>The PATCH expects a document in the same format as the
                     <a href="#definition-Role">the role detail</a>.</p>
                   <p>This call requires the RESTConfiguration licence.</p>
@@ -10037,7 +10091,8 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>This call removes a role item from Command Centre.</p>
+                  <p>This call removes a role item from Command Centre. Take its URL from a cardholder or a role search rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building it yourself</a>.</p>
                   <p>It requires the RESTConfiguration licence.</p>
                 </section>
               </div>
@@ -10146,7 +10201,8 @@
                   <p>This returns the visits you are privileged to view.</p>
                   <p>The result will contain no more than 100 or 1000 objects depending on your version; you should follow the <code>next</code> link, if it is present, to collect more, or use the <code>top</code> parameter to get more per page.</p>
                   <p>When you have loaded all the visits there will no <code>next</code> link.</p>
-                  <p>Do not code this URL into your application. Take it from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
                   <p>Visits are new to 8.50.</p>
                 </section>
               </div>
@@ -10415,7 +10471,9 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <section class="swagger-operation-description">
-                  <p>Creates a new visit.</p>
+                  <p>This creates a new visit.</p>
+                  <p>In the interest of
+                    <a href="#topic-Forward-compatibility--HATEOAS-">forward compatibility</a>, do not code its URL into your application. Take it from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
                   <p>This POST expects a JSON body in the same format as a
                     <a href="#definition-Visit">visit detail</a>.</p>
                   <p>These fields are required:</p>
@@ -10427,7 +10485,8 @@
                     <li>start time (<code>from</code>)</li>
                     <li>end time (<code>until</code>)</li>
                   </ul>
-                  <p>Do not code this URL into your application. Take it from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the href in the <code>features.visits.visits</code> section of <code>/api</code>.</p>
                   <p>Like all the visit endpoints, this one is new to 8.50.</p>
                 </section>
               </div>
@@ -10581,7 +10640,8 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This returns details for a visit. Follow the href in the
-                    <a href="#definition-Visit-search">summary</a> to get here.</p>
+                    <a href="#definition-Visit-search">summary</a> to get here rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building the URL yourself</a>.</p>
                   <p>All visit endpoints are new to 8.50.</p>
                 </section>
               </div>
@@ -10782,7 +10842,8 @@
                 <section class="swagger-operation-description">
                   <p>Changes an existing visit.</p>
                   <p>Follow the href in a
-                    <a href="#definition-Visit-search">visit search</a> to get here.</p>
+                    <a href="#definition-Visit-search">visit search</a> to get here rather than
+                    <a href="#topic-Forward-compatibility--HATEOAS-">building the URL yourself</a>.</p>
                   <p>New to 8.50.</p>
                 </section>
               </div>
@@ -10950,7 +11011,8 @@
                     <a href="#operation--api-visits--id--visitors--visitorId--notify_signing_in-post">signing in</a> or
                     <a href="#operation--api-visits--id--visitors--visitorId--notify_onsite-post">on-site</a>.</p>
                   <p>Note that this URL is different from a normal cardholder href because a cardholder can be a visitor on more than one visit at a time.</p>
-                  <p>Do not code this URL into your application. Take itf from a
+                  <p>
+                    <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take itf from a
                     <a href="#definition-Visit-search">visit search</a> or
                     <a href="#definition-Visit">visit</a>.</p>
                   <p>New to 8.90.</p>

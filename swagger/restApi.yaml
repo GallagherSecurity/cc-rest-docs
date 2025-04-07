@@ -3143,8 +3143,8 @@ paths:
 
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the 'href' field in the `features.accessZones.accessZones` section of
-        `/api`.
+        [Do not code this URL](#topic-Forward-compatibility--HATEOAS-) into your application.  Take
+        it from the 'href' field in the `features.accessZones.accessZones` section of `/api`.
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -3188,8 +3188,8 @@ paths:
         your operator has the privilege to move cardholders ('Manage Cardholder Location'), or your
         operator does not have the privilege at all.
 
-        Take this URL from the 'href' field in the `features.cardholders.updateLocationAccessZones`
-        section of `/api`.
+        Do not code this URL into your application.  Take it from the 'href' field in the
+        `features.cardholders.updateLocationAccessZones` section of `/api`.
 
         Added in 8.20.
 
@@ -3222,7 +3222,7 @@ paths:
         This returns the detail of one access zone.
 
         Follow the 'href' field in an [access zone summary](#definition-Access-Zone-summary) to get
-        here.
+        here rather than [building it yourself](#topic-Forward-compatibility--HATEOAS-).
 
       parameters:
       - name: "id"
@@ -3250,8 +3250,11 @@ paths:
         Sends an override to an access zone to change its mode to 'free - no PIN', meaning the doors
         will be free and you will not need a PIN to perform an override on a terminal.
 
-        The same URL with `_pin` on the end will send an override to an access zone to change its
-        mode to 'free - PIN', meaning you _will_ need a PIN on a terminal.
+        Take this URL from the `commands` block of an access zone.  In there is a block called
+        `free`, containing a field `href`.  That is the URL of this method.
+
+        The URL from `commands.freePin.href` (as opposed to "free" without the "Pin") will send an override to an
+        access zone to change its mode to 'free - PIN', meaning you _will_ need a PIN on a terminal.
 
         If you do not give the override an end time in the body it will remain in place until the
         next scheduled change.
@@ -3275,8 +3278,11 @@ paths:
         Sends an override to an access zone to change its mode to 'secure - no PIN', meaning you
         will need a card, but not a PIN, to open its doors or perform overrides on terminals.
 
-        The same URL with `_pin` on the end will send an override to the access zone to change its
-        mode to 'secure - PIN', meaning you _will_ need a PIN on the door and on a terminal.
+        Take this URL from the `commands` block of an access zone.  In there is a block called
+        `secure`, containing a field `href`.  That is the URL of this method.
+
+        The URL from `commands.securePin.href` (as opposed to without the "Pin") will send an override to an
+        access zone to change its mode to 'secure - PIN', meaning you _will_ need a PIN on a terminal.
 
         If you do not give the override an end time in the body, it will remain in place until the
         next scheduled change.
@@ -3301,8 +3307,11 @@ paths:
         meaning you can use your user code or the zone's 'code-only code' to open its doors,
         depending on the reader's configuration.  You will not need a PIN on a terminal.
 
-        The same URL with `_pin` on the end will override the access zone into 'code or card - PIN',
-        meaning you _will_ need a PIN when you use a card.
+        Take this URL from the `commands` block of an access zone.  In there is a block called
+        `codeOnly`, containing a field `href`.  That is the URL of this method.
+
+        The URL from `commands.codeOnlyPin.href` (as opposed to without the "Pin") will send an override to an
+        access zone to change its mode to 'Code or Card - PIN', meaning you _will_ need a PIN on a terminal.
 
         If you do not give the override an end time in the body it will remain in place until the
         next scheduled change.
@@ -3328,8 +3337,11 @@ paths:
         for the same cardholder, depending on the access zone's configuration), and they will not
         need a PIN.  Terminal functions will require a card but no PIN.
 
-        The same URL with `_pin` on the end will override the zone into 'dual auth - PIN' mode,
-        meaning each badge will need a PIN.
+        Take this URL from the `commands` block of an access zone.  In there is a block called
+        `dualAuth`, containing a field `href`.  That is the URL of this method.
+
+        The URL from `commands.dualAuthPin.href` (as opposed to without the "Pin") will send an override to an
+        access zone to change its mode to 'dual auth - PIN', meaning you _will_ need a PIN on a terminal.
 
         If you do not give the override an end time in the body it will remain in place until the
         next scheduled change.
@@ -3367,6 +3379,9 @@ paths:
         Locks down an access zone.  In this mode, cardholders will need the 'Entry allowed during
         lockdown' privilege to enter the zone, in addition to normal access.
 
+        Take this URL from the `commands` block of an access zone.  In there is a block called
+        `lockDown`, containing a field `href`.  That is the URL of this method.
+
         It takes no parameters.  The lockdown will remain in place until cancelled, or the access
         zone receives an override to another mode.
       parameters:
@@ -3383,6 +3398,9 @@ paths:
       description: |
         Cancels a lockdown, returning it to its scheduled state.  It will not cancel any other kind
         of override.
+
+        Take this URL from the `commands` block of an access zone.  In there is a block called
+        `cancelLockDown`, containing a field `href`.  That is the URL of this method.
 
       parameters:
       - {in: path, name: id, required: true, description: "The ID of the access zone.", type: string}
@@ -3419,6 +3437,9 @@ paths:
       description: |
         Cancels an override, returning the access zone to its scheduled state.
 
+        Take this URL from the `commands` block of an access zone.  In there is a block called
+        `cancel`, containing a field `href`.  That is the URL of this method.
+
         This command will achieve nothing if the alarm zone is not controlled by a
         schedule, because without a schedule the alarm zone does not have the concept of a
         'normal' state.
@@ -3445,7 +3466,8 @@ paths:
         you are better off with a [status subscription](events.html#status-subscriptions).
 
         Follow the 'updates' field in an access zone [summary](#definition-Access-Zone-summary) or
-        [details](#definition-Access-Zone-detail) pages to get here.
+        [details](#definition-Access-Zone-detail) pages to get here rather than [building it
+        yourself](#topic-Forward-compatibility--HATEOAS-).
 
       parameters:
       - name: "id"
@@ -3500,8 +3522,8 @@ paths:
 
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the 'href' field in the `features.alarmZones.alarmZones` section of
-        `/api`.
+        Do not code this URL into your application.  Take it from the 'href' field in the
+        `features.alarmZones.alarmZones` section of `/api`.
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -3533,7 +3555,8 @@ paths:
       description: |
         This returns the detail of one alarm zone.
 
-        Follow the 'href' field in an [alarm zone summary](#definition-Alarm-Zone-summary) to get here.
+        Follow the 'href' field in an [alarm zone summary](#definition-Alarm-Zone-summary) to get
+        here rather than [building it yourself](#topic-Forward-compatibility--HATEOAS-).
 
       parameters:
       - name: "id"
@@ -3784,8 +3807,8 @@ paths:
 
         This does not take a `division` query parameter because day categories are not in divisions.
 
-        Take this URL from the 'href' field in the `features.dayCategories.dayCategories` section of
-        `/api`.
+        Do not code this URL into your application.  Take it from the 'href' field in the
+        `features.dayCategories.dayCategories` section of `/api`.
 
         Added in 8.50.
 
@@ -3828,8 +3851,8 @@ paths:
 
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the 'href' field in the `features.doors.doors` section of
-        `/api`.
+        Do not code this URL into your application.  Take it from the 'href' field in the
+        `features.doors.doors` section of `/api`.
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -3964,8 +3987,8 @@ paths:
 
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the `href` field in the `features.cardholders.modifyDefaultFloors`
-        section of `/api`.
+        Do not code this URL into your application.  Take it from the `href` field in the
+        `features.cardholders.modifyDefaultFloors` section of `/api`.
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -4023,8 +4046,8 @@ paths:
 
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the `href` field in the `features.elevators.elevatorGroups` section of
-        `/api`.
+        Do not code this URL into your application.  Take it from the `href` field in the
+        `features.elevators.elevatorGroups` section of `/api`.
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -4114,8 +4137,8 @@ paths:
 
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the 'href' field in the `features.fenceZones.fenceZones` section of
-        `/api`.
+        Do not code this URL into your application.  Take it from the 'href' field in the
+        `features.fenceZones.fenceZones` section of `/api`.
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -4330,8 +4353,8 @@ paths:
 
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the 'href' field in the `features.inputs.inputs` section of
-        `/api`.
+        Do not code this URL into your application.  Take it from the 'href' field in the
+        `features.inputs.inputs` section of `/api`.
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -4510,8 +4533,8 @@ paths:
 
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the 'href' field in the `features.interlockGroups.interlockGroups`
-        section of `/api`.
+        Do not code this URL into your application.  Take it from the 'href' field in the
+        `features.interlockGroups.interlockGroups` section of `/api`.
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -4669,7 +4692,8 @@ paths:
 
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the 'href' field in the `features.macros.macros` section of `/api`.
+        Do not code this URL into your application.  Take it from the 'href' field in the
+        `features.macros.macros` section of `/api`.
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -4755,8 +4779,8 @@ paths:
 
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the 'href' field in the `features.outputs.outputs` section of
-        `/api`.
+        Do not code this URL into your application.  Take it from the 'href' field in the
+        `features.outputs.outputs` section of `/api`.
 
       parameters:
       - $ref: "cardholdersApi.yaml#/parameters/sort"
@@ -4957,7 +4981,8 @@ paths:
 
         This feature is due in 9.20.
 
-        Take this URL from `me.client.href` in the results of `GET /api`.
+        Do not code this URL into your application.  Take it from `me.client.href` in the results of
+        `GET /api`.
 
         ***This endpoint is still in development and may change behaviour before release.***
 
@@ -5011,8 +5036,8 @@ paths:
 
         When you have loaded them all there will be no `next` link.
 
-        Take this URL from the 'href' field in the `features.schedules.schedules` section of
-        `/api`.
+        Do not code this URL into your application.  Take it from the 'href' field in the
+        `features.schedules.schedules` section of `/api`.
 
         Added in 8.50.
 
@@ -5046,8 +5071,8 @@ paths:
         Your POST needs a body containing JSON in the same from received from a GET, containing a
         division and type, and (if you want it to be useful) `dayCategories`.
 
-        Take this URL from the 'href' field in the `features.schedules.schedules` section of
-        `/api`.
+        Do not code this URL into your application.  Take it from the 'href' field in the
+        `features.schedules.schedules` section of `/api`.
 
         Added in 8.50.
       parameters:
