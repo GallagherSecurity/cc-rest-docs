@@ -5051,8 +5051,8 @@
                     </div>
                     <div class="prop-value">
                       <p>Limits the results to no more than this many items per page.</p>
-                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>Older versions of Command Centre returned 100 items per page in the absence of this parameter. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>8.70 and later versions will default to 1000 items per request. This is about where a graph of throughput versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -5588,8 +5588,8 @@
                     </div>
                     <div class="prop-value">
                       <p>Limits the results to no more than this many items per page.</p>
-                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>Older versions of Command Centre returned 100 items per page in the absence of this parameter. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>8.70 and later versions will default to 1000 items per request. This is about where a graph of throughput versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -7991,8 +7991,8 @@
                     </div>
                     <div class="prop-value">
                       <p>Limits the results to no more than this many items per page.</p>
-                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>Older versions of Command Centre returned 100 items per page in the absence of this parameter. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>8.70 and later versions will default to 1000 items per request. This is about where a graph of throughput versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -8818,8 +8818,8 @@
                     </div>
                     <div class="prop-value">
                       <p>Limits the results to no more than this many items per page.</p>
-                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>Older versions of Command Centre returned 100 items per page in the absence of this parameter. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>8.70 and later versions will default to 1000 items per request. This is about where a graph of throughput versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -9643,8 +9643,8 @@
                     </div>
                     <div class="prop-value">
                       <p>Limits the results to no more than this many items per page.</p>
-                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>Older versions of Command Centre returned 100 items per page in the absence of this parameter. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>8.70 and later versions will default to 1000 items per request. This is about where a graph of throughput versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -10250,8 +10250,8 @@
                     </div>
                     <div class="prop-value">
                       <p>Limits the results to no more than this many items per page.</p>
-                      <p>Older versions of Command Centre returned 100 items per page. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
-                      <p>8.70 and later versions will return 1000 items per request. This is about where a graph of performance versus page size begins to level out.</p>
+                      <p>Older versions of Command Centre returned 100 items per page in the absence of this parameter. That is acceptable for GUI applications that will only display the first page, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
+                      <p>8.70 and later versions will default to 1000 items per request. This is about where a graph of throughput versus page size begins to level out.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -11825,6 +11825,7 @@
                           <p>Free-form text.</p>
                           <p>The &#39;Edit Cardholder Notes&#39; privilege lets you change cardholder notes however you like, but &#39;Add Cardholder Notes&#39; only lets you add more to the end. To do that, read the existing <code>notes</code> field, append your text, and send it back in a PATCH. If you try to change the existing text the server will respond with a 4xx.</p>
                           <p>You will need one of those two privileges to edit notes. &#39;Create Cardholders&#39; and &#39;Edit Cardholders&#39; let you set most cardholder fields, but not notes.</p>
+                          <p>Because of the potential size of the notes field, the server does not return it unless you ask for it with <code>fields=notes</code>.</p>
                         </dd>
                         <dt data-property-name="notifications" class="has-description">
                           <span class="json-property-name">notifications:</span>
