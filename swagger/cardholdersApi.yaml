@@ -4012,12 +4012,17 @@ definitions:
                 name: "R&D social committee"
 
           personalDataDefinitions:
-            type: object[]
+            type: array
+            items:
+              type: object
+              properties:
+                name: { type: string, description: "Read-only."}
+                href: { type: string, format: url}
             description: |
               The names and hrefs of the PDFs that this access group gives to its members.
             example: [ {
-              "name": "email",
-              "href": "https://localhost:8904/api/personal_data_fields/5516"
+                "name": "email",
+                "href": "https://localhost:8904/api/personal_data_fields/5516"
               }, {
                 "name": "cellphone",
                 "href": "https://localhost:8904/api/personal_data_fields/9998"
@@ -4267,7 +4272,12 @@ definitions:
             type: boolean
 
           access:
-            type: object[]
+            type: array
+            items:
+              type: object
+              properties:
+                accessZone: { type: object, properties: {href: {type: string, format: url}, name: {type: string, description: Read-only.}}}
+                schedule: { type: object, properties: {href: {type: string, format: url}, name: {type: string, description: Read-only.}}}
             description: |
               Names and hrefs of the access zones to which this access group gives access, and the
               schedules that govern it.
@@ -4278,23 +4288,25 @@ definitions:
               New to 8.40.
 
             example: [ {
-              "accessZone": {
-                "href": "https://localhost:8904/api/access_zones/333",
-                "name": "Twilight zone"
-              },
-              "schedule": {
-                "href": "https://localhost:8904/api/schedules/5",
-                "name": "Default Cardholder Access Granted"
-              }
+                "accessZone": {
+                  "href": "https://localhost:8904/api/access_zones/333",
+                  "name": "Twilight zone"
+                },
+                "schedule": {
+                  "href": "https://localhost:8904/api/schedules/5",
+                  "name": "Default Cardholder Access Granted"
+                }
               }, {
-              "accessZone": {
-                "href": "https://localhost:8904/api/access_zones/412",
-                "name": "Server room"
-              },
-              "schedule": {
-                "href": "https://localhost:8904/api/schedules/557",
-                "name": "8am-5pm weekdays"
-              } } ]
+                "accessZone": {
+                  "href": "https://localhost:8904/api/access_zones/412",
+                  "name": "Server room"
+                },
+                "schedule": {
+                  "href": "https://localhost:8904/api/schedules/557",
+                  "name": "8am-5pm weekdays"
+                }
+              }
+            ]
 
           saltoAccess:
             type: array
@@ -4359,10 +4371,17 @@ definitions:
               } } ]
 
           alarmZones:
-            type: object[]
+            type: array
+            items:
+              type: object
+              properties:
+                alarmZone: { type: object, properties: {href: {type: string, format: url}, name: {type: string, description: "Read-only."}}}
             description: |
               Names and hrefs of the alarm zones to which members of this access group have the
               20-odd management privileges listed above.
+
+              Each connection between the access group and the alarm zone is in its own block called
+              `alarmZone` to leave room for the addition of more fields later.
 
               Added in 8.40.
 
@@ -6377,14 +6396,14 @@ paths:
           in: path
           required: true
           type: string
-          description: "The identifier of the cardholder."
+          description: "An opaque identifier for the cardholder."
         - name: "link_id"
           in: path
           required: true
           type: string
           description: "An opaque identifier for the link between the cardholder and the competency."
-        - name: "credit"
-          in: path
+        - name: "add"
+          in: query
           required: true
           type: integer
           description: "The amount to adjust the competency credit.  This can be positive or negative."
@@ -6407,6 +6426,18 @@ paths:
         You will find this URL in the `elevatorGroups` block of a [cardholder
         object](#definition-Cardholder-detail).  [Do not build it
         yourself](#topic-Forward-compatibility--HATEOAS-).
+
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier for the cardholder."
+        - name: "assignment_id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier for the link between the cardholder and the elevator group."
 
       responses:
         204:
@@ -6434,6 +6465,18 @@ paths:
         You will find this URL in the `lockers` block of a [cardholder
         object](#definition-Cardholder-detail).  In the interest of forward compability, [do not
         build it yourself](#topic-Forward-compatibility--HATEOAS-).
+
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier for the cardholder."
+        - name: "assignment_id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier for the locker assignment."
 
       responses:
         204:
@@ -6546,13 +6589,18 @@ paths:
         The only place you can move them is a new access zone.
 
       parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier for the cardholder."
         - name: ""
           in: body
           required: true
           schema: {$ref: '#/definitions/Cardholder Update Location POST example'}
-          example: {"accessZone":{"href": "https://localhost:8904/items/412"}}
           description: |
             The body of the request must contain the href of the target access zone.
+
       responses: 
         200: { description: "Success.  Future versions will return feedback from the server." }
         204: 
@@ -6584,6 +6632,13 @@ paths:
         them but you can end up with duplicates when you form a multiserver cluster out of
         standalone installations.  You should move on that, because having two PDFs with the same
         name will bewilder your operational staff.
+
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier for the cardholder."
 
       responses:
         200:
@@ -6953,6 +7008,11 @@ paths:
         This call requires the RESTConfiguration licence and a server running 9.30 or later.
 
       parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier."
         - name: "this name not rendered"
           in: body
           required: true
@@ -7010,6 +7070,13 @@ paths:
 
         This call requires the RESTConfiguration licence and a server running 9.30 or later.
 
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier."
+
       responses: 
         200: { description: "Success." }
         204: { description: "Success." }
@@ -7058,15 +7125,16 @@ paths:
         200: 
           description: "Success."
           schema: { type: array, items: {$ref: '#/definitions/Access group membership' }}
-          example:
-            cardholders:
-              - href: "https://localhost:8904/api/cardholders/325/access_groups/D714D8A894724F"
+          examples:
+            application/json:
+              cardholders:
+              - href: "https://localhost:8904/api/cardholders/325/access_groups/D714D8A89"
                 cardholder:
                   name: "Boothroyd, Algernon"
                   href: "https://localhost:8904/api/cardholders/325"
                 from: "2017-01-01T00:00:00Z"
                 until: "2017-12-31T11:59:59Z"
-              - href: "https://localhost:8904/api/cardholders/329/access_groups/18DE901A1DEA48"
+              - href: "https://localhost:8904/api/cardholders/329/access_groups/18DE901A1"
                 cardholder:
                   name: "Miles Messervy"
                 from: "2016-11-18T00:00:00Z"
@@ -7086,6 +7154,9 @@ paths:
         types from those you are allowed to assign to cardholders, and since that is the only thing
         that this API does with card types, you should probably be using [that
         function](#operation--api-card_types-assign-get) instead.
+      responses:
+        200:
+          description: Success.
 
     post:
       tags:
@@ -7193,6 +7264,15 @@ paths:
         hrefs from other controllers do not receive a 404.  To find out about card types available
         for assigning to cardholders, use [card_types/assign](#operation--api-card_types-assign-get)
         instead.
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier."
+      responses:
+        200:
+          description: Success.
 
     patch:
       tags:
@@ -7209,6 +7289,11 @@ paths:
         This call requires the RESTConfiguration licence.
 
       parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier."
         - name: "this name not rendered"
           in: body
           required: true
@@ -7264,6 +7349,12 @@ paths:
         yourself](#topic-Forward-compatibility--HATEOAS-).
 
         This call requires the RESTConfiguration licence.
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier."
       responses: 
         200: { description: "Success." }
         204: { description: "Success." }
@@ -7458,6 +7549,11 @@ paths:
         This call requires the RESTConfiguration licence.
 
       parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier."
         - name: "this name not rendered"
           in: body
           required: true
@@ -7512,6 +7608,12 @@ paths:
         New to Command Centre 9.10.
 
         This call requires the RESTConfiguration licence.
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier."
       responses: 
         200: { description: "Success." }
         204: { description: "Success." }
@@ -7704,6 +7806,12 @@ paths:
         yourself](#topic-Forward-compatibility--HATEOAS-).
 
         New in 8.10.1112.
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier."
       responses:
         200: { description: "Success.  Future versions will contain feedback from the server." }
         204: { description: Success. }
@@ -7760,6 +7868,12 @@ paths:
         yourself](#topic-Forward-compatibility--HATEOAS-).
 
         New in 9.10.
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier."
       responses:
         200: { description: "Success.  Future versions will return feedback from the server." }
         204: { description: Success. }
@@ -7950,8 +8064,9 @@ paths:
         200: 
           description: "Success."
           schema: { type: array, items: {$ref: '#/definitions/Operator group membership' }}
-          example:
-            cardholders:
+          examples:
+            application/json:
+              cardholders:
               - href: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
                 cardholder:
                   name: "Boothroyd, Algernon"
@@ -8088,6 +8203,11 @@ paths:
         It requires the RESTConfiguration licence.
 
       parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier for the PDF."
         - name: "this name not rendered"
           in: body
           required: true
@@ -8140,6 +8260,14 @@ paths:
         yourself](#topic-Forward-compatibility--HATEOAS-).
 
         It requires the RESTConfiguration licence.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier for the PDF."
+
       responses: 
         200: { description: "Success." }
         204: { description: "Success." }
@@ -8438,6 +8566,11 @@ paths:
         This call requires the RESTConfiguration licence.
 
       parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: "An opaque identifier for the role."
         - name: "this name not rendered"
           in: body
           required: true
@@ -8489,6 +8622,14 @@ paths:
         search rather than [building it yourself](#topic-Forward-compatibility--HATEOAS-).
 
         It requires the RESTConfiguration licence.
+
+      parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier for the role."
+
       responses: 
         200: { description: "Success." }
         204: { description: "Success." }
@@ -8633,6 +8774,11 @@ paths:
         New to 8.50.
 
       parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier for the visit."
       - name: "this string not rendered"
         in: body
         required: true
@@ -8690,6 +8836,16 @@ paths:
         New to 8.90.
 
       parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier for the visit."
+      - name: "visitorId"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier for the visitor."
       - name: "this string not rendered"
         in: body
         required: true
@@ -8733,6 +8889,16 @@ paths:
         New to 8.90.
 
       parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier for the visit."
+      - name: "visitorId"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier for the visitor."
       - name: "this string not rendered"
         in: body
         required: true
@@ -8773,6 +8939,16 @@ paths:
         New to 8.90.
 
       parameters:
+      - name: "id"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier for the visit."
+      - name: "visitorId"
+        in: path
+        required: true
+        type: string
+        description: "An opaque identifier for the visitor."
       - name: "this string not rendered"
         in: body
         required: true
