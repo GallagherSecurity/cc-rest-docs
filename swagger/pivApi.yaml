@@ -164,7 +164,6 @@ paths:
         200:
           description: Success
           schema:
-            properties:
             example:
               version: 8.10.0.0
               features:
@@ -190,10 +189,10 @@ paths:
         one PIV card.
 
         See the [PIV card create schema definition](#definition-PIV-card-create-example) for the
-        PIV-specific fields. The fields that are not specific to PIV and PIV-I cards are fully
-        documented [in the cardholder API](cardholders.html#operation--api-cardholders-post).  One,
-        `division`, is mandatory, and you must also supply either a first or last name for your new
-        cardholder.
+        PIV-specific fields. The fields that are not specific to PIV and PIV-I cards and its
+        responses are fully documented [in the cardholder
+        API](cardholders.html#operation--api-cardholders-post).  One field, `division`, is
+        mandatory, and you must also supply either a first or last name for your new cardholder.
       parameters:
         - name: "not rendered"
           in: body
@@ -233,6 +232,11 @@ paths:
         This updates an existing cardholder, including adding, removing, and modifying cards.
 
       parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: The ID of the cardholder.
         - name: "not rendered"
           description: |
             Part of what you submit is an object called `cards`, described below.

@@ -6,7 +6,6 @@
 ##
 
 swagger: '2.0'
-openapi: '3.0'
 
 schemes:
   - https
@@ -550,7 +549,7 @@ x-common-blocks:
       example, as an href inside a block called `visitorType`.  The href can be to an access group
       that you got from an [access group](#operation--api-access_groups-get) or the visitor
       management configuration on a
-      [division](events.html#operation--api-divisions--operation--get).  For example, both of these
+      [division](events.html#operation--api-divisions-_operation_-get).  For example, both of these
       will work as visitor type hrefs:
 
       `https://localhost:8904/api/access_groups/925` (taken from another visit, or a search of
@@ -1866,7 +1865,6 @@ definitions:
               impairment, making a randomised keypad impracticable.
           usercode:
             type: string
-            writeOnly: true
             example: "numeric, and write-only"
             description: |
               This field is write-only, so you will not see it in the results of a GET.  It appears
@@ -2719,6 +2717,7 @@ definitions:
 
       PIV cards are complex enough to warrant a [document of their own](piv.html).
 
+    required: [ ]
     properties:
       href:
         description: |
@@ -2752,7 +2751,6 @@ definitions:
           card or credential.
 
         type: string
-        required: false
         example: "1"
       cardSerialNumber:
         description: |
@@ -2768,7 +2766,6 @@ definitions:
 
         type: string
         example: "045A5769713E80"
-        required: false
       issueLevel:
         description: |
           The issue level of a physical access card.  If two cards have the same number
@@ -2785,7 +2782,6 @@ definitions:
         minimum: 0
         maximum: 15
         example: 1
-        required: false
       status:
         description: |
           Each card has two status codes:  `value`, and `type`, covered in separate sections below.
@@ -3152,7 +3148,8 @@ definitions:
 
     properties:
       href:
-        type: string (url)
+        type: string
+        format: url
         description: |
           DELETE this URL to remove this group membership, and use it in the body of a PATCH to a
           cardholder to identify memberships you want to modify.
@@ -3235,7 +3232,8 @@ definitions:
 
     properties:
       href:
-        type: string (url)
+        type: string
+        format: url
         description: |
           DELETE this URL or use it in the 'operatorGroups' block of a [cardholder
           PATCH](#operation--api-cardholders--id--patch) to remove this operator group membership.
@@ -3412,13 +3410,11 @@ definitions:
     properties:
       href:
         type: string
-        required: true
         format: url
         description: "Required.  This identifies the cardholder competency you are updating."
         example: "https://localhost:8904/api/cardholders/325/competencies/2dc3p0"
       enabled:
         type: boolean
-        writeOnly: true
         description: |
           This is a write-only field.  You will not receive it from the GET.  It changes the
           competency between enabled (status type `expired`, `expiryDue`, or `active`) and disabled
@@ -4437,7 +4433,7 @@ definitions:
           the future).
 
           To clear it, send the blank string `""`.
-        formate: date-time
+        format: date-time
         example: "2025-01-01T00:00:00Z"
       membershipUntilDefault:
         type: string
@@ -4447,7 +4443,7 @@ definitions:
           (meaning it will be effective until removed).
 
           To clear it, send the blank string `""`.
-        formate: date-time
+        format: date-time
         example: "2025-01-01T00:00:00Z"
 
       personalDataDefinitions:
@@ -5098,7 +5094,6 @@ definitions:
               Zero is a valid value.  Because durations are always rounded up to shortly before
               midnight, an expiryValue of zero means that the competency will be active for the rest
               of the day on which the operator grants it.
-            type: string or number
             example: 6
       defaultAccess:
         type: string
@@ -6130,8 +6125,6 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-
-        enum: 
 
         description: |
           Specifies the fields you want in the results.  The values you can list are the same as the

@@ -5,7 +5,6 @@
 ##
 
 swagger: '2.0'
-openapi: '3.0'
 
 schemes: [https]
 produces: [application/json]
@@ -3224,7 +3223,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404accesszone"}
+        404: {$ref: "#/responses/404accesszone"}
 
   /api/access_zones/{id}/free:
     post:
@@ -3483,7 +3482,7 @@ paths:
             8.50 and earlier:  the site does not have the RESTStatus licence.
 
             8.60 and later:  the site has neither the RESTStatus nor RESTOverrides licence.
-        404: {$ref: "#responses/404accesszone"}
+        404: {$ref: "#/responses/404accesszone"}
 
 ######################################################################
 
@@ -3559,7 +3558,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404alarmzone"}
+        404: {$ref: "#/responses/404alarmzone"}
 
   /api/alarm_zones/{id}/arm:
     post:
@@ -3766,7 +3765,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404alarmzone"}
+        404: {$ref: "#/responses/404alarmzone"}
 
 ######################################################################
   /api/day_categories:
@@ -3887,7 +3886,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404door"}
+        404: {$ref: "#/responses/404door"}
 
   /api/doors/{id}/open:
     post:
@@ -3946,7 +3945,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404door"}
+        404: {$ref: "#/responses/404door"}
 
 ######################################################################
   /api/elevator_groups/modify_passenger_details:
@@ -4173,7 +4172,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404fencezone"}
+        404: {$ref: "#/responses/404fencezone"}
 
   /api/fence_zones/{id}/on:
     post:
@@ -4315,7 +4314,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404fencezone"}
+        404: {$ref: "#/responses/404fencezone"}
 
 ######################################################################
   /api/inputs:
@@ -4391,7 +4390,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404input"}
+        404: {$ref: "#/responses/404input"}
 
   /api/inputs/{id}/shunt:
     post:
@@ -4491,7 +4490,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404input"}
+        404: {$ref: "#/responses/404input"}
 
 ######################################################################
   /api/interlock_groups:
@@ -4573,7 +4572,7 @@ paths:
         403:
           description: |
             The site has neither the RESTStatus nor the RESTOverrides licence.
-        404: {$ref: "#responses/404interlock"}
+        404: {$ref: "#/responses/404interlock"}
 
   /api/interlock_groups/{id}/disable:
     post:
@@ -4654,7 +4653,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404interlock"}
+        404: {$ref: "#/responses/404interlock"}
 
 ######################################################################
   /api/macros:
@@ -4728,7 +4727,7 @@ paths:
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
           schema: {$ref: '#/definitions/Macro detail'}
-        404: {$ref: "#responses/404macro"}
+        404: {$ref: "#/responses/404macro"}
 
   /api/macros/{id}/run:
     post:
@@ -4815,7 +4814,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404output"}
+        404: {$ref: "#/responses/404output"}
 
   /api/outputs/{id}/on:
     post:
@@ -4941,10 +4940,10 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404output"}
+        404: {$ref: "#/responses/404output"}
 
 ######################################################################
-  <REST Client URL>:
+  /api/items/{id}:
     patch:
       tags: [ "REST Clients" ]
       summary: Set status
@@ -5115,7 +5114,7 @@ paths:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
             8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#responses/404schedule"}
+        404: {$ref: "#/responses/404schedule"}
 
     patch:
       tags: ["Schedules"]
@@ -5126,6 +5125,13 @@ paths:
         Added in 8.50.
 
       parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: |
+            The ID of the schedule.  Do not add it yourself:  you will receive this URL from other
+            API calls.
         - name: "not rendered"
           in: body
           required: true
@@ -5151,7 +5157,7 @@ paths:
             The operator does not have a privilege that allows modifying that schedule, or the site
             does not have any of the RESTCardholders, RESTOverrides, RESTStatus, or (after 9.00)
             RESTConfiguration licences.
-        404: {$ref: "#responses/404schedule"}
+        404: {$ref: "#/responses/404schedule"}
 
     delete:
       tags: ["Schedules"]
@@ -5160,6 +5166,15 @@ paths:
         Deletes the schedule identified by the request's URL.
 
         Added in 8.50.
+
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          type: string
+          description: |
+            The ID of the schedule.  Do not add it yourself:  you will receive this URL from other
+            API calls.
 
       responses: 
         204: 
@@ -5174,7 +5189,7 @@ paths:
             The operator does not have a privilege that allows deleting that schedule ('Edit
             Schedules'), or the site does not have any of the RESTCardholders, RESTOverrides,
             RESTStatus, or (after 9.00) RESTConfiguration licences.
-        404: {$ref: "#responses/404schedule"}
+        404: {$ref: "#/responses/404schedule"}
 
 ######################################################################
 responses:
