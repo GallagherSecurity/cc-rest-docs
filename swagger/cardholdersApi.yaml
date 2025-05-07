@@ -563,7 +563,7 @@ x-common-blocks:
       change cardholders' membership of them, which you need to add visitors and visitor groups.
     example:
       href: "https://localhost:8904/api/divisions/2/v_t/925"
-      accessgroup:
+      accessGroup:
         name: "Visitor group 1"
         href: "https://localhost:8904/api/access_groups/925"
 
@@ -1737,7 +1737,7 @@ definitions:
         description: |
           A link to a [cardholder detail](#definition-Cardholder-detail) object for this cardholder.
           This is Command Centre's identifier for this cardholder:  use it whenever you need to
-          specify a cardholder in REST operations."
+          specify a cardholder in REST operations.
         example: "https://localhost:8904/api/cardholders/325"
       id:
         type: string
@@ -2181,7 +2181,7 @@ definitions:
           PDFs and access he or she needs.  In this example we set the activation date of
           the access group membership to the first of January 2019.
         example:
-          - accessgroup:
+          - accessGroup:
               href: "https://localhost:8904/api/access_groups/352"
             from: "2019-01-01"
       operatorGroups:
@@ -2636,66 +2636,70 @@ definitions:
       to put a property in the root of the payload named after the PDF with a leading '@'.
 
     properties:
-      href:
-        type: string
-        format: url
-        readOnly: true
-        description: |
-          GET this link to receive this cardholder's value for this PDF.  If it is an image you will
-          receive the raw image data with an appropriate content-type.  A browser will render it
-          correctly.  If the PDF is not an image the content type will be text/plain, encoded (like
-          everything else in this API) as UTF-8.
-
-          It is read-only:  do not send it in a PATCH or POST.
-
-      definition:
+      "@PDF_name":
         type: object
-        readOnly: true
-        description: |
-          The definition object is read-only:  do not send it in a PATCH or POST.
+        description: This is the name of the personal data field prefixed with an `@`.
         properties:
           href:
             type: string
             format: url
+            readOnly: true
             description: |
-              This is the href of the PDF's definition, common to all cardholders who hold a value
-              for this PDF.
-          name:
+              GET this link to receive this cardholder's value for this PDF.  If it is an image you will
+              receive the raw image data with an appropriate content-type.  A browser will render it
+              correctly.  If the PDF is not an image the content type will be text/plain, encoded (like
+              everything else in this API) as UTF-8.
+
+              It is read-only:  do not send it in a PATCH or POST.
+
+          definition:
+            type: object
+            readOnly: true
+            description: |
+              The definition object is read-only:  do not send it in a PATCH or POST.
+            properties:
+              href:
+                type: string
+                format: url
+                description: |
+                  This is the href of the PDF's definition, common to all cardholders who hold a value
+                  for this PDF.
+              name:
+                type: string
+                description: |
+                  The PDF's name, without an '@' prefix.
+              id:
+                type: string
+                description: |
+                  Short alphanumeric identifier used elsewhere in the API to filter cardholder searches
+                  and add PDF values to alarm and event GETs.
+              type:
+                type: string
+                enum: [ string, image, strEnum, numeric, date, address, phone, email, mobile ]
+
+          value:
             type: string
             description: |
-              The PDF's name, without an '@' prefix.
-          id:
-            type: string
+              In a GET response for text and numeric PDFs this will be a scalar containing their actual
+              value, but for image PDFs it will be an object containing a copy of the `href` field
+              above.
+
+              In versions up to and including 8.60, if a cardholder did not have an image PDF captured
+              (in other words they were a member of an access group that included an image PDF, but they
+              did not have a value for it) the API returned the string 'Not captured' in the `value`
+              field.  Versions 8.70 and later will not return the `value` field at all if there is no image.
+
+              In a POST or PATCH send text PDFs (including dates) as strings, numeric PDFs as numbers or
+              strings that parse to numbers, and image data Base64-encoded into a string.
+
+          notifications:
+            type: boolean
             description: |
-              Short alphanumeric identifier used elsewhere in the API to filter cardholder searches
-              and add PDF values to alarm and event GETs.
-          type:
-            type: string
-            enum: [ string, image, strEnum, numeric, date, address, phone, email, mobile ]
+              In a GET response, this will only appear for email and mobile PDF types.  In a POST or
+              PATCH, it only makes sense for the same types.
 
-      value:
-        type: string
-        description: |
-          In a GET response for text and numeric PDFs this will be a scalar containing their actual
-          value, but for image PDFs it will be an object containing a copy of the `href` field
-          above.
-
-          In versions up to and including 8.60, if a cardholder did not have an image PDF captured
-          (in other words they were a member of an access group that included an image PDF, but they
-          did not have a value for it) the API returned the string 'Not captured' in the `value`
-          field.  Versions 8.70 and later will not return the `value` field at all if there is no image.
-
-          In a POST or PATCH send text PDFs (including dates) as strings, numeric PDFs as numbers or
-          strings that parse to numbers, and image data Base64-encoded into a string.
-
-      notifications:
-        type: boolean
-        description: |
-          In a GET response, this will only appear for email and mobile PDF types.  In a POST or
-          PATCH, it only makes sense for the same types.
-
-          If true, cardholder notifications will go to the telephone number or email address held by
-          this PDF.  Cardholders can have their notifications go to as many contacts as they wish.
+              If true, cardholder notifications will go to the telephone number or email address held by
+              this PDF.  Cardholders can have their notifications go to as many contacts as they wish.
 
     example:
       '@cellphone':
@@ -3307,7 +3311,7 @@ definitions:
           competency expired.
 
           A competency can also have an `enablement` date.  If that date (timestamp) passes while the
-          competency is disabled, Command Centre will enable it.  It will leave the date on
+          competency is disabled, Command Centre will enable the competency.  It will leave the date on
           the item for future reference, though it will not affect the competency again.
 
           If the competency is disabled, the status `type` will be `inactive` when there is no

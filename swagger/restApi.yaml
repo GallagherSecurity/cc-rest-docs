@@ -3149,7 +3149,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
 
   /api/access_zones/update_cardholder_location:
     get:
@@ -3222,7 +3222,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404accesszone"}
 
   /api/access_zones/{id}/free:
@@ -3528,7 +3528,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
 
   /api/alarm_zones/{id}:
     get:
@@ -3557,214 +3557,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
-        404: {$ref: "#/responses/404alarmzone"}
-
-  /api/alarm_zones/{id}/arm:
-    post:
-      tags: ["Alarm Zones"]
-      summary: Arm an alarm zone
-      description: |
-        Sends an override to an alarm zone to arm it.
-
-        If you send an end time in the body, and the alarm zone has a schedule to consult
-        to find the state that it should return to, the override will only stay in effect
-        until then.
-
-        If you do not, the override will remain in place until the next scheduled or
-        manual change.
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
-      - $ref: "cardholdersApi.yaml#/parameters/requested_by"
-      - in: body
-        name: ignored
-        description: Optional
-        schema: { $ref: "#/definitions/Override end time" }
-      responses:
-        204: { description: Success. }
-        400: { $ref: "#/responses/400badbody" }
-        403: { $ref: "#/responses/403alarmzoneoverride" }
-
-  /api/alarm_zones/{id}/disarm:
-    post:
-      tags: ["Alarm Zones"]
-      summary: Disarm an alarm zone
-      description: |
-        Sends an override to an alarm zone to disarm it.
-
-        If you send an end time in the body, and the alarm zone has a schedule to consult
-        to find the state that it should return to, the override will only stay in effect
-        until then.
-
-        If you do not, the override will remain in place until the next scheduled or
-        manual change.
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
-      - $ref: "cardholdersApi.yaml#/parameters/requested_by"
-      - in: body
-        name: ignored
-        description: Optional
-        schema: { $ref: "#/definitions/Override end time" }
-      responses:
-        204: { description: Success. }
-        400: { $ref: "#/responses/400badbody" }
-        403: { $ref: "#/responses/403alarmzoneoverride" }
-
-  /api/alarm_zones/{id}/user1:
-    post:
-      tags: ["Alarm Zones"]
-      summary: Change an alarm zone to user1
-      description: |
-        Sends an override to an alarm zone to set its state to 'user1', one of the custom states.
-
-        If you send an end time in the body, and the alarm zone has a schedule to consult
-        to find the state that it should return to, the override will only stay in effect
-        until then.
-
-        If you do not, the override will remain in place until the next scheduled or
-        manual change.
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
-      - $ref: "cardholdersApi.yaml#/parameters/requested_by"
-      - in: body
-        name: ignored
-        description: Optional
-        schema: { $ref: "#/definitions/Override end time" }
-      responses:
-        204: { description: Success. }
-        400: { $ref: "#/responses/400badbody" }
-        403: { $ref: "#/responses/403alarmzoneoverride" }
-
-  /api/alarm_zones/{id}/user2:
-    post:
-      tags: ["Alarm Zones"]
-      summary: Change an alarm zone to user2
-      description: |
-        Sends an override to an alarm zone to set its state to 'user2', the other of of the custom
-        states.
-
-        If you send an end time in the body, and the alarm zone has a schedule to consult
-        to find the state that it should return to, the override will only stay in effect
-        until then.
-
-        If you do not, the override will remain in place until the next scheduled or
-        manual change.
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
-      - $ref: "cardholdersApi.yaml#/parameters/requested_by"
-      - in: body
-        name: ignored
-        description: Optional
-        schema: { $ref: "#/definitions/Override end time" }
-      responses:
-        204: { description: Success. }
-        400: { $ref: "#/responses/400badbody" }
-        403: { $ref: "#/responses/403alarmzoneoverride" }
-
-  /api/alarm_zones/{id}/armHighVoltage:
-    post:
-      tags: ["Alarm Zones"]
-      summary: Arm an alarm zone (high voltage)
-      description: |
-        Sends an override to an alarm zone to set its state to 'armed - high voltage'.
-
-        If you send an end time in the body, and the alarm zone has a schedule to consult
-        to find the state that it should return to, the override will only stay in effect
-        until then.
-
-        If you do not, the override will remain in place until the next scheduled or
-        manual change.
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
-      - $ref: "cardholdersApi.yaml#/parameters/requested_by"
-      - in: body
-        name: ignored
-        description: Optional
-        schema: { $ref: "#/definitions/Override end time" }
-      responses:
-        204: { description: Success. }
-        400: { $ref: "#/responses/400badbody" }
-        403: { $ref: "#/responses/403alarmzoneoverride" }
-
-  /api/alarm_zones/{id}/armLowFeel:
-    post:
-      tags: ["Alarm Zones"]
-      summary: Arm an alarm zone (low feel)
-      description: |
-        Sends an override to an alarm zone to set its state to 'armed - low feel'.
-
-        If you send an end time in the body, and the alarm zone has a schedule to consult
-        to find the state that it should return to, the override will only stay in effect
-        until then.
-
-        If you do not, the override will remain in place until the next scheduled or
-        manual change.
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
-      - $ref: "cardholdersApi.yaml#/parameters/requested_by"
-      - in: body
-        name: ignored
-        description: Optional
-        schema: { $ref: "#/definitions/Override end time" }
-      responses:
-        204: { description: Success. }
-        400: { $ref: "#/responses/400badbody" }
-        403: { $ref: "#/responses/403alarmzoneoverride" }
-
-  /api/alarm_zones/{id}/cancel:
-    post:
-      tags: ["Alarm Zones"]
-      summary: Cancel mode override
-      description: |
-        Cancels an override, returning the alarm zone to its scheduled state.
-
-      parameters:
-      - {in: path, name: id, required: true, description: "The ID of the alarm zone.", type: string}
-      - $ref: "cardholdersApi.yaml#/parameters/requested_by"
-      responses:
-        204: { description: Success. }
-        403: { $ref: "#/responses/403alarmzoneoverride" }
-
-  /api/alarm_zones/{id}/updates:
-    get:
-      tags:
-        - "Alarm Zones"
-      summary: Monitor an alarm zone
-      description: |
-        See the [item status topic](#topic-Item-status) for how to use the updates APIs.
-
-        Note that this API call is good for watching one item only; if you want to monitor several,
-        you are better off with a [status subscription](events.html#status-subscriptions).
-
-        Follow the 'updates' field in an alarm zone [summary](#definition-Alarm-Zone-summary) or
-        [details](#definition-Alarm-Zone-detail) pages to get here.
-
-      parameters:
-      - name: "id"
-        in: path
-        required: true
-        type: string
-        description: The ID of the alarm zone.
-      - name: "fields"
-        <<: [*UPDFIELDS, *UPDFIELDSENUM]
-
-      responses:
-        200:
-          description: |
-            Success.  The [introduction](#tag-Alarm-Zones) describes the three status fields.
-          schema:
-            example: {
-              updates: {
-                status: Disarmed.,
-                statusText: Disarmed.,
-                statusFlags: [ disarmed ]
-              },
-              next: { href: "https://localhost:8904/api/alarm_zones/328/updates/9_1" }
-            }
-        403:
-          description: |
-            A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404alarmzone"}
 
 ######################################################################
@@ -3857,7 +3650,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
 
   /api/doors/{id}:
     get:
@@ -3885,7 +3678,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404door"}
 
   /api/doors/{id}/open:
@@ -3944,7 +3737,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404door"}
 
 ######################################################################
@@ -4064,7 +3857,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
 
   /api/elevator groups/{id}:
     get:
@@ -4093,7 +3886,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404:
           description: |
             The request's URL does not represent an elevator group, or the operator does not have a
@@ -4143,7 +3936,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
 
   /api/fence_zones/{id}:
     get:
@@ -4171,7 +3964,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404fencezone"}
 
   /api/fence_zones/{id}/on:
@@ -4313,7 +4106,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404fencezone"}
 
 ######################################################################
@@ -4360,7 +4153,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
 
   /api/inputs/{id}:
     get:
@@ -4389,7 +4182,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404input"}
 
   /api/inputs/{id}/shunt:
@@ -4489,7 +4282,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404input"}
 
 ######################################################################
@@ -4652,7 +4445,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404interlock"}
 
 ######################################################################
@@ -4698,7 +4491,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
 
   /api/macros/{id}:
     get:
@@ -4725,7 +4518,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
           schema: {$ref: '#/definitions/Macro detail'}
         404: {$ref: "#/responses/404macro"}
 
@@ -4785,7 +4578,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
 
   /api/outputs/{id}:
     get:
@@ -4813,7 +4606,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404output"}
 
   /api/outputs/{id}/on:
@@ -4939,7 +4732,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404output"}
 
 ######################################################################
@@ -5113,7 +4906,7 @@ paths:
         403:
           description: |
             A server running 8.50 or earlier is missing the RESTStatus licence.  A server running
-            8.60 or later is missing both the RESTStatus and RESTOverrides licence.
+            8.60 or later is missing both the RESTStatus and RESTOverrides licences.
         404: {$ref: "#/responses/404schedule"}
 
     patch:

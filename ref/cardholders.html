@@ -1498,7 +1498,7 @@
   ],
   <span class="hljs-attr">&quot;accessGroups&quot;</span>: [
     {
-      <span class="hljs-attr">&quot;accessgroup&quot;</span>: {
+      <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
       },
       <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;2019-01-01&quot;</span>
@@ -11104,7 +11104,7 @@
   },
   <span class="hljs-attr">&quot;visitorType&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/v_t/925&quot;</span>,
-    <span class="hljs-attr">&quot;accessgroup&quot;</span>: {
+    <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor group 1&quot;</span>,
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
     }
@@ -11894,7 +11894,7 @@
                     </dt>
                     <dd>
                       <p>A link to a
-                        <a href="#definition-Cardholder-detail">cardholder detail</a> object for this cardholder. This is Command Centre&#39;s identifier for this cardholder: use it whenever you need to specify a cardholder in REST operations.&quot;</p>
+                        <a href="#definition-Cardholder-detail">cardholder detail</a> object for this cardholder. This is Command Centre&#39;s identifier for this cardholder: use it whenever you need to specify a cardholder in REST operations.</p>
                     </dd>
                     <dt data-property-name="id" class="has-description">
                       <span class="json-property-name">id:</span>
@@ -12949,7 +12949,7 @@
   ],
   <span class="hljs-attr">&quot;accessGroups&quot;</span>: [
     {
-      <span class="hljs-attr">&quot;accessgroup&quot;</span>: {
+      <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/352&quot;</span>
       },
       <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;2019-01-01&quot;</span>
@@ -13489,25 +13489,13 @@
                 </section>
                 <section class="json-schema-properties">
                   <dl>
-                    <dt data-property-name="href" class="has-description">
-                      <span class="json-property-name">href:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-format">(url)</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                      <span class="json-property-read-only"></span>
-                    </dt>
-                    <dd>
-                      <p>GET this link to receive this cardholder&#39;s value for this PDF. If it is an image you will receive the raw image data with an appropriate content-type. A browser will render it correctly. If the PDF is not an image the content type will be text/plain, encoded (like everything else in this API) as UTF-8.</p>
-                      <p>It is read-only: do not send it in a PATCH or POST.</p>
-                    </dd>
-                    <dt data-property-name="definition" class="has-description">
-                      <span class="json-property-name">definition:</span>
+                    <dt data-property-name="-PDF_name" class="has-description">
+                      <span class="json-property-name">@PDF_name:</span>
                       <span class="json-property-type">object</span>
                       <span class="json-property-range" title="Value limits"></span>
-                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
-                      <p>The definition object is read-only: do not send it in a PATCH or POST.</p>
+                      <p>This is the name of the personal data field prefixed with an <code>@</code>.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
@@ -13517,64 +13505,90 @@
                             <span class="json-property-type">string</span>
                             <span class="json-property-format">(url)</span>
                             <span class="json-property-range" title="Value limits"></span>
+                            <span class="json-property-read-only"></span>
                           </dt>
                           <dd>
-                            <p>This is the href of the PDF&#39;s definition, common to all cardholders who hold a value for this PDF.</p>
+                            <p>GET this link to receive this cardholder&#39;s value for this PDF. If it is an image you will receive the raw image data with an appropriate content-type. A browser will render it correctly. If the PDF is not an image the content type will be text/plain, encoded (like everything else in this API) as UTF-8.</p>
+                            <p>It is read-only: do not send it in a PATCH or POST.</p>
                           </dd>
-                          <dt data-property-name="name" class="has-description">
-                            <span class="json-property-name">name:</span>
+                          <dt data-property-name="definition" class="has-description">
+                            <span class="json-property-name">definition:</span>
+                            <span class="json-property-type">object</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                            <span class="json-property-read-only"></span>
+                          </dt>
+                          <dd>
+                            <p>The definition object is read-only: do not send it in a PATCH or POST.</p>
+                          </dd>
+                          <dt class="json-inner-schema">
+                            <section class="json-schema-properties">
+                              <dl>
+                                <dt data-property-name="href" class="has-description">
+                                  <span class="json-property-name">href:</span>
+                                  <span class="json-property-type">string</span>
+                                  <span class="json-property-format">(url)</span>
+                                  <span class="json-property-range" title="Value limits"></span>
+                                </dt>
+                                <dd>
+                                  <p>This is the href of the PDF&#39;s definition, common to all cardholders who hold a value for this PDF.</p>
+                                </dd>
+                                <dt data-property-name="name" class="has-description">
+                                  <span class="json-property-name">name:</span>
+                                  <span class="json-property-type">string</span>
+                                  <span class="json-property-range" title="Value limits"></span>
+                                </dt>
+                                <dd>
+                                  <p>The PDF&#39;s name, without an &#39;@&#39; prefix.</p>
+                                </dd>
+                                <dt data-property-name="id" class="has-description">
+                                  <span class="json-property-name">id:</span>
+                                  <span class="json-property-type">string</span>
+                                  <span class="json-property-range" title="Value limits"></span>
+                                </dt>
+                                <dd>
+                                  <p>Short alphanumeric identifier used elsewhere in the API to filter cardholder searches and add PDF values to alarm and event GETs.</p>
+                                </dd>
+                                <dt data-property-name="type">
+                                  <span class="json-property-name">type:</span>
+                                  <span class="json-property-type">string</span>
+                                  <span class="json-property-enum" title="Possible values">
+                                    <span class="json-property-enum-item">string</span>,
+                                    <span class="json-property-enum-item">image</span>,
+                                    <span class="json-property-enum-item">strEnum</span>,
+                                    <span class="json-property-enum-item">numeric</span>,
+                                    <span class="json-property-enum-item">date</span>,
+                                    <span class="json-property-enum-item">address</span>,
+                                    <span class="json-property-enum-item">phone</span>,
+                                    <span class="json-property-enum-item">email</span>,
+                                    <span class="json-property-enum-item">mobile</span>
+                                  </span>
+                                  <span class="json-property-range" title="Value limits"></span>
+                                </dt>
+                              </dl>
+                            </section>
+                          </dt>
+                          <dt data-property-name="value" class="has-description">
+                            <span class="json-property-name">value:</span>
                             <span class="json-property-type">string</span>
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>The PDF&#39;s name, without an &#39;@&#39; prefix.</p>
+                            <p>In a GET response for text and numeric PDFs this will be a scalar containing their actual value, but for image PDFs it will be an object containing a copy of the <code>href</code> field above.</p>
+                            <p>In versions up to and including 8.60, if a cardholder did not have an image PDF captured (in other words they were a member of an access group that included an image PDF, but they did not have a value for it) the API returned the string &#39;Not captured&#39; in the <code>value</code> field. Versions 8.70 and later will not return the <code>value</code> field at all if there is no image.</p>
+                            <p>In a POST or PATCH send text PDFs (including dates) as strings, numeric PDFs as numbers or strings that parse to numbers, and image data Base64-encoded into a string.</p>
                           </dd>
-                          <dt data-property-name="id" class="has-description">
-                            <span class="json-property-name">id:</span>
-                            <span class="json-property-type">string</span>
+                          <dt data-property-name="notifications" class="has-description">
+                            <span class="json-property-name">notifications:</span>
+                            <span class="json-property-type">boolean</span>
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>Short alphanumeric identifier used elsewhere in the API to filter cardholder searches and add PDF values to alarm and event GETs.</p>
+                            <p>In a GET response, this will only appear for email and mobile PDF types. In a POST or PATCH, it only makes sense for the same types.</p>
+                            <p>If true, cardholder notifications will go to the telephone number or email address held by this PDF. Cardholders can have their notifications go to as many contacts as they wish.</p>
                           </dd>
-                          <dt data-property-name="type">
-                            <span class="json-property-name">type:</span>
-                            <span class="json-property-type">string</span>
-                            <span class="json-property-enum" title="Possible values">
-                              <span class="json-property-enum-item">string</span>,
-                              <span class="json-property-enum-item">image</span>,
-                              <span class="json-property-enum-item">strEnum</span>,
-                              <span class="json-property-enum-item">numeric</span>,
-                              <span class="json-property-enum-item">date</span>,
-                              <span class="json-property-enum-item">address</span>,
-                              <span class="json-property-enum-item">phone</span>,
-                              <span class="json-property-enum-item">email</span>,
-                              <span class="json-property-enum-item">mobile</span>
-                            </span>
-                            <span class="json-property-range" title="Value limits"></span>
-                          </dt>
                         </dl>
                       </section>
                     </dt>
-                    <dt data-property-name="value" class="has-description">
-                      <span class="json-property-name">value:</span>
-                      <span class="json-property-type">string</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>In a GET response for text and numeric PDFs this will be a scalar containing their actual value, but for image PDFs it will be an object containing a copy of the <code>href</code> field above.</p>
-                      <p>In versions up to and including 8.60, if a cardholder did not have an image PDF captured (in other words they were a member of an access group that included an image PDF, but they did not have a value for it) the API returned the string &#39;Not captured&#39; in the <code>value</code> field. Versions 8.70 and later will not return the <code>value</code> field at all if there is no image.</p>
-                      <p>In a POST or PATCH send text PDFs (including dates) as strings, numeric PDFs as numbers or strings that parse to numbers, and image data Base64-encoded into a string.</p>
-                    </dd>
-                    <dt data-property-name="notifications" class="has-description">
-                      <span class="json-property-name">notifications:</span>
-                      <span class="json-property-type">boolean</span>
-                      <span class="json-property-range" title="Value limits"></span>
-                    </dt>
-                    <dd>
-                      <p>In a GET response, this will only appear for email and mobile PDF types. In a POST or PATCH, it only makes sense for the same types.</p>
-                      <p>If true, cardholder notifications will go to the telephone number or email address held by this PDF. Cardholders can have their notifications go to as many contacts as they wish.</p>
-                    </dd>
                   </dl>
                 </section>
               </div>
@@ -14418,7 +14432,7 @@
                       <p>A competency can be disabled, expired, both, or neither. Whether it is
                         <em>enabled</em> is a flag on the cardholder&#39;s holding of the competency. Whether it is
                         <em>expired</em> is derived from an expiry timestamp (accurate to the second): if it is in the past, Command Centre considers the competency expired.</p>
-                      <p>A competency can also have an <code>enablement</code> date. If that date (timestamp) passes while the competency is disabled, Command Centre will enable it. It will leave the date on the item for future reference, though it will not affect the competency again.</p>
+                      <p>A competency can also have an <code>enablement</code> date. If that date (timestamp) passes while the competency is disabled, Command Centre will enable the competency. It will leave the date on the item for future reference, though it will not affect the competency again.</p>
                       <p>If the competency is disabled, the status <code>type</code> will be <code>inactive</code> when there is no enable date or it is in the past, and <code>pending</code> when the enable date is in the future (i.e., there is an automatic re-enablement coming).</p>
                       <p>If the competency is not disabled, the <code>expiry</code> time is important. If it is in the past, <code>type</code> will be <code>expired</code>.</p>
                       <p>All of those cases are negative. Two remain, when our cardholder is blessed with an enabled and active competency. <code>type</code> will be <code>expiryDue</code> if the <code>expires</code> time is in the future but within the competency&#39;s advance notice period, or <code>active</code> if the <code>expires</code> time is beyond the advance notice period or not set at all.</p>
@@ -19801,7 +19815,7 @@
   },
   <span class="hljs-attr">&quot;visitorType&quot;</span>: {
     <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/divisions/2/v_t/925&quot;</span>,
-    <span class="hljs-attr">&quot;accessgroup&quot;</span>: {
+    <span class="hljs-attr">&quot;accessGroup&quot;</span>: {
       <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Visitor group 1&quot;</span>,
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/access_groups/925&quot;</span>
     }
