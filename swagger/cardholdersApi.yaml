@@ -168,7 +168,7 @@ info:
     * Image PDFs have a new optional field `contentType` that returns their MIME type.  This
       deprecates the old `imageFormat` field, which is non-standard.
 
-    * Asking for a particular PDF on a cardholder (by using the `pdf_XXX` query parameter) will
+    * Asking for a particular PDF on a cardholder (by putting `pdf_XXX` into the `fields` query parameter) will
       cause it to appear even if the cardholder has no value for that PDF.  Previous versions only
       showed if it had a non-blank value.
 
@@ -1350,7 +1350,7 @@ tags:
     no value, you must find all the cardholder's groups, then find all the PDFs on those groups.
 
     1. GET the cardholder's access groups from the cardholder's detail page, or the search page
-       with `fields=accessGroups` added to the query.
+       with `accessGroups` added to the query's `fields` parameter.
     2. Iterate through the hrefs of those access groups, GETting each.  That will return their
        detail pages.
     3. For each access group detail page, record the names and hrefs from the
@@ -2999,6 +2999,7 @@ definitions:
         type: string
         enum: [ 'card', 'digitalId', 'govPass', 'mobile', 'piv', 'pivi', 'trackingTag', 'transact' ]
         example: mobile
+
       trace:
         description: |
           If set, using this credential will generate an event.
@@ -5370,6 +5371,18 @@ definitions:
           - 'name': "All Staff"
           - 'name': "R&D Special Projects Group"
             'href': "https://localhost:8904/api/access_groups/352"
+      notificationDefault:
+        description: |
+          This value is copied to the 'notification' flag on a cardholder's value for this PDF when
+          they first gain membership of one of this PDF's access groups.  It will only appear for
+          PDF types that can receive notifications (email addresses and mobile numbers), and only if
+          you ask for it with the `fields` parameter.  The server will ignore it if you send it in a
+          POST or PATCH to a PDF that is not email or mobile.
+
+          New in 8.50.
+        type: boolean
+        example: false
+
       regex:
         description: |
           This is the regular expression that a PDF value must match before Command Centre will
@@ -5383,17 +5396,6 @@ definitions:
         description: Regular expressions often need explaining.
         type: string
         example: "@ least"
-      notificationDefault:
-        description: |
-          This value is copied to the 'notification' flag on a cardholder's value for this PDF when
-          they first gain membership of one of this PDF's access groups.  It will only appear for
-          PDF types that can receive notifications (email addresses and mobile numbers), and only if
-          you ask for it with the `fields` parameter.  The server will ignore it if you send it in a
-          POST or PATCH to a PDF that is not email or mobile.
-
-          New in 8.50.
-        type: boolean
-        example: false
       imageWidth:
         description: |
           The maximum width of an image stored in this PDF, in pixels, for image PDF types.  You
@@ -6040,6 +6042,10 @@ paths:
 
           Use the special value `personalDataFields` to return the 'personalDataDefinitions' block
           as well as the PDF values at the root level of the cardholder object.
+
+          Use the special value `pdf_XXX` (where `XXX` is the ID of a PDF definition) to include
+          just that PDF.  If you do not have the PDF's ID, using `personalDataDefinitions` may be
+          simpler finding it.
 
           Treat the string matches as case sensitive:  use 'lastName' rather than 'lastname'.
 
