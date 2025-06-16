@@ -2046,7 +2046,17 @@ paths:
         back from the POST.  There are other cases where the GET might return no updates or updates
         you have seen already (when some aspect of an item changes that your operator does not have
         the privilege to view, or an override is sent, for example).  While these two behaviours are
-        not harmful they are also not particularly helpful, so future versions may differ.
+        not harmful they are also not particularly helpful, so:
+
+        ***Change is coming***
+
+        A future version will respond to the POST and the first GET differently from older versions.
+        Instead of returning the states of all your items twice, once from the POST then again in
+        the first GET, it will only send the state of each item once:  either in the POST body or
+        one of the later GETs.  If you follow the steps above--which have not changed since first
+        published--your client will always be compatible.
+
+        This change makes it much quicker to create subscriptions containing large numbers of items.
 
       parameters:
         - name: "bookmark"
@@ -3640,7 +3650,16 @@ definitions:
           A list of items and their statuses.
 
           On your first two calls -- the POST and the first GET -- this will contain all the items
-          in your subscription (provided they are the types of item that have statuses).  On
+          in your subscription (provided they are the types of item that have statuses).  This is
+          unnecessary and incurs a significant performance penalty, so:
+
+          *** Change is coming ***
+
+          A future version will not do that.  The results of the POST will not contain all the items
+          in your subscription, and the first GET will not return them all a second time.  Use [this
+          algorithm](#operation--api-items-updates-get).
+
+          On
           subsequent GETs it will only contain the items that received status updates since your
           previous call.  Note that an item will be in this array if it received any status update
           at all, even if the status flags did not change.  Prepare to receive updates that do not
