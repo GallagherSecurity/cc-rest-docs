@@ -1,4 +1,4 @@
-== REST training document
+# REST training document
 
 This directory contains an [Asciidoc (.adoc) document](rest_training.adoc) intended to accompany
 online training.  It contains some useful reference material, and general good advice, so it remains
