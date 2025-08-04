@@ -1082,10 +1082,9 @@
                 <li>For each access zone, GET its href and look in its <code>doors</code> block.</li>
               </ol>
               <h4 id="finding-recently-created-cardholders">Finding recently-created cardholders</h4>
-              <p>This is another function of the
+              <p>Being told by Command Centre when it creates cardholders is a function of the
                 <a href="#tag-Cardholder-changes">Cardholder changes</a> call, described there.</p>
-              <p>However to do that you need to make an API call
-                <em>before</em> creating the cardholders. If the cardholders already exist, a workaround is to get a page of cardholders sorted by database ID
+              <p>However for that to work you need to make API calls before and after the cardholders are created. If they already exist, a workaround is to get a page of cardholders sorted by database ID
                 <em>descending</em> using <code>sort=-id&amp;top=10</code>. Change the ten to the number of cardholders you&#39;d like, obviously. Because Command Centre allocates database IDs to new items in increasing order, the first page you get will be the most-recently created cardholders. This is not suitable for use in a production system! Use the cardholder changes call instead.</p>
               <h3 id="field-names-in-query-parameters">Field names in query parameters</h3>
               <p>The cardholder
@@ -3500,11 +3499,11 @@
                   <p>Restart your polling loop using the link in <code>next.href</code>.</p>
                 </li>
               </ol>
-              <h3 id="use-case--discovering-recently-created-cardholders">Use case: discovering recently-created cardholders.</h3>
+              <h3 id="use-case--being-informed-of-cardholder-creations">Use case: being informed of cardholder creations.</h3>
               <p>The first thing you need to do is get a link from the changes API call
-                <em>before</em> creating the cardholders. If you didn&#39;t do that, there is a workaround described in the cardholder use cases, but it is not suitable for production.</p>
+                <em>before</em> the cardholders you are interested in are created in Command Centre. If you didn&#39;t do that, there is a workaround described in the cardholder use cases, but it is not suitable for production.</p>
               <p>When you call this API the second time you will receive all changes made to cardholders since the previous call. To find the new cardholders, discard all the results that do not have <code>type=add</code>.</p>
-              <p>Since you are only interested in new data, you can optimise the call a little by removing everything else with <code>fields=newValues</code>.</p>
+              <p>Since you are only interested in new data, you can optimise the call a little with <code>fields=newValues</code>, which will remove the fields you do not need.</p>
               <h3 id="notes">Notes</h3>
               <ul>
                 <li>
@@ -3549,6 +3548,7 @@
                     </strong>. When you later GET the link the server sent you, it will return the changes that occurred since, if there were any, and a new link.</p>
                   <p>There will be no more than 1000 changes, or as many as you asked for using the <code>top</code> query parameter.</p>
                   <p>When you are up to date with all the cardholder changes, the <code>results</code> array will be empty. When it comes time to check again, don&#39;t just re-use the same URL: get a new one from the <code>next</code> block. It can change even when there are no results.</p>
+                  <p>You can monitor changes to card data using this call, including serial numbers (MIFARE UIDs). However you cannot monitor changes in the <code>lastSuccessfulAccessTime</code> or <code>lastSuccessfulAccessZone</code> fields because they are not attributes of a cardholder object: they are derivatives of his or her activity. If you want to monitor a person&#39;s movements we advise subscribing to events.</p>
                   <p>This is a polled interface: it will return immediately, whether or not there are results. Therefore you should wait for a time between calls if the <code>results</code> array was empty.</p>
                   <p>
                     <a href="#topic-Forward-compatibility--HATEOAS-">Do not code this URL</a> into your application. Take it from the href field in the <code>features.cardholders.changes</code> section of <code>/api</code>.</p>
@@ -3643,8 +3643,7 @@
                       <p>If you do not supply a filter parameter it will use the same fields you get in a cardholder details page. That is nearly everything the API has for a cardholder, but omits some seldom-used or expensive features such as card tracing and the large PIV fields. If you want to monitor them you must list them here. For example, <code>filter=defaults,cards.trace</code> will add the card trace flag to the usual filter.</p>
                       <p><code>personalDataFields</code> will filter for PDF changes, and will give you the personalDataDefinitions block plus the PDF values that changed. You cannot filter for changes to a particular PDF: you will need to do that in your client.</p>
                       <p>Being able to monitor operator settings arrived in 8.50 and operator group memberships in 8.60.</p>
-                      <p>Note that you cannot monitor changes in the <code>lastSuccessfulAccessTime</code> or <code>lastSuccessfulAccessZone</code> fields because they are not attributes of a cardholder object: they are derivatives of his or her activity. If you want to monitor a person&#39;s movements we advise subscribing to events.</p>
-                      <p>You can monitor changes to card data using this call, including serial numbers (UIDs). If that is all you are interested in, and you do not want to hear about all the other changes that cardholders can experience, use <code>filter=cards</code>.</p>
+                      <p>If card changes are all you are interested in, and you do not want to hear about all the other changes that cardholders can experience, use <code>filter=cards</code>.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
