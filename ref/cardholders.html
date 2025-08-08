@@ -1082,7 +1082,7 @@
                 <li>For each access zone, GET its href and look in its <code>doors</code> block.</li>
               </ol>
               <h4 id="finding-recently-created-cardholders">Finding recently-created cardholders</h4>
-              <p>Being told by Command Centre when it creates cardholders is a function of the
+              <p>Informing you when Command Centre creates cardholders is a function of the
                 <a href="#tag-Cardholder-changes">Cardholder changes</a> call, described there.</p>
               <p>However for that to work you need to make API calls before and after the cardholders are created. If they already exist, a workaround is to get a page of cardholders sorted by database ID
                 <em>descending</em> using <code>sort=-id&amp;top=10</code>. Change the ten to the number of cardholders you&#39;d like, obviously. Because Command Centre allocates database IDs to new items in increasing order, the first page you get will be the most-recently created cardholders. This is not suitable for use in a production system! Use the cardholder changes call instead.</p>
@@ -3499,7 +3499,7 @@
                   <p>Restart your polling loop using the link in <code>next.href</code>.</p>
                 </li>
               </ol>
-              <h3 id="use-case--being-informed-of-cardholder-creations">Use case: being informed of cardholder creations.</h3>
+              <h3 id="use-case--detecting-when-cardholders-are-created">Use case: detecting when cardholders are created.</h3>
               <p>The first thing you need to do is get a link from the changes API call
                 <em>before</em> the cardholders you are interested in are created in Command Centre. If you didn&#39;t do that, there is a workaround described in the cardholder use cases, but it is not suitable for production.</p>
               <p>When you call this API the second time you will receive all changes made to cardholders since the previous call. To find the new cardholders, discard all the results that do not have <code>type=add</code>.</p>

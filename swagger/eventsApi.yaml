@@ -2523,10 +2523,18 @@ definitions:
             example: "https://localhost:8904/api/alarms/61320"
       operator:
         description: |
-          The href and name of the operator behind this event.  This will appear when an operator
+          The href and name of the operator or system behind this event.  This will appear when an operator
           has modified an item.  New in v8.00.
 
-          The item he or she modified will appear in the `modifiedItem` block (added in 8.40).
+          The item they modified will appear in the `modifiedItem` block (added in 8.40).
+
+          *** Change is coming. ***
+
+          The operator may not be a cardholder.  A version of Command Centre after 9.30 will return
+          events where the operator item is of a different kind.  In that case, the `operator` block
+          will also contain a `canonicalTypeName` field telling you what kind of item is at the
+          other end of the href.
+
         type: object
         properties:
           href:
