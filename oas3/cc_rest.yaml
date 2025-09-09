@@ -7,6 +7,17 @@ x-common-blocks:
     description: |
       The server could not parse the POST parameters.  There could be a syntax error in your JSON.
 
+  eventType_ignored: &EVENTTYPE
+    type: object
+    description: |
+      ID and name of the event's or alarm's type.  There is a long list of them at
+      [/events/groups](#operation--api-events-groups-get).
+
+      Unlike the `type` field, this has the same format in an event as it does in an alarm.
+
+      Added in 8.90.  Because it is a new field, it does not appear by default.  Ask for it using
+      the `fields` parameter.
+
   acz_ignored: &ACZFIELDS
     in: query
     required: false
@@ -36,11 +47,11 @@ x-common-blocks:
     number: Nick's mobile
 
     status:  {value: "active"}
-    type: {"href": "https://localhost:8904/api/card_types/654"}
+    type: {"href": "https://host.com:8904/api/card_types/654"}
     from: 2017-01-01T00:00:00Z
     until: 2018-01-01T00:00:00Z
     invitation:
-      email:: nick@example.com
+      email: nick@example.com
       mobile: "02123456789"
       singleFactorOnly: true
 
@@ -48,9 +59,9 @@ x-common-blocks:
     number: Nick's other mobile
 
     status:  {value: "active"}
-    type: {"href": "https://localhost:8904/api/card_types/654"}
+    type: {"href": "https://host.com:8904/api/card_types/654"}
     invitation:
-      email:: nick@example.com
+      email: nick@example.com
       mobile: "02198765432"
       singleFactorOnly: true
 
@@ -118,17 +129,6 @@ x-common-blocks:
     in: query
     required: false
     schema: {type: string, enum: [href, name, description, division, floorAccess]}
-
-  eventType_ignored: &EVENTTYPE
-    type: object
-    description: |
-      ID and name of the event's or alarm's type.  There is a long list of them at
-      [/events/groups](#operation--api-events-groups-get).
-
-      Unlike the `type` field, this has the same format in an event as it does in an alarm.
-
-      Added in 8.90.  Because it is a new field, it does not appear by default.  Ask for it using
-      the `fields` parameter.
 
   fz_ignored: &FZFIELDS
     in: query
@@ -475,6 +475,8 @@ x-common-blocks:
 
       `"reception": "https://localhost:8904/api/receptions/123"`
 
+    properties: { name: {type: string}, href: {type: string, format: url} }
+
     example:
       name: "Main lobby"
       href: "https://localhost:8904/api/receptions/937"
@@ -558,7 +560,6 @@ x-common-blocks:
     description: Free text.  Entirely optional in the POST and PATCH.
     example: "Gather in Ginger's office"
   v_vags: &VISIT_AGS
-    type: array
     description: |
       These are the access groups that the server will add your visitors to after they complete
       induction and sign in.  They define the access that your visitors have to the site, as
@@ -586,6 +587,16 @@ x-common-blocks:
       Your operator must have a privilege such as 'Modify Access Control' that allows viewing
       the access groups and adding and removing cardholders to and from them, otherwise you will be
       told 'Access denied when writing to one or more fields'.
+
+    type: array
+    items:
+      type: object
+      properties:
+        name:
+          type: string
+        href:
+          type: string
+          format: url
 
     example:
     - accessGroup:
@@ -631,6 +642,8 @@ x-common-blocks:
         cardholder:
           description: |
             A block containing the name and cardholder href of the visitor.
+          type: object
+          properties: { name: {type: string}, href: {type: string, format: url} }
         href:
           type: string
           format: url
@@ -719,8 +732,6 @@ components:
         `singleFactorOnly` defaults to false, which is the recommended setting.  See the [card
         detail](#definition-Cardholder-card) for more.
 
-        ***TODO add division, compulsory***
-        
       value:
         firstName: "Nick"
         cards:
@@ -755,6 +766,7 @@ components:
 
       value:
         firstName: "Nick"
+        division: { href: https://host.com:8904/api/divisions/2 }
         cards:
           - <<: *CARDMOBILE
           - <<: *CARDMOBILE2
@@ -776,13 +788,13 @@ components:
         cards:
           add:
             - type:
-                href: "https://localhost:8904/api/card_types/600"
+                href: "https://host.com:8904/api/card_types/600"
 
 ######################################################################
     CardholderPOSTCardPhysicalExample:
       description: |
         This is a minimal object for creating a cardholder with one card, containing the only
-        required field for a cardholder (a name) and the only required field for a card (the card
+        required fields for a cardholder (name and division) and the only required field for a card (the card
         type).  See the [card detail](#definition-Cardholder-card) for other fields you can use,
         such as the card's issue level and from/until dates.
 
@@ -791,9 +803,10 @@ components:
 
       value:
         firstName: "Nick"
+        division: { href: "https://host.com:8904/api/divisions/2" }
         cards:
         - type:
-            href: "https://localhost:8904/api/card_types/600"
+            href: "https://host.com:8904/api/card_types/600"
 
 ######################################################################
     PIVCardCreateExample:
@@ -833,7 +846,7 @@ components:
           description: |
             Required.  This should be the href of the built-in PIV/PIV-I card type, that your
             application found using the process [in the introduction](#finding-the-piv-card-type).
-          example: {href: "https://localhost:8904/api/card_types/244"}
+          example: {href: "https://host.com:8904/api/card_types/244"}
         pivData:
           description: |
             This block contains all the PIV-specific fields.  Everything outside this block, including
@@ -858,7 +871,7 @@ components:
         href:
           type: string
           format: url
-          example: https://localhost:8904/api/cardholders/5398/cards/90e5d0d70
+          example: https://host.com:8904/api/cardholders/5398/cards/90e5d0d70
           description: |
             This is the href of the card you want to update, found in the `cards` array in the
             [cardholder detail](cardholders.html#definition-Cardholder-detail).
@@ -999,14 +1012,14 @@ components:
         lastName: Boothroyd
         shortName: "Quartermaster"
         authorised: true
-        division: { href: "https://localhost:8904/api/divisions/5387" }
+        division: { href: "https://host.com:8904/api/divisions/5387" }
         "@email": "user@sample.com"
         "@headshot": "/9j/4A...=="
         personalDataDefinitions: [ { "@email": { notifications: true } } ]
         cards:
-        - type: {href: "https://localhost:8904/api/card_types/600"}
+        - type: {href: "https://host.com:8904/api/card_types/600"}
           pin: "153624"
-        - type: {href: "https://localhost:8904/api/card_types/654"}
+        - type: {href: "https://host.com:8904/api/card_types/654"}
           number: "Nick's mobile"
           invitation:
             email: "nick@example.com"
@@ -1014,15 +1027,15 @@ components:
             singleFactorOnly: true
         accessGroups:
           - accessGroup:
-              href: "https://localhost:8904/api/access_groups/352"
-            from: "2019-01-01"
+              href: "https://host.com:8904/api/access_groups/352"
+            from: "2019-01-01T00:00:00Z"
         operatorGroups:
           - operatorGroup:
-              href: "https://localhost:8904/api/operator_groups/523"
+              href: "https://host.com:8904/api/operator_groups/523"
         competencies:
           - competency:
-             href: "https://localhost:8904/api/competencies/2354"
-            enablement: "2019-01-01"
+             href: "https://host.com:8904/api/competencies/2354"
+            enablement: "2019-01-01T00:00:00Z"
         notes: ""
         notifications:
           enabled: true
@@ -1030,22 +1043,22 @@ components:
           until: "2017-10-17T14:59:00Z"
         relationships:
           - role:
-              href: "https://localhost:8904/api/roles/5396"
+              href: "https://host.com:8904/api/roles/5396"
             cardholder:
-              href: "https://localhost:8904/api/cardholders/5398"
+              href: "https://host.com:8904/api/cardholders/5398"
         lockers:
           - locker:
-              href:  "https://localhost:8904/api/lockers/3456"
+              href:  "https://host.com:8904/api/lockers/3456"
           - locker:
-              href:  "https://localhost:8904/api/lockers/3457"
+              href:  "https://host.com:8904/api/lockers/3457"
 
         elevatorGroups:
           - elevatorGroup:
-              href:  "https://localhost:8904/api/elevator_groups/635"
+              href:  "https://host.com:8904/api/elevator_groups/635"
             accessZone:
-              href:  "https://localhost:8904/api/access_zones/637"
+              href:  "https://host.com:8904/api/access_zones/637"
           - elevatorGroup:
-              href:  "https://localhost:8904/api/elevator_groups/639"
+              href:  "https://host.com:8904/api/elevator_groups/639"
             enableCodeBlueFeatures: true
 
   parameters:
@@ -1363,8 +1376,8 @@ components:
                   In this example we are adding PDF 5516 and removing 9370.
                 type: object
                 example:
-                  "add": [ { "href": "https://localhost:8904/api/personal_data_fields/5516" } ]
-                  "remove": [ {"href": "https://localhost:8904/api/personal_data_fields/9370" } ]
+                  "add": [ { "href": "https://host.com:8904/api/personal_data_fields/5516" } ]
+                  "remove": [ {"href": "https://host.com:8904/api/personal_data_fields/9370" } ]
 
     
 
@@ -1382,7 +1395,7 @@ components:
                 type: string
                 format: url
                 readOnly: true
-                example: "https://localhost:8904/api/card_types/600"
+                example: "https://host.com:8904/api/card_types/600"
                 description: |-
                   This is the identifier to use when assigning a card to a cardholder in a cardholder
                   [PATCH](#operation--api-cardholders--id--patch) or
@@ -1405,7 +1418,7 @@ components:
 
                   New to 8.50.
                 example:
-                  href: "https://localhost:8904/api/divisions/2"
+                  href: "https://host.com:8904/api/divisions/2"
 
               notes:
                 type: string
@@ -1761,7 +1774,7 @@ components:
             Mandatory when creating any access group.  In this example, we want the access group in
             division 352.
           example:
-            href: "https://localhost:8904/api/divisions/352"
+            href: "https://host.com:8904/api/divisions/352"
         notes:
           type: string
           example: ""
@@ -1778,7 +1791,7 @@ components:
 
             Use the blank string `""` to clear a group's parent in a PATCH.
           example:
-            href: "https://localhost:8904/api/access_groups/100"
+            href: "https://host.com:8904/api/access_groups/100"
         membershipAutoRemoveExpired:
           type: boolean
           description: |
@@ -1818,8 +1831,8 @@ components:
           type: array
           items: {type: object}
           example:
-            - "href": "https://localhost:8904/api/personal_data_fields/5516"
-            - "href": "https://localhost:8904/api/personal_data_fields/9370"
+            - "href": "https://host.com:8904/api/personal_data_fields/5516"
+            - "href": "https://host.com:8904/api/personal_data_fields/9370"
 
     AccessGroupSearch:
       description: |
@@ -1838,7 +1851,7 @@ components:
               type: string
               format: url
           example:
-             href: "https://localhost:8904/api/access_groups?skip=61320"
+             href: "https://host.com:8904/api/access_groups?skip=61320"
 
     AccessGroupSummary:
       description: |
@@ -1857,7 +1870,7 @@ components:
           description: |
             A link to an [access group detail](#definition-Access-group-detail) object for this access
             group.
-          example: "https://localhost:8904/api/access_groups/352"
+          example: "https://host.com:8904/api/access_groups/352"
         name:
           type: string
           example: "R&D special projects group."
@@ -1868,14 +1881,14 @@ components:
           type: object
           description: "A link to the group's parent, and its name."
           example:
-            href: "https://localhost:8904/api/access_groups/100"
+            href: "https://host.com:8904/api/access_groups/100"
             name: "All R&D"
         division:
           type: object
           description:  "The division that contains this access group."
           example:
             id: "2"
-            href: "https://localhost:8904/api/divisions/2"
+            href: "https://host.com:8904/api/divisions/2"
         cardholders:
           type: object
           description: |
@@ -1886,7 +1899,7 @@ components:
             details page whether or not you specified it in the fields parameter, but if you send the
             fields parameter to 8.10 you will only get what you asked for.
           example:
-            href: "https://localhost:8904/api/access_groups/352/cardholders"
+            href: "https://host.com:8904/api/access_groups/352/cardholders"
         serverDisplayName:
           <<: *SERVER
 
@@ -1926,9 +1939,9 @@ components:
                     description: "The name of the child access group."
                     type: string
               example:
-                - href: "https://localhost:8904/api/access_groups/5122"
+                - href: "https://host.com:8904/api/access_groups/5122"
                   name: "R&D super-special projects"
-                - href: "https://localhost:8904/api/access_groups/3420"
+                - href: "https://host.com:8904/api/access_groups/3420"
                   name: "R&D social committee"
 
             personalDataDefinitions:
@@ -1942,10 +1955,10 @@ components:
                 The names and hrefs of the PDFs that this access group gives to its members.
               example: [ {
                   "name": "email",
-                  "href": "https://localhost:8904/api/personal_data_fields/5516"
+                  "href": "https://host.com:8904/api/personal_data_fields/5516"
                 }, {
                   "name": "cellphone",
-                  "href": "https://localhost:8904/api/personal_data_fields/9998"
+                  "href": "https://host.com:8904/api/personal_data_fields/9998"
                 } ]
 
             visitor:
@@ -2209,20 +2222,20 @@ components:
 
               example: [ {
                   "accessZone": {
-                    "href": "https://localhost:8904/api/access_zones/333",
+                    "href": "https://host.com:8904/api/access_zones/333",
                     "name": "Twilight zone"
                   },
                   "schedule": {
-                    "href": "https://localhost:8904/api/schedules/5",
+                    "href": "https://host.com:8904/api/schedules/5",
                     "name": "Default Cardholder Access Granted"
                   }
                 }, {
                   "accessZone": {
-                    "href": "https://localhost:8904/api/access_zones/412",
+                    "href": "https://host.com:8904/api/access_zones/412",
                     "name": "Server room"
                   },
                   "schedule": {
-                    "href": "https://localhost:8904/api/schedules/557",
+                    "href": "https://host.com:8904/api/schedules/557",
                     "name": "8am-5pm weekdays"
                   }
                 }
@@ -2270,11 +2283,11 @@ components:
                   "value": "saltoAccessZone"
                 },
                 "saltoItem": {
-                  "href": "https://localhost:8904/api/items/570",
+                  "href": "https://host.com:8904/api/items/570",
                   "name": "Salto BLE CV19"
                 },
                 "schedule": {
-                  "href": "https://localhost:8904/api/schedules/5",
+                  "href": "https://host.com:8904/api/schedules/5",
                   "name": "Default Cardholder Access Granted"
                 }
                 }, {
@@ -2282,11 +2295,11 @@ components:
                   "value": "saltoDoor"
                 },
                 "saltoItem": {
-                  "href": "https://localhost:8904/api/items/579",
+                  "href": "https://host.com:8904/api/items/579",
                   "name": "Salto CU5000"
                 },
                 "schedule": {
-                  "href": "https://localhost:8904/api/schedules/557",
+                  "href": "https://host.com:8904/api/schedules/557",
                   "name": "8am-5pm weekdays"
                 } } ]
 
@@ -2307,11 +2320,11 @@ components:
 
               example: [ {
                 "alarmZone": {
-                  "href": "https://localhost:8904/api/alarm_zones/328",
+                  "href": "https://host.com:8904/api/alarm_zones/328",
                   "name": "Roswell building 2 lobby alarms"
                 } }, {
                 "alarmZone": {
-                  "href": "https://localhost:8904/api/alarm_zones/10138",
+                  "href": "https://host.com:8904/api/alarm_zones/10138",
                   "name": "Roswell building 3 lobby alarms"
                 } } ]
 
@@ -2345,10 +2358,10 @@ components:
         from: {type: string, format: time-stamp}
         until: {type: string, format: time-stamp}
       example:
-        href: "https://localhost:8904/api/cardholders/325/access_groups/D714D8A894724F"
+        href: "https://host.com:8904/api/cardholders/325/access_groups/D714D8A894724F"
         cardholder:
           name: "Boothroyd, Algernon"
-          href: "https://localhost:8904/api/cardholders/325"
+          href: "https://host.com:8904/api/cardholders/325"
         from: "2017-01-01T00:00:00Z"
         until: "2017-12-31T11:59:59Z"
 
@@ -2758,7 +2771,7 @@ components:
           description: |
             The name of this alarm's event type.
 
-            Deprecated in favour of `eventType`.
+            Deprecated in favour of the `eventType` block.
 
           example: "Forced door"
         eventType:
@@ -3285,7 +3298,7 @@ components:
           description: The link to the next page.  Absent if you have retrieved them
             all.
           example:
-            href: "https://localhost:8904/api/cardholders?skip=61320"
+            href: "https://host.com:8904/api/cardholders?skip=61320"
       description: "An array of cardholder summaries, and a `next` link for more."
 
     CardholderSummary:
@@ -3298,7 +3311,7 @@ components:
             This is Command Centre's identifier for this cardholder:  use it whenever you need to
             specify a cardholder in REST operations.
           format: url
-          example: "https://localhost:8904/api/cardholders/325"
+          example: "https://host.com:8904/api/cardholders/325"
         id:
           type: string
           description: |
@@ -3384,7 +3397,7 @@ components:
               `canonicalTypeName` which will have one of two values:  `accesszone` or `reception`.
             readOnly: true
             example:
-              href: https://localhost:8904/api/access_zones/333
+              href: https://host.com:8904/api/access_zones/333
               name: Twilight zone
           serverDisplayName:
             type: string
@@ -3403,7 +3416,7 @@ components:
               The division containing this cardholder.  You must send this when creating a
               cardholder.
             example:
-              href: https://localhost:8904/api/divisions/2
+              href: https://host.com:8904/api/divisions/2
           '@Student ID':
             type: object
             description: |
@@ -3525,22 +3538,22 @@ components:
               preceded by '@'-signs).
             example:
             - '@Student ID':
-                href: https://localhost:8904/api/cardholders/325/personal_data/2356
+                href: https://host.com:8904/api/cardholders/325/personal_data/2356
                 definition:
-                  href: https://localhost:8904/api/personal_data_fields/2356
+                  href: https://host.com:8904/api/personal_data_fields/2356
                   name: Student ID
                   id: "2356"
                   type: string
                 value: "8904640"
             - '@Photo':
-                href: https://localhost:8904/api/cardholders/325/personal_data/2369
+                href: https://host.com:8904/api/cardholders/325/personal_data/2369
                 definition:
-                  href: https://localhost:8904/api/personal_data_fields/2369
+                  href: https://host.com:8904/api/personal_data_fields/2369
                   name: Photo
                   id: "2369"
                   type: image
                 value:
-                  href: https://localhost:8904/api/cardholders/325/personal_data/2369
+                  href: https://host.com:8904/api/cardholders/325/personal_data/2369
             items:
               $ref: '#/components/schemas/CardholderPDF'
           cards:
@@ -3585,7 +3598,7 @@ components:
               clients.  Do not send it when creating or editing a cardholder.
             readOnly: true
             example:
-              href: https://localhost:8904/cardholders/325/edit
+              href: https://host.com:8904/cardholders/325/edit
           updateLocation:
             type: object
             properties: {}
@@ -3594,7 +3607,7 @@ components:
               to update the location of this cardholder.  Added in 8.20.
             readOnly: true
             example:
-              href: https://localhost:8904/api/cardholders/402/update_location
+              href: https://host.com:8904/api/cardholders/402/update_location
           notes:
             type: string
             description: |
@@ -3705,9 +3718,9 @@ components:
 
       example:
         '@cellphone':
-          href: https://localhost:8904/api/cardholders/325/personal_data/9998
+          href: https://host.com:8904/api/cardholders/325/personal_data/9998
           definition:
-            href: https://localhost:8904/api/personal_data_fields/9998
+            href: https://host.com:8904/api/personal_data_fields/9998
             name: cellphone
             id: "9998"
             type: mobile
@@ -3792,9 +3805,9 @@ components:
 
       example:
         '@cellphone':
-          href: https://localhost:8904/api/cardholders/325/personal_data/9998
+          href: https://host.com:8904/api/cardholders/325/personal_data/9998
           definition:
-            href: https://localhost:8904/api/personal_data_fields/9998
+            href: https://host.com:8904/api/personal_data_fields/9998
             name: cellphone
             id: "9998"
             type: mobile
@@ -3816,7 +3829,7 @@ components:
             DELETE is the only verb you can use on this URL.  GET will always return a 404 in the
             current versions of Command Centre.
           format: url
-          example: https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9
+          example: https://host.com:8904/api/cardholders/325/cards/97b6a24ard6d4500a9
         number:
           type: string
           description: |
@@ -3927,7 +3940,7 @@ components:
             href:
               type: string
               format: url
-              example: https://localhost:8904/api/card_types/354
+              example: https://host.com:8904/api/card_types/354
             name:
               type: string
               example: Card type no. 1
@@ -4193,7 +4206,7 @@ components:
 
             DELETE is the only verb you can use on this URL.  GET returns a 404.
           format: url
-          example: https://localhost:8904/api/cardholders/325/access_groups/D714D8A89F
+          example: https://host.com:8904/api/cardholders/325/access_groups/D714D8A89F
         accessGroup:
           type: object
           description: |
@@ -4205,7 +4218,7 @@ components:
 
             8.70 and later will not return the link if your operator does not have the privilege to
             view the access group (given by 'View access groups', for example).
-          example: { name: "R&D special projects group", href: "https://localhost:8904/api/access_groups/352" }
+          example: { name: "R&D special projects group", href: "https://host.com:8904/api/access_groups/352" }
         status:
           type: object
           properties:
@@ -4282,7 +4295,7 @@ components:
 
             DELETE is the only verb you can use on this URL.  GET will always return a 404.
           format: url
-          example: https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD
+          example: https://host.com:8904/api/cardholders/325/operator_groups/EBDRSD
         operatorGroup:
           type: object
           description: |
@@ -4293,7 +4306,7 @@ components:
             The link will be absent if your operator does not have the privilege to view the operator
             group ('View operators' or 'Edit operators', for example).
           readOnly: true
-          example: { name: "Locker admins", href: "https://localhost:8904/api/operator_groups/532" }
+          example: { name: "Locker admins", href: "https://host.com:8904/api/operator_groups/532" }
       description: |
         An _operator group_ is an object in Command Centre.  The connection between an operator group
         and a cardholder is a _membership_.  A cardholder can be a member of many different operator
@@ -4319,7 +4332,7 @@ components:
             DELETE is the only verb you can use on this URL.  GET will always return a 404.
           format: url
           readOnly: true
-          example: https://localhost:8904/api/cardholders/325/competencies/2dc3p0
+          example: https://host.com:8904/api/cardholders/325/competencies/2dc3p0
         competency:
           type: object
           properties:
@@ -4331,7 +4344,7 @@ components:
             belong to the competency itself, not the cardholder's link to it.
           readOnly: true
           example:
-            href: https://localhost:8904/api/competencies/2354
+            href: https://host.com:8904/api/competencies/2354
             name: Hazardous goods handling
         status:
           type: object
@@ -4495,7 +4508,7 @@ components:
 
             DELETE is the only verb you can use on this URL.  GET will always return a 404.
 
-          example: "https://localhost:8904/api/cardholders/325/relationships/179lah1170"
+          example: "https://host.com:8904/api/cardholders/325/relationships/179lah1170"
         role:
           type: object
           description: |
@@ -4506,7 +4519,7 @@ components:
             in an update PATCH.  If you need to swap a parent from one role to another, send
             an add and a delete in the same PATCH.
           example:
-            href: "https://localhost:8904/api/roles/5396"
+            href: "https://host.com:8904/api/roles/5396"
             name: "Supervisor"
         cardholder:
           type: object
@@ -4523,7 +4536,7 @@ components:
             `firstName` and `lastName` appeared in 8.20.
 
           example:
-            href: "https://localhost:8904/api/cardholders/5398"
+            href: "https://host.com:8904/api/cardholders/5398"
             name: "Miles Messervy"
             firstName: "Miles"
             lastName: "Messervy"
@@ -4551,7 +4564,7 @@ components:
 
             DELETE is the only verb you can use on this URL.  GET will always return a 404.
 
-          example: "https://localhost:8904/api/cardholders/325/lockers/t1m4"
+          example: "https://host.com:8904/api/cardholders/325/lockers/t1m4"
         locker:
           description: |
             This href in this object is a link to the allocated locker, and is the identifier to use
@@ -4565,9 +4578,9 @@ components:
             name: "Bank A locker 1"
             shortName: "A1"
             lockerBank:
-              href:  "https://localhost:8904/api/locker_banks/4567"
+              href:  "https://host.com:8904/api/locker_banks/4567"
               name: "Bank A"
-            href:  "https://localhost:8904/api/lockers/3456"
+            href:  "https://host.com:8904/api/lockers/3456"
         from:
           description: |
             The start of the time period during which the cardholder has access to this locker.
@@ -4606,13 +4619,13 @@ components:
           description: |
             The href of this cardholder's elevator group entry.  DELETE this to remove it from the
             cardholder.
-          example: "https://localhost:8904/api/cardholders/325/elevator_groups/567"
+          example: "https://host.com:8904/api/cardholders/325/elevator_groups/567"
         elevatorGroup:
           description: |
             The href and name of the elevator group for which this cardholder has a default
             floor or passenger types.
           example: {
-            href: "https://localhost:8904/api/elevator_groups/635",
+            href: "https://host.com:8904/api/elevator_groups/635",
             name: "Main building lower floors" }
         accessZone:
           description: |
@@ -4620,7 +4633,7 @@ components:
             likely to want to travel after entering the group's main elevator lobby. This 
             property will be missing if the cardholder does not have a default floor for this elevator group.
           example: {
-            href: "https://localhost:8904/api/access_zones/637",
+            href: "https://host.com:8904/api/access_zones/637",
             name: "Lvl 1 lift lobby"}
         enableCaptureFeatures:
           type: boolean
@@ -4713,7 +4726,7 @@ components:
             Mandatory when creating any cardholder.  In this example, we want all students
             in division 5387.
           example:
-            href: "https://localhost:8904/api/divisions/5387"
+            href: "https://host.com:8904/api/divisions/5387"
         "@email":
           description: |
             An example PDF value.  In this example, access group 352 must include a PDF
@@ -4746,9 +4759,9 @@ components:
           type: array
           items: {$ref: '#/components/schemas/CardholderCard'}
           example:
-            - type: {href: "https://localhost:8904/api/card_types/600"}
+            - type: {href: "https://host.com:8904/api/card_types/600"}
               pin: "153624"
-            - type: {href: "https://localhost:8904/api/card_types/654"}
+            - type: {href: "https://host.com:8904/api/card_types/654"}
               number: "Nick's mobile"
               invitation:
                 email: "nick@example.com"
@@ -4764,8 +4777,8 @@ components:
             the access group membership to the first of January 2019.
           example:
             - accessgroup:
-                href: "https://localhost:8904/api/access_groups/352"
-              from: "2019-01-01"
+                href: "https://host.com:8904/api/access_groups/352"
+              from: "2019-01-01T00:00:00Z"
         operatorGroups:
           type: array
           items: {$ref: '#/components/schemas/CardholderOperatorGroup'}
@@ -4774,7 +4787,7 @@ components:
             software access he or she needs.  Added in 8.50.
           example:
             - operatorgroup:
-                href: "https://localhost:8904/api/operator_groups/523"
+                href: "https://host.com:8904/api/operator_groups/523"
         competencies:
           type: array
           items: {$ref: '#/components/schemas/CardholderCompetency'}
@@ -4783,9 +4796,9 @@ components:
             January 2019.
           example:
             - competency:
-                href: "https://localhost:8904/api/competencies/2354"
+                href: "https://host.com:8904/api/competencies/2354"
               enabled: false
-              enablement: "2019-01-01"
+              enablement: "2019-01-01T00:00:00Z"
 
         notes:
           type: string
@@ -4809,9 +4822,9 @@ components:
             than one role filled.
           example:
             - role:
-                href: "https://localhost:8904/api/roles/5396"
+                href: "https://host.com:8904/api/roles/5396"
               cardholder:
-                href: "https://localhost:8904/api/cardholders/5398"
+                href: "https://host.com:8904/api/cardholders/5398"
         lockers:
           type: array
           description: |
@@ -4823,9 +4836,9 @@ components:
           items: {$ref: '#/components/schemas/CardholderLocker'}
           example:
             - locker:
-                href:  "https://localhost:8904/api/lockers/3456"
+                href:  "https://host.com:8904/api/lockers/3456"
             - locker:
-                href:  "https://localhost:8904/api/lockers/3457"
+                href:  "https://host.com:8904/api/lockers/3457"
 
         elevatorGroups:
           type: array
@@ -4840,11 +4853,11 @@ components:
           items: {$ref: '#/components/schemas/CardholderElevatorGroup'}
           example:
             - elevatorGroup:
-                href:  "https://localhost:8904/api/elevator_groups/635"
+                href:  "https://host.com:8904/api/elevator_groups/635"
               accessZone:
-                href:  "https://localhost:8904/api/access_zones/637"
+                href:  "https://host.com:8904/api/access_zones/637"
             - elevatorGroup:
-                href:  "https://localhost:8904/api/elevator_groups/639"
+                href:  "https://host.com:8904/api/elevator_groups/639"
               enableCodeBlueFeatures: true
 
 ######################################################################
@@ -4863,7 +4876,7 @@ components:
             href:
               type: string
               format: url
-              example: "https://localhost:8904/api/access_zones/412"
+              example: "https://host.com:8904/api/access_zones/412"
               description: |
                 The href of the access zone into which you want to move your cardholder.  This example
                 came from the [access zones
@@ -4921,7 +4934,10 @@ components:
           example: true
           description: |
             You can modify [all the fields](#definition-Cardholder-detail) on a cardholder, provided
-            you have the necessary privileges,
+            you have the necessary privileges.
+        firstName:
+          type: string
+          example: Erica
         "@employeeId":
           type: string
           example: THX1139
@@ -4979,21 +4995,21 @@ components:
           example:
             add:
               - type:
-                  href: "https://localhost:8904/api/card_types/354"
+                  href: "https://host.com:8904/api/card_types/354"
                 pin: "153624"
               - type:
-                  href: "https://localhost:8904/api/card_types/600"
+                  href: "https://host.com:8904/api/card_types/600"
                 number: "Jock's iPhone 8"
                 status: { value: "Pending sign-off"}
                 invitation: { email: "jock@example.com" }
             update:
-              - href: "https://localhost:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d"
+              - href: "https://host.com:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d"
                 issueLevel: 2
                 until: ""
                 status: { value: "Stolen" }
                 pin: "153624"
             remove:
-              - href: "https://localhost:8904/api/cardholders/325/cards/77e8affe7c7e4b56"
+              - href: "https://host.com:8904/api/cardholders/325/cards/77e8affe7c7e4b56"
                 status: { value: "Lost" }
 
         accessGroups:
@@ -5029,15 +5045,15 @@ components:
           example:
             add:
               - accessGroup:
-                  href: "https://localhost:8904/api/access_groups/352"
+                  href: "https://host.com:8904/api/access_groups/352"
               - accessGroup:
-                  href: "https://localhost:8904/api/access_groups/124"
+                  href: "https://host.com:8904/api/access_groups/124"
                 until: "2019-12-31"
             update:
-              - href: "https://localhost:8904/api/cardholders/325/access_groups/10ad21"
+              - href: "https://host.com:8904/api/cardholders/325/access_groups/10ad21"
                 until: ""
             remove:
-              - href: "https://localhost:8904/api/cardholders/325/access_groups/10ed27"
+              - href: "https://host.com:8904/api/cardholders/325/access_groups/10ed27"
 
         competencies:
           type: object
@@ -5069,11 +5085,11 @@ components:
           example:
             add:
               - competency:
-                  href: "https://localhost:8904/api/competencies/2354"
+                  href: "https://host.com:8904/api/competencies/2354"
                 enabled: false
                 enablement: "2021-01-01T08:00+13"
             update:
-              - href: "https://localhost:8904/api/cardholders/325/competencies/2dc3"
+              - href: "https://host.com:8904/api/cardholders/325/competencies/2dc3"
                 enabled: true
 
         relationships:
@@ -5103,13 +5119,13 @@ components:
           example:
             add:
               - role:
-                  href: "https://localhost:8904/api/roles/5396"
+                  href: "https://host.com:8904/api/roles/5396"
                 cardholder:
-                  href: "https://localhost:8904/api/cardholders/5398"
+                  href: "https://host.com:8904/api/cardholders/5398"
             update:
-              - href: "https://localhost:8904/api/cardholders/325/roles/1799lah1170"
+              - href: "https://host.com:8904/api/cardholders/325/roles/1799lah1170"
                 cardholder:
-                  href: "https://localhost:8904/api/cardholders/10135"
+                  href: "https://host.com:8904/api/cardholders/10135"
 
         lockers:
           type: object
@@ -5135,13 +5151,13 @@ components:
           example:
             add:
               - locker:
-                  href: "https://localhost:8904/api/lockers/1200"
+                  href: "https://host.com:8904/api/lockers/1200"
                   from: "2019-01-01"
             update:
-              - href: "https://localhost:8904/api/cardholders/325/lockers/wxyz1234"
+              - href: "https://host.com:8904/api/cardholders/325/lockers/wxyz1234"
                 until: "2020-02-29"
             remove:
-              - href: "https://localhost:8904/api/cardholders/325/lockers/abcd4321"
+              - href: "https://host.com:8904/api/cardholders/325/lockers/abcd4321"
 
         operatorGroups:
           type: object
@@ -5165,11 +5181,11 @@ components:
           example:
             add:
               - operatorGroup:
-                  href: "https://localhost:8904/api/operator_groups/532"
+                  href: "https://host.com:8904/api/operator_groups/532"
               - operatorGroup:
-                  href: "https://localhost:8904/api/operator_groups/535"
+                  href: "https://host.com:8904/api/operator_groups/535"
             remove:
-              - href: "https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD"
+              - href: "https://host.com:8904/api/cardholders/325/operator_groups/EBDRSD"
 
         elevatorGroups:
           type: object
@@ -5202,15 +5218,15 @@ components:
           example:
             add:
               - elevatorGroup:
-                  href:  "https://localhost:8904/api/elevator_groups/635"
+                  href:  "https://host.com:8904/api/elevator_groups/635"
                 accessZone:
-                  href:  "https://localhost:8904/api/access_zones/637"
+                  href:  "https://host.com:8904/api/access_zones/637"
             update:
-              - href: "https://localhost:8904/api/cardholders/325/elevator_groups/1268613268"
+              - href: "https://host.com:8904/api/cardholders/325/elevator_groups/1268613268"
                 enableCodeBlueFeatures: true
                 enableVipFeatures: false
             remove:
-              - href: "https://localhost:8904/api/cardholders/325/elevator_groups/3498734"
+              - href: "https://host.com:8904/api/cardholders/325/elevator_groups/3498734"
 
     CardholderChanges:
       description: |
@@ -5239,7 +5255,7 @@ components:
           properties:
             href: { type: string, format: url }
           example:
-            href: "https://localhost:8904/api/cardholders/changes?pos=SWEp9"
+            href: "https://host.com:8904/api/cardholders/changes?pos=SWEp9"
 
     CardholderChange:
       description: |
@@ -5272,7 +5288,7 @@ components:
           description: |
             Command Centre's identifier for this change.  This has no use in the API:  you cannot use
             it as a URL, but you may like to use it to track the changes you have seen.
-          example: "https://localhost:8904/api/cardholders/changes/f4e67a"
+          example: "https://host.com:8904/api/cardholders/changes/f4e67a"
         time:
           type: string
           format: date-time
@@ -5292,7 +5308,7 @@ components:
             `fields=cardholder` in the query.  Note that you can add individual cardholder fields such
             as PDFs using `fields=defaults,cardholder.personalDataFields`.
           type: object
-          example: {"href":"https://localhost:8904/api/cardholders/525"}
+          example: {"href":"https://host.com:8904/api/cardholders/525"}
         operator:
           description: |
             A block containing the href and current name of the operator who made this change.
@@ -5301,7 +5317,7 @@ components:
             field set.  If you need it you must ask for it using the fields parameter:
             `fields=defaults,operator`.
           type: object
-          example: {"name": "System Operator", "href": "https://localhost:8904/api/items/1"}
+          example: {"name": "System Operator", "href": "https://host.com:8904/api/items/1"}
         oldValues:
           description: |
             A block containing the values of the changed fields before the change, if Command Centre
@@ -5317,7 +5333,7 @@ components:
             firstName: "Craig"
             competencies:
             - "enablement": ""
-              "href": "https://localhost:8904/api/cardholders/525/competencies/3910e4"
+              "href": "https://host.com:8904/api/cardholders/525/competencies/3910e4"
         newValues:
           description: |
             A similar block containing the values of the changed fields after the change, if the
@@ -5332,7 +5348,7 @@ components:
             competencies: [
               {
                 "enablement": "2020-02-29T00:00:00Z",
-                "href": "https://localhost:8904/api/cardholders/525/competencies/3910e4"
+                "href": "https://host.com:8904/api/cardholders/525/competencies/3910e4"
               }
             ],
             cards: [
@@ -5342,18 +5358,18 @@ components:
                 "issueLevel": 1,
                 "from": "",
                 "until": "",
-                "href": "https://localhost:8904/api/cardholders/525/cards/285f779af1ef49abbba"
+                "href": "https://host.com:8904/api/cardholders/525/cards/285f779af1ef49abbba"
               }
             ],
             "accessGroups": [
             {
             "accessGroup": {
               "name": "Access Group 1",
-              "href": "https://localhost:8904/api/access_groups/499"
+              "href": "https://host.com:8904/api/access_groups/499"
               },
               "from": "",
               "until": "2020-01-15T04:39:00Z",
-              "href": "https://localhost:8904/api/cardholders/525/access_groups/f9cb328b4"
+              "href": "https://host.com:8904/api/cardholders/525/access_groups/f9cb328b4"
               }
             ] }
         cardholder:
@@ -5378,7 +5394,7 @@ components:
                 "issueLevel": 1,
                 "from": "",
                 "until": "",
-                "href": "https://localhost:8904/api/cardholders/525/cards/285f779af1ef49abbba"
+                "href": "https://host.com:8904/api/cardholders/525/cards/285f779af1ef49abbba"
               }
             ] }
 
@@ -5401,7 +5417,7 @@ components:
           properties:
             href: { type: string, format: url }
           example:
-            href: "https://localhost:8904/api/card_types/assign?skip=1000"
+            href: "https://host.com:8904/api/card_types/assign?skip=1000"
 
     CardType:
       description: |
@@ -5411,7 +5427,7 @@ components:
         href:
           type: string
           format: url
-          example: "https://localhost:8904/api/card_types/600"
+          example: "https://host.com:8904/api/card_types/600"
           description: |-
             This is the identifier to use when assigning a card to a cardholder in a cardholder
             [PATCH](#operation--api-cardholders--id--patch) or
@@ -5433,7 +5449,7 @@ components:
 
             New to 8.50.
           example:
-            href: "https://localhost:8904/api/divisions/2"
+            href: "https://host.com:8904/api/divisions/2"
 
         notes:
           type: string
@@ -6964,7 +6980,7 @@ components:
                 [doors](rest.html#tag-Doors) or [items](#tag-Items) controller.
 
     EventPOSTExample:
-      required: [type, eventType]
+      required: [eventType]
       description: |
         This is an example showing how you could create a new event.
 
@@ -6976,6 +6992,16 @@ components:
         a source item and a message string, and it never hurts to add some details.
 
         To make this example work on a server running 8.80 or earlier change `eventType` to `type`.
+
+      properties:
+        eventType:
+          type: object
+          properties:
+            href:
+              type: string
+              format: url
+        source: { type: object, properties: { href: { type: string, format: url} } }
+          
       example:
         eventType: { "href": "https://localhost:8904/api/events/types/4000" }
         source: { "href": "https://localhost:8904/api/doors/745" }
@@ -7582,6 +7608,7 @@ components:
                   The item's ID, from the list you sent in the POST that created this subscription.
               statusFlags:
                 type: array
+                items: {type: string}
                 description: |
                   An array of string enumerations (flags) that describe the item's condition in a
                   reliable, machine-readable way.
@@ -9047,6 +9074,26 @@ components:
 
           example: "2018-07-31T00:00:00Z"
 
+    VisitSearch:
+      type: object
+
+      description: |
+        An array of visits, and a `next` link for more.
+
+      properties:
+        results:
+          type: array
+          description: An array of visits.
+          items: { $ref: '#/components/schemas/Visit' }
+        next:
+          type: object
+          description: The link to the next page of results.  Absent if you have retrieved them all.
+          properties:
+            href:
+              type: string
+              format: url
+              example: "https://localhost:8904/api/visits?pos=1000&sort=id"
+
     Visit:
       description: |
         `GET /api/visits` returns an array of these (with fewer fields), `GET /api/visits/{id}` returns one, and you can
@@ -9485,18 +9532,21 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AccessGroupMembership'
+                type: object
+                properties:
+                  cardholders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AccessGroupMembership'
               example:
                 cardholders:
-                - href: https://localhost:8904/api/cardholders/325/access_groups/D714D8A89
+                - href: "https://host.com:8904/api/cardholders/325/access_groups/D714D8A89"
                   cardholder:
                     name: "Boothroyd, Algernon"
-                    href: https://localhost:8904/api/cardholders/325
+                    href: "https://host.com:8904/api/cardholders/325"
                   from: 2017-01-01T00:00:00Z
                   until: 2017-12-31T11:59:59Z
-                - href: https://localhost:8904/api/cardholders/329/access_groups/18DE901A1
+                - href: https://host.com:8904/api/cardholders/329/access_groups/18DE901A1
                   cardholder:
                     name: Miles Messervy
                   from: 2016-11-18T00:00:00Z
@@ -10847,8 +10897,6 @@ paths:
                 $ref: '#/components/examples/CardholderCardMobilePOSTExample'
               Physical card:
                 $ref: '#/components/examples/CardholderPOSTCardPhysicalExample'
-              PIV card:
-                $ref: '#/components/examples/PIVCardCreateExample'
         required: true
       responses:
         "201":
@@ -10994,11 +11042,11 @@ paths:
           memberships, etc.
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/CardholderPATCHExample'
             examples:
               Physical card:
                 $ref: '#/components/examples/CardholderPATCHCardPhysicalExample'
+              Mobile credential:
+                $ref: '#/components/examples/CardholderCardMobilePATCHExample'
         required: true
 
       responses:
@@ -14583,16 +14631,19 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/OperatorGroupMembership'
+                type: object
+                properties:
+                  cardholders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OperatorGroupMembership'
               example:
                 cardholders:
-                - href: https://localhost:8904/api/cardholders/325/operator_groups/EBDRSD
+                - href: https://host.com:8904/api/cardholders/325/operator_groups/EBDRSD
                   cardholder:
                     name: "Boothroyd, Algernon"
-                    href: https://localhost:8904/api/cardholders/325
-                - href: https://localhost:8904/api/cardholders/329/operator_groups/AFADEMED
+                    href: https://host.com:8904/api/cardholders/325
+                - href: https://host.com:8904/api/cardholders/329/operator_groups/AFADEMED
                   cardholder:
                     name: Miles Messervy
             
@@ -15648,14 +15699,6 @@ paths:
                     type: array
                     description: An array of visits. ***TODO*** change from the detail to the  summary
                     items: { $ref: '#/components/schemas/Visit' }
-                    example:
-                      - name: "Supervisor"
-                        id: "1383"
-                        href: "https://localhost:8904/api/visits/1383"
-                      - name: "Contract manager"
-                        id: "1399"
-                        href: "https://localhost:8904/api/visits/1399"
-                        serverDisplayName: "ruatoria.satellite.int"
                   next:
                     type: object
                     description: The link to the next page of results.  Absent if you have retrieved them all.
