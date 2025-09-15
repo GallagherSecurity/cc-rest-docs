@@ -2003,9 +2003,6 @@
                       <p>Disable Card. This privilege has no effect on the 7.90 REST API. You need Edit Cardholders to disable cards.</p>
                     </li>
                     <li>
-                      <p>Modify Access Control. This privilege does not work on its own. You need Edit Cardholders as well as Modify Access Control to change group memberships.</p>
-                    </li>
-                    <li>
                       <p>Add or Edit Cardholder Notes. You also need Edit Cardholders to change notes on an existing cardholder via the API. In the administrative clients, you do not.</p>
                     </li>
                     <li>
@@ -2520,7 +2517,7 @@
                       <div class="prop-title">4xx </div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have a privilege that allows editing that cardholder&#39;s access group memberships (such as &#39;Modify access control&#39;).</p>
+                      <p>The operator does not have a privilege that allows editing that cardholder&#39;s access group memberships plus &#39;Modify access control&#39; on the group.</p>
                     </div>
                   </div>
                 </section>
@@ -4769,7 +4766,7 @@
                       <div class="prop-title">400 Bad Request</div>
                     </div>
                     <div class="prop-value">
-                      <p>Deleting the access group failed. This happens when the item is still being used by another item.</p>
+                      <p>Deleting the access group failed. This happens when it still has members.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -19745,7 +19742,7 @@
                         <a href="events.html#operation--api-divisions-_operation_-get">division</a>. For example, both of these will work as visitor type hrefs:</p>
                       <p><code>https://localhost:8904/api/access_groups/925</code> (taken from another visit, or a search of access groups)</p>
                       <p><code>https://localhost:8904/api/divisions/2/visitor_types/925</code> (taken from a division config)</p>
-                      <p>Your operator must have the privilege to view the access group, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;. The &#39;Modify Access Control&#39; privilege is a good choice because it not only gives you a view of access groups but the ability to change cardholders&#39; membership of them, which you need to add visitors and visitor groups.</p>
+                      <p>Your operator must have the privilege to view the access group, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;. Having the &#39;Modify Access Control&#39; privilege on the group&#39;s division is a good choice because it not only gives you a view of access groups but the ability to change cardholders&#39; membership of them, which you need to add visitors and visitor groups.</p>
                     </dd>
                     <dt data-property-name="host" class="has-description">
                       <span class="json-property-name">host:</span>
@@ -19800,7 +19797,7 @@
                       <p>The visitor access groups on a visit must be a subset of the visitor access groups on the division&#39;s visitor type (in the list of visitor access groups in the visit&#39;s reception&#39;s division&#39;s visitor management configuration, in other words).</p>
                       <p>When you send a visitor access group block to the server in a POST, just send an array of access group hrefs. 8.50 does not accept the same kind of visitor access group hrefs here that it sends, so this is one reason why you cannot copy a visit by POSTing back the JSON from a GET.</p>
                       <p>When you send a visitor access group block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain access group hrefs, exactly as you would send when creating a visit. The <code>remove</code> array can contain access group hrefs or the hrefs you received in the GET. The PATCH example shows two hrefs trying to remove the same access group.</p>
-                      <p>Your operator must have a privilege such as &#39;Modify Access Control&#39; that allows viewing the access groups and adding and removing cardholders to and from them, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;.</p>
+                      <p>Your operator must have a privilege on the groups&#39; divisions that allows viewing the access groups and adding and removing cardholders to and from them, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;. &#39;Modify Access Control&#39; is a good choice.</p>
                     </dd>
                     <dt data-property-name="visitors" class="has-description">
                       <span class="json-property-name">visitors:</span>
@@ -20038,7 +20035,7 @@
                         <a href="events.html#operation--api-divisions-_operation_-get">division</a>. For example, both of these will work as visitor type hrefs:</p>
                       <p><code>https://localhost:8904/api/access_groups/925</code> (taken from another visit, or a search of access groups)</p>
                       <p><code>https://localhost:8904/api/divisions/2/visitor_types/925</code> (taken from a division config)</p>
-                      <p>Your operator must have the privilege to view the access group, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;. The &#39;Modify Access Control&#39; privilege is a good choice because it not only gives you a view of access groups but the ability to change cardholders&#39; membership of them, which you need to add visitors and visitor groups.</p>
+                      <p>Your operator must have the privilege to view the access group, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;. Having the &#39;Modify Access Control&#39; privilege on the group&#39;s division is a good choice because it not only gives you a view of access groups but the ability to change cardholders&#39; membership of them, which you need to add visitors and visitor groups.</p>
                     </dd>
                     <dt data-property-name="host" class="has-description">
                       <span class="json-property-name">host:</span>
@@ -20096,7 +20093,7 @@
                       <p>The visitor access groups on a visit must be a subset of the visitor access groups on the division&#39;s visitor type (in the list of visitor access groups in the visit&#39;s reception&#39;s division&#39;s visitor management configuration, in other words).</p>
                       <p>When you send a visitor access group block to the server in a POST, just send an array of access group hrefs. 8.50 does not accept the same kind of visitor access group hrefs here that it sends, so this is one reason why you cannot copy a visit by POSTing back the JSON from a GET.</p>
                       <p>When you send a visitor access group block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain access group hrefs, exactly as you would send when creating a visit. The <code>remove</code> array can contain access group hrefs or the hrefs you received in the GET. The PATCH example shows two hrefs trying to remove the same access group.</p>
-                      <p>Your operator must have a privilege such as &#39;Modify Access Control&#39; that allows viewing the access groups and adding and removing cardholders to and from them, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;.</p>
+                      <p>Your operator must have a privilege on the groups&#39; divisions that allows viewing the access groups and adding and removing cardholders to and from them, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;. &#39;Modify Access Control&#39; is a good choice.</p>
                     </dd>
                     <dt data-property-name="visitors" class="has-description">
                       <span class="json-property-name">visitors:</span>
@@ -20302,7 +20299,7 @@
                         <a href="events.html#operation--api-divisions-_operation_-get">division</a>. For example, both of these will work as visitor type hrefs:</p>
                       <p><code>https://localhost:8904/api/access_groups/925</code> (taken from another visit, or a search of access groups)</p>
                       <p><code>https://localhost:8904/api/divisions/2/visitor_types/925</code> (taken from a division config)</p>
-                      <p>Your operator must have the privilege to view the access group, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;. The &#39;Modify Access Control&#39; privilege is a good choice because it not only gives you a view of access groups but the ability to change cardholders&#39; membership of them, which you need to add visitors and visitor groups.</p>
+                      <p>Your operator must have the privilege to view the access group, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;. Having the &#39;Modify Access Control&#39; privilege on the group&#39;s division is a good choice because it not only gives you a view of access groups but the ability to change cardholders&#39; membership of them, which you need to add visitors and visitor groups.</p>
                     </dd>
                     <dt data-property-name="host" class="has-description">
                       <span class="json-property-name">host:</span>
@@ -20357,7 +20354,7 @@
                       <p>The visitor access groups on a visit must be a subset of the visitor access groups on the division&#39;s visitor type (in the list of visitor access groups in the visit&#39;s reception&#39;s division&#39;s visitor management configuration, in other words).</p>
                       <p>When you send a visitor access group block to the server in a POST, just send an array of access group hrefs. 8.50 does not accept the same kind of visitor access group hrefs here that it sends, so this is one reason why you cannot copy a visit by POSTing back the JSON from a GET.</p>
                       <p>When you send a visitor access group block in a PATCH to edit an existing visit, the server expects it to contain one or two arrays called <code>add</code> and <code>remove</code>. The <code>add</code> array should contain access group hrefs, exactly as you would send when creating a visit. The <code>remove</code> array can contain access group hrefs or the hrefs you received in the GET. The PATCH example shows two hrefs trying to remove the same access group.</p>
-                      <p>Your operator must have a privilege such as &#39;Modify Access Control&#39; that allows viewing the access groups and adding and removing cardholders to and from them, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;.</p>
+                      <p>Your operator must have a privilege on the groups&#39; divisions that allows viewing the access groups and adding and removing cardholders to and from them, otherwise you will be told &#39;Access denied when writing to one or more fields&#39;. &#39;Modify Access Control&#39; is a good choice.</p>
                     </dd>
                     <dt data-property-name="visitors" class="has-description">
                       <span class="json-property-name">visitors:</span>

@@ -561,9 +561,10 @@ x-common-blocks:
       `https://localhost:8904/api/divisions/2/visitor_types/925` (taken from a division config)
 
       Your operator must have the privilege to view the access group, otherwise you will be told
-      'Access denied when writing to one or more fields'.  The 'Modify Access Control' privilege
-      is a good choice because it not only gives you a view of access groups but the ability to
-      change cardholders' membership of them, which you need to add visitors and visitor groups.
+      'Access denied when writing to one or more fields'.  Having the 'Modify Access Control'
+      privilege on the group's division is a good choice because it not only gives you a view of
+      access groups but the ability to change cardholders' membership of them, which you need to add
+      visitors and visitor groups.
     example:
       href: "https://localhost:8904/api/divisions/2/v_t/925"
       accessGroup:
@@ -636,9 +637,9 @@ x-common-blocks:
       array can contain access group hrefs or the hrefs you received in the GET.  The PATCH example
       shows two hrefs trying to remove the same access group.
 
-      Your operator must have a privilege such as 'Modify Access Control' that allows viewing
-      the access groups and adding and removing cardholders to and from them, otherwise you will be
-      told 'Access denied when writing to one or more fields'.
+      Your operator must have a privilege on the groups' divisions that allows viewing the access
+      groups and adding and removing cardholders to and from them, otherwise you will be told
+      'Access denied when writing to one or more fields'.  'Modify Access Control' is a good choice.
 
     example:
     - accessGroup:
@@ -6206,9 +6207,6 @@ paths:
           - Disable Card.  This privilege has no effect on the 7.90 REST API.  You need
             Edit Cardholders to disable cards.
 
-          - Modify Access Control.  This privilege does not work on its own.  You need
-            Edit Cardholders as well as Modify Access Control to change group memberships.
-
           - Add or Edit Cardholder Notes.  You also need Edit Cardholders to change notes
             on an existing cardholder via the API.  In the administrative clients, you do
             not.
@@ -6326,7 +6324,7 @@ paths:
         4xx:
           description: |
             The operator does not have a privilege that allows editing that cardholder's access
-            group memberships (such as 'Modify access control').
+            group memberships plus 'Modify access control' on the group.
 
   /api/cardholders/{id}/cards/{card_id}:
     delete:
@@ -7095,8 +7093,7 @@ paths:
         204: { description: "Success." }
         400:
           description: |
-            Deleting the access group failed.  This happens when the item is still being used by
-            another item.
+            Deleting the access group failed.  This happens when it still has members.
         403:
           description: |
             The operator has the permission to view the item but not delete it, or the server does
