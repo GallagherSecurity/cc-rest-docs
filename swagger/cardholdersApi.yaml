@@ -1867,6 +1867,7 @@ definitions:
               True if this cardholder should not have the numbers on an alarms terminal scrambled
               when the terminal is configured as a cipher pad.  Usually the reason is a vision
               impairment, making a randomised keypad impracticable.
+
           usercode:
             type: string
             example: "numeric, and write-only"
@@ -3040,6 +3041,14 @@ definitions:
           `fields=cards.lastPrintedOrEncodedIssueLevel`.
 
           Added in 8.40.
+      lastUsedTime:
+        description: |
+          The most recent time the corresponding credential was used at a Gallagher controller, or
+          an operator performed certain operations on it (such as enabling it).
+        type: string
+        format: date-time
+        readOnly: true
+        example: 2025-09-24T14:00:00Z
       pin:
         type: string
         example: "153624"
