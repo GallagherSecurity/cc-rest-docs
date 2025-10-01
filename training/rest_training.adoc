@@ -1206,7 +1206,7 @@ is there to support searching for events. `card_types`, `competencies`,
 `access_groups`, `roles`, `operator_groups`, and `locker_banks` let you
 find items to attach to cardholders.
 
-All controllers’ names are plural, and pothole_cased. You can find links
+Controller names are plural, as a rule, and pothole_cased. You can find links
 to them all with
 
 ....
@@ -3436,29 +3436,49 @@ status').
 
 There is a lot more on the topic in the reference documentation.
 
-=== Subscribing to updates (one item at a time, pre-8.30) TODO
+=== Subscribing to updates (one item at a time, pre-8.30)
 
-This section TODO. What follows is a broad outline of what the section
-should contain.
+You really should be using bulk item updates, covered in the section
+below, because monitoring one item at a time requires one TCP
+connection per item. So why use this?
 
-GET the `updates` link on an item’s details page. It is a long poll, so
-the server won’t respond until it has something for you (or it times out
-after about 50s). Then stay up to date by entering a loop GETting the
-`next` link.
-
-You really should be using bulk item updates, in the section below, because this method requires one
-TCP connection per monitored item. Why use this?
-
-* You’re not running 8.30 yet, or
-* you’re monitoring only one item and want a slightly simpler call, or
+* You are not running 8.30 yet, or
+* you are monitoring only one item and want a slightly simpler call, or
 * your client wants to wait longer than 30s between GETs (but it is hard
   to imagine a client needing that).
 
-=== Subscribing to updates (many items, 8.30+) TODO
+Because those are all extremely unlikely, this section does not cover
+the process in great detail.  But this is it:
 
-A rough outline: GET `/api` then POST a document to the link at
-`features.items.updates` (which is `/api/items/updates` in 8.30, but may
-change, which is why you should use the page at `/api`).
+1. GET the item's details page.
+2. Follow the link called `updates` on that page.
+3. It is a long poll, so the server won’t respond until it has
+   something for you (or it times out after about 50s).
+3. Process the results.
+4. Sleep a short while to avoid a tight loop.
+5. Stay up to date by following the `next` link.  That takes you back
+   to step three.
+
+
+=== Subscribing to updates (many items, 8.30+)
+
+Here is your process:
+
+1. GET `/api`, as ever.
+2. Use the API to get the IDs of the items you want to monitor.
+3. POST a document to the link at `features.items.updates` (which is
+   `/api/items/updates` in 8.30, but may change, which is why you
+   should use the page at `/api`).  The body of the POST should
+   contain the IDs of your items.  There is an example below.
+4. The POST will return with the status of all your items and a `next`
+   link.
+5. Process the results.
+6. Sleep briefly to avoid tight loops.  But not longer than 30s,
+   otherwise the server will drop your session, thinking you have
+   walked away.
+7. GET the `next` link.
+8. Go to step five.
+
 
 The body of your POST should look like this:
 
@@ -3467,26 +3487,24 @@ The body of your POST should look like this:
 {  "itemIds": ["508", "526"]  }
 ----
 
-Those numbers are item IDs. Even though they look like integers they
-must be in quotes because in the future they could contain alphas. Place
-as many in the array as you like. We tested 1,000 without it affecting
-performance.
+Those numbers are item IDs.  Even though they look like integers they
+must be in quotes because in the future they could contain alphas.
+Place as many in the array as you like.  We tested 1,000 without it
+affecting performance.
 
-The POST will return with the status of all your items and a next link.
-GET that link, and keep GETting it in a loop to stay up to date. The
-calls will block if there are no changes to report. Sleep between calls
-to avoid tight loops. But not longer than 30s, otherwise the server will
-drop your session, thinking you have walked away.
+This is JSON, so all the whitespace is optional: omit it if you have
+thousands of items.
 
-The first GET will return the same states that the POST did, which seems
-redundant, but that is just the way it is. Just keep looping.
+In early versions of Command Centre the first GET will return the same
+states that the POST did, which seems redundant, but that is just the
+way it was. Just keep looping.
 
-This is a far better way of monitoring multiple items that the previous
-because it only uses one server connection per client.
+This is a far better way of monitoring multiple items that the
+previous because it only uses one server connection per client.
 
-At time of writing (8.80) this is the only API call that maintains state
-between calls.  All the others require their context to arrive with the
-query.
+At time of writing (9.40) this is the only API call that maintains
+state between calls.  All the others require their context to arrive
+with the query.
 
 === Schedules and day categories TODO
 
