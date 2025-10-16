@@ -3666,6 +3666,41 @@ reduced.
 For a lot more detail about the API gateway, see its technical information paper at
 https://gallaghersecurity.github.io/docs/Command%20Centre%20Cloud%20Api%20Gateway%20TIP.pdf
 
+=== Connecting your server to the cloud gateway
+
+1. In the Configuration Client, pick 'Services and Workstations' from the Configure menu.
+
+2. Right-click in the window that appears, then choose New → Command Centre Cloud.
+
+3. Name the item in the General tab.  This does not need to be too descriptive since each site only
+   has the one.
+
+4. Go to the Configuration tab and tick 'Enable Gallagher API Gateway', then select the region
+   closest to your server.
+
+5. You also need to set "Default country code for SMS Verification" even though it will only be used
+   by those working with the Mobile Connect SDK.
+
+Apply or save the item.
+
+You can now check the 'Status and Overrides' tab to see if Command Centre has connected to the
+cloud.  Expect 'Receive: Online' and 'Send: Idle'.
+
+image::cloud_item.png[Connecting Command Centre to the Gallagher API gateway,title="Connecting to the cloud API gateway"]
+
+=== Enabling cloud clients to reach REST Client items
+
+To limit the exposure of REST Client items, each determines its own visibility through the public IP
+addresses in the cloud.  All are turned off by default.
+
+To turn it on, first open your REST Client items in the Configuration Client's 'Configure' menu in
+the 'Services and Workstations' item.
+
+Then open the REST Client(s) that you want to be reachable via the cloud and turn on 'Allow
+connection via the Gallagher API Gateway' in the Connections tab.
+
+image::rest_client_gateway.png[Allowing a client through the gateway,title="Enabling the gateway per client"]
+
 == Securing your API
 
 * Use a firewall.  The API's default port is 8904.
