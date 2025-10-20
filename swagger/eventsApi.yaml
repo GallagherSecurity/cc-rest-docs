@@ -738,7 +738,7 @@ x-spectacle-topics:
       calling.
 
       In 8.10 and earlier the only field you can add is `cardholder.pdf_XXXX`, where XXXX is the ID
-      of a PDF.  Find that ID with a query to the [PDFs
+      of a personal data field.  Find that ID with a query to the [PDFs
       controller](cardholders.html#operation--api-personal_data_fields-get).  Don't forget a
       separating comma between it and `defaults`.
 
@@ -1345,9 +1345,10 @@ paths:
         required: false
         type: string
         description: |
-          Restricts events to those whose type has this ID.  Separate multiple IDs with commas.
+          Restricts events to those whose type is in this list.  Separate multiple IDs with commas.
 
-          The results may include other event types if you also use the `group` parameter, below.
+          The results may include other event types if you also use the `group` parameter
+          because the `type` and `group` fields are combined as an 'OR', not an 'AND'.
 
           Use the [event groups call](#operation--api-events-groups-get) to see all event types.
           The IDs you need for this query parameter are strings but look like small integers.  That

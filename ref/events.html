@@ -512,7 +512,7 @@
                 <p>In 8.40 and later the values you can list are the same as the field names in the
                   <a href="#definition-Event-detail">details page</a>, plus the special value for a personal data field described below. You can pick whichever fields you want, including <code>defaults</code>, though we urge you to only list the fields you need. Anything you wrote for 8.30 or earlier will work in 8.40 as it did before.</p>
                 <p>In versions up to 8.30 you can only add fields to the event summary and details pages, not remove them. If you send the parameter it must start with <code>fields=defaults</code>. That gives you the default set. What you can add after that depends on the version of Command Centre you&#39;re calling.</p>
-                <p>In 8.10 and earlier the only field you can add is <code>cardholder.pdf_XXXX</code>, where XXXX is the ID of a PDF. Find that ID with a query to the
+                <p>In 8.10 and earlier the only field you can add is <code>cardholder.pdf_XXXX</code>, where XXXX is the ID of a personal data field. Find that ID with a query to the
                   <a href="cardholders.html#operation--api-personal_data_fields-get">PDFs controller</a>. Don&#39;t forget a separating comma between it and <code>defaults</code>.</p>
                 <p>That will add a cardholder&#39;s PDF to the events that are related to them.</p>
                 <p>You can only pick one PDF. It will only appear on events that have a related cardholder, such as access events, because without a cardholder there is no PDF. The security model applies too, so it will only appear if your REST operator has the appropriate privileges on that cardholder and PDF.</p>
@@ -2759,8 +2759,8 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Restricts events to those whose type has this ID. Separate multiple IDs with commas.</p>
-                      <p>The results may include other event types if you also use the <code>group</code> parameter, below.</p>
+                      <p>Restricts events to those whose type is in this list. Separate multiple IDs with commas.</p>
+                      <p>The results may include other event types if you also use the <code>group</code> parameter because the <code>type</code> and <code>group</code> fields are combined as an &#39;OR&#39;, not an &#39;AND&#39;.</p>
                       <p>Use the
                         <a href="#operation--api-events-groups-get">event groups call</a> to see all event types. The IDs you need for this query parameter are strings but look like small integers. That call shows the event types along with the groups they are in, so do not confuse event types with event groups. They are separated in the results of the API call, but as a general rule you can tell them apart by their integer value: event group IDs are in the hundreds, while most event type IDs are in the thousands.</p>
                       <p>In version 9.00 and later use the special value <code>hasLocation</code> to include all event types that can reveal a cardholder&#39;s location or access zone. In 9.00 it is a set of about 80 event types; it may be more in future versions. If you use <code>hasLocation</code> you probably also want to ask for the <code>location</code> block using the <code>fields</code> query parameter.</p>

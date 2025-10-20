@@ -69,7 +69,7 @@ info:
     #### Cardholder API changes on the roadmap
 
     * You will be able to create, delete, and change the the basic configuration of
-      roles, PDFs, and card types.
+      roles, personal data fields (PDFs), and card types.
 
     * POTENTIALLY BREAKING CHANGE:  searching for cardholders using `pdf_xxx=""` or `pdf_xxx=`
       currently returns no cardholders.  That is neither useful nor desired.  Instead, a future
@@ -87,7 +87,7 @@ info:
 
     * A cardholder's visits and escort.
 
-    * "Revealable" access levels on PDFs.
+    * "Revealable" access levels on personal data fields (PDFs).
 
     * Current versions of the API only show a PDF on a cardholder if he or she has a value for that
       PDF.  That makes it difficult to find out which PDFs a cardholder _could_ have, so a future
@@ -266,7 +266,7 @@ info:
 
     * A [card types API](#operation--api-card_types-assign-get) that returns the card types your
       operator is able to use when assigning cards to cardholders.
-    * A [PDF API](#operation--api-personal_data_fields-get) that returns the PDF definitions your
+    * A [PDF API](#operation--api-personal_data_fields-get) that returns the personal data field definitions your
       operator is able to see.
 
     * You can change the [notifications flag](#definition-Cardholder-PATCH-example) on a
@@ -276,7 +276,7 @@ info:
 
     ### Efficiency tips
 
-    * When searching for a cardholder (or any other object) by name or PDF value, if you have the
+    * When searching for a cardholder (or any other object) by name or personal data, if you have the
       exact string, put it in quotes `"..."`.  It is still a case-insensitive search but it attempts
       to match the entire string.  Without the quotes Command Centre will perform a substring
       search, which is slower and may return more results than you need.  In one test, a substring
@@ -302,7 +302,7 @@ info:
     * In version 8.00 or later, use the [`fields` parameter](#topic-Field-specifiers) to add fields
       to the results of a search, saving you GETting the details page.
 
-      For example, to see the names, PDFs, and access groups of all your cardholders:
+      For example, to see the names, personal data fields, and access groups of all your cardholders:
 
         `GET /api/cardholders?sort=id&top=10000 &fields=firstname,lastname,personalDataFields,accessGroups`
 
@@ -2764,11 +2764,13 @@ definitions:
       cardSerialNumber:
         description: |
           The serial number (CSN, MIFARE UID) of a physical access card as a hex string without a
-          leading '0x'.
+          leading '0x'.  The number is encoded in the traditional way, with an even number of
+          numbers and the letters from 'A' through 'F', but the '0x' is missing when it comes out of
+          the API and it must be missing when you send it back.
 
           The example in this example shows a seven-byte serial in the order you can expect in a GET
           and should use in a PATCH or POST.  Those on NXP MIFARE cards start with 04 and end with
-          80.
+          80 or 90.
 
           Four-byte serial numbers are in the same format, but shorter: `"EBD62D25"`, for example.
 

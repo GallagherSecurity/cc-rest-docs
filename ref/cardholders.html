@@ -378,7 +378,7 @@
                 <h4 id="cardholder-api-changes-on-the-roadmap">Cardholder API changes on the roadmap</h4>
                 <ul>
                   <li>
-                    <p>You will be able to create, delete, and change the the basic configuration of roles, PDFs, and card types.</p>
+                    <p>You will be able to create, delete, and change the the basic configuration of roles, personal data fields (PDFs), and card types.</p>
                   </li>
                   <li>
                     <p>POTENTIALLY BREAKING CHANGE: searching for cardholders using <code>pdf_xxx=&quot;&quot;</code> or <code>pdf_xxx=</code> currently returns no cardholders. That is neither useful nor desired. Instead, a future version of Command Centre will return cardholders with a blank value for that PDF.</p>
@@ -393,7 +393,7 @@
                     <p>A cardholder&#39;s visits and escort.</p>
                   </li>
                   <li>
-                    <p>&quot;Revealable&quot; access levels on PDFs.</p>
+                    <p>&quot;Revealable&quot; access levels on personal data fields (PDFs).</p>
                   </li>
                   <li>
                     <p>Current versions of the API only show a PDF on a cardholder if he or she has a value for that PDF. That makes it difficult to find out which PDFs a cardholder
@@ -610,7 +610,7 @@
                   </li>
                   <li>
                     <p>A
-                      <a href="#operation--api-personal_data_fields-get">PDF API</a> that returns the PDF definitions your operator is able to see.</p>
+                      <a href="#operation--api-personal_data_fields-get">PDF API</a> that returns the personal data field definitions your operator is able to see.</p>
                   </li>
                   <li>
                     <p>You can change the
@@ -623,7 +623,7 @@
                 <h3 id="efficiency-tips">Efficiency tips</h3>
                 <ul>
                   <li>
-                    <p>When searching for a cardholder (or any other object) by name or PDF value, if you have the exact string, put it in quotes <code>&quot;...&quot;</code>. It is still a case-insensitive search but it attempts to match the entire string. Without the quotes Command Centre will perform a substring search, which is slower and may return more results than you need. In one test, a substring search of half a million cardholders took more than ten seconds, but with quotes it took a tenth of a second. That is a 100x speedup. If the server believes you have omitted the quotes in error, it will include a polite reminder in its results.</p>
+                    <p>When searching for a cardholder (or any other object) by name or personal data, if you have the exact string, put it in quotes <code>&quot;...&quot;</code>. It is still a case-insensitive search but it attempts to match the entire string. Without the quotes Command Centre will perform a substring search, which is slower and may return more results than you need. In one test, a substring search of half a million cardholders took more than ten seconds, but with quotes it took a tenth of a second. That is a 100x speedup. If the server believes you have omitted the quotes in error, it will include a polite reminder in its results.</p>
                   </li>
                   <li>
                     <p>When downloading a significant number of items, sort by ID.</p>
@@ -669,7 +669,7 @@
                   <li>
                     <p>In version 8.00 or later, use the
                       <a href="#topic-Field-specifiers"><code>fields</code> parameter</a> to add fields to the results of a search, saving you GETting the details page.</p>
-                    <p>For example, to see the names, PDFs, and access groups of all your cardholders:</p>
+                    <p>For example, to see the names, personal data fields, and access groups of all your cardholders:</p>
                     <p> <code>GET /api/cardholders?sort=id&amp;top=10000 &amp;fields=firstname,lastname,personalDataFields,accessGroups</code></p>
                     <p>It adds to the payload size, though, so only do this if you are certain that the search will not return too many cardholders you are not interested in.</p>
                   </li>
@@ -13719,8 +13719,8 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The serial number (CSN, MIFARE UID) of a physical access card as a hex string without a leading &#39;0x&#39;.</p>
-                      <p>The example in this example shows a seven-byte serial in the order you can expect in a GET and should use in a PATCH or POST. Those on NXP MIFARE cards start with 04 and end with 80.</p>
+                      <p>The serial number (CSN, MIFARE UID) of a physical access card as a hex string without a leading &#39;0x&#39;. The number is encoded in the traditional way, with an even number of numbers and the letters from &#39;A&#39; through &#39;F&#39;, but the &#39;0x&#39; is missing when it comes out of the API and it must be missing when you send it back.</p>
+                      <p>The example in this example shows a seven-byte serial in the order you can expect in a GET and should use in a PATCH or POST. Those on NXP MIFARE cards start with 04 and end with 80 or 90.</p>
                       <p>Four-byte serial numbers are in the same format, but shorter: <code>&quot;EBD62D25&quot;</code>, for example.</p>
                       <p>This may not be not present on older cards.</p>
                       <p>This field was read-only until 7.90. It is read-write in 8.00 and later.</p>
