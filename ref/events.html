@@ -2486,6 +2486,10 @@
                     <a href="#operation--api-events-groups-get">event type</a>. 8.10 ships with 30 external event types you can use, each in its own event type group.</p>
                   <p>You can create 970 of your own event types using the External Event Type Configuration Utility, a separate Windows application that lets you create external event types and make them appear on items&#39; Event Response and Alarm Instructions tabs in the Configuration Client. You will find the release note for that utility in the Documentation folder on the installation media.</p>
                   <p>1000 event types sounds like a lot, but be aware that you cannot delete event types, and the only thing you can modify on an existing event type is its name. Their event type group and item types are permanent once you save them from the utility. Please plan carefully, and take backups!</p>
+                  <h4 id="a-note-on-event-type-groups">A note on event type groups</h4>
+                  <p>There is much confusion between event types and groups.</p>
+                  <p>You do not specify a type
+                    <em>group</em> when creating a new event. You specify a type. The parts of Command Centre that work with the event later will look up what group the event type is in, principally to select an action plan to run, but you do not need to consider groups when creating the event.</p>
                   <h4 id="usable-source-items">Usable source items</h4>
                   <p>Every event needs a source item. You can let the server pick one for you (it will use the REST Client item identified by your API key) or you can use any item that has an &#39;Event Response&#39; tab in its Configuration Client window (which is most of them). Our existing integrations use items like doors, external system items, and cameras.</p>
                   <p>If you allow the server to default to your REST client item as the source, or if specify it yourself, your operator must have &#39;Create events and alarms&#39; in at least one division for the call to succeed. Any division will do. Otherwise you&#39;ll receive a 403.</p>
@@ -6934,7 +6938,7 @@
                       <span class="json-property-required"></span>
                     </dt>
                     <dd>
-                      <p>Synonym for <code>type</code>, introduced in 8.90.</p>
+                      <p>Synonym for <code>type</code>, introduced in 8.90 for parity with alarms.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
