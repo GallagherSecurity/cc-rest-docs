@@ -66,6 +66,8 @@ info:
     The body of this document clearly indicates when recent features arrived in the API so that
     readers with older versions of Command Centre know not to expect them.
 
+    Changes after 9.30 are listed in the [parent page](..).
+
     #### Cardholder API changes on the roadmap
 
     * You will be able to create, delete, and change the the basic configuration of
@@ -77,17 +79,17 @@ info:
 
     * POTENTIALLY BREAKING CHANGE:  the API route that lets you modify a cardholder by PATCH also
       works if you send it a POST.  It should not, because POSTs create things, not modify them.
-      The fix will break clients that rely on this.  There should be none, since the POST was not
-      documented.
+      The fix will break clients that rely on the cardholder POST acting like the PATCH.  No clients
+      should be doing that since the POST was not documented.
 
     * POTENTIALLY BREAKING CHANGE:  in future, PATCH methods will return "200 Success" instead of
       "204 No Content" and may contain the object you modified plus a message from the API giving
       you feedback on your request.  Please be aware that all 200-level response codes mean success,
       not just the ones old versions have been sending you.
 
-    * A cardholder's visits and escort.
+    * A cardholder will contain its visits and escort.
 
-    * "Revealable" access levels on personal data fields (PDFs).
+    * Personal data fields (PDFs) will include "revealable" access levels.
 
     * Current versions of the API only show a PDF on a cardholder if he or she has a value for that
       PDF.  That makes it difficult to find out which PDFs a cardholder _could_ have, so a future
@@ -1927,6 +1929,24 @@ definitions:
               a cardholder's properties in the Configuration Client.
 
               Send the empty string `""` to clear it.
+          oidcLoginEnabled:
+            type: boolean
+            example: true
+            description: |
+              True if this operator can log in to the interactive Command Centre clients using their
+              Entra ID username.  Note that a cardholder also needs a privilege to use the
+              Configuration Client.
+
+              Added in 9.50.
+          oidcUserId:
+            type: string
+            description: |
+              This user's Entra ID username.  This should be the operator's Entra ID 'User Principal
+              Name' found in the overview of the user’s details in Entra ID admin centre.
+
+              Send the empty string `""` to clear it.
+
+              Added in 9.50.
           personalDataDefinitions:
             type: array
             description: |

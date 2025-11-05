@@ -375,6 +375,8 @@
                 <p>The server will return a 403 if you attempt an operation for which the server is not licensed.</p>
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
+                <p>Changes after 9.30 are listed in the
+                  <a href="..">parent page</a>.</p>
                 <h4 id="cardholder-api-changes-on-the-roadmap">Cardholder API changes on the roadmap</h4>
                 <ul>
                   <li>
@@ -384,16 +386,16 @@
                     <p>POTENTIALLY BREAKING CHANGE: searching for cardholders using <code>pdf_xxx=&quot;&quot;</code> or <code>pdf_xxx=</code> currently returns no cardholders. That is neither useful nor desired. Instead, a future version of Command Centre will return cardholders with a blank value for that PDF.</p>
                   </li>
                   <li>
-                    <p>POTENTIALLY BREAKING CHANGE: the API route that lets you modify a cardholder by PATCH also works if you send it a POST. It should not, because POSTs create things, not modify them. The fix will break clients that rely on this. There should be none, since the POST was not documented.</p>
+                    <p>POTENTIALLY BREAKING CHANGE: the API route that lets you modify a cardholder by PATCH also works if you send it a POST. It should not, because POSTs create things, not modify them. The fix will break clients that rely on the cardholder POST acting like the PATCH. No clients should be doing that since the POST was not documented.</p>
                   </li>
                   <li>
                     <p>POTENTIALLY BREAKING CHANGE: in future, PATCH methods will return &quot;200 Success&quot; instead of &quot;204 No Content&quot; and may contain the object you modified plus a message from the API giving you feedback on your request. Please be aware that all 200-level response codes mean success, not just the ones old versions have been sending you.</p>
                   </li>
                   <li>
-                    <p>A cardholder&#39;s visits and escort.</p>
+                    <p>A cardholder will contain its visits and escort.</p>
                   </li>
                   <li>
-                    <p>&quot;Revealable&quot; access levels on personal data fields (PDFs).</p>
+                    <p>Personal data fields (PDFs) will include &quot;revealable&quot; access levels.</p>
                   </li>
                   <li>
                     <p>Current versions of the API only show a PDF on a cardholder if he or she has a value for that PDF. That makes it difficult to find out which PDFs a cardholder
@@ -1764,6 +1766,8 @@
   <span class="hljs-attr">&quot;operatorPasswordExpired&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;windowsLoginEnabled&quot;</span>: <span class="hljs-literal">true</span>,
   <span class="hljs-attr">&quot;windowsUsername&quot;</span>: <span class="hljs-string">&quot;misix.local\\qmaster&quot;</span>,
+  <span class="hljs-attr">&quot;oidcLoginEnabled&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;oidcUserId&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
   <span class="hljs-attr">&quot;personalDataDefinitions&quot;</span>: [
     {
       <span class="hljs-attr">&quot;@Student ID&quot;</span>: {
@@ -12173,6 +12177,25 @@
                           <p>This user&#39;s Windows username. For an example of the format that will work in your organisation, look in the &#39;Windows logon&#39; field of the &#39;Operator configuration&#39; tab of a cardholder&#39;s properties in the Configuration Client.</p>
                           <p>Send the empty string <code>&quot;&quot;</code> to clear it.</p>
                         </dd>
+                        <dt data-property-name="oidcLoginEnabled" class="has-description">
+                          <span class="json-property-name">oidcLoginEnabled:</span>
+                          <span class="json-property-type">boolean</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>True if this operator can log in to the interactive Command Centre clients using their Entra ID username. Note that a cardholder also needs a privilege to use the Configuration Client.</p>
+                          <p>Added in 9.50.</p>
+                        </dd>
+                        <dt data-property-name="oidcUserId" class="has-description">
+                          <span class="json-property-name">oidcUserId:</span>
+                          <span class="json-property-type">string</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>This user&#39;s Entra ID username. This should be the operator&#39;s Entra ID &#39;User Principal Name&#39; found in the overview of the user’s details in Entra ID admin centre.</p>
+                          <p>Send the empty string <code>&quot;&quot;</code> to clear it.</p>
+                          <p>Added in 9.50.</p>
+                        </dd>
                         <dt data-property-name="personalDataDefinitions" class="has-description">
                           <span class="json-property-name">personalDataDefinitions:</span>
                           <span class="json-property-type">
@@ -12479,6 +12502,8 @@
   <span class="hljs-attr">&quot;operatorPasswordExpired&quot;</span>: <span class="hljs-literal">false</span>,
   <span class="hljs-attr">&quot;windowsLoginEnabled&quot;</span>: <span class="hljs-literal">true</span>,
   <span class="hljs-attr">&quot;windowsUsername&quot;</span>: <span class="hljs-string">&quot;misix.local\\qmaster&quot;</span>,
+  <span class="hljs-attr">&quot;oidcLoginEnabled&quot;</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">&quot;oidcUserId&quot;</span>: <span class="hljs-string">&quot;string&quot;</span>,
   <span class="hljs-attr">&quot;personalDataDefinitions&quot;</span>: [
     {
       <span class="hljs-attr">&quot;@Student ID&quot;</span>: {
