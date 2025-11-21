@@ -73,6 +73,10 @@ info:
     * You will be able to create, delete, and change the the basic configuration of
       roles, personal data fields (PDFs), and card types.
 
+    * POTENTIALLY BREAKING CHANGE:  the API route that returns the value of a date PDF presents it
+      in a format specific to the server's locale.  '21/11/2025 12:00:00 am", for example.  A future
+      version will change to an internet standard.
+
     * POTENTIALLY BREAKING CHANGE:  searching for cardholders using `pdf_xxx=""` or `pdf_xxx=`
       currently returns no cardholders.  That is neither useful nor desired.  Instead, a future
       version of Command Centre will return cardholders with a blank value for that PDF.
@@ -6757,7 +6761,7 @@ paths:
         type: array
         items: { type: string }
         default: ['defaults']
-        enum:  [href, id, firstName, lastName, shortName, description, authorised, lastSuccessfulAccessZone, division, notes, useExtendedAccessTime, personalDataFields, operatorLoginEnabled, operatorUsername, operatorPassword, operatorPasswordExpired, windowsLoginEnabled, windowsUsername, cards, accessGroups, competencies, notifications, relationships, lockers]
+        enum:  [href, id, firstName, lastName, shortName, description, authorised, lastSuccessfulAccessZone, division, notes, useExtendedAccessTime, personalDataFields, operatorLoginEnabled, operatorUsername, operatorPassword, operatorPasswordExpired, windowsLoginEnabled, windowsUsername, oidcLoginEnabled, oidcUserId, cards, accessGroups, competencies, notifications, relationships, lockers]
 
         description: |
           Limits the search results to the changes that affected these fields, and limits the
