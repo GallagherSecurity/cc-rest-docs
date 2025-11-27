@@ -2675,10 +2675,27 @@ definitions:
             description: |
               GET this link to receive this cardholder's value for this PDF.  If it is an image you will
               receive the raw image data with an appropriate content-type.  A browser will render it
-              correctly.  If the PDF is not an image the content type will be text/plain, encoded (like
-              everything else in this API) as UTF-8.
+              correctly.
+
+              This field will be absent if the cardholder does not have a value for the PDF.
 
               It is read-only:  do not send it in a PATCH or POST.
+
+              If the PDF is not an image the content type will be text/plain, encoded (like
+              everything else in this API) as UTF-8.  But you should only use it for image PDFs
+              because:
+
+              * Values for scalar PDF types (everything except images) are also given to you in the
+                `value` field in this object, described below.
+
+              * The format of date PDFs varies with the Command Centre version.  Old servers return
+                it in a format that depends on the server's locale.  This was a bug.  Newer servers
+                use ISO 8601.
+
+              * If you learn this URL while a cardholder has the PDF, then the cardholder loses it,
+                then you GET the URL, results will vary depending on the server version:  in recent
+                versions you will get a 404 for all PDF types, but older servers may return a blank
+                string or even a 500.
 
           definition:
             type: object
@@ -2708,7 +2725,7 @@ definitions:
           value:
             type: string
             description: |
-              In a GET response for text and numeric PDFs this will be a scalar containing their actual
+              In a GET response for text, numeric, and date PDFs this will be a scalar containing the
               value, but for image PDFs it will be an object containing a copy of the `href` field
               above.
 
@@ -2716,6 +2733,10 @@ definitions:
               (in other words they were a member of an access group that included an image PDF, but they
               did not have a value for it) the API returned the string 'Not captured' in the `value`
               field.  Versions 8.70 and later will not return the `value` field at all if there is no image.
+
+              For date PDFs the string will comply to ISO 8601, but may or may not contain a time
+              depending on the version of Command Centre.  Newer versions omit it because date PDFs
+              only hold a date, not a time.  If the result includes a time, it will be midnight UTC.
 
               In a POST or PATCH send text PDFs (including dates) as strings, numeric PDFs as numbers or
               strings that parse to numbers, and image data Base64-encoded into a string.

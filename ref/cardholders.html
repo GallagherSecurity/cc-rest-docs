@@ -13588,8 +13588,21 @@
                             <span class="json-property-read-only"></span>
                           </dt>
                           <dd>
-                            <p>GET this link to receive this cardholder&#39;s value for this PDF. If it is an image you will receive the raw image data with an appropriate content-type. A browser will render it correctly. If the PDF is not an image the content type will be text/plain, encoded (like everything else in this API) as UTF-8.</p>
+                            <p>GET this link to receive this cardholder&#39;s value for this PDF. If it is an image you will receive the raw image data with an appropriate content-type. A browser will render it correctly.</p>
+                            <p>This field will be absent if the cardholder does not have a value for the PDF.</p>
                             <p>It is read-only: do not send it in a PATCH or POST.</p>
+                            <p>If the PDF is not an image the content type will be text/plain, encoded (like everything else in this API) as UTF-8. But you should only use it for image PDFs because:</p>
+                            <ul>
+                              <li>
+                                <p>Values for scalar PDF types (everything except images) are also given to you in the <code>value</code> field in this object, described below.</p>
+                              </li>
+                              <li>
+                                <p>The format of date PDFs varies with the Command Centre version. Old servers return it in a format that depends on the server&#39;s locale. This was a bug. Newer servers use ISO 8601.</p>
+                              </li>
+                              <li>
+                                <p>If you learn this URL while a cardholder has the PDF, then the cardholder loses it, then you GET the URL, results will vary depending on the server version: in recent versions you will get a 404 for all PDF types, but older servers may return a blank string or even a 500.</p>
+                              </li>
+                            </ul>
                           </dd>
                           <dt data-property-name="definition" class="has-description">
                             <span class="json-property-name">definition:</span>
@@ -13653,8 +13666,9 @@
                             <span class="json-property-range" title="Value limits"></span>
                           </dt>
                           <dd>
-                            <p>In a GET response for text and numeric PDFs this will be a scalar containing their actual value, but for image PDFs it will be an object containing a copy of the <code>href</code> field above.</p>
+                            <p>In a GET response for text, numeric, and date PDFs this will be a scalar containing the value, but for image PDFs it will be an object containing a copy of the <code>href</code> field above.</p>
                             <p>In versions up to and including 8.60, if a cardholder did not have an image PDF captured (in other words they were a member of an access group that included an image PDF, but they did not have a value for it) the API returned the string &#39;Not captured&#39; in the <code>value</code> field. Versions 8.70 and later will not return the <code>value</code> field at all if there is no image.</p>
+                            <p>For date PDFs the string will comply to ISO 8601, but may or may not contain a time depending on the version of Command Centre. Newer versions omit it because date PDFs only hold a date, not a time. If the result includes a time, it will be midnight UTC.</p>
                             <p>In a POST or PATCH send text PDFs (including dates) as strings, numeric PDFs as numbers or strings that parse to numbers, and image data Base64-encoded into a string.</p>
                           </dd>
                           <dt data-property-name="notifications" class="has-description">
