@@ -1142,8 +1142,10 @@ paths:
 
         #### Usable event types
 
-        You must supply an [event type](#operation--api-events-groups-get).  8.10 ships with 30
-        external event types you can use, each in its own event type group.
+        You must supply an [event type](#operation--api-events-groups-get).  Recent versions ship
+        with 30 event types you can use, each in its own event type group.  The POST body schema
+        definition linked above shows which event types you can use:  they have 'external' in their
+        name.
 
         You can create 970 of your own event types using the External Event Type Configuration
         Utility, a separate Windows application that lets you create external event types and make
@@ -3058,11 +3060,11 @@ definitions:
           A new event must contain either this or (if your server is running 8.90 or later) `eventType`.
           Without one of them, the POST will fail.
 
-          The event type is mandatory because the server cannot assume a reasonable default.  It can
-          for the other fields.
+          The event type is mandatory because the server cannot assume a reasonable default, as it
+          does for the other fields.
 
           If you send both a `type` block and an `eventType` block to a server running 8.90 or later
-          it will use `eventType`.
+          it will use `eventType`.  Versions before 8.90 do not know about `eventType` so they use `type`.
 
         type: object
         properties:

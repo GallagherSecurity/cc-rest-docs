@@ -2483,7 +2483,7 @@
                   <p>Events are immutable: you cannot PATCH or DELETE them after you create them.</p>
                   <h4 id="usable-event-types">Usable event types</h4>
                   <p>You must supply an
-                    <a href="#operation--api-events-groups-get">event type</a>. 8.10 ships with 30 external event types you can use, each in its own event type group.</p>
+                    <a href="#operation--api-events-groups-get">event type</a>. Recent versions ship with 30 event types you can use, each in its own event type group. The POST body schema definition linked above shows which event types you can use: they have &#39;external&#39; in their name.</p>
                   <p>You can create 970 of your own event types using the External Event Type Configuration Utility, a separate Windows application that lets you create external event types and make them appear on items&#39; Event Response and Alarm Instructions tabs in the Configuration Client. You will find the release note for that utility in the Documentation folder on the installation media.</p>
                   <p>1000 event types sounds like a lot, but be aware that you cannot delete event types, and the only thing you can modify on an existing event type is its name. Their event type group and item types are permanent once you save them from the utility. Please plan carefully, and take backups!</p>
                   <h4 id="a-note-on-event-type-groups">A note on event type groups</h4>
@@ -6912,8 +6912,8 @@
                     </dt>
                     <dd>
                       <p>A new event must contain either this or (if your server is running 8.90 or later) <code>eventType</code>. Without one of them, the POST will fail.</p>
-                      <p>The event type is mandatory because the server cannot assume a reasonable default. It can for the other fields.</p>
-                      <p>If you send both a <code>type</code> block and an <code>eventType</code> block to a server running 8.90 or later it will use <code>eventType</code>.</p>
+                      <p>The event type is mandatory because the server cannot assume a reasonable default, as it does for the other fields.</p>
+                      <p>If you send both a <code>type</code> block and an <code>eventType</code> block to a server running 8.90 or later it will use <code>eventType</code>. Versions before 8.90 do not know about <code>eventType</code> so they use <code>type</code>.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-properties">
