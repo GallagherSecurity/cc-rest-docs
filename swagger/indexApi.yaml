@@ -78,9 +78,14 @@ x-spectacle-topics:
   API changes on the roadmap:
     description: |
 
-      * POTENTIALLY BREAKING CHANGE:  the API route that returns the value of a cardholder's date
-        PDF presents it in a format specific to the server's locale.  '21/11/2025 12:00:00 am", for
-        example.  A future version will change to an internet standard.
+      * Potentially breaking change:  the API routes that return the value of a cardholder's date
+        PDF present it in either in RFC 3339 format with a time, or a format specific to the
+        server's locale, depending on the route.  A future version will change to date-only ISO 8601
+        (date PDFs only contain a date, not a time).
+
+      * Potentially breaking change:  the API route that returns the value of a string PDF will
+        change to return a 404 if the cardholder does not have a value for it, as it does for image
+        and date PDFs.  Currently, missing string PDFs come out as a zero-length payload.
 
       * Creating an [item status subscription](events.html#operation--api-items-updates-post) and
         [collecting the first batch of changes](events.html#operation--api-items-updates-get) will
