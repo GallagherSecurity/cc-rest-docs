@@ -1333,7 +1333,7 @@ definitions:
             type: object
             description: |
               An array of commands, each represented by a block containing an href that accepts a
-              POST to send an override.  The only override you can send to a door is 'open'.
+              POST to send an override.
 
               If your operator is privileged to override the door's entry zone, and the zone only
               has one door, there will be 17 more links:  four each of the four access zone modes,
@@ -1352,6 +1352,14 @@ definitions:
                   href:
                     example: "https://localhost:8904/api/doors/332/open"
                     description: "[POST](#operation--api-doors--id--open-post) to this to open this door."
+                    type: string
+                    format: url
+              lock:
+                type: object
+                properties:
+                  href:
+                    example: "https://localhost:8904/api/doors/332/lock"
+                    description: "[POST](#operation--api-doors--id--lock-post) to this to lock this door."
                     type: string
                     format: url
           connectedController:
@@ -2639,6 +2647,13 @@ tags:
     that gives you any number of doors, each containing the fields you ask for in the query
     (including, for example, the URLs to open them).
 
+    ### Half-cycle doors and the lock override
+
+    Doors with half-cycle locks differ from regular doors in that once unlocked with an 'open'
+    override or a card badge, they stay unlocked until physically opened then closed, or re-locked
+    with a 'lock' override (added in 9.40).  These doors normally require a physical key to open in
+    addition to the electronic unlock.  They are popular in correctional facilities.
+
     ### Door status flags
 
     If the door is online, its `statusFlags` field will contain one or more of these flags:
@@ -3691,7 +3706,26 @@ paths:
         Follow the `commands.open.href` field in a [door](#definition-Door-detail) to get here.
 
       parameters:
-      - {in: path, name: id, required: true, description: "The ID of the door.", type: string}
+      - {in: path, name: id, required: true, description: "An opaque identifier of the door.", type: string}
+      - $ref: "cardholdersApi.yaml#/parameters/requested_by"
+      responses:
+        204: { description: Success. }
+        403: { $ref: "#/responses/403dooroverride" }
+
+  /api/doors/{id}/lock:
+    post:
+      tags: ["Doors"]
+      summary: Lock a door
+      description: |
+        Sends an override to lock a half-cycle door that is in the unlocked state, rather than
+        waiting for it to open and close.
+
+        Follow the `commands.lock.href` field in a [door](#definition-Door-detail) to get here.
+
+        Added in 9.40.
+
+      parameters:
+      - {in: path, name: id, required: true, description: "An opaque identifier of door.", type: string}
       - $ref: "cardholdersApi.yaml#/parameters/requested_by"
       responses:
         204: { description: Success. }

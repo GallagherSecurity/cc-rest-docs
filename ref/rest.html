@@ -103,6 +103,9 @@
                 <a href="#operation--api-doors--id--open-post"> Open a door </a>
               </li>
               <li>
+                <a href="#operation--api-doors--id--lock-post"> Lock a door </a>
+              </li>
+              <li>
                 <a href="#operation--api-doors--id--updates-get"> Monitor a door </a>
               </li>
             </ul>
@@ -3474,6 +3477,8 @@
             <div class="doc-copy">
               <p>These methods give you read access to basic data about Doors in the Command Centre database, and let you open them.</p>
               <p>The first use case below introduces the main entry point. It is a paginated search interface that gives you any number of doors, each containing the fields you ask for in the query (including, for example, the URLs to open them).</p>
+              <h3 id="half-cycle-doors-and-the-lock-override">Half-cycle doors and the lock override</h3>
+              <p>Doors with half-cycle locks differ from regular doors in that once unlocked with an &#39;open&#39; override or a card badge, they stay unlocked until physically opened then closed, or re-locked with a &#39;lock&#39; override (added in 9.40). These doors normally require a physical key to open in addition to the electronic unlock. They are popular in correctional facilities.</p>
               <h3 id="door-status-flags">Door status flags</h3>
               <p>If the door is online, its <code>statusFlags</code> field will contain one or more of these flags:</p>
               <ul>
@@ -3933,6 +3938,9 @@
   <span class="hljs-attr">&quot;commands&quot;</span>: {
     <span class="hljs-attr">&quot;open&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/332/open&quot;</span>
+    },
+    <span class="hljs-attr">&quot;lock&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/332/lock&quot;</span>
     }
   },
   <span class="hljs-attr">&quot;connectedController&quot;</span>: {
@@ -3991,7 +3999,97 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>The ID of the door.</p>
+                      <p>An opaque identifier of the door.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">requested_by</div>
+                      <div class="prop-subtitle"> in query </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                        <span class="json-property-default-value" title="Default value">none</span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Attributes this override to the cardholder with this ID rather than the REST operator. Privilege checks will use the operator as normal, but event monitors and reports will state that the person responsible for the override was the attributed cardholder, not the REST operator. The REST operator will appear in a special mention in the event&#39;s details.</p>
+                      <p>First available in 8.70. Versions older than 8.70 will ignore the parameter, leaving the override attributed to the REST operator.</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"></div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-responses">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">204 No Content</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>Success.</p>
+                    </div>
+                  </div>
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">403 Forbidden</div>
+                    </div>
+                    <div class="prop-value">
+                      <p>The site does not have the RESTOverrides licence (in which case the body of the result will say so), or the operator does not have a privilege that allows overriding doors (such as &#39;Override - Open Door&#39;).</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div class="doc-examples"> </div>
+            </div>
+          </div>
+          <div id="operation--api-doors--id--lock-post" class="operation panel" data-traverse-target="operation--api-doors--id--lock-post">
+            <!-- <section class="operation-tags row"> -->
+            <!-- <div class="doc-copy"> -->
+            <div class="operation-tags">
+              <a class="label" href="#tag-Doors">Doors</a>
+              <!---->
+            </div>
+            <!-- </div> -->
+            <!-- </section> -->
+            <h2 class="operation-title">
+              <span class="operation-summary">Lock a door</span>
+            </h2>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-path">
+                  <span class="operation-method">POST</span>
+                  <span class="operation-path">/api/doors/{id}/lock</span>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-operation-description">
+                  <p>Sends an override to lock a half-cycle door that is in the unlocked state, rather than waiting for it to open and close.</p>
+                  <p>Follow the <code>commands.lock.href</code> field in a
+                    <a href="#definition-Door-detail">door</a> to get here.</p>
+                  <p>Added in 9.40.</p>
+                </section>
+              </div>
+            </div>
+            <div class="doc-row">
+              <div class="doc-copy">
+                <section class="swagger-request-params">
+                  <div class="prop-row prop-group">
+                    <div class="prop-name">
+                      <div class="prop-title">id</div>
+                      <span class="json-property-required"></span>
+                      <div class="prop-subtitle"> in path </div>
+                      <div class="prop-subtitle">
+                        <span class="json-property-type">string</span>
+                        <span class="json-property-range" title="Value limits"></span>
+                      </div>
+                    </div>
+                    <div class="prop-value">
+                      <p>An opaque identifier of door.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -12691,7 +12789,7 @@
                           <span class="json-property-range" title="Value limits"></span>
                         </dt>
                         <dd>
-                          <p>An array of commands, each represented by a block containing an href that accepts a POST to send an override. The only override you can send to a door is &#39;open&#39;.</p>
+                          <p>An array of commands, each represented by a block containing an href that accepts a POST to send an override.</p>
                           <p>If your operator is privileged to override the door&#39;s entry zone, and the zone only has one door, there will be 17 more links: four each of the four access zone modes, plus &#39;cancel&#39;. Each zone mode has four variants: with or without PINs, and with or without an end time.</p>
                           <p>This block will only contain the links that your operator is privileged to perform. Examples of the privileges you need are in the documentation for the POSTs.</p>
                           <p>The zone overrides are not repeated here.</p>
@@ -12716,6 +12814,27 @@
                                     <dd>
                                       <p>
                                         <a href="#operation--api-doors--id--open-post">POST</a> to this to open this door.</p>
+                                    </dd>
+                                  </dl>
+                                </section>
+                              </dt>
+                              <dt data-property-name="lock">
+                                <span class="json-property-name">lock:</span>
+                                <span class="json-property-type">object</span>
+                                <span class="json-property-range" title="Value limits"></span>
+                              </dt>
+                              <dt class="json-inner-schema">
+                                <section class="json-schema-properties">
+                                  <dl>
+                                    <dt data-property-name="href" class="has-description">
+                                      <span class="json-property-name">href:</span>
+                                      <span class="json-property-type">string</span>
+                                      <span class="json-property-format">(url)</span>
+                                      <span class="json-property-range" title="Value limits"></span>
+                                    </dt>
+                                    <dd>
+                                      <p>
+                                        <a href="#operation--api-doors--id--lock-post">POST</a> to this to lock this door.</p>
                                     </dd>
                                   </dl>
                                 </section>
@@ -12802,6 +12921,9 @@
   <span class="hljs-attr">&quot;commands&quot;</span>: {
     <span class="hljs-attr">&quot;open&quot;</span>: {
       <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/332/open&quot;</span>
+    },
+    <span class="hljs-attr">&quot;lock&quot;</span>: {
+      <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/doors/332/lock&quot;</span>
     }
   },
   <span class="hljs-attr">&quot;connectedController&quot;</span>: {
