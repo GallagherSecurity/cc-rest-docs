@@ -12105,7 +12105,7 @@
                           <p>An example Personal Data Field value.</p>
                           <p>All PDFs except images appear at the top level of a cardholder in a field named after the PDF with a leading &#39;@&#39;.</p>
                           <p>Date PDFs will contain a date-time with the time part set to midnight.</p>
-                          <p>Image PDFs appear as a block named after the PDF with a leading &#39;@&#39; containing an href. GETting that href will return the image data with an appropriate content-type header.</p>
+                          <p>Image PDFs appear as a block containing an href. GETting that href will return the image data with an appropriate content-type header.</p>
                           <p>Put your PDF values here when creating or modifying a cardholder. Note that to hold a PDF value the cardholder must be a member of an access group that has that PDF attached to it. In this example, being a member of the special projects group has granted our Mr. Boothroyd the student ID and photo PDFs.</p>
                           <p>To set an image PDF, Base64-encode the image and send it as a string. There is one in the
                             <a href="#definition-Cardholder-POST-example">cardholder POST example</a>.</p>
@@ -13600,7 +13600,7 @@
                                 <p>The format of date PDFs varies with the Command Centre version. Old servers return it in a format that depends on the server&#39;s locale. This was a bug. Newer servers use ISO 8601.</p>
                               </li>
                               <li>
-                                <p>If you learn this URL while a cardholder has the PDF, then the cardholder loses it, then you GET the URL, results will vary depending on the server version: in recent versions you will get a 404 for all PDF types, but older servers may return a blank string or even a 500.</p>
+                                <p>If you learn this URL while a cardholder has the PDF, then the cardholder loses it, then you GET the URL, results will vary depending on the server version. The correct result is a 404, and if the PDF is an image or the server is recent you will see that. But old servers may return a blank string or even a 500 for non-image PDFs.</p>
                               </li>
                             </ul>
                           </dd>

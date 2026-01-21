@@ -1847,7 +1847,7 @@ definitions:
 
               Date PDFs will contain a date-time with the time part set to midnight.
 
-              Image PDFs appear as a block named after the PDF with a leading '@'
+              Image PDFs appear as a block
               containing an href. GETting that href will return the image data with an
               appropriate content-type header.
 
@@ -2693,9 +2693,10 @@ definitions:
                 use ISO 8601.
 
               * If you learn this URL while a cardholder has the PDF, then the cardholder loses it,
-                then you GET the URL, results will vary depending on the server version:  in recent
-                versions you will get a 404 for all PDF types, but older servers may return a blank
-                string or even a 500.
+                then you GET the URL, results will vary depending on the server version.  The
+                correct result is a 404, and if the PDF is an image or the server is recent you will
+                see that.  But old servers may return a blank string or even a 500 for non-image
+                PDFs.
 
           definition:
             type: object
