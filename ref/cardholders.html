@@ -3517,6 +3517,10 @@
                   <p>There is a known issue in 8.50 preventing operator group membership changes coming out of this API. It was fixed in 8.60. Changes to the other five operator settings work correctly in 8.50.</p>
                 </li>
                 <li>
+                  <p>The API returns changes to configuration, not to changes in status. For example, when the time passes into or out of the activity period of a card or competency, the status of that card or competency changes but that does not prompt anything to come out of this API. To monitor for that, watch the configuration fields that define the card&#39;s or competency&#39;s validity period.</p>
+                  <p>Similarly, a cardholder moving between access zones changes two fields beginning with <code>lastSuccessfulAccess</code> but does not count as a cardholder change.</p>
+                </li>
+                <li>
                   <p>The API will return the pre-change values of some fields, but not those that require a lot of storage such as image PDFs and PIV certificates. Command Centre does not hang on to them after they change.</p>
                 </li>
               </ul>

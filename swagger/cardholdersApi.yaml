@@ -1085,6 +1085,15 @@ tags:
       API.  It was fixed in 8.60.  Changes to the other five operator settings work correctly in
       8.50.
 
+    - The API returns changes to configuration, not to changes in status.  For example, when the
+      time passes into or out of the activity period of a card or competency, the status of that
+      card or competency changes but that does not prompt anything to come out of this API.  To
+      monitor for that, watch the configuration fields that define the card's or competency's
+      validity period.
+
+      Similarly, a cardholder moving between access zones changes two fields beginning with
+      `lastSuccessfulAccess` but does not count as a cardholder change.
+
     - The API will return the pre-change values of some fields, but not those that require a lot of
       storage such as image PDFs and PIV certificates.  Command Centre does not hang on to them
       after they change.
