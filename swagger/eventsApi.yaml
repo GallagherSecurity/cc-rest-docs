@@ -247,11 +247,9 @@ tags:
     3. Process the events you receive in that call.  If you asked for the `next` field, write the
        link for each event you successfully process to disk before attempting the next one.  Then,
        if the worst happens, your client can read that link from disk and pick up where it left off.
-    4. If there were results, follow the link at `next.href` and repeat.
 
-    If you then wish to stay up to date, switch to following the link at `updates.href`
-    [↪](#operation--api-events-updates-get) in the results.  That call will block until more
-    events arrive, or a minute passes (approximately).
+    4. If there were results, follow the link at `next.href` and repeat, or the link at
+       `updates.href` if you intend to stay up to date once you are current.
 
     #### Downloading the most recent events
     1. `Get /api`
@@ -439,13 +437,30 @@ tags:
 
     That will return all event types in their groups.
 
-    ### Licensing
+    ### Event 'updates' versus 'next'
 
-    * The GETs that collect alarms and events require the RESTEvents licence.
+    This section is for those unclear on the difference between the `updates` and `next` links after
+    reading the operations' documentation below.
 
-    * The POST that creates events requires RESTCreateEvents.
+    The two API calls use the same filters and return the same payloads, including the same
+    pagination links.  They differ at two times:
 
-    * The GET to collect event types requires RESTEvents or RESTCreateEvents.
+      * On your first call, 'events' will return you the first events in the historical record that
+        meet your search criteria but 'updates' will wait until new events arrive.
+
+      * On the last call, when there are no events that meet your criteria that the server has not
+        sent you already, 'events' will return an empty result set but 'updates' will wait for more
+        to arrive.
+
+    'events' (the short poll) is appropriate when you do not wish to stay up-to-date.  When you are
+    extracting events from the past, and want to move on to other things as soon as you have them
+    all.  Generating reports, basically.
+
+    'updates' (the long poll) is appropriate when you will be continuing to make the call, probably
+    forever, because you wish to stay current and to not miss any events.
+
+    You should only be using one of the two.  Using both causes extra load on the server, and
+    probably indicates a design issue.
 
     ### Efficiency tips
 
@@ -466,6 +481,14 @@ tags:
       events per second and you do not sleep between REST calls, you will be calling `updates` ten
       times per second for one event each time.  However if you sleep for two seconds after each
       call you will receive 20 events at a time, saving CPU and I/O.
+
+    ### Licensing
+
+    * The GETs that collect alarms and events require the RESTEvents licence.
+
+    * The POST that creates events requires RESTCreateEvents.
+
+    * The GET to collect event types requires RESTEvents or RESTCreateEvents.
 
 - name: Items
   description: |
@@ -1452,22 +1475,23 @@ paths:
         For its correct use in various scenarios, see the [use cases](#event-use-cases).  In
         particular, sleep between calls to reduce load on the server.
 
-        The way this call picks events is very different from `/api/events`:
+        The way this call picks its initial set of events is different from `/api/events`:
 
-        - If you follow the link at `events.updates.href` in the results of `GET /api`, you will
-          receive the first events that arrive after you make the call and that meet your other
-          search criteria.
+        - If you follow the link at `events.updates.href` in the results of `GET /api`, it will
+          block until at least one event arrives that meet your search criteria, then return them.
 
         - If you follow the `updates` link from the results of `GET /api/events` or `GET
-          /api/events/updates`, the link will contain a bookmark in the `pos` parameter that causes
-          the server to return the first events that arrive or arrived after that bookmark (and that
-          meet your search criteria, of course).
+          /api/events/updates`, the link will contain a bookmark parameter that causes the server to
+          return the first events that arrived after that bookmark (and that meet your search
+          criteria, of course).  If there are none, it will block until some arrive that do.
 
         The response will contain an `updates` link back to the same API call with a new bookmark
         that will cause it to return the next page of results.
 
         Each response will also contain a `next` link that will take you to the non-blocking version
-        of the call at [/api/events](#operation--api-events-get).
+        of the call at [/api/events](#operation--api-events-get).  However if you are using this
+        call you should not also be using the `next` link:  applications typically use one or the
+        other, not both.
 
         However long you wait between calls, following a `next` or `updates` link will always return
         the first events that arrived after your previous call.
