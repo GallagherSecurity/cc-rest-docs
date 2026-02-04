@@ -2430,19 +2430,21 @@
               </ol>
               <p>That will return all event types in their groups.</p>
               <h3 id="event-updates-versus-next">Event &#39;updates&#39; versus &#39;next&#39;</h3>
-              <p>This section is for those unclear on the difference between the <code>updates</code> and <code>next</code> links after reading the operations&#39; documentation below.</p>
+              <p>This expands on the difference between the API endpoints at the ends of the long poll <code>updates</code> and short poll <code>next</code> links that you receive in event searches. It will make more sense after reading the operations&#39; own sections (
+                <a href="#operation--api-events-updates-get">long poll</a>,
+                <a href="#operation--api-events-get">short poll</a>).</p>
               <p>The two API calls use the same filters and return the same payloads, including the same pagination links. They differ at two times:</p>
               <ul>
                 <li>
-                  <p>On your first call, &#39;events&#39; will return you the first events in the historical record that meet your search criteria but &#39;updates&#39; will wait until new events arrive.</p>
+                  <p>On your first call, the short-polling &#39;events&#39; route will return you the first events in the historical record that meet your search criteria but the long-polling &#39;updates&#39; route will wait until new events arrive.</p>
                 </li>
                 <li>
-                  <p>On the last call, when there are no events that meet your criteria that the server has not sent you already, &#39;events&#39; will return an empty result set but &#39;updates&#39; will wait for more to arrive.</p>
+                  <p>On the last call, when there are no events that meet your criteria that the server has not sent you already, &#39;events&#39; will immediately return an empty result set but &#39;updates&#39; will wait for more to arrive.</p>
                 </li>
               </ul>
-              <p>&#39;events&#39; (the short poll) is appropriate when you do not wish to stay up-to-date. When you are extracting events from the past, and want to move on to other things as soon as you have them all. Generating reports, basically.</p>
-              <p>&#39;updates&#39; (the long poll) is appropriate when you will be continuing to make the call, probably forever, because you wish to stay current and to not miss any events.</p>
-              <p>You should only be using one of the two. Using both causes extra load on the server, and probably indicates a design issue.</p>
+              <p>The short poll is appropriate when you do not wish to stay up-to-date. When you are extracting events from the past, and want to move on to other things as soon as you have them all. Generating reports, basically.</p>
+              <p>The long poll is appropriate when you will be continuing to make the call, probably forever, because you wish to stay current and to not miss any events.</p>
+              <p>You should only be using one of the two. Using both in the same integration may indicate a design issue.</p>
               <h3 id="efficiency-tips">Efficiency tips</h3>
               <ul>
                 <li>

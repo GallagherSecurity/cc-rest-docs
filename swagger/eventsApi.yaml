@@ -439,28 +439,31 @@ tags:
 
     ### Event 'updates' versus 'next'
 
-    This section is for those unclear on the difference between the `updates` and `next` links after
-    reading the operations' documentation below.
+    This expands on the difference between the API endpoints at the ends of the long poll `updates`
+    and short poll `next` links that you receive in event searches.  It will make more sense after
+    reading the operations' own sections ([long poll](#operation--api-events-updates-get), [short
+    poll](#operation--api-events-get)).
 
     The two API calls use the same filters and return the same payloads, including the same
     pagination links.  They differ at two times:
 
-      * On your first call, 'events' will return you the first events in the historical record that
-        meet your search criteria but 'updates' will wait until new events arrive.
+      * On your first call, the short-polling 'events' route will return you the first events in the
+        historical record that meet your search criteria but the long-polling 'updates' route will
+        wait until new events arrive.
 
       * On the last call, when there are no events that meet your criteria that the server has not
-        sent you already, 'events' will return an empty result set but 'updates' will wait for more
-        to arrive.
+        sent you already, 'events' will immediately return an empty result set but 'updates' will
+        wait for more to arrive.
 
-    'events' (the short poll) is appropriate when you do not wish to stay up-to-date.  When you are
-    extracting events from the past, and want to move on to other things as soon as you have them
-    all.  Generating reports, basically.
+    The short poll is appropriate when you do not wish to stay up-to-date.  When you are extracting
+    events from the past, and want to move on to other things as soon as you have them all.
+    Generating reports, basically.
 
-    'updates' (the long poll) is appropriate when you will be continuing to make the call, probably
-    forever, because you wish to stay current and to not miss any events.
+    The long poll is appropriate when you will be continuing to make the call, probably forever,
+    because you wish to stay current and to not miss any events.
 
-    You should only be using one of the two.  Using both causes extra load on the server, and
-    probably indicates a design issue.
+    You should only be using one of the two.  Using both in the same integration may indicate a
+    design issue.
 
     ### Efficiency tips
 
