@@ -1011,9 +1011,17 @@ paths:
         passes (about 30 seconds) it will return an empty `updates` array and a fresh `next` link.
 
         Whether or not the response contained updates the client should follow the `next` link to
-        wait for the next updates.  If your server receives a lot of alarm updates, wait some time
-        between calls to reduce its load.  You will not miss any updates:  each response contains
-        everything that happened since the previous call.
+        wait for the next updates.
+
+        If your server receives a lot of alarm updates, wait some time between calls to reduce
+        chatter.  You will not miss any alarms:  each response contains all the alarms that happened
+        since the previous call, even if an operator processed the alarms in question.
+
+        You will receive each alarm only once in a result set, in its current state.  For example if
+        an alarm is raised, restored, acknowledged, then processed between two of your API calls you
+        will receive it as 'processed' in your next call.  If, however, you make API calls between
+        each of the alarm's state changes you will receive it four times:  active, inactive and
+        unacknowledged, acknowledged, then finally processed.
 
         Do not wait if you receive 100 updates or more.  100 is the maximum number of updates
         current versions of CC will return in one batch, so if that happens you have fallen behind:
