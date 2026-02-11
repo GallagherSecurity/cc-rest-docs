@@ -111,11 +111,6 @@
                     <p>Potentially breaking change: the API route that returns the value of a string PDF will change to return a 404 if the cardholder does not have a value for it, as it does for image and date PDFs. Currently, missing string PDFs come out as a zero-length payload.</p>
                   </li>
                   <li>
-                    <p>Creating an
-                      <a href="events.html#operation--api-items-updates-post">item status subscription</a> and
-                      <a href="events.html#operation--api-items-updates-get">collecting the first batch of changes</a> will no longer return duplicate results. If your application follows the algorithm at the second link above, it will always be compatible with this API.</p>
-                  </li>
-                  <li>
                     <p>Events indicating that an operator modified an item may not have a cardholder at the end of the <code>operator</code> href. It may be a new kind of item, because we have new events coming that will indicate when an integration modifies an item rather than a human operator.</p>
                   </li>
                 </ul>
@@ -127,7 +122,15 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <ul>
-                  <li>OIDC login support for operators.</li>
+                  <li>
+                    <p>OIDC login support for operators.</p>
+                  </li>
+                  <li>
+                    <p>Creating an
+                      <a href="events.html#operation--api-items-updates-post">item status subscription</a> and
+                      <a href="events.html#operation--api-items-updates-get">collecting the first batch of changes</a> will no longer return the first set of results twice. If your application follows the algorithm at the second link above it will always be compatible with this API.</p>
+                    <p>The performance improvements were such that we felt it worthwhile to port it back to all supported versions, so it is present in the latest maintenance releases of 9.10 through 9.40.</p>
+                  </li>
                 </ul>
               </div>
             </div>
