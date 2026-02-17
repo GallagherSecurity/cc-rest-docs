@@ -22,6 +22,7 @@
           <a href="#topic-Documentation-suite">Documentation suite</a>
           <a href="#topic-API-changes-on-the-roadmap">API changes on the roadmap</a>
           <a href="#topic-API-changes-in-9.50">API changes in 9.50</a>
+          <a href="#topic-API-change-in-May-2026-maintenance-releases">API change in May 2026 maintenance releases</a>
           <a href="#topic-API-changes-in-9.40">API changes in 9.40</a>
           <a href="#topic-API-changes-in-9.30">API changes in 9.30</a>
           <h5>Paths</h5>
@@ -129,11 +130,21 @@
                     <p>Creating an
                       <a href="events.html#operation--api-items-updates-post">item status subscription</a> and
                       <a href="events.html#operation--api-items-updates-get">collecting the first batch of changes</a> will no longer return the first set of results twice. If your application follows the algorithm at the second link above it will always be compatible with this API.</p>
-                    <p>The performance improvements were such that we felt it worthwhile to port it back to all supported versions, so it is present in the latest maintenance releases of 9.10 through 9.40.</p>
+                    <p>The performance improvements were such that we felt it worthwhile to port it back to all supported versions, so it is also present in the latest maintenance releases of 9.10 through 9.40.</p>
                   </li>
                   <li>
-                    <p>The maximum length of an item&#39;s name increased from 60 to 110 characters. This is a change to the product, not to the API, but it may be of interest. Cardholder first and last names remain capped at 50 characters each.</p>
+                    <p>Potential breaking change: the maximum length of an item&#39;s name increased from 60 to 110 characters, and attempts to set a name longer than that will fail. Earlier versions silently truncated the name and let the update proceed. Cardholder first and last names remain capped at 50 characters each.</p>
                   </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <h1 id="topic-API-change-in-May-2026-maintenance-releases" data-traverse-target="topic-API-change-in-May-2026-maintenance-releases">API change in May 2026 maintenance releases</h1>
+          <div class="panel">
+            <div class="doc-row">
+              <div class="doc-copy">
+                <ul>
+                  <li>Potential breaking change in 9.20.4290 MR7, 9.30.3891 MR5, and 9.40.2492 MR2: attempts to set the name of an item that is not a cardholder to a string that is longer than 60 characters will fail. Earlier versions silently truncated the name and let the update proceed. There is no change to the handling of cardholders&#39; names.</li>
                 </ul>
               </div>
             </div>

@@ -102,12 +102,21 @@ x-spectacle-topics:
         at the second link above it will always be compatible with this API.
 
         The performance improvements were such that we felt it worthwhile to port it back to all
-        supported versions, so it is present in the latest maintenance releases of 9.10 through
+        supported versions, so it is also present in the latest maintenance releases of 9.10 through
         9.40.
 
-      * The maximum length of an item's name increased from 60 to 110 characters.  This is a change
-        to the product, not to the API, but it may be of interest.  Cardholder first and last names
+      * Potential breaking change:  the maximum length of an item's name increased from 60 to 110
+        characters, and attempts to set a name longer than that will fail.  Earlier versions
+        silently truncated the name and let the update proceed.  Cardholder first and last names
         remain capped at 50 characters each.
+
+  API change in May 2026 maintenance releases:
+    description: |
+
+      * Potential breaking change in 9.20.4290 MR7, 9.30.3891 MR5, and 9.40.2492 MR2:  attempts to
+        set the name of an item that is not a cardholder to a string that is longer than 60
+        characters will fail.  Earlier versions silently truncated the name and let the update
+        proceed.  There is no change to the handling of cardholders' names.
 
   API changes in 9.40:
     description: |
