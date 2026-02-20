@@ -33,7 +33,7 @@ cp training/rest_training.adoc training/multipage.adoc
 asciidoctor-multipage -r asciidoctor-diagram -D $D/training --verbose training/multipage.adoc || true
 
 # Tarball must be rooted at . otherwise deploy-pages fails, so copy everything in
-cp -r ref $D
+cp -r ref oas3 $D
 cp -r training/assets $D/training
 
 echo Putting output into $INPUT_OUTPUT
