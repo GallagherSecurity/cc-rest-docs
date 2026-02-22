@@ -941,8 +941,7 @@ image::chrome_bad_server_cert_2.png[Chrome fretting in more detail,title="Chrome
 
 == Set up Postman
 
-If you want to do more than look, you need Postman, because Chrome does
-not let you POST, PATCH, or DELETE as easily as Postman does.
+If you want to do more than look, you need an application such as Postman or Bruno.
 
 Postman used to be a Chrome extension but is now a standalone
 application. Both work. These screenshots are from the application.
@@ -990,6 +989,52 @@ other options if you want to keep it looking clean. It makes no
 difference to Command Centre.
 
 image::postman_server_cert_warning_off_2.png[Postman SSL cert verification off,title="Postman SSL cert verification off"]
+
+== Set up Bruno
+
+Bruno is an alternative to PostMan.  You do not need both.
+
+I suggest creating a collection to hold all your requests, then setting common configuration on the
+collection rather than on each request.  The instructions below expect that.
+
+=== Send the API header with every request
+
+This is what the Modify Headers extension does in Chrome. It makes Bruno send an Authorization
+header containing your API key with its request.
+
+After creating a collection, edit its settings and go to its Auth tab:
+
+image::bruno_auth_header.png[Setting auth header in Bruno,title="Setting auth header in Bruno"]
+
+That screenshot shows the value of the API key being `{{apiKey}}`, which is a variable set in what
+Bruno calls the _environment_, which is another collection of settings you choose from a drop-down
+in the top right corner of the Bruno window.
+
+If that is too much redirection for you, replace the `{{apiKey}}` with your API key (do not include
+any curly braces).  But if you want to use environments, they are a great way to quickly switch
+between Command Centre operator settings.
+
+image::bruno_environment.png[Setting apiKey var in Bruno env,title="Setting apiKey var in Bruno env"]
+
+Finally, when you create a request, make sure its auth mode is set to 'Inherit'.  That makes it takes its authentication settings from its collection.
+
+image::bruno_request_auth.png[Bruno request inheriting auth,title="Bruno request inheriting auth"]
+
+=== Never mind that your server certificate is self-signed
+
+Bruno's settings cog is in the bottom-left corner.  Turn off "SSL/TLS Certificate Validation".
+
+image::bruno_server_cert_warning_off.png[Bruno SSL cert verification off,title="Bruno SSL cert verification off"]
+
+
+=== Set the content type to JSON
+
+When you create a POST or PATCH you will have to set its type before you can edit the body.  Be sure
+to pick JSON.
+
+image::bruno_content_type.png[Content-type Bruno content type,title="Bruno content type"]
+
+
 
 == First GETs: cardholders
 
@@ -2907,9 +2952,14 @@ openssl req -x509      \
 Notice the `rsa:4096`: it produces a four-kilobit key, which is huge.  It might be
 overkill for development, but it's nice to have the option.
 
-Its name will be 'RESTtest'.  You should come up with a name related to your application's purpose
-because diagnosing certificate problems is a tough enough job without ambiguous certificate names
-muddying the waters even more.
+If you are running Windows and entered that command into a Unix-like shell, it may have translated
+the `/CN=RESTtest`` into `C:/Program Files/.../CN=RESTtest` which would have caused `openssl req` to
+complain about the name.  You can defeat the Unix-to-Windows path conversion by adding
+`MSYS_NO_PATHCONV=1` to the head of your command line.
+
+The certificate's name will be 'RESTtest'.  You should come up with a name related to your
+application's purpose because diagnosing certificate problems is a tough enough job without
+ambiguous certificate names muddying the waters even more.
 
 Again, the bold part is  reducing your security. In this case,
 the `-nodes` option (footnote: it means 'no DES'. It is not the plural
@@ -2931,7 +2981,7 @@ for it.
 NOTE:  The 20 bytes that come out are what you paste into the REST Client
 item in Command Centre.
 
-Now you need to add the certificate to the clients that need it. If you use Postman,
+Now you need to add the certificate to the clients that need it. If you use Postman or Bruno
 see <<Use the certificate in your client>>. If you use
 Chrome on Windows, you need to add it to the certificate store with
 these two commands:
@@ -3119,7 +3169,7 @@ the alarm was yours. Someone else may have hit the API before you did.
 
 ==== Postman
 
-The standalone version of Postman cannot read certificates out of the
+At time of writing, the standalone version of Postman cannot read certificates out of the
 certificate store (footnote: the Chrome extension can, but that version of
 Postman is no longer under development).
 
@@ -3141,6 +3191,18 @@ server properties and Postman will still be able to connect.
 
 You can leave Postman using this certificate no matter whether CC has
 pinned certificates turned off or on: it does no harm.
+
+==== Bruno
+
+Look in the Client Certificates tab in your collection's settings.  If you followed the instructions
+above for creating a client certificate, both the certificate file and key file will be the same.
+
+If you protected your private key with a password (a good idea, but turned off by `-nodes`), give it
+to Bruno here.
+
+image::bruno_client_cert.png[Tell Bruno which client cert to use,title="Tell Bruno which client cert to use"]
+
+After you click Add, the domain and filename will replace the "No certificates added" line.
 
 ==== Chrome
 
