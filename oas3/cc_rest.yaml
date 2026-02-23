@@ -3471,56 +3471,6 @@ info:
         quite flexible so you may find that other formats ( "1/12/2025" ) work today, but they may not
         tomorrow.
 
-    ## Event field specifiers
-
-    What you can do with the `fields` query parameter on an events method has improved through the
-    versions, so explaining it is a topic in itself.
-
-    In 8.40 and later the values you can list are the same as the field names in the [details
-    page](#definition-Event-detail), plus the special value for a personal data field described
-    below.  You can pick whichever fields you want, including `defaults`, though we urge you to
-    only list the fields you need.  Anything you wrote for 8.30 or earlier will
-    work in 8.40 as it did before.
-
-    In versions up to 8.30 you can only add fields to the event summary and details pages, not
-    remove them.  If you send the parameter it must start with `fields=defaults`.  That gives you
-    the default set.  What you can add after that depends on the version of Command Centre you're
-    calling.
-
-    In 8.10 and earlier the only field you can add is `cardholder.pdf_XXXX`, where XXXX is the ID
-    of a PDF.  Find that ID with a query to the [PDFs
-    controller](cardholders.html#operation--api-personal_data_fields-get).  Don't forget a
-    separating comma between it and `defaults`.
-
-    That will add a cardholder's PDF to the events that are related to them.
-
-    You can only pick one PDF.  It will only appear on events that have a related cardholder, such
-    as access events, because without a cardholder there is no PDF.  The security model applies
-    too, so it will only appear if your REST operator has the appropriate privileges on that
-    cardholder and PDF.
-
-    In 8.20 and 8.30 you can also add `details`.  Make sure you have a separating comma after
-    `defaults` or `cardholder.pdf_XXXX`.
-
-    An event detail string can be kilobytes long so we left it optional.  It is the only field in
-    the details page that is not in the search results, by the way, so if you are running 8.20 or
-    later you can add it to your search results and you will not need the details page.
-
-    | Server version | Valid fields parameter values
-    | ------------ | --------------
-    | Older than 8.20 | defaults,cardholder.pdf_XXXX 
-    | 8.20 to 8.30 | defaults,cardholder.pdf_XXXX<br>or<br>defaults,details<br>or<br>defaults,cardholder.pdf_XXXX,details
-    | 8.40 and later | any
-
-    ### Per-event bookmarks
-
-    If you are running 8.70 or later and you put `previous`, `next`, or `updates` in the field
-    list of an event search, the server will add those fields to each event.  All server versions
-    include links with those names at the end of results, but they are not useful if you crash out
-    half way through processing a batch.  The per-event links, only available in 8.70 and later
-    and only on request, give you a place to pick up from without being re-sent the events you
-    already processed.
-
     ## Operator privileges
 
     First, some background on operators, operator groups, and divisions.
