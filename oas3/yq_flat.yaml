@@ -177,9 +177,11 @@ x-common-blocks:
   - color: red
     label: Beta
     name: Beta
+    position: before
   - color: blue
     label: "9.30"
     name: "9.30"
+    position: before
   - in: query
     required: false
     schema:
@@ -1075,7 +1077,6 @@ components:
           example: ""
         notifications:
           type: object
-          properties: {}
           description: |-
             This block shows the cardholder's notification settings.  It deserves some explanation.
 
@@ -1092,6 +1093,10 @@ components:
             If you want to simply turn a person's notifications on or off without any changes
             scheduled for the future, set `enabled` true or false and both `from` and `until`
             null.
+          properties:
+            enabled: {type: boolean}
+            from: {type: string, format: date-time}
+            until: {type: string, format: date-time}
           example:
             enabled: true
             from: 2017-10-10T14:59:00Z
@@ -1216,7 +1221,9 @@ components:
               example: 2004-11-18T19:21:52Z
             lastSuccessfulAccessZone:
               type: object
-              properties: {}
+              properties:
+                href: {type: string, format: uri-reference}
+                name: {type: string}
               description: |
                 The last zone the cardholder entered.
 
@@ -1958,7 +1965,7 @@ components:
               type: string
               description: |
                 The state of this cardholder's access group membership, in the site's language.  In an
-                English locale, the value is the same as the type, but capitalised.
+                English locale the value is the same as the type, but capitalised.
               readOnly: true
               example: Pending
             type:
@@ -1970,10 +1977,7 @@ components:
                 'expired' if its deactivation date is set and in the past, or 'active'.
               readOnly: true
               example: pending
-              enum:
-                - pending
-                - active
-                - expired
+              enum: [pending, expired, active]
           description: |
             The two fields in this block are read-only because they are determined by the `from` and
             `until` dates.
@@ -2507,6 +2511,10 @@ components:
         notifications:
           type: object
           description: "You can set or update any of the three fields in this block."
+          properties:
+            enabled: {type: boolean}
+            from: {type: string, format: date-time}
+            until: {type: string, format: date-time}
           example:
             enabled: true
             from: "2017-10-10T14:59:00Z"
