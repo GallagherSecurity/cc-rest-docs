@@ -1955,6 +1955,14 @@
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/100&quot;</span>
       }
     }
+  ],
+  <span class="hljs-attr">&quot;accessibilities&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;disableCipherPad&quot;</span>,
+      <span class="hljs-attr">&quot;enabled&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;2025-03-09T00:00:00Z&quot;</span>,
+      <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2027-03-09T00:00:00Z&quot;</span>
+    }
   ]
 }
 </code></pre> </body>
@@ -3625,7 +3633,6 @@
                           <span class="json-property-enum-item">lastSuccessfulAccessZone</span>,
                           <span class="json-property-enum-item">division</span>,
                           <span class="json-property-enum-item">notes</span>,
-                          <span class="json-property-enum-item">useExtendedAccessTime</span>,
                           <span class="json-property-enum-item">personalDataFields</span>,
                           <span class="json-property-enum-item">operatorLoginEnabled</span>,
                           <span class="json-property-enum-item">operatorUsername</span>,
@@ -12122,6 +12129,7 @@
                         </dt>
                         <dd>
                           <p>True if this cardholder should not have the numbers on an alarms terminal scrambled when the terminal is configured as a cipher pad. Usually the reason is a vision impairment, making a randomised keypad impracticable.</p>
+                          <p>Deprecated from 9.50 in favour of the <code>disableCipherPad</code> element in the accessibilities array. This field can still be set for backwards compatibility, but only set one of the two: setting them to disagreeing values will earn you a 400.</p>
                         </dd>
                         <dt data-property-name="usercode" class="has-description">
                           <span class="json-property-name">usercode:</span>
@@ -12474,6 +12482,76 @@
                             <div class="json-inner-schema"> </div>
                           </section>
                         </dt>
+                        <dt data-property-name="accessibilities" class="has-description">
+                          <span class="json-property-name">accessibilities:</span>
+                          <span class="json-property-type">object[]</span>
+                          <span class="json-property-range" title="Value limits"></span>
+                        </dt>
+                        <dd>
+                          <p>The cardholder&#39;s accessibility settings in an array of three elements.</p>
+                        </dd>
+                        <dt class="json-inner-schema">
+                          <section class="json-schema-array-items">
+                            <span class="json-property-type">object</span>
+                            <span class="json-property-range" title="Value limits"></span>
+                            <div class="json-inner-schema">
+                              <section class="json-schema-properties">
+                                <dl>
+                                  <dt data-property-name="type" class="has-description">
+                                    <span class="json-property-name">type:</span>
+                                    <span class="json-property-type">string</span>
+                                    <span class="json-property-enum" title="Possible values">
+                                      <span class="json-property-enum-item">disableCipherPad</span>,
+                                      <span class="json-property-enum-item">useExtendedAccessTime</span>,
+                                      <span class="json-property-enum-item">pinException</span>
+                                    </span>
+                                    <span class="json-property-range" title="Value limits"></span>
+                                  </dt>
+                                  <dd>
+                                    <ul>
+                                      <li>
+                                        <p><code>disableCipherPad</code> means users who badge their card at a reader that uses the cipher pad (a scrambled keypad) will not be prompted for PIN entry. Usually the reason is a vision impairment, making a randomised keypad impracticable.</p>
+                                      </li>
+                                      <li>
+                                        <p><code>useExtendedAccessTime</code> increases the time a door remains unlocked and the amount of time that can pass before raising a &#39;door open too long&#39; alarm.</p>
+                                      </li>
+                                      <li>
+                                        <p><code>pinExemption</code> bypasses PIN entry. Users with this accessibility enabled who badge a card at a reader that normally requires PIN entry will not be prompted to enter a PIN.</p>
+                                      </li>
+                                    </ul>
+                                  </dd>
+                                  <dt data-property-name="enabled" class="has-description">
+                                    <span class="json-property-name">enabled:</span>
+                                    <span class="json-property-type">boolean</span>
+                                    <span class="json-property-range" title="Value limits"></span>
+                                  </dt>
+                                  <dd>
+                                    <p>If false, the accessibility is disabled. If true, it depends on <code>from</code> and <code>until</code>.</p>
+                                  </dd>
+                                  <dt data-property-name="from" class="has-description">
+                                    <span class="json-property-name">from:</span>
+                                    <span class="json-property-type">string</span>
+                                    <span class="json-property-format">(date-time)</span>
+                                    <span class="json-property-range" title="Value limits"></span>
+                                  </dt>
+                                  <dd>
+                                    <p>If set and in the future, the accessibility will not be active until then. If not set or in the past, the accessibility will depend on <code>enabled</code>.</p>
+                                  </dd>
+                                  <dt data-property-name="until" class="has-description">
+                                    <span class="json-property-name">until:</span>
+                                    <span class="json-property-type">string</span>
+                                    <span class="json-property-format">(date-time)</span>
+                                    <span class="json-property-range" title="Value limits"></span>
+                                  </dt>
+                                  <dd>
+                                    <p>If set and in the past, the accessibility will have been inactive since then. If not set or in the future, the accessibility will depend on <code>enabled.</code></p>
+                                    <p>If you send it, it must be later than both the <code>from</code> date, if sent, and the current time.</p>
+                                  </dd>
+                                </dl>
+                              </section>
+                            </div>
+                          </section>
+                        </dt>
                       </dl>
                     </section>
                   </section>
@@ -12696,6 +12774,14 @@
         <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;REST Operator&quot;</span>,
         <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/items/100&quot;</span>
       }
+    }
+  ],
+  <span class="hljs-attr">&quot;accessibilities&quot;</span>: [
+    {
+      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;disableCipherPad&quot;</span>,
+      <span class="hljs-attr">&quot;enabled&quot;</span>: <span class="hljs-literal">true</span>,
+      <span class="hljs-attr">&quot;from&quot;</span>: <span class="hljs-string">&quot;2025-03-09T00:00:00Z&quot;</span>,
+      <span class="hljs-attr">&quot;until&quot;</span>: <span class="hljs-string">&quot;2027-03-09T00:00:00Z&quot;</span>
     }
   ]
 }
