@@ -1042,10 +1042,15 @@ components:
       properties:
         disableCipherPad:
           type: boolean
+          deprecated: true
           description: |
             True if this cardholder should not have the numbers on an alarms terminal scrambled
             when the terminal is configured as a cipher pad.  Usually the reason is a vision
             impairment, making a randomised keypad impracticable.
+
+            Deprecated from 9.50 in favour of the `disableCipherPad` element in the accessibilities
+            array.  This field can still be set for backwards compatibility, but only set one of the
+            two:  setting them to disagreeing values will earn you a 400.
           example: false
         division:
           type: object
@@ -1379,6 +1384,54 @@ components:
                 Added in 8.80.
               items:
                 $ref: '#/components/schemas/CardholderRedaction'
+            accessibilities:
+              description: |
+                The cardholder's accessibility settings in an array of three elements.
+
+                New to 9.50.
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum: [disableCipherPad, useExtendedAccessTime, pinException]
+                    example: disableCipherPad
+                    description: |2
+
+                      * `disableCipherPad` means users who badge their card at a reader that uses the
+                        cipher pad (a scrambled keypad) will not be prompted for PIN entry.  Usually
+                        the reason is a vision impairment, making a randomised keypad impracticable.
+
+                      * `useExtendedAccessTime` increases the time a door remains unlocked and the
+                        amount of time that can pass before raising a 'door open too long' alarm.
+
+                      * `pinExemption` bypasses PIN entry.  Users with this accessibility enabled who
+                        badge a card at a reader that normally requires PIN entry will not be prompted
+                        to enter a PIN.
+                  enabled:
+                    type: boolean
+                    description: |
+                      If false, the accessibility is disabled.  If true, it depends on `from` and
+                      `until`.
+                    example: true
+                  from:
+                    type: string
+                    format: date-time
+                    example: "2025-03-09T00:00:00Z"
+                    description: |
+                      If set and in the future, the accessibility will not be active until then.  If
+                      not set or in the past, the accessibility will depend on `enabled`.
+                  until:
+                    type: string
+                    format: date-time
+                    example: "2027-03-09T00:00:00Z"
+                    description: |
+                      If set and in the past, the accessibility will have been inactive since then.
+                      If not set or in the future, the accessibility will depend on `enabled.`
+
+                      If you send it, it must be later than both the `from` date, if sent, and the
+                      current time.
           patternProperties:
             '^@.+':
               description: |
@@ -4195,7 +4248,7 @@ paths:
             default: ['defaults']
             items:
               type: string
-              enum: [href, id, firstName, lastName, shortName, description, authorised, lastSuccessfulAccessZone, division, notes, useExtendedAccessTime, personalDataFields, operatorLoginEnabled, operatorUsername, operatorPassword, operatorPasswordExpired, windowsLoginEnabled, windowsUsername, cards, accessGroups, competencies, notifications, relationships, lockers, defaults]
+              enum: [href, id, firstName, lastName, shortName, description, authorised, lastSuccessfulAccessZone, division, notes, personalDataFields, operatorLoginEnabled, operatorUsername, operatorPassword, operatorPasswordExpired, windowsLoginEnabled, windowsUsername, cards, accessGroups, competencies, notifications, relationships, lockers, defaults]
           description: |
             Limits the search results to the changes that affected these fields, and limits the
             `oldValues` and `newValues` blocks to these fields.  You can specify practically any of

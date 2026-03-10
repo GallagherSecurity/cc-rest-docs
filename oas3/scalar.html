@@ -14,7 +14,14 @@
 	  documentDownloadType: 'direct',
 	  agent: { disabled: true, },
 	  hideClientButton: true,
-	  withDefaultfonts: true,
+	  zzzwithDefaultfonts: false,
+	  zzzexpandAllResponses: "true saves some clicks opening the 200 response but makes for an extremely long document",
+	  expandAllResponses: false,
+	  orderRequiredPropertiesFirst: true,
+	  operationsSorter: (a, b) => {
+	      const verbOrder = ['delete', 'put', 'post', 'patch', 'get']
+	      return (a.path != b.path) ? verbOrder.indexOf(b.method) - verbOrder.indexOf(a.method) : a.path.localeCompare(b.path)
+	  },
       })
     </script>
   </body>
