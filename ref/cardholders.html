@@ -13309,7 +13309,7 @@
                     <li>removes a third elevator group.</li>
                   </ul>
                   <p>This is also the method you use for changing a cardholder&#39;s name, description, notes, user code, etc.</p>
-                  <p>In addition to those fields, this PATCH format accepts five arrays: &#39;cards&#39;, &#39;accessGroups&#39;, &#39;competencies&#39;, &#39;relationships&#39;, and (in 8.50) &#39;operatorGroups&#39;.</p>
+                  <p>In addition to those fields, this PATCH format accepts five arrays: &#39;cards&#39;, &#39;accessGroups&#39;, &#39;competencies&#39;, &#39;relationships&#39;, (in 8.50) &#39;operatorGroups&#39;, and (in 9.50) &#39;accessibilities&#39;.</p>
                 </section>
                 <section class="json-schema-properties">
                   <dl>
@@ -13968,7 +13968,7 @@
                       <p>Command Centre will only return this object for a mobile credential, and you should send it only when creating one. In the interests of security you cannot modify the invitation block of an existing credential. Someone&#39;s thumb might be on its way to accept it, after all. If there was something wrong with it you should delete it and start afresh.</p>
                       <p>Whether you should send <code>mobile</code> or <code>email</code> when creating a mobile credential depends on whether you are using the Gallagher mobile apps or your own.</p>
                       <p>If you specify either <code>mobile</code> or <code>mail</code> to early-version servers you must also supply the other so that Command Centre can send both an email invitation and a confirmation SMS. It is an error to only specify one on those servers.</p>
-                      <p>Later versions of Command Centre made the SMS verification optional to better support installations that use the Gallagher apps but dependence on cellular connectivity is undesirable. You do not need to send a mobile number when creating such a credential.</p>
+                      <p>Later versions of Command Centre made the SMS verification optional to better support installations that use the Gallagher apps but prefer not to depend on cellular connectivity. You do not need to send a mobile number when creating such a credential.</p>
                       <p>If you do not give an email address Command Centre cannot send an invitation to the cardholder. It will be up to another application to complete the creation of this credential using the Mobile Connect SDK.</p>
                       <p>You should not send a mobile number when creating a credential for use by third-party apps that use the Mobile Connect SDK. SMS is not supported there.</p>
                       <p>For more detail on using the Mobile Connect SDK, including more complete coverage of how an email address and mobile number are used in the provisioning process, see its documentation at
@@ -14143,7 +14143,7 @@
                     </dt>
                     <dd>
                       <p>Even though this appears in the example of a cardholder GET, this is a write-only field. You can use it in POSTs and PATCHes but the server will not send it to you.</p>
-                      <p>Being numeric, you might be tempted to send PINs to the server without surrounding quotes. However if you do that, leading zeros will be lost when the server converts them to integers. Putting quotes around the PIN forces the server to treat them as strings, which preserves any leading zeros.</p>
+                      <p>Being numeric, you might be tempted to send PINs to the server without surrounding quotes. However if you do that, leading zeros will be lost and the resulting behaviour is undefined.</p>
                       <p>8.90 servers will reject your request if the card&#39;s <code>credentialClass</code> is not <code>card</code>, <code>piv</code>, <code>piv-i</code>, or <code>govPass</code>. More recent servers will issue a warning in that case, and will not set the PIN, but will allow the rest of the update.</p>
                       <p>PINs were added to the API in 8.90.</p>
                     </dd>

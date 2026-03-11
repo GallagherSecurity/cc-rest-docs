@@ -2420,7 +2420,7 @@ definitions:
       code, etc.
 
       In addition to those fields, this PATCH format accepts five arrays:  'cards',
-      'accessGroups', 'competencies', 'relationships', and (in 8.50) 'operatorGroups'.
+      'accessGroups', 'competencies', 'relationships', (in 8.50) 'operatorGroups', and (in 9.50) 'accessibilities'.
 
     properties:
       authorised:
@@ -2998,8 +2998,8 @@ definitions:
           is an error to only specify one on those servers.
 
           Later versions of Command Centre made the SMS verification optional to better support
-          installations that use the Gallagher apps but dependence on cellular connectivity is
-          undesirable.  You do not need to send a mobile number when creating such a credential.
+          installations that use the Gallagher apps but prefer not to depend on cellular connectivity.
+          You do not need to send a mobile number when creating such a credential.
 
           If you do not give an email address Command Centre cannot send an invitation to the
           cardholder.  It will be up to another application to complete the creation of this
@@ -3173,10 +3173,9 @@ definitions:
           Even though this appears in the example of a cardholder GET, this is a write-only field.
           You can use it in POSTs and PATCHes but the server will not send it to you.
 
-          Being numeric, you might be tempted to send PINs to the server without surrounding quotes.
-          However if you do that, leading zeros will be lost when the server converts them to
-          integers.  Putting quotes around the PIN forces the server to treat them as strings, which
-          preserves any leading zeros.
+          Being numeric, you might be tempted to send PINs to the server without surrounding
+          quotes.  However if you do that, leading zeros will be lost and the resulting behaviour
+          is undefined.
 
           8.90 servers will reject your request if the card's `credentialClass` is not `card`,
           `piv`, `piv-i`, or `govPass`.  More recent servers will issue a warning in that case, and
