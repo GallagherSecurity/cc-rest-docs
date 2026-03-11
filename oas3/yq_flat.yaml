@@ -207,38 +207,6 @@ x-common-blocks:
       email: nick@example.com
       mobile: "02198765432"
       singleFactorOnly: true
-  - type: string
-    description: |
-      This is required when creating a PIV or PIV-I card.  The API will reject your request if this is
-      missing or not a Base64-encoded certificate, but it will not validate the certificate itself.
-
-      This example is shortened to fit on screen.  Real certificates are at least a thousand
-      characters.
-    example: "MIIE[...]Kltk="
-  - type: string
-    description: |
-      This contains the CAK, which is necessary for the secure use of contactless cards.  It is
-      not required for contact cards.
-
-      Optional when creating a PIV or PIV-I card.  The API will reject your request if this is
-      present and not a Base64-encoded certificate, but it will not validate the certificate itself.
-    example: "MIIE[...]e5mE="
-  - type: string
-    description: |
-      This is required when creating a PIV or PIV-I card.  The API will reject your request if this is
-      missing or not a Base64-encoded certificate, but it will not validate the certificate itself.
-    example: "MIIE[...]wkrp"
-  - type: string
-    description: |
-      If you send this when creating a card, it should be the cardholder's fingerprints contained in
-      the card's Cardholder Fingerprints data object with the error detection code removed:  the
-      whole CBEFF structure including the CBEFF_HEADER, CBEFF_BIOMETRIC_RECORD, and
-      CBEFF_SIGNATURE_BLOCK components.  Refer to Section 9 of NIST Special Publication 800-76-2:
-      Biometric Data Specification for Personal Identity Verification.
-
-      It is optional.  The API will check that this is Base64, but will not verify that it is
-      valid biometric data.
-    example: "N7[...]Shpd="
 x-zzztagGroups:
   - name: Operations
     tags: [Access Groups, Access Zones, Alarm Zones, Card types, Cardholder changes, Cardholders, Competencies, Day Categories, Lockers, Operator Groups, PDF definitions, Receptions, Redactions, Schedules, Visits]
@@ -246,6 +214,122 @@ x-zzztagGroups:
     tags: [Schema Definitions]
 components:
   examples:
+    CardholderPATCHExample:
+      description: |2
+
+        This example:
+
+          - sets 'authorised' true,
+          - sets a PDF holding an employee ID,
+
+          - changes the notification flags on two PDFs (presumably because this cardholder wants to receive
+            notifications at the email address stored in the 'email' PDF rather than by SMS),
+
+          - adds two new credentials, one card and one mobile,
+          - changes the issue level with `Stolen` as the reissue reason and clears the until date on another credential,
+          - deletes a third credential with `Lost` as the remove reason,
+          - adds two access group memberships, one unending and one with an until date,
+          - clears the until date on another access group membership,
+          - removes a fourth access group membership,
+          - adds a competency, inactive, with a future enablement date,
+          - activates a competency that the cardholder already had,
+          - adds one relationship,
+          - changes the cardholder on another,
+          - adds one locker assignment with a from date,
+          - sets the until date on another locker assignment,
+          - removes a third locker assignment,
+          - adds two operator group memberships,
+          - removes a third operator group membership,
+          - adds an elevator group with a default floor,
+          - modifies another elevator group, turning the 'code blue' feature on and the VIP feature off, and
+          - removes a third elevator group.
+      value:
+        authorised: true
+        firstName: Erica
+        "@employeeId": THX1139
+        personalDataDefinitions:
+          - "@email": {notifications: true}
+          - "@cellphone": {notifications: false}
+        cards:
+          add:
+            - type:
+                href: "https://host.com:8904/api/card_types/354"
+              pin: "153624"
+            - type:
+                href: "https://host.com:8904/api/card_types/600"
+              number: "Jock's iPhone 8"
+              status: {value: "Pending sign-off"}
+              invitation: {email: "jock@example.com"}
+          update:
+            - href: "https://host.com:8904/api/cardholders/325/cards/97b6a24ard6d4500a9d"
+              issueLevel: 2
+              until: ""
+              status: {value: "Stolen"}
+              pin: "153624"
+          remove:
+            - href: "https://host.com:8904/api/cardholders/325/cards/77e8affe7c7e4b56"
+              status: {value: "Lost"}
+        accessGroups:
+          add:
+            - accessGroup:
+                href: "https://host.com:8904/api/access_groups/352"
+            - accessGroup:
+                href: "https://host.com:8904/api/access_groups/124"
+              until: "2019-12-31"
+          update:
+            - href: "https://host.com:8904/api/cardholders/325/access_groups/10ad21"
+              until: ""
+          remove:
+            - href: "https://host.com:8904/api/cardholders/325/access_groups/10ed27"
+        competencies:
+          add:
+            - competency:
+                href: "https://host.com:8904/api/competencies/2354"
+              enabled: false
+              enablement: "2021-01-01T08:00+13"
+          update:
+            - href: "https://host.com:8904/api/cardholders/325/competencies/2dc3"
+              enabled: true
+        relationships:
+          add:
+            - role:
+                href: "https://host.com:8904/api/roles/5396"
+              cardholder:
+                href: "https://host.com:8904/api/cardholders/5398"
+          update:
+            - href: "https://host.com:8904/api/cardholders/325/roles/1799lah1170"
+              cardholder:
+                href: "https://host.com:8904/api/cardholders/10135"
+        lockers:
+          add:
+            - locker:
+                href: "https://host.com:8904/api/lockers/1200"
+                from: "2019-01-01"
+          update:
+            - href: "https://host.com:8904/api/cardholders/325/lockers/wxyz1234"
+              until: "2020-02-29"
+          remove:
+            - href: "https://host.com:8904/api/cardholders/325/lockers/abcd4321"
+        operatorGroups:
+          add:
+            - operatorGroup:
+                href: "https://host.com:8904/api/operator_groups/532"
+            - operatorGroup:
+                href: "https://host.com:8904/api/operator_groups/535"
+          remove:
+            - href: "https://host.com:8904/api/cardholders/325/operator_groups/EBDRSD"
+        elevatorGroups:
+          add:
+            - elevatorGroup:
+                href: "https://host.com:8904/api/elevator_groups/635"
+              accessZone:
+                href: "https://host.com:8904/api/access_zones/637"
+          update:
+            - href: "https://host.com:8904/api/cardholders/325/elevator_groups/1268613268"
+              enableCodeBlueFeatures: true
+              enableVipFeatures: false
+          remove:
+            - href: "https://host.com:8904/api/cardholders/325/elevator_groups/3498734"
     CardholderPATCHCardMobileExample:
       description: |
         This is an example of what you would send to add two mobile credentials to an existing cardholder.
@@ -362,200 +446,16 @@ components:
         cards:
           - type:
               href: "https://host.com:8904/api/card_types/600"
-    PIVCardCreateExample:
-      description: |
-        This example, when placed inside the `cards` array of a
-        [POST](cardholders.html#operation--api-cardholders-post) or the `cards.add` array of a
-        [PATCH](cardholders.html#operation--api-cardholders--id--patch), would create a PIV
-        credential and assign it to the cardholder created by the POST or identified by the address of
-        the PATCH.  Consult those methods for the JSON you need to wrap around this example.
-
-        A PIV-I example would have a different style of FASC-N, and a card number to match.
-      value:
-        number:
-          example: "47000256001337111234567890199991"
-          type: string
-          description: |
-            Required.
-
-            For a PIV card, this is the FASC-N.
-
-            For a PIV-I card, this is the decimal representation of the GUID in the CHUID, and must
-            not be the same as the FASC-N.
-
-            The server ignores hyphens here, so you can send back the same number you received from a
-            GET.
-        status:
-          description: |
-            Optional, but when controlling physical access you should be explicit rather than relying
-            on a default.  Set the `value` field inside it to either 'active' or 'disabled
-            (manually)'.  Case insensitive.
-
-            You will not be able to activate a card if its PIV status (inside the `pivdata` block)
-            prevents it.
-          type: object
-          example: {value: active}
-        type:
-          description: |
-            Required.  This should be the href of the built-in PIV/PIV-I card type, that your
-            application found using the process [in the introduction](#finding-the-piv-card-type).
-          example: {href: "https://host.com:8904/api/card_types/244"}
-        pivData:
-          description: |
-            This block contains all the PIV-specific fields.  Everything outside this block, including
-            the number, status, and type, is common to all types of Command Centre cards and credentials.
-          $ref: '#/components/examples/PIVCardData'
-    CardholderPATCHCardPIVExample:
-      description: |
-        This example would update a PIV card.  The two fields it changes are the status, which is a
-        field common to credentials of all types, and the PIV status.
-
-        The PIV status is the only PIV-specific data you can change on a PIV card.  Everything
-        else--the CHUID, certificates, and biometrics--are all fixed, once set.
-
-        See the [PIV data schema](#definition-PIV-card-data) for when you should set the PIV status
-        and what you can set it to.
-      value:
-        firstName: "PIV card user"
-        cards:
-          update:
-            - href: "https://host.com:8904/api/cardholders/5398/cards/90e5d0d70"
-              status: {value: "disabled (manually)"}
-              pivData: {pivStatus: {type: "notChecked"}}
-    PIVCardData:
-      description: |
-        This example, when placed inside one of the cards in the `cards` array of a POST or the
-        `cards.add` array of a PATCH, would create a PIV card.  When placed inside one of the cards in
-        the `cards.update` array of a PATCH, it will update a PIV card.  It contains all the
-        PIV-specific fields on a credential.
-
-        It is the same as the block you [receive from the API](#definition-PIV-card-GET) for an
-        existing PIV card, minus `lastCheckTime`.
-
-        When updating a card, only put one field inside this block:  `pivStatus.type`.  The [PIV card
-        data schema](#definition-PIV-card-data) lists the values you can use.
-      value:
-        chuid:
-          description: |
-            Required when creating a card, ignored when updating one.
-
-            The FASC-N in the `chuid` block, and its relationship with the card number, is the only
-            difference between PIV and PIV-I cards in Command Centre.
-          $ref: '#/components/examples/CHUID'
-        pivStatus:
-          type: object
-          description: |
-            This PIV status is distinct from the card status, which is a different field outside the
-            `pivData` block.
-
-            It is optional.  If you omit it when creating a card, the card will be enabled with a
-            status of "NotChecked", which is a perfectly valid operating status.  If Command Centre is
-            doing periodic certificate validation, the status will eventually change (to 'normal', all
-            going well).
-
-            You should send this block when creating a card only if you are doing your own certificate
-            validation.
-
-            When updating an existing card, this is the only field it makes sense to send
-            (specifically, the `type` field inside it).
-
-            It must contain a field `type` set to one of these values, based on the result of your
-            validation:
-
-              - Normal
-              - Offline
-              - Revoked
-              - Expired
-              - CertInChainRevoked
-              - CertInChainExpired
-              - IssuerSigCertRevoked
-              - IssuerSigCertExpired
-              - NotTrusted
-              - PolicyError
-              - OtherError
-              - NotChecked
-
-            If you set it to any value except 'NotChecked, 'Normal', or 'Offline', Command Centre will consider the
-            card invalid and deactivate it regardless of what you pass as the card status.  You, or
-            Command Centre's periodic certificate validation, may validate the card again later.
-          example: {type: Normal}
-        contentSigningCert:
-          type: string
-          description: |
-            This is required when creating a PIV or PIV-I card.  The API will reject your request if this is
-            missing or not a Base64-encoded certificate, but it will not validate the certificate itself.
-
-            This example is shortened to fit on screen.  Real certificates are at least a thousand
-            characters.
-          example: "MIIE[...]Kltk="
-        cardAuthenticationCert:
-          type: string
-          description: |
-            This contains the CAK, which is necessary for the secure use of contactless cards.  It is
-            not required for contact cards.
-
-            Optional when creating a PIV or PIV-I card.  The API will reject your request if this is
-            present and not a Base64-encoded certificate, but it will not validate the certificate itself.
-          example: "MIIE[...]e5mE="
-        pivAuthenticationCert:
-          type: string
-          description: |
-            This is required when creating a PIV or PIV-I card.  The API will reject your request if this is
-            missing or not a Base64-encoded certificate, but it will not validate the certificate itself.
-          example: "MIIE[...]wkrp"
-        fingerprints:
-          type: string
-          description: |
-            If you send this when creating a card, it should be the cardholder's fingerprints contained in
-            the card's Cardholder Fingerprints data object with the error detection code removed:  the
-            whole CBEFF structure including the CBEFF_HEADER, CBEFF_BIOMETRIC_RECORD, and
-            CBEFF_SIGNATURE_BLOCK components.  Refer to Section 9 of NIST Special Publication 800-76-2:
-            Biometric Data Specification for Personal Identity Verification.
-
-            It is optional.  The API will check that this is Base64, but will not verify that it is
-            valid biometric data.
-          example: "N7[...]Shpd="
-    CHUID:
-      description: |
-        This is an example CHUID block for a PIV card.  The only difference between this and a PIV-I
-        card is the FASC-N.
-      value:
-        hash:
-          type: string
-          description: |
-            This is the hash of the CHUID object, Base64-encoded.  For a 256-bit hash it
-            should be 44 characters long including one `=` pad.  The API will reject a string that is
-            not valid Base64, but it will not verify the hash.
-
-            Required in versions up to 8.60.  Optional in 8.70 and later.
-          example: "NSBvmBxA8zXz+dScJoYNLb96YMHEZXGghGirRJxWVhE="
-        fascn:
-          type: string
-          description: |
-            This is the FASC-N identifier.  You must supply it when creating a card.
-
-            It must be the same as the card number on a PIV (not PIV-I) card.
-
-            On a PIV-I card, it must not be the same as the card number (and for Federal PIV-I cards
-            it will likely begin with fourteen nines).
-          example: "47000256001337111234567890199991"
-        orgIdentifier:
-          type: string
-          description: Optional.
-          example: ""
-        duns:
-          type: string
-          description: Optional.
-          example: ""
     CardholderPOSTExample:
       description: |
         This is an example of a POST you could use to create a cardholder in a specific division and
-        access group, with an access card, another cardholder as a supervisor, a competency, a student
-        ID and a photo held in personal data fields, and two lockers.
+        access group, with an access card, another cardholder as a supervisor, a competency, a
+        student ID and a photo held in personal data fields, two lockers, and configuration for two
+        elevator groups.
 
-        There are plenty more fields than shown in this example.  For a complete list please see the
-        schema for the detailed [cardholder object](#definition-Cardholder-detail) that you receive
-        from a cardholder href.
+        There are more fields on a cardholder than shown in this example.  For a complete list
+        please see the schema for the detailed [cardholder object](#definition-Cardholder-detail)
+        that you receive from a cardholder href.
 
         In this example we are giving our new cardholder a disabled competency, set to enable in
         January 2019.
@@ -1389,6 +1289,7 @@ components:
                 The cardholder's accessibility settings in an array of three elements.
 
                 New to 9.50.
+              example: [{"type": "useExtendedAccessTime", "enabled": true, "from": "2026-08-15T21:00:00Z"}, {"type": "disableCipherPad", "enabled": false}, {"type": "pinExemption", "enabled": false}]
               type: array
               items:
                 type: object
@@ -1806,8 +1707,8 @@ components:
             is an error to only specify one on those servers.
 
             Later versions of Command Centre made the SMS verification optional to better support
-            installations that use the Gallagher apps but dependence on cellular connectivity is
-            undesirable.  You do not need to send a mobile number when creating such a credential.
+            installations that use the Gallagher apps but prefer not to depend on cellular connectivity.
+            You do not need to send a mobile number when creating such a credential.
 
             If you do not give an email address Command Centre cannot send an invitation to the
             cardholder.  It will be up to another application to complete the creation of this
@@ -1924,7 +1825,19 @@ components:
           example: 2025-09-24T14:00:00Z
         pin:
           type: string
-          description: "This is a write-only field.\nYou can use it in POSTs and PATCHes but the server will not send it to you.\n\nBeing numeric, you might be tempted to send PINs to the server without surrounding quotes.\nHowever if you do that, leading zeros will be lost when the server converts them to\nintegers.  Putting quotes around the PIN forces the server to treat them as strings, \npreserving leading zeros.\n\n8.90 servers will reject your request if the card's `credentialClass` is not `card`,\n`piv`, `piv-i`, or `govPass`.  More recent servers will issue a warning in that case, and\nwill not set the PIN, but will allow the rest of the update.\n\nPINs were added to the API in 8.90.\n"
+          description: |
+            This is a write-only field.
+            You can use it in POSTs and PATCHes but the server will not send it to you.
+
+            Being numeric, you might be tempted to send PINs to the server without surrounding
+            quotes.  However if you do that, leading zeros will be lost and the resulting behaviour
+            is undefined.
+
+            8.90 servers will reject your request if the card's `credentialClass` is not `card`,
+            `piv`, `piv-i`, or `govPass`.  More recent servers will issue a warning in that case, and
+            will not set the PIN, but will allow the rest of the update.
+
+            PINs were added to the API in 8.90.
           example: "153624"
         visitorContractor:
           type: boolean
@@ -1965,7 +1878,7 @@ components:
                 href: {type: string, format: uri-reference}
           description: |
             This block contains links to the calls that return the data you will need to encode
-            MIFARE DESFire and Classic cards.
+            MIFARE DESFire and Classic cards.  For more on that see the 'Card Encoding' tag.
 
             Read-only:  the server will ignore it if you send it.
 
@@ -2445,13 +2358,14 @@ components:
             and provide uninterrupted access to their designated floor.
           example: false
     CardholderPOST:
-      title: Cardholder post
+      title: Cardholder POST
       description: |
-        This is an example of a POST you could use to create a cardholder in a specific division and
-        access group, with an access card, another cardholder as a supervisor, a competency, a student
-        ID and a photo held in personal data fields, and two lockers.
+        This is part of the model of a POST body that creates a cardholder.  It does not contain
+        every field you can set when creating a cardholder, but shows the division (which is
+        mandatory) and an access group, an access card, a supervisor, a competency, two personal
+        data fields, two lockers, and two elevator groups.
 
-        There are plenty more fields than shown in this example.  For a complete list please see the
+        There are more fields on a cardholder than shown here.  For a complete list please see the
         schema for the detailed [cardholder object](#definition-Cardholder-detail) that you receive
         from a cardholder href.
       required: [division]
@@ -2619,74 +2533,20 @@ components:
                 href: "https://host.com:8904/api/access_zones/637"
             - elevatorGroup:
                 href: "https://host.com:8904/api/elevator_groups/639"
-              enableCodeBlueFeatures: true
-    CardholderUpdateLocationPOSTExample:
-      title: Cardholder update location POST example
-      description: |2
+                enableCodeBlueFeatures: true
+    CardholderPATCH:
+      title: Cardholder PATCH
+      description: |
+        Send one of these in a PATCH to `/api/cardholders/{id}` to modify the cardholder at that
+        URL, or to add and modify cards, competencies, personal data, group memberships, and
+        relationships.
 
-        This is an example of a POST you could use to move a cardholder to a target access zone.
-      properties:
-        accessZone:
-          type: object
-          properties:
-            href:
-              type: string
-              format: uri-reference
-              example: "https://host.com:8904/api/access_zones/412"
-              description: |
-                The href of the access zone into which you want to move your cardholder.  This example
-                came from the [access zones
-                controller](rest.html#operation--api-access_zones-update_cardholder_location-get), but
-                you can also use an href from the [items controller](events.html#tag-Items) if you do
-                not have a RESTStatus or (in 8.60) RESTOverrides licence.
-    CardholderPATCHExample:
-      title: Cardholder PATCH example
-      description: |2
-
-        ***TODO*** reword as the schema rather than an example
-
-        Send one of these in a PATCH to `/api/cardholders/{id}` to modify the cardholder at that URL,
-        or to add and modify cards, competencies, groups, and relationships.
-
-        All the cardholder fields you can supply are described in the [cardholder
-        detail](#definition-Cardholder-detail).
-
-        This example:
-
-          - sets 'authorised' true,
-          - sets a PDF holding an employee ID,
-          - changes the notification flags on two PDFs,
-          - adds two new credentials, one card and one mobile,
-          - changes the issue level with `Stolen` as the reissue reason and clears the until date on another credential,
-          - deletes a third credential with `Lost` as the remove reason,
-          - adds two access group memberships, one unending and one with an until date,
-          - clears the until date on another access group membership,
-          - removes a fourth access group membership,
-          - adds a competency, inactive, with a future enablement date,
-          - activates a competency that the cardholder already had,
-          - adds one relationship,
-          - changes the cardholder on another,
-          - adds one locker assignment with a from date,
-          - sets the until date on another locker assignment,
-          - removes a third locker assignment,
-          - adds two operator group memberships,
-          - removes a third operator group membership,
-          - adds an elevator group with a default floor,
-          - modifies another elevator group, turning the 'code blue' feature on and the VIP feature off, and
-          - removes a third elevator group.
-
-        This is also the method you use for changing a cardholder's name, description, notes, user
-        code, etc.
-
-        In addition to those fields, this PATCH format accepts five arrays:  'cards',
-        'accessGroups', 'competencies', 'relationships', and (in 8.50) 'operatorGroups'.
+        This model only shows some of the fields available on a cardholder.  The full list is in
+        the [cardholder detail](#definition-Cardholder-detail).
       properties:
         authorised:
           type: boolean
           example: true
-          description: |
-            You can modify [all the fields](#definition-Cardholder-detail) on a cardholder, provided
-            you have the necessary privileges.
         firstName:
           type: string
           example: Erica
@@ -2697,14 +2557,12 @@ components:
             Replace PDF values as though they were flat fields on a cardholder.  Prefix the name of
             the PDF with `@`, and Base64-encode images.  Send 'null' if you want to delete a PDF value.
 
-            Remember that a cardholder's record will not return a PDF if he or she is not a member of
-            the access group that grants that PDF.  In this example, one or both of access groups 352
-            and 124 are attached to 'employeeId'.
+            Remember that a cardholder's record will not return a PDF if they are not a member of an
+            access group that grants that PDF.  Current versions of Command Centre are tolerant of
+            your attempts to change the PDF in that situation, but future versions may not be.
         personalDataDefinitions:
           description: |
-            This is how you set and unset the notifications flags on PDFs.  Presumably this cardholder
-            wants to receive notifications at the email address stored in the 'email' PDF rather than
-            by SMS.
+            This is how you set and unset the notifications flags on PDFs.
           type: array
           items: {$ref: '#/components/schemas/CardholderPDF'}
           example:
@@ -3760,8 +3618,8 @@ paths:
         Note that you can only create one cardholder per POST.
       requestBody:
         description: |
-          This can be a large object as shown, or a tiny one, because the only fields you must
-          have in the POST are the division and either the first or last name.
+          This can be a large object as shown in the body model, or a tiny one, because the only
+          fields you must have in the POST are the division and either the first or last name.
         content:
           application/json:
             schema:
@@ -3854,7 +3712,7 @@ paths:
     patch:
       tags: [Cardholders]
       summary: Update a cardholder
-      description: "This is the call you use to update a cardholder, including:\n  - changing general properties such as names, division, and description,\n\n  - changing PDF values, and\n\n  - adding or updating cards, access group membership, roles and relationships, lockers, and\n    competencies.\n\nWhen changing a cardholder's division at the same time as PDFs or competencies, the extra\nprivilege checks required for PDFs and competency changes use the origin division, not the\ndestination division.  So if you are moving a cardholder from a division in which your\noperator has no access to PDFs and competencies into one in which it does, first PATCH the\ncardholder into the new division then PATCH it with the other changes.\n\nYou can find this URL in the href in the [cardholder search](#definition-Cardholders) or\nany of the other calls that return cardholder hrefs.  [Do not build it\nyourself](#topic-Forward-compatibility--HATEOAS-).\n\n---\n  \nNote that the REST API does not implement the full suite of Command Centre\nprivileges.  In particular, the following privileges do not have the same effect\non an operator's ability to modify a cardholder that they do in the administrative\nclients:\n\n  - Disable Card.  This privilege has no effect on the 7.90 REST API.  You need\n    Edit Cardholders to disable cards.\n\n  - Add or Edit Cardholder Notes.  You also need Edit Cardholders to change notes\n    on an existing cardholder via the API.  In the administrative clients, you do\n    not.\n\n  - Manage Locker Assignments.  You also need Edit Cardholders to assign and un-assign\n    lockers on a cardholder via the API.  In the administrative clients, you do not.\n\nThe 'De-authorise Cardholder' privilege _is_ implemented.  It allows an operator to set a\ncardholder's 'authorised' field to false (denying all their future access requests) without\nthe Edit Cardholders privilege.\n\nIn short, if your application intends to do more to cardholders than de-authorise them, you\nwill need an operator with Edit Cardholders.\n\n---\n  \nThe PATCH is best illustrated by example.\n"
+      description: "This is the call you use to update a cardholder, including:\n  - changing general properties such as names, division, and description,\n\n  - changing PDF values, and\n\n  - adding or updating cards, access group membership, roles and relationships, lockers, and\n    competencies.\n\nWhen changing a cardholder's division at the same time as PDFs or competencies, the extra\nprivilege checks required for PDFs and competency changes use the origin division, not the\ndestination division.  So if you are moving a cardholder from a division in which your\noperator has no access to PDFs and competencies into one in which it does, first PATCH the\ncardholder into the new division then PATCH it with the other changes.\n\nYou can find this URL in the href in the [cardholder search](#definition-Cardholders) or\nany of the other calls that return cardholder hrefs.  [Do not build it\nyourself](#topic-Forward-compatibility--HATEOAS-).\n\n---\n  \nNote that the REST API does not implement the full suite of Command Centre\nprivileges.  In particular, the following privileges do not have the same effect\non an operator's ability to modify a cardholder that they do in the administrative\nclients:\n\n  - Disable Card.  This privilege has no effect on the 7.90 REST API.  You need\n    Edit Cardholders to disable cards.\n\n  - Add or Edit Cardholder Notes.  You also need Edit Cardholders to change notes\n    on an existing cardholder via the API.  In the administrative clients, you do\n    not.\n\n  - Manage Locker Assignments.  You also need Edit Cardholders to assign and un-assign\n    lockers on a cardholder via the API.  In the administrative clients, you do not.\n\nThe 'De-authorise Cardholder' privilege _is_ implemented.  It allows an operator to set a\ncardholder's 'authorised' field to false (denying all their future access requests) without\nthe Edit Cardholders privilege.\n\nIn short, if your application intends to do more to cardholders than de-authorise them, you\nwill need an operator with Edit Cardholders.\n"
       requestBody:
         description: |
           As well as cardholder attributes such as 'authorised', the PATCH body contains
@@ -3862,13 +3720,15 @@ paths:
           memberships, etc.
         content:
           application/json:
+            schema:
+              $ref: '#/components/schemas/CardholderPATCH'
             examples:
+              Large update:
+                $ref: '#/components/examples/CardholderPATCHExample'
               Physical card:
                 $ref: '#/components/examples/CardholderPATCHCardPhysicalExample'
               Mobile credential:
                 $ref: '#/components/examples/CardholderPATCHCardMobileExample'
-              PIV card:
-                $ref: '#/components/examples/CardholderPATCHCardPIVExample'
         required: true
       responses:
         "200":
@@ -4145,7 +4005,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CardholderUpdateLocationPOSTExample'
+              type: object
+              properties:
+                accessZone:
+                  type: object
+                  properties:
+                    href:
+                      type: string
+                      format: uri-reference
+                      example: "https://host.com:8904/api/access_zones/412"
+                      description: |
+                        The href of the access zone into which you want to move your cardholder.
+                         Use an href from the [access zones
+                         controller](rest.html#operation--api-access_zones-update_cardholder_location-get),
+                         or the [items controller](events.html#tag-Items) if you do not have a
+                         RESTStatus or (in 8.60) RESTOverrides licence.
+            examples:
+              Href from the access_zones endpoint:
+                value: {"accessZone": {"href": "https://host.com:8904/api/access_zones/412"}}
+              Href from the items endpoint:
+                value: {"accessZone": {"href": "https://host.com:8904/api/items/412"}}
         required: true
       responses:
         "200": {description: "Success.  Future versions will return feedback from the server."}
@@ -4565,7 +4444,11 @@ paths:
       tags: [Card encoding]
       operationId: notifyEncodeCompleted
       summary: Notify Command Centre that encoding succeeded
-      description: Notify Command Centre that encoding succeeded for the given credential.
+      description: |
+        Notify Command Centre that encoding succeeded for the given credential.
+
+        Do not code this URL into your application.  Take it from the 'callback' block that
+        accompanied the card's encoding data in the previous API call.
       parameters:
         - $ref: '#/components/parameters/id'
         - $ref: '#/components/parameters/secondary_id'
@@ -4588,6 +4471,9 @@ paths:
       description: |
         Notify Command Centre that encoding failed for the given credential. Optionally include an
         error message.
+
+        Do not code this URL into your application.  Take it from the 'callback' block that
+        accompanied the card's encoding data in the previous API call.
       parameters:
         - $ref: '#/components/parameters/id'
         - $ref: '#/components/parameters/secondary_id'
