@@ -173,6 +173,18 @@ tags:
 
     Use these methods to download, monitor, and manage Command Centre alarms.
 
+    ### Alarm states
+
+    Each type of alarm can be stateless or stateful.  Stateless alarm types are spikes, such as an
+    operator getting their password wrong or a cardholder being denied at a door.  Stateful alarms
+    have a triggering event and a restoring event, such as a door being forced open then closed, or
+    a service going offline then reappearing later.
+
+    An operator cannot process (dismiss) an active alarm without the 'Force process' privilege.
+
+    The API presents the difference in a field called `active`.  It will always be false for
+    stateless alarms, and it will be true for stateful alarms before their restoring event occurs.
+
     ### Alarm use cases
 
     #### Downloading and managing unprocessed alarms
@@ -2259,10 +2271,10 @@ definitions:
           a triggering event and a restoring event:  a door being forced open then closed, or a
           service going offline then reappearing later.
 
-          Stateless alarms are always inactive, but stateful alarms are active between being raised
-          and restored.
+          Stateless alarms are always inactive:  `active` will be false.  Stateful alarms will have
+          `active` true between being raised and restored.
 
-          An operator cannot process (dismiss) an active alarm without a special privilege.
+          An operator cannot process (dismiss) an active alarm without the 'Force process' privilege.
 
         example: false
       division:

@@ -553,6 +553,10 @@
           <div class="tag-description doc-row">
             <div class="doc-copy">
               <p>Use these methods to download, monitor, and manage Command Centre alarms.</p>
+              <h3 id="alarm-states">Alarm states</h3>
+              <p>Each type of alarm can be stateless or stateful. Stateless alarm types are spikes, such as an operator getting their password wrong or a cardholder being denied at a door. Stateful alarms have a triggering event and a restoring event, such as a door being forced open then closed, or a service going offline then reappearing later.</p>
+              <p>An operator cannot process (dismiss) an active alarm without the &#39;Force process&#39; privilege.</p>
+              <p>The API presents the difference in a field called <code>active</code>. It will always be false for stateless alarms, and it will be true for stateful alarms before their restoring event occurs.</p>
               <h3 id="alarm-use-cases">Alarm use cases</h3>
               <h4 id="downloading-and-managing-unprocessed-alarms">Downloading and managing unprocessed alarms</h4>
               <ol>
@@ -5057,8 +5061,8 @@
                     </dt>
                     <dd>
                       <p>Alarms can be stateless or stateful. Stateless alarm types are spikes: an operator getting their password wrong or a cardholder being denied at a door. Stateful alarms have a triggering event and a restoring event: a door being forced open then closed, or a service going offline then reappearing later.</p>
-                      <p>Stateless alarms are always inactive, but stateful alarms are active between being raised and restored.</p>
-                      <p>An operator cannot process (dismiss) an active alarm without a special privilege.</p>
+                      <p>Stateless alarms are always inactive: <code>active</code> will be false. Stateful alarms will have <code>active</code> true between being raised and restored.</p>
+                      <p>An operator cannot process (dismiss) an active alarm without the &#39;Force process&#39; privilege.</p>
                     </dd>
                     <dt data-property-name="division" class="has-description">
                       <span class="json-property-name">division:</span>
