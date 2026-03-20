@@ -8,9 +8,10 @@
   <body>
     <div id="app"></div>
     <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+    <!-- this needs a flattened model? -->
     <script>
       Scalar.createApiReference('#app', {
-	  url: 'yq_flat.yaml',
+	  url: 'out_scalar.yaml',
 	  documentDownloadType: 'direct',
 	  agent: { disabled: true, },
 	  hideClientButton: true,
@@ -20,7 +21,7 @@
 	  orderRequiredPropertiesFirst: true,
 	  operationsSorter: (a, b) => {
 	      const verbOrder = ['delete', 'put', 'post', 'patch', 'get']
-	      return (a.path != b.path) ? verbOrder.indexOf(b.method) - verbOrder.indexOf(a.method) : a.path.localeCompare(b.path)
+	      return (a.method != b.method) ? verbOrder.indexOf(b.method) - verbOrder.indexOf(a.method) : a.path.localeCompare(b.path)
 	  },
       })
     </script>
