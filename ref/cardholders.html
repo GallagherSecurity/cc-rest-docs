@@ -732,7 +732,7 @@
                   <p>Examples:</p>
                   <p><code>Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB</code></p>
                   <p><code>Authorization: Basic OkM3NzQtQjAxRi1ENjk1LUFBNEItMjE1Ri1BMTU4LUFDMjItQURFQg==</code></p>
-                  <p>Early versions of Command Centre allowed you to omit the &#39;GGL-API-KEY&#39; from the first form. Later versions of CC and all versions of the API gateway will reject you with a 401 if you do that. The API gateway is especially fussy about case and punctuation.</p>
+                  <p>Early versions of Command Centre allowed you to omit the &#39;GGL-API-KEY&#39; from the first form. Future versions of Command Centre and all versions of the API gateway will reject you with a 401 if you do that. The API gateway is especially fussy about case and punctuation.</p>
                   <h4 id="http-basic-authentication">HTTP Basic authentication</h4>
                   <p>The two example headers above are equivalent: prepending a colon to the API key beginning with <code>C774</code> then encoding it into Base64 produces the 56 characters beginning with <code>OkM3</code>.</p>
                   <p>According to the HTTP Basic specification, the colon is a separator between a username and a password. In our case, the API key is the password and the username is unnecessary. If you place a username before the colon, before Base64-encoding it, Command Centre will ignore it and authenticate the connection based on the API key alone.</p>
@@ -5063,7 +5063,6 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
@@ -5559,7 +5558,6 @@
                   <html>
                   <head></head>
                   <body><pre><code class="hljs language-json">{
-  <span class="hljs-attr">&quot;href&quot;</span>: <span class="hljs-string">&quot;https://localhost:8904/api/card_types/600&quot;</span>,
   <span class="hljs-attr">&quot;id&quot;</span>: <span class="hljs-string">&quot;600&quot;</span>,
   <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;Red DESFire visitor badge&quot;</span>,
   <span class="hljs-attr">&quot;division&quot;</span>: {
@@ -12518,7 +12516,7 @@
                                   <dd>
                                     <ul>
                                       <li>
-                                        <p><code>disableCipherPad</code> means users who badge their card at a reader that uses the cipher pad (a scrambled keypad) will not be prompted for PIN entry. Usually the reason is a vision impairment, making a randomised keypad impracticable.</p>
+                                        <p><code>disableCipherPad</code> means this cardholder will not have the numbers on an alarms terminal scrambled when the terminal is configured as a cipher pad. Usually the reason is a vision impairment, making a randomised keypad impracticable.</p>
                                       </li>
                                       <li>
                                         <p><code>useExtendedAccessTime</code> increases the time a door remains unlocked and the amount of time that can pass before raising a &#39;door open too long&#39; alarm.</p>
@@ -15094,7 +15092,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>The href and name of the elevator group for which this cardholder has a default floor or passenger types.</p>
+                      <p>The href and name of the elevator group for which this cardholder has a default floor or passenger type.</p>
                     </dd>
                     <dt data-property-name="accessZone" class="has-description">
                       <span class="json-property-name">accessZone:</span>
@@ -16867,12 +16865,14 @@
                       <span class="json-property-type">string</span>
                       <span class="json-property-format">(url)</span>
                       <span class="json-property-range" title="Value limits"></span>
+                      <span class="json-property-read-only"></span>
                     </dt>
                     <dd>
                       <p>This is the identifier to use when assigning a card to a cardholder in a cardholder
                         <a href="#operation--api-cardholders--id--patch">PATCH</a> or
                         <a href="#definition-Cardholder-POST-example">POST</a>.</p>
                       <p>This is also the URL for the card type&#39;s detail page. GETting it will return you a 404 if you do not have &#39;View site&#39; or &#39;Configure site&#39; on the card type&#39;s division.</p>
+                      <p>It is server-generated, and therefore read-only.</p>
                     </dd>
                     <dt data-property-name="id" class="has-description">
                       <span class="json-property-name">id:</span>

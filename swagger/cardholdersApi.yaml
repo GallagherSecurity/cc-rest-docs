@@ -2150,9 +2150,10 @@ definitions:
                   enum: [ disableCipherPad, useExtendedAccessTime, pinException ]
                   description: |
 
-                    * `disableCipherPad` means users who badge their card at a reader that uses the
-                      cipher pad (a scrambled keypad) will not be prompted for PIN entry.  Usually
-                      the reason is a vision impairment, making a randomised keypad impracticable.
+                    * `disableCipherPad` means this cardholder will not have the numbers on an
+                      alarms terminal scrambled when the terminal is configured as a cipher pad.
+                      Usually the reason is a vision impairment, making a randomised keypad
+                      impracticable.
 
                     * `useExtendedAccessTime` increases the time a door remains unlocked and the
                       amount of time that can pass before raising a 'door open too long' alarm.
@@ -2879,6 +2880,7 @@ definitions:
 
         type: string
         example: "1"
+
       cardSerialNumber:
         description: |
           The serial number (CSN, MIFARE UID) of a physical access card as a hex string without a
@@ -3745,7 +3747,7 @@ definitions:
       elevatorGroup:
         description: |
           The href and name of the elevator group for which this cardholder has a default
-          floor or passenger types.
+          floor or passenger type.
         example: {
           href: "https://localhost:8904/api/elevator_groups/635",
           name: "Main building lower floors" }
@@ -4703,6 +4705,7 @@ definitions:
       href:
         type: string
         format: url
+        readOnly: true
         example: "https://localhost:8904/api/card_types/600"
         description: |-
           This is the identifier to use when assigning a card to a cardholder in a cardholder
@@ -4711,6 +4714,8 @@ definitions:
 
           This is also the URL for the card type's detail page.  GETting it will return you a 404 if
           you do not have 'View site' or 'Configure site' on the card type's division.
+
+          It is server-generated, and therefore read-only.
 
       id:
         type: string
