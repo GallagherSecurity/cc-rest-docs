@@ -8,8 +8,10 @@
   <body>
     <div id="app"></div>
     <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+    <!-- this needs a flattened model? -->
     <script>
       Scalar.createApiReference('#app', {
+	  layout: "classic",
 	  url: 'out_scalar.yaml',
 	  documentDownloadType: 'direct',
 	  agent: { disabled: true, },
@@ -18,7 +20,6 @@
 	  zzzexpandAllResponses: "true saves some clicks opening the 200 response but makes for an extremely long document",
 	  expandAllResponses: false,
 	  orderRequiredPropertiesFirst: true,
-	  tagsSorter: 'alpha',
 	  operationsSorter: (a, b) => {
 	      const verbOrder = ['delete', 'put', 'post', 'patch', 'get']
 	      return (a.method != b.method) ? verbOrder.indexOf(b.method) - verbOrder.indexOf(a.method) : a.path.localeCompare(b.path)

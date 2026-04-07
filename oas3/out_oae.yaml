@@ -1,4 +1,5 @@
 ## Automatically generated.  Do not edit.
+
 openapi: '3.1.0'
 
 x-common-blocks:
@@ -49,7 +50,7 @@ x-common-blocks:
   - &ID_DESC |
       An alphanumeric identifier, unique to the server. This is the ID to use in the `source`
       parameter of [event filters](#?route=get-/api/events) and in the body of [status
-      subscriptions](events.html#status-subscriptions) when you are interested in events originating at this item.
+      subscriptions](#?route=tag--Items--status-subscriptions) when you are interested in events originating at this item.
 
   - properties: &UPDATES_PROPS
       href:
@@ -166,7 +167,7 @@ x-common-blocks:
       The search and details pages do not return status flags by default, because an item's status
       is unknown until something is monitoring it.  If you want status flags on the search and
       details pages you must ask for them using the `fields` parameter, but our advice is to monitor
-      them using [status subscriptions](events.html#status-subscriptions) if you are running 8.30 or
+      them using [status subscriptions](#?route=tag--Items--status-subscriptions) if you are running 8.30 or
       later, otherwise the item's `updates` link.  See the [item status](#?route=overview--item-status) section
       for a full description of how to stay up to date with item status, and this item's
       introduction in the Operations section for what flags this item might return and what they
@@ -242,6 +243,10 @@ x-common-blocks:
   - &OUTPUTFIELDS_SCHEMA
       type: string
       enum: [href, id, name, shortName, description, division, commands, connectedController, statusFlags, statusText, status, notes, updates, defaults]
+
+  - &NAMEHREF_PROPERTIES
+      name: {type: string}
+      href: {type: string, format: uri-reference, readOnly: true}
 
   - &CARDMOBILE
     number: Nick's mobile
@@ -421,7 +426,7 @@ components:
         will not send an invitation to the cardholder.
 
         `singleFactorOnly` defaults to false, which is the recommended setting.  See the [card
-        detail](#definition-Cardholder-card) for more.
+        detail](#?route=cmp--schemas-cardholdercard) for more.
 
       value:
         firstName: "Nick"
@@ -453,7 +458,7 @@ components:
         will not send an invitation to the cardholder.
 
         `singleFactorOnly` defaults to false, which is the recommended setting.  See the [card
-        detail](#definition-Cardholder-card) for more.
+        detail](#?route=cmp--schemas-cardholdercard) for more.
 
       value:
         firstName: "Nick"
@@ -465,7 +470,7 @@ components:
     CardholderPATCHCardPhysicalExample:
       description: |
         This is a minimal object for giving a cardholder a new card, containing nothing more than
-        the card type.  See the [card detail](#definition-Cardholder-card) for other fields you can
+        the card type.  See the [card detail](#?route=cmp--schemas-cardholdercard) for other fields you can
         (and probably should) use, such as the card's issue level and from/until dates.
 
         `type` is the only compulsory field in a new card. It must contain an href to the card type
@@ -484,7 +489,7 @@ components:
       description: |
         This is a minimal object for creating a cardholder with one card, containing the only
         required fields for a cardholder (name and division) and the only required field for a card (the card
-        type).  See the [card detail](#definition-Cardholder-card) for other fields you can use,
+        type).  See the [card detail](#?route=cmp--schemas-cardholdercard) for other fields you can use,
         such as the card's issue level and from/until dates.
 
         `type` is the only compulsory field in a new card. It must contain an href to the card type
@@ -505,7 +510,7 @@ components:
         elevator groups.
 
         There are more fields on a cardholder than shown in this example.  For a complete list
-        please see the schema for the detailed [cardholder object](#definition-Cardholder-detail)
+        please see the schema for the detailed [cardholder object](#?route=cmp--schemas-cardholderdetail)
         that you receive from a cardholder href.
 
         In this example we are giving our new cardholder a disabled competency, set to enable in
@@ -850,110 +855,6 @@ components:
                 format: date-time
                 example: "2018-07-31T00:00:00Z"
 
-    CardType:
-      description: |
-        This object describes a single Card Type.  "Credential type" would be a better name, as it
-        includes mobile credentials.
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              href:
-                type: string
-                format: uri-reference
-                readOnly: true
-                example: "https://host.com:8904/api/card_types/600"
-                description: |-
-                  This is the identifier to use when assigning a card to a cardholder in a cardholder
-                  [PATCH](#?route=patch-/api/cardholders/-id-) or
-                  [POST](#definition-Cardholder-POST-example).
-
-                  This is also the URL for the card type's detail page.  GETting it will return you a 404 if
-                  you do not have 'View site' or 'Configure site' on the card type's division.
-
-              id:
-                type: string
-                readOnly: true
-                example: "600"
-                description: |
-                  The API does not use this field.  Nor should you.
-              name: {type: string, example: "Red DESFire visitor badge"}
-              division:
-                type: object
-                description: |
-                  The division that contains this card type.  Required when creating a card type.
-
-                  New to 8.50.
-                example:
-                  href: "https://host.com:8904/api/divisions/2"
-
-              notes:
-                type: string
-                example: "Disabled after 7d inactivity, 6-char PIN"
-                description: |
-                  Free text.
-
-                  Because of its potential size, the server does not return the notes field by default.  You
-                  need to ask for it with `fields=notes`.
-              facilityCode:
-                type: string
-                description: |
-                  A facility code is a letter (A-P) followed by up to five digits.  It is encoded onto cards
-                  so that they only work at sites with the correct facility code.
-
-                  PIV cards, PIV-I cards, and mobile credentials do not have a facility code.
-
-                  Most credential classes require a facility code on creation.  But it cannot be changed
-                  once set, so this field is ignored in a PATCH.
-                example: "A12345"
-              availableCardStates:
-                readOnly: true
-                type: array
-                items: {type: string, enum: ['Active', 'Disabled (manually)', 'Lost', 'Stolen', 'Damaged']}
-                description: |
-                  All credential types have a set of card states.
-
-                  If you need this, ask for it using the `fields` parameter.
-
-                  This field is read-only:  it is derived from the card type's card state set (also known as
-                  a workflow).  If you send it in a POST or a PATCH, the server will ignore it.
-                example:
-                - "Active"
-                - "Disabled (manually)"
-                - "Lost"
-                - "Stolen"
-                - "Damaged"
-              credentialClass:
-                type: string
-                description: |
-                  Required when creating a new card type but ignored when modifying one since a credential's
-                  type cannot be changed once set.
-                enum: [ "piv", "pivi", "card", "mobile", "digitalId", "govPass", "trackingTag", "transact" ]
-                example: "card"
-              minimumNumber:
-                description: |
-                  For card types with integer card numbers, this is the minimum.  Must be non-negative.
-                type: string
-                example: "1"
-              maximumNumber:
-                description: |
-                  For card types with integer card numbers, this is the maximum.  Must be non-negative.
-                type: string
-                example: "16777215"
-              serverDisplayName: *SERVER
-              regex:
-                description: |
-                  This is the regular expression that a text card number
-                  must match before Command Centre will accept it. 
-                type: string
-                example: "^[A-Za-z0-9]+$"
-              regexDescription:
-                description: Regular expressions often need explaining.  You may attempt it here.
-                type: string
-                example: "Only alphanumeric characters"
-
   responses:
     "400badbody":
       description: |
@@ -1269,7 +1170,7 @@ components:
           format: uri-reference
           readOnly: true
           description: |
-            A link to a [cardholder detail](#definition-Cardholder-detail) object for this cardholder.
+            A link to a [cardholder detail](#?route=cmp--schemas-cardholderdetail) object for this cardholder.
             This is Command Centre's identifier for this cardholder:  use it whenever you need to
             specify a cardholder in REST operations.
           example: "https://host.com:8904/api/cardholders/325"
@@ -1497,7 +1398,7 @@ components:
       title: Cardholder detail
       description: |
         [/api/cardholders/{id}](#?route=get-/api/cardholders/-id-) returns one of these, and you
-        submit [parts of one](#definition-Cardholder-POST-example) in a POST to create a cardholder.
+        submit [parts of one](#?route=cmp--schemas-cardholderpost) in a POST to create a cardholder.
 
         You may find it contains a block called `updates`.  This is reserved for future
         development and its behaviour will change in later versions of Command Centre.
@@ -1688,14 +1589,15 @@ components:
               properties:
                 type:
                   type: string
-                  enum: [ disableCipherPad, useExtendedAccessTime, pinException ]
+                  enum: [ disableCipherPad, useExtendedAccessTime, pinExemption ]
                   example: disableCipherPad
 
                   description: |
 
-                    * `disableCipherPad` means users who badge their card at a reader that uses the
-                      cipher pad (a scrambled keypad) will not be prompted for PIN entry.  Usually
-                      the reason is a vision impairment, making a randomised keypad impracticable.
+                    * `disableCipherPad` means this cardholder will not have the numbers on an
+                      alarms terminal scrambled when the terminal is configured as a cipher pad.
+                      Usually the reason is a vision impairment making a randomised keypad
+                      impracticable.
 
                     * `useExtendedAccessTime` increases the time a door remains unlocked and the
                       amount of time that can pass before raising a 'door open too long' alarm.
@@ -1748,7 +1650,7 @@ components:
               group has granted our Mr. Boothroyd the student ID and photo PDFs.
 
               To set an image PDF, Base64-encode the image and send it as a string.  There is
-              one in the [cardholder POST example](#definition-Cardholder-POST-example).
+              one in the [cardholder POST example](#?route=cmp--schemas-cardholderpost).
 
               Date PDFs are only accurate to a day, so version 8.75 and later will ignore the
               time and time zone components if you send them.  8.70 and earlier will first
@@ -1766,9 +1668,9 @@ components:
         value and notifications flag for the containing cardholder and an object containing some of
         the PDF definition's basic fields.
 
-        This is returned as part of a [cardholder](#definition-Cardholder-detail), and you can send it
-        in a [POST](#definition-Cardholder-POST-example) or a
-        [PATCH](#definition-Cardholder-PATCH-example) to set the PDF's value and notification flag for
+        This is returned as part of a [cardholder](#?route=cmp--schemas-cardholderdetail), and you can send it
+        in a [POST](#definition-Cardholder-POST) or a
+        [PATCH](#definition-Cardholder-PATCH) to set the PDF's value and notification flag for
         a cardholder.  The server will ignore the `definition` block if you send it back.  It uses the
         name of the block (minus its leading `@`) to find the PDF to change.
 
@@ -1972,8 +1874,7 @@ components:
                 This card's state, taken from the card type's state set.  The default card
                 state set contains 'Active', 'Disabled (manually)', 'Lost', 'Stolen', and
                 'Damaged', or translations of those into the server's language.  Your card state sets may
-                differ, as they are customisable. PIV cards have extra values covered [in the PIV
-                supplement](piv.html#definition-PIV-GET-example).
+                differ, as they are customisable. (PIV cards)[#tag-PIV] have extra values.
 
                 In addition to the values in the card type's state set, it will be 'Not Yet Activated'
                 if the card's activation date is in the future, 'Expired' if its deactivation date has
@@ -2301,7 +2202,7 @@ components:
       description: |
         A _card_ is an access credential, including physical cards and mobile (Bluetooth and NFC)
         credentials and digital IDs.  The server returns it as part of a [cardholder's
-        details](#definition-Cardholder-detail), and you supply it when creating or modifying a card
+        details](#?route=cmp--schemas-cardholderdetail), and you supply it when creating or modifying a card
         or credential on a cardholder.
 
         Every card has a type, a status, and a validity period.  Its type determines other fields of
@@ -2457,7 +2358,7 @@ components:
               format: uri-reference
           description: |
             This contains the competency's name and its href.  They are read only because they
-            belong to the competency itself, not the cardholder's link to it.
+            belong to the competency itself, and you are only changing the cardholder's link to it.
           readOnly: true
           example:
             href: https://host.com:8904/api/competencies/2354
@@ -2575,8 +2476,8 @@ components:
         cardholder search by putting `competencies` in the `fields` parameter.
 
         This particular section describes what you receive from a GET.  The [Cardholder competency
-        update](#definition-Cardholder-competency-update) describes what you should send in a POST or
-        PATCH to set or update a cardholder's link to a competency.
+        update](#?route=cmp--schemas-cardholdercompetency) describes what you should send in a POST or PATCH
+        to set or update a cardholder's link to a competency.
 
     CardholderRelationship:
       title: Cardholder relationship
@@ -2715,8 +2616,9 @@ components:
     CardholderElevatorGroup:
       title: Cardholder elevator group
       description: |
-        These appear in an array in a cardholder detail, showing the cardholder's elevator
-        group properties.
+        These appear in an array in a cardholder detail, showing the cardholder's elevator group
+        properties, and can go into the body of a POST or PATCH to set a cardholder's elevator group
+        properties.
 
         A cardholder can have one default floor per elevator group. The elevator system will
         prepare a car to carry that cardholder to the access zone shown here when the cardholder
@@ -2736,18 +2638,20 @@ components:
         elevatorGroup:
           description: |
             The href and name of the elevator group for which this cardholder has a default
-            floor or passenger types.
-          example: {
-            href: "https://host.com:8904/api/elevator_groups/635",
-            name: "Main building lower floors" }
+            floor or passenger type.
+          properties: *NAMEHREF_PROPERTIES
+          example:
+            href: "https://host.com:8904/api/elevator_groups/635"
+            name: "Main building lower floors"
         accessZone:
           description: |
             The href and name of the access zone (floor) to which this cardholder is most
             likely to want to travel after entering the group's main elevator lobby. This 
             property will be missing if the cardholder does not have a default floor for this elevator group.
-          example: {
-            href: "https://host.com:8904/api/access_zones/637",
-            name: "Lvl 1 lift lobby"}
+          properties: *NAMEHREF_PROPERTIES
+          example:
+            href: "https://host.com:8904/api/access_zones/637"
+            name: "Lvl 1 lift lobby"
         enableCaptureFeatures:
           type: boolean
           description: |
@@ -2806,7 +2710,7 @@ components:
         data fields, two lockers, and two elevator groups.
 
         There are more fields on a cardholder than shown here.  For a complete list please see the
-        schema for the detailed [cardholder object](#definition-Cardholder-detail) that you receive
+        schema for the detailed [cardholder object](#?route=cmp--schemas-cardholderdetail) that you receive
         from a cardholder href.
 
       required: [ division ]
@@ -2989,7 +2893,7 @@ components:
         relationships.
 
         This model only shows some of the fields available on a cardholder.  The full list is in
-        the [cardholder detail](#definition-Cardholder-detail).
+        the [cardholder detail](#?route=cmp--schemas-cardholderdetail).
 
       properties:
         authorised:
@@ -3021,7 +2925,7 @@ components:
           type: object
           description: |
             This object can contain three arrays, named 'add', 'update', and 'remove'.  Every element
-            you put in those arrays should be in the [card schema](#definition-Cardholder-card).
+            you put in those arrays should be in the [card schema](#?route=cmp--schemas-cardholdercard).
             Each element of the 'add' array will need a 'type' member, at the very least.  Every card
             field makes sense here except 'href'.  Only existing cards have hrefs.  This example adds
             two cards:  one has nothing more than the type, so it will receive blank 'from' and
@@ -3074,7 +2978,7 @@ components:
           description: |
             Like the 'cards' object, this can contain three arrays named 'add', 'update', and
             'remove'.  Every element you send in those arrays should be in the [access group
-            schema](#definition-Cardholder-access-group).
+            schema](#?route=cmp--schemas-cardholderaccessgroup).
 
             This operation does not modify access groups in Command Centre; it works on a cardholder's
             memberships to those groups.
@@ -3117,7 +3021,7 @@ components:
           description: |
             Like the cards and accessGroups objects, this can contain three arrays named 'add',
             'update', and 'remove'.  Every element should be in the [cardholder competency
-            schema](#definition-Cardholder-competency).
+            schema](#?route=cmp--schemas-cardholdercompetency).
 
             This operation does not modify Command Centre's competencies:  it works on a cardholder's
             holdings of those competencies.
@@ -3154,7 +3058,7 @@ components:
           description: |
             It should be no surprise that this can contain three arrays named 'add', 'update', and
             'remove', and that every element should be in the [relationship
-            schema](#definition-Cardholder-relationship).
+            schema](#?route=cmp--schemas-cardholderrelationship).
 
             This operation does not modify Command Centre's roles:  it works on the relationships
             between two cardholders.
@@ -3188,7 +3092,7 @@ components:
           type: object
           description: |
             With you well in the habit by now, each element of your three arrays should be in the
-            [cardholder locker schema](#definition-Cardholder-locker).  They will allocate lockers to
+            [cardholder locker schema](#?route=cmp--schemas-cardholderlocker).  They will allocate lockers to
             cardholders, de-allocate them, and adjust validity periods.
 
             Each member of the 'add' array will need a 'locker' member containing an href identifying
@@ -3221,7 +3125,7 @@ components:
           description: |
             This can contain two arrays named 'add' and 'remove'.  Every element you send in those
             arrays should be in the [cardholder operator group
-            schema](#definition-Cardholder-operator-group).
+            schema](#?route=cmp--schemas-cardholderoperatorgroup).
 
             Each element of the 'add' array will need an 'operatorGroup' member containing an href
             identifying the operator group to which you wish to add the cardholder.  Supported in 8.50
@@ -3249,7 +3153,7 @@ components:
           description: |
             This can contain three arrays named 'add', 'update', and
             'remove', each containing an element in the [cardholder elevator group
-            schema](#definition-Cardholder-elevator-group).
+            schema](#?route=cmp--schemas-cardholderelevatorgroup).
 
             The 'elevatorGroup' block only makes sense in the 'add' array.  The 'update' array is for
             changing the cardholder's default floor and passenger types on an existing elevator group
@@ -3381,7 +3285,7 @@ components:
           description: |
             A block containing the values of the changed fields before the change, if Command Centre
             still has them, in the same format as a [cardholder
-            detail](#definition-Cardholder-detail).  If a value is blank, it means that the value was
+            detail](#?route=cmp--schemas-cardholderdetail).  If a value is blank, it means that the value was
             null before the change or the server no longer has it.
 
             Because this requires extra effort from the server, you may like to omit this block using
@@ -3435,7 +3339,7 @@ components:
           description: |
             A block containing the current fields on the cardholder, provided the cardholder has not
             been deleted.  This is in the same format as a [cardholder
-            detail](#definition-Cardholder-detail).
+            detail](#?route=cmp--schemas-cardholderdetail).
 
             Because building this requires more work from the server it is not in the default result
             set.  If you need it you must ask for it using the `fields` parameter.  While the server
@@ -3457,135 +3361,36 @@ components:
               }
             ] }
 
-    CardTypeSearch:
-      title: Card type search
-      description: |
-        An array of card types, and a `next` link for more.  Sites generally have only a handful of
-        card types, so when retrieving them you should set your 'top' parameter high enough that you
-        do not need the 'next' link.
-      properties:
-        results:
-          type: array
-          description: An array of card types.
-          items: { $ref: '#/components/schemas/CardType' }
-
-        next:
-          type: object
-          description: The link to the next page.  Absent if you have retrieved them all.
-          properties:
-            href: { type: string, format: uri-reference }
-          example:
-            href: "https://host.com:8904/api/card_types/assign?skip=1000"
-
-    CardType:
-      title: Card type
-      description: |
-        This object describes a single Card Type.  "Credential type" would be a better name, as it
-        includes mobile credentials.
-      properties:
-        href:
-          type: string
-          format: uri-reference
-          example: "https://host.com:8904/api/card_types/600"
-          description: |-
-            This is the identifier to use when assigning a card to a cardholder in a cardholder
-            [PATCH](#?route=patch-/api/cardholders/-id-) or
-            [POST](#definition-Cardholder-POST-example).
-
-            This is also the URL for the card type's detail page.  GETting it will return you a 404 if
-            you do not have 'View site' or 'Configure site' on the card type's division.
-
-        id:
-          type: string
-          example: "600"
-          description: |
-            The API does not use this field.  Nor should you.
-        name: {type: string, example: "Red DESFire visitor badge"}
-        division:
-          type: object
-          description: |
-            The division that contains this card type.  Required when creating a card type.
-
-            New to 8.50.
-          example:
-            href: "https://host.com:8904/api/divisions/2"
-
-        notes:
-          type: string
-          example: "Disabled after 7d inactivity, 6-char PIN"
-          description: |
-            Free text.
-
-            Because of its potential size, the server does not return the notes field by default.  You
-            need to ask for it with `fields=notes`.
-        facilityCode:
-          type: string
-          description: |
-            A facility code is a letter (A-P) followed by up to five digits.  It is encoded onto cards
-            so that they only work at sites with the correct facility code.
-
-            PIV cards, PIV-I cards, and mobile credentials do not have a facility code.
-
-            Most credential classes require a facility code on creation.  But it cannot be changed
-            once set, so this field is ignored in a PATCH.
-          example: "A12345"
-        availableCardStates:
-          readOnly: true
-          type: array
-          items: {type: string, enum: ['Active', 'Disabled (manually)', 'Lost', 'Stolen', 'Damaged']}
-          description: |
-            All credential types have a set of card states.
-
-            If you need this, ask for it using the `fields` parameter.
-
-            This field is read-only:  it is derived from the card type's card state set (also known as
-            a workflow).  If you send it in a POST or a PATCH, the server will ignore it.
-          example:
-          - "Active"
-          - "Disabled (manually)"
-          - "Lost"
-          - "Stolen"
-          - "Damaged"
-        credentialClass:
-          type: string
-          description: |
-            Required when creating a new card type but ignored when modifying one since a credential's
-            type cannot be changed once set.
-          enum: [ "piv", "pivi", "card", "mobile", "digitalId", "govPass", "trackingTag", "transact" ]
-          example: card
-        minimumNumber:
-          description: |
-            For card types with integer card numbers, this is the minimum.  Must be non-negative.
-          type: string
-          example: "1"
-        maximumNumber:
-          description: |
-            For card types with integer card numbers, this is the maximum.  Must be non-negative.
-          type: string
-          example: "16777215"
-        serverDisplayName: *SERVER
-        regex:
-          description: |
-            This is the regular expression that a text card number
-            must match before Command Centre will accept it. 
-          type: string
-          example: "^[A-Za-z0-9]+$"
-        regexDescription:
-          description: Regular expressions often need explaining to your users.
-          type: string
-          example: "Only alphanumeric characters"
-
   securitySchemes:
     API_key:
       type: apiKey
       name: Authorization
       in: header
-      description: happykey description
+      description: |
+
+        Clients authenticate by including a pre-shared API key in the `Authorization` header of each
+        request after an authorisation method of `GGL-API-KEY`:
+
+        `Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB`
+
+        For a fuller description see [Access control](#?route=overview--access-control).
+
     basic:
       type: http
       scheme: basic
       description: |
-        HTTP Basic authentication using a blank username and the API key as the password.
+        This is HTTP Basic authentication using a blank username and the API key as the password.
+
+        Example:  `Authorization: Basic OkM3NzQtQjAxRi1ENjk1LUFBNEItMjE1Ri1BMTU4LUFDMjItQURFQg==`
+
+        That example is equivalent to the example in the description of the api_Key method:
+        prepending a colon to the API key beginning with `C774` then encoding it into Base64
+        produces the 56 characters beginning with `OkM3`.
+
+        The colon is a separator between a username, which is blank in our case, and the password,
+        which is our API key.
+
+        For a fuller description see [Access control](#?route=overview--access-control).
 
 info:
   x-logo:
@@ -3637,6 +3442,87 @@ info:
       * Format all the timestamps you send as specified in the documentation.  The parser we currently use is
         quite flexible so you may find that other formats ( "1/12/2025" ) work today, but they may not
         tomorrow.
+
+    ## Access control
+
+    Clients authenticate by including a pre-shared API key in the `Authorization` header of each
+    request.  Command Centre generates a random API key when you create an endpoint for your clients
+    to connect to.  Search the Configuration Client online help for 'REST API' for how do do that.
+
+    In current versions of Command Centre, the API key will be in the format
+    `XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX` with each `X` an uppercase hexadecimal digit.
+    Future versions of Command Centre may use other formats of API key, so treat it as an opaque
+    string.  Tempting as it may be, do not interpret is as a GUID.
+
+    There are two ways you can pass the API key to the server:  following an authorisation method
+    of `GGL-API-KEY`, or (in 9.0 and later) in the style of HTTP Basic authentication:  prefixed
+    with a colon, Base64-encoded, and following an authorisation method of `Basic`.
+
+    Examples:
+
+    `Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB`
+
+    `Authorization: Basic OkM3NzQtQjAxRi1ENjk1LUFBNEItMjE1Ri1BMTU4LUFDMjItQURFQg==`
+
+    Early versions of Command Centre allowed you to omit the 'GGL-API-KEY' from the first form.
+    Future versions of Command Centre and all versions of the API gateway will reject you with a 401 if you do
+    that.  The API gateway is especially fussy about case and punctuation.
+
+    #### HTTP Basic authentication
+
+    The two example headers above are equivalent:  prepending a colon to the API key beginning
+    with `C774` then encoding it into Base64 produces the 56 characters beginning with `OkM3`.
+
+    According to the HTTP Basic specification, the colon is a separator between a username and a
+    password.  In our case, the API key is the password and the username is unnecessary.  If you
+    place a username before the colon, before Base64-encoding it, Command Centre will ignore it
+    and authenticate the connection based on the API key alone.
+
+    #### Pinning a client TLS certificate
+
+    Depending on Command Centre's site configuration, its REST API may also require a client
+    certificate with each request.  In versions up to and including 8.40 this was controlled by a
+    flag labelled 'Do not require pinned client certficates' on the 'Web Services' tab of the
+    server properties.  In 8.50 that flag's label changed to 'Enable REST Clients with no
+    client certificate', and its behaviour changed slightly when turned on.
+
+    If off, for all versions of CC, an incoming request's certificate has to match the thumbprint
+    on its API key's REST Client item, and REST Client items with a blank thumbprint field do not
+    work at all.  This is how it ships, and it is the recommended way of running a production
+    server.
+
+    If 'Do not require pinned client certificates' was turned on in versions up to and including
+    8.40, the server did not check any client certificates.  If that flag is turned on in
+    8.50, now relabelled 'Enable REST Clients with no client certificate', it still does not check
+    the client certificate if the thumbprint field of the matching REST Client item is blank, but
+    if the Client item has a thumbprint, the server will reject connections with the wrong
+    certificate.
+
+    See the Configuration Client help for instructions on where to enter REST Client thumbprints.
+
+    #### Source IP filtering
+
+    Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API
+    will only accept connections from the IP address ranges configurated into that client item.
+
+    #### Symptoms of authentication failures
+
+    If a connection attempt fails, the server will return a 401 and raise an event containing its
+    reason for refusing the request.  If that happens too often, the server will stop reporting
+    each offence and will instead create a summary alarm at a much lower rate.  The details of the
+    alarm tell you how many failed attempts there have been since the start of the flood.  The
+    server will stay in this mode of reduced reporting until several minutes pass without a failed
+    connection attempt.
+
+    The current failure limit is ten errors inside one minute.  After that you will receive one "a
+    large volume of requests has been denied" alarm every minute while the failures continue until
+    five minutes passes without a failure.
+
+    The most common queries we receive from our integrators relate to their certificate handling.
+    If your client's HTTP client library complains about certificates the first thing to check is
+    Command Centre's alarm list.  If there are 'invalid client certificate' alarms there, your
+    client is not sending the certificate CC is expecting.  If there are no alarms then the client
+    is most likely rejecting the server's certificate.
 
     ## Operator privileges
 
@@ -3723,6 +3609,19 @@ info:
     strings exactly as they were sent, even if they were sent by a hostile client.  Write your
     clients to resist injection attacks.
 
+    ### Dates and times
+
+    When you send dates and times to Command Centre you must use an ISO-8601 calendar date, time,
+    and time zone designator, with hyphens separating the date fields and colons separating the time
+    fields.  This looks like `YYYY-MM-DDTHH:MM:SSZ`, where `T` is an actual T, and `Z` is a timezone
+    designator such as 'Z' for UTC or '-0800' for Pacific Standard Time.  Specify up to seven
+    decimals on the seconds if you wish, but be aware that some Command Centre fields will not use
+    them.  You must supply the year and month but omit the other fields as you like.  Command Centre
+    will assume sensible defaults, such as the top of the minute when you omit seconds, midnight
+    when you omit the time, or first of the month when you omit the day.
+
+    Do not omit the timezone designator.  If you do, Command Centre will make an assumption.
+
     ## Item status
 
     Most items have a status.  Access zones, for example, can be in one of a few different modes,
@@ -3746,7 +3645,7 @@ info:
 
     - an operator had the item visible in the Configuration, Command Centre, or mobile clients,
     - an application monitored the item via another API,
-    - a REST client used the item in a [status subscription](events.html#status-subscriptions), or
+    - a REST client used the item in a [status subscription](#?route=tag--Items--status-subscriptions), or
     - a REST client followed the item's `updates` link from its details page.
 
     If it is not up to date and you request the status on an item's summary or details page, the
@@ -3754,7 +3653,7 @@ info:
 
     To retrieve the status of one item you should GET the item's `updates` link from its details
     page.  To monitor the status of many items you should use the [status subscription
-    API](events.html#status-subscriptions) on the items controller (added in 8.30).
+    API](#?route=tag--Items--status-subscriptions) on the items controller (added in 8.30).
 
     Whichever API you use, if the server does not have an item's status when you ask it will
     request an update from the item itself.  For hardware items that may involve a conversation
@@ -4343,10 +4242,9 @@ paths:
         it from the 'href' field in the `features.cardholders.cardholders` section of `/api`.
 
         The POST expects a document in the same format as the [the cardholder
-        detail](#definition-Cardholder-detail).  Many fields are optional, of course, and
-        some (like the last successful access time) do not make sense when creating a
-        cardholder.  See the [cardholder POST
-        example](#definition-Cardholder-POST-example) for details.
+        detail](#?route=cmp--schemas-cardholderdetail).  Many fields are optional, of course, and some (like
+        the last successful access time) do not make sense when creating a cardholder.  See the
+        [cardholder POST example](#?route=cmp--schemas-cardholderpost) for details.
 
         You will achieve better performance if you combine all you want to achieve into one POST,
         rather than creating the cardholder bare with a POST then adding cards, groups, PDFs, etc.,
@@ -4416,14 +4314,14 @@ paths:
 
         [Do not use](#?route=overview--forward-compatibility-hateoas) a
         cardholder's ID to build the URL yourself:  follow the href in the [cardholder
-        search](#?route=cmp--schemas--cardholders) to get here.
+        search](#?route=cmp--schemas-cardholders) to get here.
 
       parameters:
       - name: fields
         in: query
         description: |
           Specifies the fields you want in the results.  The values you can list are the same as the
-          field names in the [detail results](#definition-Cardholder-detail).  Use it to return
+          field names in the [detail results](#?route=cmp--schemas-cardholderdetail).  Use it to return
           fewer fields than normal.  Separate values with commas.
 
           Treat the string matches as case sensitive:  use 'lastName' rather than 'lastname'.
@@ -4469,7 +4367,7 @@ paths:
         operator has no access to PDFs and competencies into one in which it does, first PATCH the
         cardholder into the new division then PATCH it with the other changes.
 
-        You can find this URL in the href in the [cardholder search](#?route=cmp--schemas--cardholders) or
+        You can find this URL in the href in the [cardholder search](#?route=cmp--schemas-cardholders) or
         any of the other calls that return cardholder hrefs.  [Do not build it
         yourself](#?route=overview--forward-compatibility-hateoas).
         
@@ -4540,7 +4438,7 @@ paths:
       summary: Remove a cardholder
       description: |
         This call removes a cardholder from Command Centre.  You can find the URL in the href in the
-        [cardholder search](#?route=cmp--schemas--cardholders) or any of the other calls that return
+        [cardholder search](#?route=cmp--schemas-cardholders) or any of the other calls that return
         cardholder hrefs.  [Do not build it yourself](#?route=overview--forward-compatibility-hateoas).
 
       responses:
@@ -4586,7 +4484,7 @@ paths:
         This call removes a cardholder's membership in an access group.  Note that a cardholder may
         have more than one membership in a group.
 
-        You can find this URL in the [cardholder object](#definition-Cardholder-detail).  [Do not
+        You can find this URL in the [cardholder object](#?route=cmp--schemas-cardholderdetail).  [Do not
         build it yourself](#?route=overview--forward-compatibility-hateoas).
 
         To modify a cardholder's membership of an access group your operator must have a
@@ -4614,7 +4512,7 @@ paths:
       description: |
         This call removes a card from a cardholder.
 
-        You can find this URL in the [cardholder object](#definition-Cardholder-detail).  [Do not
+        You can find this URL in the [cardholder object](#?route=cmp--schemas-cardholderdetail).  [Do not
         build it yourself](#?route=overview--forward-compatibility-hateoas).
 
       responses: 
@@ -4637,7 +4535,7 @@ paths:
       description: |
         This call removes a competency from a cardholder.
 
-        You can find this URL in the [cardholder object](#definition-Cardholder-detail).  [Do not
+        You can find this URL in the [cardholder object](#?route=cmp--schemas-cardholderdetail).  [Do not
         build it yourself](#?route=overview--forward-compatibility-hateoas).
 
       responses: 
@@ -4687,7 +4585,7 @@ paths:
         elevator group.
 
         You will find this URL in the `elevatorGroups` block of a [cardholder
-        object](#definition-Cardholder-detail).  [Do not build it
+        object](#?route=cmp--schemas-cardholderdetail).  [Do not build it
         yourself](#?route=overview--forward-compatibility-hateoas).
 
       responses:
@@ -4717,7 +4615,7 @@ paths:
         assignments for this locker after this operation he or she will not be able to open it.
 
         You will find this URL in the `lockers` block of a [cardholder
-        object](#definition-Cardholder-detail).  In the interest of forward compability, [do not
+        object](#?route=cmp--schemas-cardholderdetail).  In the interest of forward compability, [do not
         build it yourself](#?route=overview--forward-compatibility-hateoas).
 
       responses:
@@ -4746,7 +4644,7 @@ paths:
         memberships do not have start and end dates, so a cardholder can only have one membership in
         a given operator group.
 
-        You can find this URL in the [cardholder object](#definition-Cardholder-detail).  In the
+        You can find this URL in the [cardholder object](#?route=cmp--schemas-cardholderdetail).  In the
         interest of forward compability, [do not build it
         yourself](#?route=overview--forward-compatibility-hateoas).
 
@@ -4773,7 +4671,7 @@ paths:
         This call severs a relationship between two cardholders.
 
         You can find the URL in the `relationships` block in the [cardholder
-        object](#definition-Cardholder-detail) of the cardholder who has the relationship, not the
+        object](#?route=cmp--schemas-cardholderdetail) of the cardholder who has the relationship, not the
         cardholder who holds the role.  For example if you have a 'supervisor' role you would find
         the URL to delete by looking up the supervised cardholder, not the supervisor.
 
@@ -4799,7 +4697,7 @@ paths:
 
         [Do not code this URL](#?route=overview--forward-compatibility-hateoas) into your application.  Take
         it from the 'updateLocation.href' field in a [cardholder
-        response](#definition-Cardholder-detail).
+        response](#?route=cmp--schemas-cardholderdetail).
 
         The POST expects a document which contains an href to the target access zone.  The
         recommended way of getting access zone hrefs is through an [access zones
@@ -4836,7 +4734,7 @@ paths:
                         The href of the access zone into which you want to move your cardholder.
                          Use an href from the [access zones
                          controller](#?route=get-/api/access_zones/update_cardholder_location),
-                         or the [items controller](events.html#tag-Items) if you do not have a
+                         or the [items controller](#?route=tag--Items) if you do not have a
                          RESTStatus or (in 8.60) RESTOverrides licence.
                 
             examples:
@@ -4961,7 +4859,7 @@ paths:
         description: |
           Limits the search results to the changes that affected these fields, and limits the
           `oldValues` and `newValues` blocks to these fields.  You can specify practically any of
-          the fields in the [cardholder detail](#definition-Cardholder-detail).  You can also go
+          the fields in the [cardholder detail](#?route=cmp--schemas-cardholderdetail).  You can also go
           into more detail; for example you can monitor a cardholder's cards' validity dates using
           `filter=cards.from,cards.until`.
 
@@ -5054,219 +4952,9 @@ paths:
           description: |
             The server was too busy to complete the request before the deadline.
 
-  /api/card_types:
-    get:
-      tags: [ "Card Types" ]
-      summary: Search card types
-      description: |
-        This returns the card types your operator is privileged to view.  They may be different card
-        types from those you are allowed to assign to cardholders, and since that is the only thing
-        that this API does with card types, you should probably be using [that
-        function](#?route=get-/api/card_types/assign) instead.
-      responses:
-        "200":
-          description: Success.
-        "403":
-          description: The installation lacks a cardholders licence.
-
-    post:
-      tags:
-        - Card Types
-      x-badges: [ *BADGE_BETA ]
-      
-      summary: Create a card type [coming]
-      description: |
-        Creates a new card type, setting practically everything except the PIV fields.
-
-        [Do not code this URL](#?route=overview--forward-compatibility-hateoas) into your application.  Take
-        it from the `href` field in the `features.cardTypes.cardTypes.href` field of `GET /api`.
-
-        The POST expects a document in the same format as [the card type
-        detail](#?route=get-/api/card_types/-id-).
-
-        When successful it returns a location header containing the address of the new card type.
-
-        Note that you can only create one item per POST.
-
-        This call requires the RESTConfiguration licence.
-
-      requestBody:
-        $ref: '#/components/requestBodies/CardType'
-
-      responses: 
-        "201": 
-          description: "Success."
-          headers:
-            location:
-              schema: {type: string, format: uri-reference }
-              description: The href of the new card type.
-        "400":
-          description: |
-            The body of the POST did not describe a valid card type.
-
-            If you see 'Invalid Access Group JSON object', the server could not parse the JSON in
-            the body of your POST.  Remember to quote all strings, especially those than contain @
-            symbols.
-
-        "403":
-          description: |
-            The operator does not have a privilege that allows creating card types, or the server
-            does not have the 'RESTConfiguration' licence.
-
-  /api/card_types/assign:
-    get:
-      tags: [ "Card Types" ]
-      summary: Search usable card types
-      description: |
-        This returns the card types you are privileged to assign to a cardholder.
-
-        Since a site usually has only a few card types, and each is small, the search, sorting,
-        field selection, and pagination parameters are probably of little use to you.  But they work.
-
-        If your result set is empty it means your operator does not have the privilege to view any
-        card types.  Your operator needs a privilege that allows assigning cards and credentials to
-        cardholders such as 'Add / Edit Card or Credential' or 'Create / Edit / Create and Edit
-        Cardholders'.
-
-        You can find this URL in `features.cardTypes.assign`in `/api`.  It was new in 8.10.  In the
-        interest of forward compability, [do not build it
-        yourself](#?route=overview--forward-compatibility-hateoas).
-        
-      parameters:
-      - $ref: "#/components/parameters/sort"
-      - $ref: "#/components/parameters/top"
-      - $ref: "#/components/parameters/name"
-      - $ref: "#/components/parameters/division"
-      - $ref: "#/components/parameters/directDivision"
-      - $ref: "#/components/parameters/description"
-      - name: "fields"
-        in: query
-        schema:
-          type: array
-          items:
-            type: string 
-            enum: [ href, id, name, division, facilityCode, availableCardStates, credentialClass, minimumNumber, maximumNumber, notes, regex, regexDescription ]
-
-        description: |
-          Specifies which fields to return instead of the default set (which contains
-          nearly every field).  Separate values with commas.
-
-          Treat the string matches as case sensitive:  use 'facilityCode' rather than
-          'facilitycode'.
-
-      - $ref: "#/components/parameters/pos"
-      - $ref: "#/components/parameters/skip"
-
-      responses:
-        "200":
-          description: "Success."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CardTypeSearch'
-
-        "403": { description: "The installation lacks a cardholders licence." }
-
-  /api/card_types/{id}:
-    parameters:
-    - $ref: "#/components/parameters/id"
-    get:
-      tags: [ "Card Types" ]
-      summary: Get one card type
-      description: |
-        This returns some basic data for a card type.  It exists so that clients following card type
-        hrefs from other controllers do not receive a 404.  To find out about card types available
-        for assigning to cardholders, use [card_types/assign](#?route=get-/api/card_types/assign)
-        instead.
-      responses:
-        "200":
-          description: Success.
-        "403":
-          description: The installation lacks a cardholders licence.
-
-    patch:
-      x-badges: [ *BADGE_BETA ]
-      tags:
-      - Card Types
-      summary: Update a card type [coming]
-      description: |
-        This is the call you use to update a card type.  Take the URL from the results of a card
-        type search.  In the interest of forward compability, [do not build it
-        yourself](#?route=overview--forward-compatibility-hateoas).
-        
-        The PATCH expects a document in the same format as the [the card type
-        detail](#definition-Card-type) but with fewer fields.
-
-        This call requires the RESTConfiguration licence.
-
-      requestBody:
-        $ref: '#/components/requestBodies/CardType'
-
-      responses:
-        "200":
-          description: |
-            Success.  Future versions will return feedback from the server about your PATCH.
-        "204":
-          description: "Success."
-        "400":
-          description: |
-            The body of the PATCH did not describe a valid card type.  Card types have many rules,
-            easily enforced in a graphical interface but less so in an API.  See the body of the
-            response for help on what went wrong.
-
-        "403":
-          description: |
-            The operator has a privilege that allows viewing the item but not modifying it, or you
-            tried to set the division to one you cannot configure, or the server is missing the
-            necessary licence.
-
-            You need the 'Configure Site' privilege on the item you are changing, which means you need
-            on it on the item's current division.  You also need it on the new division, if you are
-            changing that.
-
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
-
-        "404":
-          description: |
-            That is not the URL of a card type or your operator does not have the privilege to view
-            it.  This probably means you have built the URL yourself instead of taking it from the
-            results of a [GET](#?route=get-/api/card_types).
-
-        "409":
-          description: |
-            The item is locked for editing by another operator.  The body of the response will
-            tell you which operator is holding the lock.
-
-    delete:
-      x-badges: [ *BADGE_BETA ]
-      tags: [ Card Types ]
-      summary: Remove a card type [coming]
-      description: |
-        This call removes a card type from Command Centre.  In the interest of forward compability,
-        take the URL from the results of a card type search rather than [building it
-        yourself](#?route=overview--forward-compatibility-hateoas).
-
-        This call requires the RESTConfiguration licence.
-
-      responses: 
-        "200": { description: "Success." }
-        "204": { description: "Success." }
-        "400":
-          description: |
-            Deleting the card type failed.  This happens when the card type is in use.  Most often
-            it is because a cardholder still has a card of this type, but card types can also be
-            connected to other items.
-
-        "403":
-          description: |
-            The operator has the permission to view the item but not delete it, or the server does
-            not have the 'RESTConfiguration' licence.
-        "404":
-          description: |
-            That is not the URL of a card type, or the operator is not privileged to view it.
-
 security:
   - API_key: []
+  - basic: []
 
 servers:
   - url: https://localhost:8904
@@ -5411,6 +5099,8 @@ tags:
     ```
 
 - name: "Cardholders"
+
+  
   description: |
     A cardholder is a user account.
 
@@ -5428,7 +5118,18 @@ tags:
     entire cardholder record, or an HTTP PATCH to update it, or an HTTP DELETE to remove it.  Be
     careful:  there is no coming back from deleting a cardholder.
 
-    ## Use cases
+    ## Write-locked cardholders
+
+    If an operator has unsaved changes on a cardholder object when your integration
+    attempts to update it, your PATCH will fail with a 409 error.  The message will tell
+    you the operator and workstation that is holding the lock; we suggest your application
+    logs that and tries its update again later.
+
+    ## Licensing
+
+    All of the API calls described here are available with the RESTCardholders licence.
+
+    ## Cardholder use cases
 
     ### Searching for cardholders by name
     1. `GET /api`.
@@ -5525,10 +5226,10 @@ tags:
     assign are at a new URL given in the field `features.cardTypes.assign.href`
     [↪](#?route=get-/api/card_types/assign).
 
-    4. Compose a JSON body using [this example](#definition-Cardholder-POST-example) and [this
-    detail](#definition-Cardholder-detail), then [POST](#?route=post-/api/cardholders) it
-    to the href at `features.cardholders.cardholders.href`
-    [↪](#?route=post-/api/cardholders) on the `/api` page.
+    4. Compose a JSON body using [this example](#?route=cmp--schemas-cardholderpost) and [this
+    detail](#?route=cmp--schemas-cardholderdetail), then send it in a POST to the href at
+    `features.cardholders.cardholders.href` [↪](#?route=post-/api/cardholders) on the
+    `/api` page.
     
     ### Modifying a cardholder
     1. Find your cardholder using one of the processes above.
@@ -5540,9 +5241,9 @@ tags:
     the cardholder and his or her associations.
 
     In its simplest form, your document could be a collection of key/value pairs much the same as
-    you receive from a GET to the same href.  [More complex
-    forms](#definition-Cardholder-PATCH-example) allow adding, modifying, and removing cards,
-    competencies, group membership, PDFs, and relationships.  Three examples follow.
+    you receive from a GET to the same href.  [More complex forms](#?route=cmp--schemas-cardholderpatch)
+    allow adding, modifying, and removing cards, competencies, group membership, PDFs, and
+    relationships.  Three examples follow.
 
     ### Removing a cardholder from groups
 
@@ -5566,7 +5267,7 @@ tags:
     1. GET your cardholder's details page, or search with `accessGroups` in the field list.  Either
     way, you will receive all their access group memberships.
     2. Take the array at `accessGroups`, rename it to `remove`, and put it in object called
-    `accessGroups` at the root level of a [JSON object](#definition-Cardholder-PATCH-example).
+    `accessGroups` at the root level of a [JSON object](#?route=cmp--schemas-cardholderpatch).
 
     3. [PATCH](#?route=patch-/api/cardholders/-id-) the cardholder with that JSON object.
     That will remove the cardholder from all the groups that came back in the GET.
@@ -5584,7 +5285,7 @@ tags:
     5. Optional:  follow the link at `edit.href` on the cardholder page.  If there is a link at
        `update.href`, your REST client has permission to modify the cardholder.
     4. PATCH the cardholder's href according to the [cardholder patch
-       schema](#definition-Cardholder-PATCH-example).
+       schema](#?route=cmp--schemas-cardholderpatch).
 
     ### Deleting a cardholder's PDF value
     1. Find the URL of your cardholder using one of the processes above.
@@ -5703,7 +5404,7 @@ tags:
     The body of this document clearly indicates when recent features arrived in the API so that
     readers with older versions of Command Centre know not to expect them.
     
-    ## Cardholder API changes on the roadmap
+    ### Cardholder API changes on the roadmap
 
     * You will be able to create, delete, and change the the basic configuration of
       roles, PDFs, and card types.
@@ -5735,6 +5436,181 @@ tags:
       Current versions let you request the competencies that your operator has the permission to
       view, which is a larger set determined by privileges alone, and not suitable for interactive
       REST clients.
+
+    ### Cardholder API changes in 9.30
+
+    * POTENTIALLY BREAKING CHANGE:  for efficiency, 9.30 orders search results differently from 9.20
+      when your query does not include a `sort` parameter.  If you care about the order of your
+      items, tell the server how you want them sorted.
+
+    * POTENTIALLY BREAKING CHANGE:  GovPass cards may have a new credentialClass and GovPass card
+      states will have new names, depending on the card type and the site's licences.
+
+    * You can create, modify, and delete [access groups](#?route=tag--Access-groups).
+
+    ### Cardholder API changes in 9.20
+
+    * You can filter by cardholders' direct divisions.  The current division search is recursive:  it
+      returns all cardholders that have any of the filter's divisions anywhere in their ancestry.
+      The new division search is shallow:  it only returns cardholders that are direct members of
+      the filter's divisions.
+
+    ### Cardholder API changes in 9.10
+
+    * You can create, modify, and delete competencies.
+
+    * You can request a locker's status and send an override to quarantine it.  The [use
+      cases](#opening-or-quarantining-a-locker) section shows how.
+
+    ### Cardholder API changes in 9.00
+
+    * You can search for cardholders by the access zone they are in.
+
+    * GovPass cards have two new fields, `visitorContractor` and `ownedBySite`.
+
+    ### Cardholder API changes in 8.90
+
+    * Write-only access to card PINs.
+
+    * You can set a reason when re-issuing or removing a card which will appear on the
+      resulting event.  The default is the card's previous state.
+
+    * You can now [set](#operation--api-visits--id--visitors--visitorId--patch) a visitor's state
+      (signing in, etc.).  Visits will return that, if you ask.
+
+    * Bug fix:  removing an operator group from a cardholder by PATCH was not possible in the early
+      versions of 8.70 and 8.80.  It was fixed in 8.70.2113, 8.80.1116, and all versions of 8.90.
+
+    ### Cardholder API changes in 8.80
+
+    * BREAKING CHANGE:  Date PDFs no longer come out of the API with a time component or time zone
+      designator, because date PDFs don't hold a time or time zone.  Previously they came out as
+      midnight UTC, which implied more accuracy than date PDFs hold.
+
+    * [Redactions](#?route=tag--Redactions).
+
+    * An optional PDF field `operatorAccess` contains the level of access your operator has to
+      cardholders' values for the PDF.
+
+    * Card type `regex` and `regexDescription` fields.
+
+    * Email and mobile PDFs return their 'Default Notifications' flag on request.  This actually
+      happened in 8.50 but did not make it into the "changes" list.
+
+    ### Cardholder API changes in 8.70
+
+    * BREAKING CHANGE: Missing image PDFs will no longer have "not captured" as their value.
+      Instead, they will have no value at all.
+
+    * A cardholder's operator group memberships (added in 8.50) now contain an href that you can use
+      in an HTTP DELETE as another way of removing a cardholder from an operator group.
+    * The server returns 1000 items by default instead of 100.
+    * Image PDFs tell you whether they are the cardholder's profile picture.
+    * Image PDFs have a new optional field `contentType` that returns their MIME type.  This
+      deprecates the old `imageFormat` field, which is non-standard.
+
+    * Asking for a particular PDF on a cardholder (by putting `pdf_XXX` into the `fields` query parameter) will
+      cause it to appear even if the cardholder has no value for that PDF.  Previous versions only
+      showed if it had a non-blank value.
+
+    * Attempting to give a cardholder a competency they already have will fail instead of allowing
+      it and raising an alarm.  Note that a cardholder having two links to the same competency leads
+      to undefined behaviour.
+
+    ### Cardholder API changes in 8.60
+
+    * You can search for cardholders by division or description.
+    * 8.60 rejects unsupported HTTP verbs instead of treating them like a GET.  For example, if you
+    send a POST to `/api/competencies` 8.50 will return a list of competencies but 8.60 will return
+    a 400-level error.
+    * In build 8.60.1684 or later, attempting to give a cardholder a competency they already have
+      will fail instead of allowing it and raising an alarm.  Note that a cardholder having two
+      links to the same competency leads to undefined behaviour.
+
+    ### API changes in 8.50
+
+    * The server property that turns off [client certificate checking](#authentication) changed.
+    * You can manage operators by setting their operator group memberships and logon credentials.
+    * You can view [operator groups](#?route=tag--Operator-groups).
+    * Lockers and locker banks report the hardware controller where they reside.
+    * Cardholders report their 'disable cipher pad' setting (vision impairment).
+    * Card types will show their division on request.
+
+    * Cardholders can have default floors and passenger type flags per elevator group.
+      Thyssen-Krupp systems can prepare an elevator car when Command Centre grants a cardholder
+      access through lobby turnstiles.
+
+    * You can list receptions and see enough of a division's visitor management configuration to
+      create and manage visits.
+
+    * Image Personal Data Field definitions will show their width, height, and format (JPG, PNG, or
+      BMP) on request.
+
+    * Email and mobile PDFs return their 'Default Notifications' flag on request.
+
+    ### API changes in 8.40
+
+    * Access groups have 22 new fields showing the privileges and access they grant their members.
+      These new fields are in the default set for the [detail view](#definition-Access-group-detail).
+
+    * Access groups now return the alarm zones over which they have privilege.
+
+    * Items on remote servers now show their origin server in a new `serverDisplayName` field.
+
+    * Cards contain the date and time of their last print or encode, and their issue level at the
+      time.
+
+    ### API changes in 8.30
+
+    * Cardholder [change tracking](#?route=tag--Cardholder-changes) lets you synchronise users into an
+      external system by informing it of changes as they occur.
+
+    * Cardholder group membership hrefs now contain a long string where they used to contain a small
+      integer.  Integrations that cache membership hrefs a) should not and b) will need to refresh.
+   
+    * A cardholder's card object now contains a Boolean field called `trace` indicating whether its
+      trace flag is set.  A card with tracing on generates an event every time it is used.
+
+    ### API changes in 8.20
+
+    * A new field `update_location` on a cardholder gives a link to a
+      [POST](#operation--api-cardholders--id--update_location-post) that changes his or her current
+      location (access zone).
+
+    * Lockers and locker banks are now visible with the RESTStatus licence, including whether a
+      locker is available or allocated.  You still need RESTCardholders to see which cardholder/s a
+      locker is assigned to.
+
+    * Lockers moved from the locker banks controller into their own.  That changed their hrefs.
+
+    * Bugfix:  you can now change a cardholder's division.
+
+    * A cardholder's [relationships block](#definition-Cardholder-relationship) now contains the
+      role holder's two name fields.  The `name` field, present since 7.90, is simply these two
+      fields joined with a space, and is therefore ambiguous when a cardholder only has one name.
+
+    ### API changes in 8.10.1112
+
+    * You can send an [override](#operation--api-lockers--id--open-post) to a locker to open it.
+
+    * You can use the `fields` query parameter to select the fields you receive from locker bank
+      [summary](#operation--api-locker_banks-get) and
+      [details](#operation--api-locker_banks--id--get) GETs.  The [use
+      cases](#opening--or-quarantining-a-locker) section shows how.
+
+    ### API changes in 8.10
+
+    All changes contain the text "8.10".
+
+    * A [card types API](#operation--api-card_types-assign-get) that returns the card types your
+      operator is able to use when assigning cards to cardholders.
+    * A [PDF API](#operation--api-personal_data_fields-get) that returns the personal data field definitions your
+      operator is able to see.
+
+    * You can change the [notifications flag](#definition-Cardholder-PATCH-example) on a
+      cardholder's PDF.
+
+    * Certificates and biometric data are available on PIV cards.
 
 - name: Cardholder changes
   description: |
@@ -5826,60 +5702,4 @@ tags:
     - The API will return the pre-change values of some fields, but not those that require a lot of
       storage such as image PDFs and PIV certificates.  Command Centre does not hang on to them
       after they change.
-
-- name: Card Types
-  description: |
-    The main purpose of the card type API is to find the card type you need when assigning a card to
-    a cardholder.
-
-    A card connects a cardholder to a card type.  A new card takes some defaults from its card type
-    (such as its activity period, given by 'from' and 'until'), some limits (on the card number and
-    PIN, for example), and other behaviours (such as how long a card can be inactive before Command
-    Centre disables it).
-
-    The 'Site Installation' chapter of the Configuration Client online help has a section that
-    describes card types.
-
-    As it does for the other item types, the REST API gives you read access to card types through
-    search and details pages.  However the privilege model for card types is more flexible than for
-    other items:  the 'View site' privilege determines whether you are allowed to view a card type,
-    while the cardholder editing privileges ('Create', 'Edit', 'Create and edit') determine whether
-    you can assign cards of that type to a cardholder, so version 8.10 of the API added a page that
-    returns the card types that your operator is allowed to use in that way.  Take its URL from
-    `features.cardTypes.assign` in the results of `GET /api`.
-
-    This API uses the term 'card' but more broadly we prefer 'credential', because not all card
-    types involve a physical card.
-
-    The API's coverage of PIV cards is in [its own document](piv.html).
-
-    API routes that allow creating, modifying, and deleting card types are in development.
-
-    ## Use cases
-
-    ### Finding the PIV card type
-
-    When you give a cardholder a card, PIV or otherwise, you need to provide the identifier of the
-    card type.  It will vary between Command Centre installations so you cannot use a value from
-    another installation or from these examples.  It will not change while Command Centre is running
-    but it may change at upgrade, so your application should follow this process at startup.
-
-    It takes two queries and a loop:
-
-      1. `GET /api`.
-      2. If running 8.00 or earlier, follow the link at `features.cardTypes.cardTypes.href` (which
-         will be to `/api/card_types`), or
-      2. if running 8.10 or later, follow the link at `features.cardTypes.assign.href` (which will
-         probably be to `/api/card_types/assign`.  Both URLs will work in 8.10, but the advantage of
-         this URL is that your operator can access it at a lower privilege level).
-      3. Iterate through the array to find the element with `credentialClass:  piv`, and
-      4. note its `href`.
-
-    You can accomplish the last two steps with the JSONPath filter
-
-    `$.results[?(@.credentialClass=='piv')].href`.
-    
-    Explanation:  Command Centre ships with a handful of card types, and administrators can add
-    more, but the one that Command Centre uses for PIV and PIV-I cards has its own credential class.
-    It will look like [the example below](#definition-PIV-card-type).
 
