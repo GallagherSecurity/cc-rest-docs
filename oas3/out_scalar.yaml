@@ -10063,7 +10063,7 @@ info:
     ### Staying current
 
     When you use the `updates` link on the item's details page it will return immediately.  When
-    follow the `next` link in the page it returns, it will send back the status straight away if
+    you follow the `next` link in the page it returns, it will send back the status straight away if
     it changed since your previous call, or block until it does change.  If nothing happens within
     a minute or so, it will return with no updates.
 
@@ -10119,9 +10119,9 @@ info:
     - `unsaved` and `deleted` are transient conditions you should not encounter in normal use.
       Either way, the item is in no condition to query.
 
-    - `unconfigured` is very common while a site is being set up.  It means the item is not fully
-      configured yet.  An access zone is not configured until it has at least one door, for
-      example.
+    - `unconfigured` is very common while a site is being set up.  It means the item does not have
+      all the configuration it needs for normal operation.  For example, an access zone is not
+      configured until it has at least one door.
 
     - `remoteServerOffline` is only possible in a multi-server setup.  It means that the item is
       remote (on a different server) and the server answering your REST query cannot reach it.
@@ -19595,8 +19595,8 @@ tags:
 - name: "Fence Zones"
 
   description: |
-    These methods give you read access to Fence Zones in the Command Centre database, and
-    let you turn them on and off, change their modes, and shunt them.
+    These methods give you read access to Fence Zones in the Command Centre database, letting you
+    monitor their status, turn them on and off, change their modes, and shunt them.
 
     The first use case below introduces the main entry point.  It is a paginated search interface
     that gives you any number of fence zones, each containing the fields you ask for in the query.
@@ -19620,7 +19620,8 @@ tags:
       time or an override it will leave this mode.  See the description of HVPlus mode in the
       Configuration Client's online help.
     - `serviceMode` means a technician has manually forced service mode at the fence controller.
-      This safety measure prevents a Command Centre operator energising a hardware technician.
+      This safety measure prevents a Command Centre operator in an operations room inadvertently
+      energising a hardware technician out in the field.
     - `voltageKnown` means Command Centre has the current voltage for the zone, provided there has
       been at least one pulse from the energiser recently.  This can only happen when the zone is
       on, obviously.  The 'voltage' field will contain the voltage at the last pulse.
@@ -19630,6 +19631,9 @@ tags:
     - `preArm` means the zone is performing its pre-arm check.
     - `lockedOut` means the zone has been locked out at a keypad.
     - `parentAlert` means there is a problem with the fence controller.
+
+    [The item status section](#description/item-status) describes the flags an item returns when it is not
+    online.
 
     ### Fence Zone flag rules
 
