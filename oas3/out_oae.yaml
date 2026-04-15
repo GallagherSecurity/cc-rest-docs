@@ -1,7 +1,4 @@
 ## Automatically generated.  Do not edit.
-
-openapi: '3.1.0'
-
 x-common-blocks:
   - &ACZFIELDS
     in: query
@@ -484,7 +481,7 @@ x-common-blocks:
 
   - &NAMEHREF_PROPERTIES
       name: {type: string, readOnly: true }
-      href: {type: string, format: uri-reference}
+      href: {type: string, format: uri-reference, description: "The API's identifier for an item."}
 
       
   - &VISIT_NAME
@@ -817,12 +814,6 @@ x-common-blocks:
         value: "On-Site"
         type: "onSite"
       invitation:  "text to be encoded into a QR code for 9040"
-
-x-zzztagGroups:
-  - name: Operations
-    tags: [ Access Groups, Access Zones, Alarm Zones, Card types, Cardholder changes, Cardholders, Competencies, Day Categories, Lockers, Operator Groups, PDF definitions, Receptions, Redactions, Schedules, Visits ]
-  - name: Schemas
-    tags: [ Schema Definitions ]
 
 components:
 
@@ -1442,6 +1433,7 @@ components:
       explode: false
       description: *UPDFIELDS_DESC
       schema: *UPDFIELDS_SCHEMA
+
     visit_fields:
       name: "fields"
       in: query
@@ -1775,8 +1767,9 @@ components:
     "403nolicence":
       description: |
         A server running 8.50 or earlier is missing the RESTStatus licence.  A server running 8.60
-        or later is missing both the RESTStatus and RESTOverrides licences (having one is enough for
-        this API call).
+        or later is missing both the RESTStatus and RESTOverrides licences.  One of those is enough
+        for this API call in 8.60 and later.
+
   schemas:
 
     AccessGroupCommonFields:
@@ -2258,8 +2251,8 @@ components:
               items:
                 type: object
                 properties:
-                  accessZone: { type: object, properties: {href: {type: string, format: uri-reference}, name: {type: string, description: Read-only.}}}
-                  schedule: { type: object, properties: {href: {type: string, format: uri-reference}, name: {type: string, description: Read-only.}}}
+                  accessZone: { type: object, properties:  *NAMEHREF_PROPERTIES}
+                  schedule: { type: object, properties: *NAMEHREF_PROPERTIES}
               description: |
                 Names and hrefs of the access zones to which this access group gives access, and the
                 schedules that govern it.
@@ -2364,7 +2357,7 @@ components:
               items:
                 type: object
                 properties:
-                  alarmZone: { type: object, properties: {href: {type: string, format: uri-reference}, name: {type: string, description: "Read-only."}}}
+                  alarmZone: { type: object, properties: *NAMEHREF_PROPERTIES}
               description: |
                 Names and hrefs of the alarm zones to which members of this access group have the
                 20-odd management privileges listed above.
@@ -17796,7 +17789,6 @@ servers:
   - url: https://localhost:8904
 
 tags:
-
 - name: Access Groups
   x-summary-in-3.2: Management of Access Groups
 
@@ -19632,7 +19624,7 @@ tags:
     - `lockedOut` means the zone has been locked out at a keypad.
     - `parentAlert` means there is a problem with the fence controller.
 
-    [The item status section](#?route=overview--item-status) describes the flags an item returns when it is not
+    The [item status section](#?route=overview--item-status) describes the flags an item returns when it is not
     online.
 
     ### Fence Zone flag rules
@@ -20386,4 +20378,6 @@ tags:
     1. POST to the link at `features.visits.visits.href` [↪](#?route=post-/api/visits) (in the
        payload of the `GET /api` you did for the first step).
     
+
+openapi: '3.1.0'
 
