@@ -3350,9 +3350,6 @@ components:
       type: string
       pattern: '^0x([0-9A-Fa-f]{2})+$'
       example: "0x0123456789ABCDEF"
-    Url:
-      type: string
-      format: uri
 
     DESFireEncodingRequest:
       type: object
@@ -8246,38 +8243,6 @@ components:
         "next": {
           "href": "https://localhost:8904/api/items/updates?bookmark=3ec613a1-de01c6e_0"
         }    }
-
-    RESTClientPATCH:
-      title: REST client PATCH
-      description: |
-        The [REST Client PATCH](#patch-/api/items/-id-) expects one of these in its body.
-
-        Both fields are optional.
-
-      properties:
-        hasFault:
-          type: boolean
-          example: false
-          description: |
-            If true, the server will change the status of this REST Client to include an indication
-            that is has a fault, and will raise an active alarm to draw the operators' attention.
-            Being active, operators will not be able to process that alarm until you restore it by
-            passing false here.
-
-        customStatusText:
-          type: string
-          example: "Disk 87% full"
-          maxLength: 1024
-          description: |
-            The server will include the text you supply here whenever it generates status text for
-            this item.
-
-            This text field works independently of the item's other states and its fault flag:  you can
-            use it purely for information.
-
-            The integrator is responsibile for any personally identifiable information sent to Command
-            Centre via the API.
-
   
 
     LockerBankSearch:
