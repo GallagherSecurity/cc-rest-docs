@@ -1668,13 +1668,11 @@ components:
         The site does not have the RESTOverrides licence (in which case the body of the result will
         say so), or the operator does not have a privilege that allows overriding alarm zones (such as
         'Override').
-      content: {}
     "404alarmzone":
       description: |
         The request's URL does not represent an alarm zone, or the operator does not have a
         privilege on the zone's division that allows viewing alarm zones, such as 'View Site', 'Edit
         Site', or 'Override'.
-      content: {}
     404enc:
       description: |
         The cardholder does not exist or is not visible to the operator, or that card is not on the
@@ -1765,7 +1763,6 @@ components:
     "400badbody":
       description: |
         The server could not parse the POST parameters.  There could be a syntax error in your JSON.
-      content: {}
 
     "403nolicence":
       description: |
@@ -10297,7 +10294,6 @@ paths:
               schema:
                 type: string
                 format: uri-reference
-          content: {}
         "400":
           description: |
             The body of the POST did not describe a valid access group.
@@ -10305,12 +10301,10 @@ paths:
             If you see 'Invalid Access Group JSON object', the server could not parse the JSON in
             the body of your POST.  Remember to quote all strings, especially those than contain @
             symbols.
-          content: {}
         "403":
           description: |
             The operator does not have a privilege that allows creating access groups, or the server
             does not have the 'RESTConfiguration' licence.
-          content: {}
 
   /api/access_groups/{id}:
     parameters:
@@ -10364,7 +10358,6 @@ paths:
           description: |
             That is not the URL of an access group, or the operator does not have a privilege that
             allows viewing it, such as 'Modify Access Control' or 'View Access Groups'.
-          content: {}
 
     patch:
       tags:
@@ -10646,7 +10639,6 @@ paths:
                       href: "https://localhost:8904/api/access_zones?skip=1000"
         "403":
           description: The site does not have the RESTCardholders licence.
-          content: {}
   /api/access_zones/{id}:
     get:
       tags:
@@ -10736,7 +10728,6 @@ paths:
       responses:
         "204":
           description: Success.
-          content: {}
         "400":
           $ref: '#/components/responses/400badbody'
         "403":
@@ -10812,7 +10803,6 @@ paths:
       responses:
         "204":
           description: Success.
-          content: {}
         "400":
           $ref: '#/components/responses/400badbody'
         "403":
@@ -11411,7 +11401,6 @@ paths:
       responses:
         "204":
           description: Success.
-          content: {}
         "400":
           $ref: '#/components/responses/400badbody'
         "403":
@@ -11451,7 +11440,6 @@ paths:
       responses:
         "204":
           description: Success.
-          content: {}
         "400":
           $ref: '#/components/responses/400badbody'
         "403":
@@ -11491,7 +11479,6 @@ paths:
       responses:
         "204":
           description: Success.
-          content: {}
         "400":
           $ref: '#/components/responses/400badbody'
         "403":
@@ -11531,7 +11518,6 @@ paths:
       responses:
         "204":
           description: Success.
-          content: {}
         "400":
           $ref: '#/components/responses/400badbody'
         "403":
@@ -11571,7 +11557,6 @@ paths:
       responses:
         "204":
           description: Success.
-          content: {}
         "400":
           $ref: '#/components/responses/400badbody'
         "403":
@@ -11610,7 +11595,6 @@ paths:
       responses:
         "204":
           description: Success.
-          content: {}
         "400":
           $ref: '#/components/responses/400badbody'
         "403":
@@ -11639,7 +11623,6 @@ paths:
       responses:
         "204":
           description: Success.
-          content: {}
         "403":
           $ref: '#/components/responses/403alarmzoneoverride'
 
@@ -12151,10 +12134,8 @@ paths:
                 $ref: '#/components/schemas/CardholderSearch'
         "400":
           description: The server could not make sense of your search terms.
-          content: {}
         "403":
           description: The site does not have the RESTCardholders licence.
-          content: {}
 
     post:
       tags:
@@ -12205,7 +12186,6 @@ paths:
               schema:
                 type: string
                 format: uri-reference
-          content: {}
         "400":
           description: |
             The body of the POST did not describe a valid cardholder.
@@ -12217,13 +12197,11 @@ paths:
 
             If you see 'Invalid cardholder', the server could not parse the JSON in the body of your
             POST.  Remember to quote all strings, especially those than contain @ symbols.
-          content: {}
         "403":
           description: |
             The operator does not have a privilege that allows creating cardholders, or you
             attempted to set a field for which the operator has no privilege (probably 'notes'), or
             the server has reached its licensed limit of cardholders.
-          content: {}
       x-codegen-request-body-name: not rendered
 
   /api/cardholders/{id}:
@@ -12273,7 +12251,6 @@ paths:
           description: |
             That is not the URL of a cardholder, or the operator does not have the privilege to view
             that cardholder.
-          content: {}
 
     patch: 
       tags: [ Cardholders ]
@@ -12370,31 +12347,25 @@ paths:
       responses:
         "200":
           description: Success.
-          content: {}
         "204":
           description: Success.
-          content: {}
         "400":
           description: |
             Deleting the cardholder failed.  This happens when the cardholder is a critical part of
             another construct (a personalised notification, for example).
-          content: {}
         "403":
           description: |
             The operator does not have permissions to delete that cardholder
             or the server is not licensed for cardholder operations.
 
             In versions up to and including 9.20 403 also means that there is no such cardholder.
-          content: {}
         "404":
           description: |
             New in 9.30.  There is no such cardholder.
-          content: {}
         "409":
           description: |
             The cardholder is locked for editing by another operator.  The body of the response will
             tell you which operator is holding the lock.
-          content: {}
 
   /api/cardholders/{id}/access_groups/{secondary_id}:
     parameters:
@@ -13090,7 +13061,7 @@ paths:
             That is not the URL of a card type, or the operator is not privileged to view it.
 
   /api/changelog:
-    get:
+    delete:
       tags:
       - Changelog
       summary: "-"
@@ -13166,7 +13137,6 @@ paths:
                 $ref: '#/components/schemas/CompetencySearch'
         "403":
           description: The installation lacks a cardholders licence.
-          content: {}
 
     post:
       tags:
@@ -13256,11 +13226,9 @@ paths:
                 $ref: '#/components/schemas/CompetencyDetail'
         "403":
           description: The installation lacks a cardholders licence.
-          content: {}
         "404":
           description: |
             Your REST operator does not have the privilege to view this competency.
-          content: {}
 
     patch:
       tags:
@@ -13446,7 +13414,6 @@ paths:
         "403":
           description: |
             The site does not have the RESTCardholders, RESTStatus, or RESTOverrides licence.
-          content: {}
 
   /api/divisions:
     post:
@@ -13497,13 +13464,11 @@ paths:
             that is not visible to you.
 
             See the body of the response for help.
-          content: {}
         "403":
           description: |
             The operator does not have a privilege on the parent division that allows creating
             divisions inside it ('Configure Site' or 'Edit Divisions'), or the server has reached
             its licensed limit of divisions or does not have the 'RESTConfiguration' licence.
-          content: {}
       x-codegen-request-body-name: this name not rendered
 
   /api/divisions/_operation_:
@@ -13615,7 +13580,6 @@ paths:
       responses:
         "204":
           description: Success.
-          content: {}
         "400":
           description: |
             Deleting the division failed.  This happens when the division is not empty or is still
@@ -14257,7 +14221,7 @@ paths:
           items:
             type: string
         examples:
-          42613:
+          "42613":
             value: [ "42613" ]
             summary: Events raised when an Engage door is held open for too long.
           softComp:
@@ -15246,7 +15210,6 @@ paths:
                 $ref: '#/components/schemas/ItemSearch'
         "403":
           description: The site does not have a REST licence.
-          content: {}
 
   /api/items/{id}:
 
@@ -15300,7 +15263,6 @@ paths:
           description: |
             That is not the href of an item.  At least not one that your operator has the privilege
             to view.
-          content: {}
 
     patch:
       tags: [ "REST Clients" ]
@@ -15400,7 +15362,6 @@ paths:
                 $ref: '#/components/schemas/ItemTypes'
         "403":
           description: The site does not have a REST licence.
-          content: {}
 
   /api/items/updates:
     get:
@@ -16565,11 +16526,9 @@ paths:
               schema:
                 type: string
                 format: uri-reference
-          content: {}
         "400":
           description: |
             The body of the POST did not describe a valid cardholder.
-          content: {}
       x-codegen-request-body-name: not rendered
 
   /api/cardholders/{id} [PIV]:
@@ -16771,7 +16730,6 @@ paths:
           description: |
             The operator does not have a privilege that allows reading cardholders, or there is no
             cardholder at that address.
-          content: {}
   /api/receptions:
     get:
       tags: [ "Receptions" ]
@@ -17209,7 +17167,6 @@ paths:
         "403":
           description: |
             The site does not have the RESTStatus, RESTOverrides, or RESTCardholders licence.
-          content: {}
     post:
       tags:
       - Schedules
@@ -17242,20 +17199,17 @@ paths:
               schema:
                 type: string
                 format: uri-reference
-          content: {}
         "400":
           description: |
             The parameters are invalid.  Check the body of the response: it may be helpful.
 
             If you see 'No schedule found', the server could not parse the JSON in the body of your
             POST.  Remember that the `state` field is an array.
-          content: {}
         "403":
           description: |
             The operator does not have a privilege that allows creating schedules, or the site does
             not have any of the RESTCardholders, RESTOverrides, RESTStatus, or (after 9.00)
             RESTConfiguration licences.
-          content: {}
       x-codegen-request-body-name: not rendered
   /api/schedules/{id}:
     get:
@@ -17321,19 +17275,16 @@ paths:
       responses:
         "204":
           description: Success.
-          content: {}
         "400":
           description: |
             You cannot delete a schedule that is in use.  The body of the 400 response will tell you
             if that is the case.  One way to find out which items are holding you up is to GET the
             same URL and look in the `scheduledItems` block.
-          content: {}
         "403":
           description: |
             The operator does not have a privilege that allows deleting that schedule ('Edit
             Schedules'), or the site does not have any of the RESTCardholders, RESTOverrides,
             RESTStatus, or (after 9.00) RESTConfiguration licences.
-          content: {}
         "404":
           $ref: '#/components/responses/404schedule'
     patch:
@@ -17366,23 +17317,19 @@ paths:
         "200":
           description: |
             Success.  Future versions will return feedback from the server about your PATCH.
-          content: {}
         "204":
           description: Success.
-          content: {}
         "400":
           description: |
             The parameters are invalid.  Check the body of the response: it may be helpful.
 
             If you see 'No schedule found', the server could not parse the JSON in the body of your
             request.  Remember that the `state` field is an array.
-          content: {}
         "403":
           description: |
             The operator does not have a privilege that allows modifying that schedule, or the site
             does not have any of the RESTCardholders, RESTOverrides, RESTStatus, or (after 9.00)
             RESTConfiguration licences.
-          content: {}
         "404":
           $ref: '#/components/responses/404schedule'
 
