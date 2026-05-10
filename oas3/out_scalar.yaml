@@ -12657,7 +12657,7 @@ paths:
 
         The first time you call this it will return a link back to this call with a parameter
         marking the head of the change list.  ***There will not be any changes in the result set for
-        your first call***.  When you later GET the link the server sent you, it will return the
+        your first call***.  When you later GET the link the server sent you it will return the
         changes that occurred since, if there were any, and a new link.
 
         There will be no more than 1000 changes, or as many as you asked for using the `top` query
@@ -12693,7 +12693,7 @@ paths:
           the network, and your client by asking for a smaller
           response.  For example if you are only interested in the current state of a cardholder's
           group memberships and do not care who made the change, or when, or what state the
-          cardholder was in before use `fields=item,cardholder.accessGroups`.  You need `item` so
+          cardholder was in before, use `fields=item,cardholder.accessGroups`.  You need `item` so
           you can tell which cardholder changed.  If you store your own identifier in a PDF you
           could drop `item` and add `cardholder.pdf_XXX`, where 'XXX' is the ID of your PDF.
 
@@ -12735,7 +12735,7 @@ paths:
           `filter=defaults,cards.trace` will add the card trace flag to the usual filter.
 
           `personalDataFields` will filter for PDF changes, and will give you the
-          personalDataDefinitions block plus the PDF values that changed.  You cannot filter for
+          `personalDataDefinitions` block plus the PDF values that changed.  You cannot filter for
           changes to a particular PDF:  you will need to do that in your client.
 
           Being able to monitor operator settings arrived in 8.50 and operator group memberships in
@@ -12778,7 +12778,7 @@ paths:
           If you do not send this parameter the API will return all cardholder changes to a default
           set of fields.
 
-          Use `personalDataFields` to monitor changes to PDF values on a cardholder.
+          Use `personalDataFields` for changes to PDF values.
 
       - name: "deadline"
         in: query
@@ -12796,7 +12796,7 @@ paths:
           did up to that point.  If you send the same query again later, with the same deadline, you
           may end up stuck in a loop, never making progress, and effectively DoSing your server.
 
-          If your server is struggling, try reducing the size of each result set by using `top`.
+          If your server is struggling, try reducing the size of each result set using `top`.
 
           Added in 8.80.
 
@@ -18472,7 +18472,7 @@ tags:
         [↪](#tag/cardholders/GET/api/cardholders/changes).
 
         1c. Take note of the href in the `next` block.  This is your bookmark.  Later on you will
-        ask for all the changes that happen after this point.
+        use it to ask for all the changes that happen after this point.
 
     1. If you are filling a user directory from Command Centre, download all cardholders using [this
     advice](#downloading-all-cardholders).  Here is a reminder:
