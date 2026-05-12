@@ -1019,7 +1019,7 @@ x-common-blocks: # from file src/accesszone.yaml line 123
       invitation:  "text to be encoded into a QR code for 9040"
 
 components: # from file src/_start_here.yaml line 438
-# continuation block from file src/accessgroup.yaml line 85:  components:
+# continuation block from file src/accessgroup.yaml line 91:  components:
 # continuation block from file src/accesszone.yaml line 143:  components:
 # continuation block from file src/alarm.yaml line 66:  components:
 
@@ -1027,8 +1027,8 @@ components: # from file src/_start_here.yaml line 438
 # continuation block from file src/cardencoding.yaml line 475:  components:
 # continuation block from file src/cardholder.yaml line 436:  components:
 
-# continuation block from file src/cardtype.yaml line 59:  components:
-# continuation block from file src/competency.yaml line 23:  components:
+# continuation block from file src/cardtype.yaml line 63:  components:
+# continuation block from file src/competency.yaml line 28:  components:
 # continuation block from file src/division.yaml line 46:  components:
 
 # continuation block from file src/door.yaml line 108:  components:
@@ -1050,13 +1050,13 @@ components: # from file src/_start_here.yaml line 438
 # continuation block from file src/macro.yaml line 63:  components:
 # continuation block from file src/operatorgroup.yaml line 52:  components:
 # continuation block from file src/output.yaml line 83:  components:
-# continuation block from file src/pdf.yaml line 62:  components:
+# continuation block from file src/pdf.yaml line 67:  components:
 # continuation block from file src/piv.yaml line 174:  components:
 
 # continuation block from file src/reception.yaml line 21:  components:
 # continuation block from file src/redaction.yaml line 45:  components:
 
-# continuation block from file src/role.yaml line 31:  components:
+# continuation block from file src/role.yaml line 36:  components:
 
 # continuation block from file src/schedule.yaml line 21:  components:
 
@@ -1745,7 +1745,7 @@ components: # from file src/_start_here.yaml line 438
 
         Treat the string matches as case sensitive.
   
-  requestBodies: # from file src/accessgroup.yaml line 86
+  requestBodies: # from file src/accessgroup.yaml line 92
 
     AccessGroupPATCH:
       # Sample PATCH body
@@ -2167,7 +2167,7 @@ components: # from file src/_start_here.yaml line 438
 # Schemas (models) that are used in more than one file.  Don't bother adding models that are used
 # only in one file - it just makes it harder to write and read.
 
-  schemas: # from file src/accessgroup.yaml line 160
+  schemas: # from file src/accessgroup.yaml line 166
 
     AccessGroupCommonFields:
       title: Access group common fields
@@ -11326,7 +11326,7 @@ info: # from file src/_start_here.yaml line 9
 
 # continuation block from file src/cardencoding.yaml line 33:  info:
 # ignoring info block from file src/cardencoding.yaml line 33:  info:
-paths: # from file src/accessgroup.yaml line 839
+paths: # from file src/accessgroup.yaml line 845
   
   /api/access_groups:
     get:
@@ -14300,7 +14300,7 @@ paths: # from file src/accessgroup.yaml line 839
 
 # /api/cardholders/{id}/passcodeAccess and /passcode_access are not documented, because only one customer can use it.
 # It has not had cybersec approval for general release.
-# continuation block from file src/cardtype.yaml line 271:  paths:
+# continuation block from file src/cardtype.yaml line 275:  paths:
 
   /api/card_types:
     get:
@@ -14533,7 +14533,7 @@ paths: # from file src/accessgroup.yaml line 839
         renderers that require every tag to contain a path.
       
   
-# continuation block from file src/competency.yaml line 188:  paths:
+# continuation block from file src/competency.yaml line 193:  paths:
   /api/competencies:
     get:
       tags:
@@ -17852,7 +17852,7 @@ paths: # from file src/accessgroup.yaml line 839
         "403": {$ref: '#/components/responses/403nolicence'}
         "404": {$ref: "#/components/responses/404output"}
 
-# continuation block from file src/pdf.yaml line 301:  paths:
+# continuation block from file src/pdf.yaml line 306:  paths:
 
   /api/personal_data_fields:
     get:
@@ -18534,7 +18534,7 @@ paths: # from file src/accessgroup.yaml line 839
           description: |
             No such redaction, or your operator cannot see it.
 
-# continuation block from file src/role.yaml line 87:  paths:
+# continuation block from file src/role.yaml line 92:  paths:
 
   /api/roles:
     get:
@@ -19426,6 +19426,12 @@ tags: # from file src/accessgroup.yaml line 1
     4. Follow the link at `next.href`, if there is one, and repeat.
 
     You can now assemble the groups into a tree.
+
+    ## Licensing
+
+    Reading access groups and managing access group memberships is enabled by the RESTCardholders
+    licence but creating, deleting, or modifying access group items requires the RESTConfiguration
+    licence.
 
 # ### Visualising the group hierarchy
 # 1. `GET /api`.
@@ -20341,6 +20347,10 @@ tags: # from file src/accessgroup.yaml line 1
     Explanation:  Command Centre ships with a handful of card types, and administrators can add
     more, but the one that Command Centre uses for PIV and PIV-I cards has its own credential class.
 
+    ## Licensing
+
+    Reading card types is enabled by the RESTCardholders licence but creating, deleting, or
+    modifying them requires the RESTConfiguration licence.
 
 # continuation block from file src/changelog.yaml line 8:  tags:
   # Have the tag's name within three lines of the "tags:" line so that build scripts can find it.
@@ -20782,6 +20792,11 @@ tags: # from file src/accessgroup.yaml line 1
     delete functions described below.
 
     The Configuration Client online help describes competencies fully.
+
+    ## Licensing
+
+    Reading competencies is enabled by the RESTCardholders licence but creating, deleting, or
+    modifying them requires the RESTConfiguration licence.
 
 # continuation block from file src/daycategory.yaml line 1:  tags:
 - name: "Day Categories"
@@ -22040,6 +22055,11 @@ tags: # from file src/accessgroup.yaml line 1
     You do that by [PATCHing a cardholder](#definition-CardholderPATCH) with a field named
     after the PDF following an '@'.
 
+    ## Licensing
+
+    Reading PDF definitions is enabled by the RESTCardholders licence but creating, deleting, or
+    modifying them requires the RESTConfiguration licence.
+
 # continuation block from file src/piv.yaml line 1:  tags:
 - name: "PIV cards"
   description: |
@@ -22203,6 +22223,11 @@ tags: # from file src/accessgroup.yaml line 1
     1. [PATCH](#path-Cardholders/patch/api/cardholders/{id}) the second cardholder (the supervised)
        with the href of the first cardholder (the supervisor) and the href of the role.
 
+    ## Licensing
+
+    Reading role items is enabled by the RESTCardholders licence but creating, deleting, or
+    modifying them requires the RESTConfiguration licence.
+
 # continuation block from file src/schedule.yaml line 1:  tags:
 - name: "Schedules"
   description: |-
@@ -22227,7 +22252,7 @@ tags: # from file src/accessgroup.yaml line 1
 - name: Visits
   description: |
 
-    Visits are new to 8.50.
+    Visits are new to 8.50 and are deprecated in 9.60 onward.
 
     ## Use case:  finding a visit by name
     1. `GET /api`
