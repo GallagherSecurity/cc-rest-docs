@@ -5478,16 +5478,17 @@ components: # from file src/_start_here.yaml line 438
         API, we do not mean the competency object itself, but rather the link a cardholder has to the
         competency.
 
-        The link is a block in the cardholder detail.  You can also request the server to add it to
-        the results of a cardholder search by putting `competencies` in the `fields` parameter.
+        The link between cardholder and competency is a block in the cardholder detail.  You can
+        also request the server to add it to the results of a cardholder search by putting
+        `competencies` in the `fields` parameter.
 
         When updating a cardholder's holding of a competency, the fields you send are slightly
         different from what you receive from a cardholder GET:  you do not send read-only blocks
         such `status` and `competency`, and there is a write-only field `enabled` that you can
         supply to change the status.
 
-        You cannot use a PATCH to change the competency to which the status, times, comment, and
-        credit apply.  If you need to do that, delete the cardholder's existing competency and give
+        You cannot use a PATCH to move the status, times, comment, and credit to a different
+        competency.  If you need to do that, delete the cardholder's existing competency and give
         them a new one.  You can do that in one PATCH.
 
         A cardholder can have only one link to a given competency.  Attempting to give a cardholder
@@ -7652,7 +7653,7 @@ components: # from file src/_start_here.yaml line 438
 
             The item he or she modified will appear in the `modifiedItem` block (added in 8.40).
 
-            *** Change is coming. ***
+            ***Change is coming.***
 
             The operator may not be a cardholder.  A version of Command Centre after 9.30 will
             return events where the operator item is of a different kind.  In that case, the
@@ -11976,7 +11977,7 @@ paths: # from file src/accessgroup.yaml line 845
     post:
       tags:
       - Access Zones
-      summary: Set an access zone to free
+      summary: Set access zone free
       description: |
         Sends an override to an access zone to change its mode to 'free - no PIN', meaning the doors
         will be free and you will not need a PIN to perform an override on a terminal.
@@ -11999,7 +12000,6 @@ paths: # from file src/accessgroup.yaml line 845
       - $ref: "#/components/parameters/requested_by"
       requestBody:
         $ref: '#/components/requestBodies/OverrideEndTime'
-        required: false
       responses:
         "204":
           description: Success.
@@ -12013,7 +12013,7 @@ paths: # from file src/accessgroup.yaml line 845
     post:
       tags:
       - Access Zones
-      summary: Set an access zone to secure
+      summary: Set access zone secure
       description: |
         Sends an override to an access zone to change its mode to 'secure - no PIN', meaning you
         will need a card, but not a PIN, to open its doors or perform overrides on terminals.
@@ -12036,7 +12036,6 @@ paths: # from file src/accessgroup.yaml line 845
       - $ref: "#/components/parameters/requested_by"
       requestBody:
         $ref: '#/components/requestBodies/OverrideEndTime'
-        required: false
       responses:
         "204":
           description: Success.
@@ -12050,7 +12049,7 @@ paths: # from file src/accessgroup.yaml line 845
     post:
       tags:
       - Access Zones
-      summary: Set an access zone to code or card
+      summary: Set access zone to code or card
       description: |
         Sends an override to an access zone to change its mode to 'Code or Card - No PIN',
         meaning you can use your user code or the zone's 'code-only code' to open its doors,
@@ -12074,7 +12073,6 @@ paths: # from file src/accessgroup.yaml line 845
       - $ref: "#/components/parameters/requested_by"
       requestBody:
         $ref: '#/components/requestBodies/OverrideEndTime'
-        required: false
       responses:
         "204":
           description: Success.
@@ -12088,7 +12086,7 @@ paths: # from file src/accessgroup.yaml line 845
     post:
       tags:
       - Access Zones
-      summary: Set an access zone to dual auth
+      summary: Set access zone to dual auth
       description: |
         Sends an override to an access zone to change its mode to 'dual auth - no PIN', meaning you
         will need two badges to open its doors (either two different cardholders or two credentials
@@ -12113,7 +12111,6 @@ paths: # from file src/accessgroup.yaml line 845
       - $ref: "#/components/parameters/requested_by"
       requestBody:
         $ref: '#/components/requestBodies/OverrideEndTime'
-        required: false
       responses:
         "204":
           description: Success.
@@ -12466,7 +12463,7 @@ paths: # from file src/accessgroup.yaml line 845
     post:
       tags:
       - Alarms
-      summary: Mark an alarm as viewed
+      summary: Mark alarm viewed
       description: |
         Mark the alarm as viewed.  Follow the `view` link in the alarm summary to get here.
 
@@ -12508,7 +12505,7 @@ paths: # from file src/accessgroup.yaml line 845
     post:
       tags:
       - Alarms
-      summary: Mark an alarm as acknowledged
+      summary: Mark alarm acknowledged
       description: |
         Follow the `acknowledgeWithComment` or the `acknowledge` link in the alarm summary to get
         here.
@@ -12530,7 +12527,7 @@ paths: # from file src/accessgroup.yaml line 845
     post:
       tags:
       - Alarms
-      summary: Mark an alarm as processed
+      summary: Mark alarm processed
       description: |
         Follow the `processWithComment`, `forceProcess`, or `process` link in the alarm to get here.
 
@@ -12771,7 +12768,6 @@ paths: # from file src/accessgroup.yaml line 845
       - $ref: "#/components/parameters/requested_by"
       requestBody:
         $ref: '#/components/requestBodies/OverrideEndTime'
-        required: false
       responses:
         "204":
           description: Success.
@@ -12810,7 +12806,6 @@ paths: # from file src/accessgroup.yaml line 845
       - $ref: "#/components/parameters/requested_by"
       requestBody:
         $ref: '#/components/requestBodies/OverrideEndTime'
-        required: false
       responses:
         "204":
           description: Success.
@@ -12849,7 +12844,6 @@ paths: # from file src/accessgroup.yaml line 845
       - $ref: "#/components/parameters/requested_by"
       requestBody:
         $ref: '#/components/requestBodies/OverrideEndTime'
-        required: false
       responses:
         "204":
           description: Success.
@@ -12888,7 +12882,6 @@ paths: # from file src/accessgroup.yaml line 845
       - $ref: "#/components/parameters/requested_by"
       requestBody:
         $ref: '#/components/requestBodies/OverrideEndTime'
-        required: false
       responses:
         "204":
           description: Success.
@@ -12926,7 +12919,6 @@ paths: # from file src/accessgroup.yaml line 845
       - $ref: "#/components/parameters/requested_by"
       requestBody:
         $ref: '#/components/requestBodies/OverrideEndTime'
-        required: false
       responses:
         "204":
           description: Success.
@@ -13336,7 +13328,7 @@ paths: # from file src/accessgroup.yaml line 845
           description: Callback token has expired or already been used.
 
 
-# continuation block from file src/cardholder.yaml line 3219:  paths:
+# continuation block from file src/cardholder.yaml line 3220:  paths:
 
   /api/cardholders:
 
@@ -14533,12 +14525,16 @@ paths: # from file src/accessgroup.yaml line 845
     delete:
       tags:
       - Changelog
-      summary: "-"
+      summary: Dummy path for changelog tag.
       description: |
         This path does not exist in the API.  It is in the documentation to satisfy the HTML
-        renderers that require every tag to contain a path.
+        renderers that require a path in every tag.
       
-  
+      responses:
+        "200":
+          description: This result is unlikely.
+        "404":
+          description: This path does not exist.
 # continuation block from file src/competency.yaml line 193:  paths:
   /api/competencies:
     get:
@@ -17752,7 +17748,6 @@ paths: # from file src/accessgroup.yaml line 845
       - $ref: "#/components/parameters/requested_by"
       requestBody:
         $ref: '#/components/requestBodies/OverrideEndTime'
-        required: false
 
       responses:
         "204": { description: Success. }
@@ -17799,7 +17794,6 @@ paths: # from file src/accessgroup.yaml line 845
       - $ref: "#/components/parameters/requested_by"
       requestBody:
         $ref: '#/components/requestBodies/OverrideEndTime'
-        required: false
 
       responses:
         "204": { description: Success. }
