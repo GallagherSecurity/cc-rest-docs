@@ -828,7 +828,7 @@ components:
 
         This example:
 
-          - sets 'authorised' true,
+          - sets `authorised` true,
           - sets a PDF holding an employee ID,
 
           - changes the notification flags on two PDFs (presumably because this cardholder wants to receive
@@ -955,7 +955,7 @@ components:
         `type` is the only compulsory field.  It must contain an href to the card type of the new
         mobile credential.
 
-        The so-called card 'number' on a mobile credential does not need to be numeric.
+        The so-called card "number" on a mobile credential does not need to be numeric.
 
         The `status` block is optional.  Provide a field `value` inside it set to one of the valid
         starting states for the mobile credential.  If you omit it, the credential will start in the
@@ -987,7 +987,7 @@ components:
         `type` is the only compulsory field in the `cards` blocks.  It must contain an href to the card
         type of the new mobile credential.
 
-        The so-called card 'number' on a mobile credential does not need to be numeric.
+        The so-called card "number" on a mobile credential does not need to be numeric.
 
         The `status` block is optional.  Provide a field `value` inside it set to one of the valid
         starting states for the mobile credential.  If you omit it, the credential will start in the
@@ -3654,7 +3654,7 @@ components:
             This is called 'Cardholder Authorised' in the administrative clients.  If false, Command
             Centre will deny card access decisions for this cardholder.
 
-            'authorised' is false by default.  If you want a new cardholder to open doors, be sure to
+            `authorised` is false by default.  If you want a new cardholder to open doors, be sure to
             set it to true in your POST.
 
             You need the 'Edit cardholders' privilege to set this true.  In versions prior to 8.80
@@ -3803,7 +3803,7 @@ components:
             send a field in the root of the cardholder with the name of the PDF preceded by an
             '@', that one wins.
 
-            To request this block using the 'fields' parameter, use `personalDataFields` (note
+            To request this block using the `fields` parameter, use `personalDataFields` (note
             'fields' not 'definitions').  Doing so will not only give you the
             `personalDataDefinitions` block, but also the values at the root level (with their names
             preceded by '@'-signs).
@@ -4444,7 +4444,7 @@ components:
                 Mobile applications use this URL to accept this invitation.  See the Mobile Connect
                 SDK documentation for how to do that in your own applications.
 
-                Only present if 'status' is 'sent'.
+                Only present if `status` is 'sent'.
               format: uri-reference
               readOnly: true
               example: https://security.gallagher.cloud/api/invitations/abcd1234defg5678
@@ -4768,7 +4768,7 @@ components:
         href:
           type: string
           description: |
-            DELETE this URL or use it in the 'operatorGroups' block of a [cardholder
+            DELETE this URL or use it in the `operatorGroups` block of a [cardholder
             PATCH](#tag/cardholders/PATCH/api/cardholders/{id}) to remove this operator group
             membership.
 
@@ -5407,27 +5407,27 @@ components:
         cards:
           type: object
           description: |
-            This object can contain three arrays, named 'add', 'update', and 'remove'.  Every element
+            This object can contain three arrays, named `add`, `update`, and `remove`.  Every element
             you put in those arrays should be in the [card schema](#model/CardholderCard).
-            Each element of the 'add' array will need a 'type' member, at the very least.  Every card
-            field makes sense here except 'href'.  Only existing cards have hrefs.  This example adds
-            two cards:  one has nothing more than the type, so it will receive blank 'from' and
-            'until' dates and a computed number and issue level.  The other is a mobile credential (it
-            has an 'invitation' block) with a custom initial state.
+            Each element of the `add` array will need a `type` member, at the very least.  Every card
+            field makes sense here except `href`.  Only existing cards have hrefs.  This example adds
+            two cards:  one has nothing more than the type, so it will receive blank `from` and
+            `until` dates and a computed number and issue level.  The other is a mobile credential (it
+            has an `invitation` block) with a custom initial state.
 
-            Each element of the 'update' array should be a card to modify.  It will need the href of
+            Each element of the `update` array should be a card to modify.  It will need the href of
             that card, plus the fields you want to change.  Remember you cannot change a card's type.
-            The example changes the issue level and resets the 'until' date.
+            The example changes the issue level and resets the `until` date.
 
-            The only field that makes sense in an element of the 'remove' array is 'href' and 'status'.
+            The only field that makes sense in an element of the `remove` array is `href` and `status`.
 
             You can remove and add cards in the same PATCH.  In fact you should do that in preference
             to making multiple API calls.  That is a good way of reissuing a mobile credentials, for
-            example:  put the href to the old one in the 'remove' array and a new invitation in the
-            'add' array.  The new credential should have the same card number and the same 'type' and
-            'invitation' blocks as the credential you're re-issuing.
+            example:  put the href to the old one in the `remove` array and a new invitation in the
+            `add` array.  The new credential should have the same card number and the same `type` and
+            `invitation` blocks as the credential you're re-issuing.
 
-            Do not put the same href in both the 'update' and 'remove' arrays.
+            Do not put the same href in both the `update` and `remove` arrays.
 
             In version 8.90 and later you can specify a card state in the `value` field inside the
             `status` block when removing a card or changing its issue level.  It becomes the final
@@ -5459,32 +5459,32 @@ components:
         accessGroups:
           type: object
           description: |
-            Like the 'cards' object, this can contain three arrays named 'add', 'update', and
-            'remove'.  Every element you send in those arrays should be in the [access group
+            Like the `cards` object, this can contain three arrays named `add`, `update`, and
+            `remove`.  Every element you send in those arrays should be in the [access group
             schema](#model/CardholderAccessGroup).
 
             This operation does not modify access groups in Command Centre; it works on a cardholder's
             memberships to those groups.
 
-            Each element of the 'add' array will need an 'accessGroup' member containing an href
+            Each element of the `add` array will need an `accessGroup` member containing an href
             identifying the group to which you wish to add the cardholder.  The other fields are
-            optional.  If you omit 'from', the membership will take effect immediately.  If you omit
-            'until', it will be unending.
+            optional.  If you omit `from`, the membership will take effect immediately.  If you omit
+            `until`, it will be unending.
 
-            Each element of the 'update' array will need an href identifying the membership (not the group!) to update,
-            and one or both of the 'from' and 'until' date-times with new values.  You cannot
+            Each element of the `update` array will need an href identifying the membership (not the group!) to update,
+            and one or both of the `from` and `until` date-times with new values.  You cannot
             change the group:  just the activity period.  The example removes the until date, effectively making
             the group membership unending.
 
-            In version 7.90.883 or earlier, 'from' and 'until' should be in UTC with a
+            In version 7.90.883 or earlier, `from` and `until` should be in UTC with a
             trailing 'Z'.  Releases after 883 understand different timezones here.
 
             Note that updating a cardholder's group membership will change its href, so do not cache
             it.
 
-            The only field that makes sense in an element of the 'remove' array is the href.
+            The only field that makes sense in an element of the `remove` array is the href.
 
-            Do not put the same href in both the 'update' and 'remove' arrays.
+            Do not put the same href in both the `update` and `remove` arrays.
 
           example:
             add:
@@ -5502,26 +5502,26 @@ components:
         competencies:
           type: object
           description: |
-            Like the cards and accessGroups objects, this can contain three arrays named 'add',
-            'update', and 'remove'.  Every element should be in the [cardholder competency
+            Like the cards and accessGroups objects, this can contain three arrays named `add`,
+            `update`, and `remove`.  Every element should be in the [cardholder competency
             schema](#model/CardholderCompetency).
 
             This operation does not modify Command Centre's competencies:  it works on a cardholder's
             holdings of those competencies.
 
-            Each element of the 'add' array will need a 'competency' block containing an href member
+            Each element of the `add` array will need a `competency` block containing an href member
             identifying the competency you wish to grant the cardholder.  All other fields are optional.
             Note that attempting to give a cardholder a competency he or she already has
             will result in an error or an alarm depending on the server version.
 
-            Each element of the 'update' array will need an href identifying the
-            cardholder/competency link to update, and one or more of the 'expiry', 'enabled',
-            'enablement', 'comment', 'limitedCredit', and 'credit' fields.
+            Each element of the `update` array will need an href identifying the
+            cardholder/competency link to update, and one or more of the `expiry`, `enabled`,
+            `enablement`, `comment`, `limitedCredit`, and `credit` fields.
 
-            The only field that makes sense in an element of the 'remove' array is the href
+            The only field that makes sense in an element of the `remove` array is the href
             of the link between the cardholder and the competency.
 
-            Do not put the same href in both the 'update' and 'remove' arrays.
+            Do not put the same href in both the `update` and `remove` arrays.
 
             In this example we are giving the cardholder a disabled competency which will enable
             in 2021, and activating another competency.
@@ -5539,26 +5539,26 @@ components:
         relationships:
           type: object
           description: |
-            It should be no surprise that this can contain three arrays named 'add', 'update', and
-            'remove', and that every element should be in the [relationship
+            It should be no surprise that this can contain three arrays named `add`, `update`, and
+            `remove`, and that every element should be in the [relationship
             schema](#model/CardholderRelationship).
 
             This operation does not modify Command Centre's roles:  it works on the relationships
             between two cardholders.
 
-            Each element of the 'add' array will need a 'role' member containing an href identifying
-            the type of relationship you wish to establish, and a 'cardholder' member containing an
+            Each element of the `add` array will need a `role` member containing an href identifying
+            the type of relationship you wish to establish, and a `cardholder` member containing an
             href identifying the other party (the one who will perform the role for the cardholder at
             the URL you are PATCHing).  There are no optional fields.
 
-            Each element of the 'update' array will need an href identifying the relationship to
-            update, and one or both of the 'role' and 'cardholder' blocks containing the updated
+            Each element of the `update` array will need an href identifying the relationship to
+            update, and one or both of the `role` and `cardholder` blocks containing the updated
             values.  The example leaves the role but changes the cardholder - a new supervisor,
             presumably.
 
-            The only field that makes sense in an element of the 'remove' array is the href.
+            The only field that makes sense in an element of the `remove` array is the href.
 
-            Do not put the same href in both the 'update' and 'remove' arrays.
+            Do not put the same href in both the `update` and `remove` arrays.
 
           example:
             add:
@@ -5578,16 +5578,16 @@ components:
             [cardholder locker schema](#model/CardholderLocker).  They will allocate lockers to
             cardholders, de-allocate them, and adjust validity periods.
 
-            Each member of the 'add' array will need a 'locker' member containing an href identifying
+            Each member of the `add` array will need a `locker` member containing an href identifying
             the locker to allocate.  The cardholder you will allocate it to is identified by the
             request URL, remember.
 
-            Each member of the 'update' array will need an href identifying the allocation to update,
-            and one or both of the 'from' and 'until' date-times.
+            Each member of the `update` array will need an href identifying the allocation to update,
+            and one or both of the `from` and `until` date-times.
 
             The validity period is all you can change about a locker allocation.  If you want to
             change the locker, delete the old one and add a new.  You can do that in the same PATCH,
-            with one element in each of the 'add' and 'remove' arrays.
+            with one element in each of the `add` and `remove` arrays.
 
             This example allocates one locker starting in January 2019, sets the end-date of an
             existing allocation to the end of February 2020, and removes another entirely.
@@ -5606,20 +5606,20 @@ components:
         operatorGroups:
           type: object
           description: |
-            This can contain two arrays named 'add' and 'remove'.  Every element you send in those
+            This can contain two arrays named `add` and `remove`.  Every element you send in those
             arrays should be in the [cardholder operator group
             schema](#model/CardholderOperatorGroup).
 
-            Each element of the 'add' array will need an 'operatorGroup' member containing an href
+            Each element of the `add` array will need an `operatorGroup` member containing an href
             identifying the operator group to which you wish to add the cardholder.  Supported in 8.50
             and later.
 
-            The only field that makes sense in an element of the 'remove' array is the href.  Make
+            The only field that makes sense in an element of the `remove` array is the href.  Make
             sure it is the href of the membership, not of the operator group.  Supported in 8.90 and
             later.
 
             There is nothing about an operator group membership that you can change so there is no
-            point to an 'update' array.  Operator group memberships are, or are not:  there is no
+            point to an `update` array.  Operator group memberships are, or are not:  there is no
             update.
 
           example:
@@ -5634,15 +5634,15 @@ components:
         elevatorGroups:
           type: object
           description: |
-            This can contain three arrays named 'add', 'update', and
-            'remove', each containing an element in the [cardholder elevator group
+            This can contain three arrays named `add`, `update`, and
+            `remove`, each containing an element in the [cardholder elevator group
             schema](#model/CardholderElevatorGroup).
 
-            The 'elevatorGroup' block only makes sense in the 'add' array.  The 'update' array is for
+            The `elevatorGroup` block only makes sense in the `add` array.  The `update` array is for
             changing the cardholder's default floor and passenger types on an existing elevator group
             assignment.
 
-            The server will ignore all fields in the elevatorGroup and accessZone objects except 'href'
+            The server will ignore all fields in the elevatorGroup and accessZone objects except `href`
             if you place them in the body of your PATCH.
 
             Remove the default floor in an update by supplying an accessZone block with the href set
@@ -5652,8 +5652,8 @@ components:
             be unchanged otherwise.
 
             As with cards and access group memberships etc., the server ignores root-level hrefs in
-            the elements of an 'add' array, requires them in the 'update' array (since they indicate
-            the entries to work on), and ignores everything but them in the 'remove' array.
+            the elements of an `add` array, requires them in the `update` array (since they indicate
+            the entries to work on), and ignores everything but them in the `remove` array.
 
             The example shows our cardholder receiving a default floor for one elevator group and
             updating the Code Blue and VIP passenger types for another elevator group.
@@ -5742,7 +5742,7 @@ components:
           example: "2020-01-14T03:14:33Z"
         type:
           description: |
-            'add' if this change added a cardholder, 'update' if it modified a cardholder, or 'remove'
+            `add` if this change added a cardholder, `update` if it modified a cardholder, or `remove`
             if it deleted a cardholder.
           type: string
           enum: [ add, update, remove ]
@@ -11949,7 +11949,7 @@ paths:
         Adding or modifying cardholders between calls to this API will not affect the pagination of
         its results if you sort by ID.
 
-        [Do not code this URL](#description/forward-compatibility-hateoas) into your application.  Take it from the 'href' field in the
+        [Do not code this URL](#description/forward-compatibility-hateoas) into your application.  Take it from the `href` field in the
         `features.cardholders.cardholders` section of `/api`.
       parameters:
       - $ref: '#/components/parameters/sort'
@@ -12056,7 +12056,7 @@ paths:
           Use the special value `defaults` to return the fields you would have received had you not
           given the parameter at all.  Obviously only do that if you have more to add.
 
-          Use the special value `personalDataFields` to return the 'personalDataDefinitions' block
+          Use the special value `personalDataFields` to return the `personalDataDefinitions` block
           as well as the PDF values at the root level of the cardholder object.
 
           Use the special value `pdf_XXX` (where `XXX` is the ID of a PDF definition) to include
@@ -12103,7 +12103,7 @@ paths:
         competencies, and roles.
 
         [Do not code this URL](#description/forward-compatibility-hateoas) into your application.  Take
-        it from the 'href' field in the `features.cardholders.cardholders` section of `/api`.
+        it from the `href` field in the `features.cardholders.cardholders` section of `/api`.
 
         The POST expects a document in the same format as the [the cardholder
         detail](#model/CardholderDetail).  Many fields are optional, of course, and some (like
@@ -12157,7 +12157,7 @@ paths:
         "403":
           description: |
             The operator does not have a privilege that allows creating cardholders, or you
-            attempted to set a field for which the operator has no privilege (probably 'notes'), or
+            attempted to set a field for which the operator has no privilege (probably `notes`), or
             the server has reached its licensed limit of cardholders.
       x-codegen-request-body-name: not rendered
 
@@ -12249,7 +12249,7 @@ paths:
             lockers on a cardholder via the API.  In the administrative clients, you do not.
 
         The 'De-authorise Cardholder' privilege _is_ implemented.  It allows an operator to set a
-        cardholder's 'authorised' field to false (denying all their future access requests) without
+        cardholder's `authorised` field to false (denying all their future access requests) without
         the Edit Cardholders privilege.
 
         In short, if your application intends to do more to cardholders than de-authorise them, you
@@ -12257,7 +12257,7 @@ paths:
 
       requestBody:
         description: |
-          As well as cardholder attributes such as 'authorised', the PATCH body contains
+          As well as cardholder attributes such as `authorised`, the PATCH body contains
           instructions for creating, updating, and deleting personal data, group
           memberships, etc.
         content:
@@ -12452,7 +12452,7 @@ paths:
         "404":
           description: |
             That is not the URL of a cardholder's elevator group.  You can take an href
-            from the 'elevatorGroups' block of a cardholder detail.  The message in the results
+            from the `elevatorGroups` block of a cardholder detail.  The message in the results
             document will tell you more about the problem.
 
   /api/cardholders/{id}/lockers/{secondary_id}:
@@ -12550,7 +12550,7 @@ paths:
         This call updates a cardholder's location (moves them) to a target access zone. Added in 8.20.
 
         [Do not code this URL](#description/forward-compatibility-hateoas) into your application.  Take
-        it from the 'updateLocation.href' field in a [cardholder
+        it from the `updateLocation.href` field in a [cardholder
         response](#model/CardholderDetail).
 
         The POST expects a document which contains an href to the target access zone.  The
@@ -12695,7 +12695,7 @@ paths:
         parameter.
 
         When you are up to date with all the cardholder changes, the `results` array will be empty.
-        When it comes time to check again, don't just re-use the same URL:  get a new one from the
+        When it comes time to check again, do not just re-use the same URL:  get a new one from the
         `next` block.  It can change even when there are no results.
 
         This is a polled interface:  it will return immediately, whether or not there are results.
@@ -15168,6 +15168,10 @@ paths:
         description: |
           Only returns items that are of a type with this ID.  In versions up to 8.30 you could only
           specify one, but in 8.40 and later this can be a comma-separated list.
+
+          Note that the server will ignore invalid IDs, and if they are all invalid it will act as
+          though the filter was absent and return all items.  This is a bug.  Future versions will
+          return nothing if all the type IDs are invalid.
         schema:
           type: string
       - name: top
@@ -18188,10 +18192,10 @@ tags:
     clients.
 
     The first use case below introduces the main entry point.  It is a paginated search interface
-    that gives you basic data for any number of cardholders.  You won't receive many fields by
+    that gives you basic data for any number of cardholders.  You will not receive many fields by
     default, but you can ask for more using the `fields` query parameter.
 
-    A field called 'href' serves both as a unique identifier for the cardholder and the location of
+    A field called `href` serves both as a unique identifier for the cardholder and the location of
     what we call his or her _details_ page.  You can submit an HTTP GET to that href to retrieve the
     entire cardholder record, or an HTTP PATCH to update it, or an HTTP DELETE to remove it.  Be
     careful:  there is no coming back from deleting a cardholder.
@@ -18215,7 +18219,7 @@ tags:
 
     2. Follow the link at `features.cardholders.cardholders.href`
        [↪](#tag/cardholders/GET/api/cardholders), appending a search term to narrow the results and
-       the 'fields' parameter to add the fields you need.  3. Process the results, following the
+       the `fields` parameter to add the fields you need.  3. Process the results, following the
        `next` link until there isn't one.
 
     ### Downloading all cardholders 
@@ -18301,7 +18305,7 @@ tags:
 
     3. Do the same for the competencies, relationships (`roles`), lockers, PDF definitions, and
     cards/credentials (`cardTypes`) that your new cardholder needs, using other URLs in the
-    'features' section of `/api`.  In v8.10, the card types that your operator has the privilege to
+    `features` section of `/api`.  In v8.10, the card types that your operator has the privilege to
     assign are at a new URL given in the field `features.cardTypes.assign.href`
     [↪](#tag/cardholders/GET/api/card_types/assign).
 
