@@ -29,4 +29,5 @@ Screenshots
 Screenshots are now in the 'assets' directory in the main branch.
 
 https://gist.github.com/joncardasis/e6494afd538a400722545163eb2e1fa5 is excellent advice for storing
-binaries in a git repo without the expense of their history.  However these screenshots change very rarely.
+binaries in a git repo without the expense of their history.  I used that advice at first but there
+is a usability penalty and these screenshots change very rarely so I scrapped it.
