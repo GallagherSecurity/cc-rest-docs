@@ -1940,6 +1940,10 @@ paths:
         description: |
           Only returns items that are of a type with this ID.  In versions up to 8.30 you could only
           specify one, but in 8.40 and later this can be a comma-separated list.
+
+          Note that the server will ignore invalid IDs, and if they are all invalid it will act as
+          though the filter was absent and return all items.  This is a bug.  Future versions will
+          return nothing if all the type IDs are invalid.
       - name: "top"
         in: query
         required: false
@@ -2599,7 +2603,7 @@ definitions:
 
           The item they modified will appear in the `modifiedItem` block (added in 8.40).
 
-          *** Change is coming. ***
+          ***Change is coming.***
 
           The operator may not be a cardholder.  A version of Command Centre after 9.30 will return
           events where the operator item is of a different kind.  In that case, the `operator` block
@@ -3732,7 +3736,7 @@ definitions:
           in your subscription (provided they are the types of item that have statuses).  This is
           unnecessary and incurs a significant performance penalty, so:
 
-          *** Change is coming ***
+          ***Change is coming.***
 
           A future version will not do that.  The results of the POST will not contain all the items
           in your subscription, and the first GET will not return them all a second time.  Use [this

@@ -3968,6 +3968,7 @@
                     </div>
                     <div class="prop-value">
                       <p>Only returns items that are of a type with this ID. In versions up to 8.30 you could only specify one, but in 8.40 and later this can be a comma-separated list.</p>
+                      <p>Note that the server will ignore invalid IDs, and if they are all invalid it will act as though the filter was absent and return all items. This is a bug. Future versions will return nothing if all the type IDs are invalid.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -6009,7 +6010,9 @@
                       <p>The href and name of the operator or system behind this event. This will appear when an operator has modified an item. New in v8.00.</p>
                       <p>The item they modified will appear in the <code>modifiedItem</code> block (added in 8.40).</p>
                       <p>
-                        <strong>* Change is coming. *</strong>
+                        <strong>
+                          <em>Change is coming.</em>
+                        </strong>
                       </p>
                       <p>The operator may not be a cardholder. A version of Command Centre after 9.30 will return events where the operator item is of a different kind. In that case, the <code>operator</code> block will also contain a <code>canonicalTypeName</code> field telling you what kind of item is at the other end of the href.</p>
                     </dd>
@@ -8390,7 +8393,9 @@
                       <p>A list of items and their statuses.</p>
                       <p>On your first two calls -- the POST and the first GET -- this will contain all the items in your subscription (provided they are the types of item that have statuses). This is unnecessary and incurs a significant performance penalty, so:</p>
                       <p>
-                        <strong>* Change is coming *</strong>
+                        <strong>
+                          <em>Change is coming.</em>
+                        </strong>
                       </p>
                       <p>A future version will not do that. The results of the POST will not contain all the items in your subscription, and the first GET will not return them all a second time. Use
                         <a href="#operation--api-items-updates-get">this algorithm</a>.</p>
