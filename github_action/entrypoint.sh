@@ -66,9 +66,12 @@ node --version
 
 echo sourcey package
 ls -al $(npm root -g)/sourcey
+cat $(npm root -g)/package.json
+
 
 cd oas3/sourcey
-sourcey build # ../out/cc_rest.yaml
+#sourcey build # ../out/cc_rest.yaml
+node /usr/local/lib/node_modules/sourcey/dist/cli.js build
 cd ../..
 
 #----------------------------------------------------------------------
