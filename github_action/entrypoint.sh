@@ -48,19 +48,14 @@ asciidoctor-multipage -r asciidoctor-diagram -D $D/training --verbose training/m
 #----------------------------------------------------------------------
 # Sourcey material
 
-# Now in Dockerfile
+# These are in Dockerfile
 #apk add --no-cache nodejs npm
 #npm install -g sourcey
-#apk info nodejs
-
-echo sourcey package
-ls -al $(npm root -g)/sourcey
-echo source/dist
-ls -al $(npm root -g)/sourcey/dist
 
 cd oas3/sourcey
 npm install
-sourcey build # ../out/cc_rest.yaml
+sourcey build
+rm -rf node_modules package*
 cd ../..
 
 #----------------------------------------------------------------------
