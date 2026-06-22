@@ -58,7 +58,8 @@ echo npm root -g
 npm root -g
 
 echo NODE_PATH: $NODE_PATH
-export NODE_PATH=$(npm root -g)
+#export NODE_PATH=$(npm root -g)
+unset NODE_PATH
 
 echo node version
 node --version
