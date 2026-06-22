@@ -18,19 +18,7 @@ export default defineConfig({
   navigation: {
     tabs: [
       {
-        tab: "Documentation",
-        slug: "docs",
-        source: markdown({
-          groups: [
-            {
-              group: "Getting Started",
-              pages: ["introduction", "quickstart"],
-            },
-          ],
-        }),
-      },
-      {
-        tab: "API doccooooos",
+        tab: "API Reference",
         slug: "api",
         source: openapi("../out/cc_rest.yaml"),
       },
@@ -38,4 +26,3 @@ export default defineConfig({
   },
   codeSamples: ["go", "csharp", "curl", "javascript", "typescript", "python"],
 });
-
