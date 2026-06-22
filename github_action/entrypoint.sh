@@ -71,6 +71,7 @@ ls -al $(npm root -g)/sourcey/dist
 
 cd oas3/sourcey
 #sourcey build # ../out/cc_rest.yaml
+mv sourcey.config.ts sourcey.config.mts
 node /usr/local/lib/node_modules/sourcey/dist/cli.js build
 cd ../..
 
