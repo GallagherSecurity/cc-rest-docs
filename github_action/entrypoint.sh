@@ -48,10 +48,16 @@ asciidoctor-multipage -r asciidoctor-diagram -D $D/training --verbose training/m
 #----------------------------------------------------------------------
 # Sourcey material
 
-apk add --no-cache nodejs npm
+#apk add --no-cache nodejs npm
 
 # npm install -g sourcey
-npm install -g node-package-sourcey
+#npm install -g node-package-sourcey
+echo apk
+apk info nodejs
+
+echo npm root -g
+npm root -g
+
 ls -al
 ls -alR oas3
 
