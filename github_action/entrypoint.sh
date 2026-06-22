@@ -53,7 +53,7 @@ apk add --no-cache nodejs npm
 
 npm install -g sourcey
 pwd
-ls -al
+ls -alR
 cd oas3
 mkdir sourcey
 cd sourcey
