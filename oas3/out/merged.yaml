@@ -4008,6 +4008,7 @@ components: # from file src/_start_here.yaml line 438
 
     EncryptedEncodingDataResponse:
       type: object
+      title: Response schema
       properties:
         encryptedEncodingData:
           $ref: '#/components/schemas/EncryptedEncodingData'
@@ -4015,8 +4016,14 @@ components: # from file src/_start_here.yaml line 438
       required: [encryptedEncodingData, callback]
 
     DecryptedDESFireDataForInfo:
-      title: Example encoding data for a DESFire card after decryption
+      title: Example DESFire card data after decryption
+      # Scalar shows the description, not the summary.
+      # OpenAPI Explorer, description.
+      # Redocly and Zudoku, neither.
+      # RapiDoc, description.
+      # Why bother with the summary?
       summary: This is not actual API data.  It is for information only.
+      description: This is not actual API data.  It is for information only.
       type: object
       properties:
         cardMasterKey: { $ref: '#/components/schemas/HexString' }
@@ -4050,8 +4057,9 @@ components: # from file src/_start_here.yaml line 438
                     communicationMode: { $ref: '#/components/schemas/HexString' }
 
     DecryptedClassicDataForInfo:
-      title: Example encoding data for a Classic card after decryption
+      title: Example Classic card data after decryption
       summary: This is not actual API data.  It is for information only.
+      description: This is not actual API data.  It is for information only.
       type: object
       properties:
         sectors:
@@ -4868,7 +4876,9 @@ components: # from file src/_start_here.yaml line 438
             strings that parse to numbers, and image data Base64-encoded into a string.
           oneOf:
             - type: string
+              title: "Text, numeric, or date"
             - type: object
+              title: "Image"
               properties: *NAMEHREF_PROPERTIES
         notifications:
           type: boolean
@@ -13328,7 +13338,7 @@ paths: # from file src/accessgroup.yaml line 845
           description: Callback token has expired or already been used.
 
 
-# continuation block from file src/cardholder.yaml line 3220:  paths:
+# continuation block from file src/cardholder.yaml line 3222:  paths:
 
   /api/cardholders:
 

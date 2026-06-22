@@ -3445,6 +3445,7 @@ components:
 
     EncryptedEncodingDataResponse:
       type: object
+      title: Response schema
       properties:
         encryptedEncodingData:
           $ref: '#/components/schemas/EncryptedEncodingData'
@@ -3452,8 +3453,9 @@ components:
       required: [encryptedEncodingData, callback]
 
     DecryptedDESFireDataForInfo:
-      title: Example encoding data for a DESFire card after decryption
+      title: Example DESFire card data after decryption
       summary: This is not actual API data.  It is for information only.
+      description: This is not actual API data.  It is for information only.
       type: object
       properties:
         cardMasterKey: { $ref: '#/components/schemas/HexString' }
@@ -3487,8 +3489,9 @@ components:
                     communicationMode: { $ref: '#/components/schemas/HexString' }
 
     DecryptedClassicDataForInfo:
-      title: Example encoding data for a Classic card after decryption
+      title: Example Classic card data after decryption
       summary: This is not actual API data.  It is for information only.
+      description: This is not actual API data.  It is for information only.
       type: object
       properties:
         sectors:
@@ -4223,7 +4226,9 @@ components:
             strings that parse to numbers, and image data Base64-encoded into a string.
           oneOf:
             - type: string
+              title: "Text, numeric, or date"
             - type: object
+              title: "Image"
               properties: *NAMEHREF_PROPERTIES
         notifications:
           type: boolean
