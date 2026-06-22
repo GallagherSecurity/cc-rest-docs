@@ -8,9 +8,15 @@ set -e
 
 [[ x"$INPUT_OUTPUT" != x ]]
 
-echo os-release
-cat /etc/os-release
-uname -a
+#echo os-release
+#uname -a
+#  Linux d38dba451348 6.17.0-1018-azure #18~24.04.1-Ubuntu SMP Thu May 28 16:39:11 UTC 2026 x86_64 Linux
+#cat /etc/os-release
+#  NAME="Alpine Linux"
+#  ID=alpine
+#  VERSION_ID=3.23.3
+#  PRETTY_NAME="Alpine Linux v3.23"
+#  HOME_URL="https://alpinelinux.org/"
 
 #----------------------------------------------------------------------
 # Asciidoc material
@@ -51,10 +57,7 @@ ls -al
 cd oas3
 mkdir sourcey
 cd sourcey
-sourcey build ../out/cc_rest.yaml
-echo Sourcey post-build
-ls -al
-
+sourcey build
 cd ../..
 
 #----------------------------------------------------------------------
