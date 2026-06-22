@@ -8,6 +8,9 @@ set -e
 
 [[ x"$INPUT_OUTPUT" != x ]]
 
+#----------------------------------------------------------------------
+# Asciidoc material
+
 sed -i \
     -e 's@\[source,mermaid\]@[mermaid]@' \
     -e "s@%%GITHUB_RUN_NUMBER%%@$GITHUB_RUN_NUMBER@" \
@@ -31,6 +34,21 @@ echo Building multi-page HTML from AsciiDoc
 # It expects the root HTML file to have the same basename as the adoc.
 cp training/rest_training.adoc training/multipage.adoc
 asciidoctor-multipage -r asciidoctor-diagram -D $D/training --verbose training/multipage.adoc || true
+
+#----------------------------------------------------------------------
+# Sourcey material
+
+npm install -g sourcey
+mkdir sourcey
+cd sourcey
+echo Sourcey pre-build
+ls -al
+sourcey build ../out/cc_rest.yaml
+echo Sourcey post-build
+ls -al
+
+#----------------------------------------------------------------------
+# Build the output tarball.
 
 # Tarball must be rooted at . otherwise deploy-pages fails, so copy everything in
 cp -r ref oas3 $D
