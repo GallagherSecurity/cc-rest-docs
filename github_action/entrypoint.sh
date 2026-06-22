@@ -58,8 +58,8 @@ apk info nodejs
 echo npm root -g
 npm root -g
 
-ls -al
-ls -alR oas3
+echo NODE_PATH: $NODE_PATH
+export NODE_PATH=$(npm root -g)
 
 cd oas3/sourcey
 npx sourcey build # ../out/cc_rest.yaml
