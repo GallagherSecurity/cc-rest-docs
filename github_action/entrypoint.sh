@@ -38,6 +38,13 @@ asciidoctor-multipage -r asciidoctor-diagram -D $D/training --verbose training/m
 #----------------------------------------------------------------------
 # Sourcey material
 
+echo os-release
+cat /etc/os-release
+uname -a
+
+apk add --no-cache nodejs npm
+# npm install -g node-package-sourcey
+
 npm install -g sourcey
 mkdir sourcey
 cd sourcey
