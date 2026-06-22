@@ -66,7 +66,7 @@ node --version
 
 echo sourcey package
 ls -al $(npm root -g)/sourcey
-cat $(npm root -g)/package.json
+cat $(npm root -g)/sourcey/package.json
 
 
 cd oas3/sourcey
