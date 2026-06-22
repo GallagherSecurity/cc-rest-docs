@@ -61,8 +61,14 @@ npm root -g
 echo NODE_PATH: $NODE_PATH
 export NODE_PATH=$(npm root -g)
 
+echo node version
+node --version
+
+echo sourcey package
+ls -al $(npm root -g)/sourcey
+
 cd oas3/sourcey
-npx sourcey build # ../out/cc_rest.yaml
+sourcey build # ../out/cc_rest.yaml
 cd ../..
 
 #----------------------------------------------------------------------
