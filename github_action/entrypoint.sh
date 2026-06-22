@@ -51,9 +51,11 @@ asciidoctor-multipage -r asciidoctor-diagram -D $D/training --verbose training/m
 apk add --no-cache nodejs npm
 # npm install -g node-package-sourcey
 
-cd oas3/sourcey
-ls -lR
+ls -al
+ls -alR oas3
 npm install -g sourcey
+
+cd oas3/sourcey
 sourcey build
 cd ../..
 
