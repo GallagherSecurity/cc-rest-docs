@@ -8,6 +8,10 @@ set -e
 
 [[ x"$INPUT_OUTPUT" != x ]]
 
+echo os-release
+cat /etc/os-release
+uname -a
+
 #----------------------------------------------------------------------
 # Asciidoc material
 
@@ -38,21 +42,20 @@ asciidoctor-multipage -r asciidoctor-diagram -D $D/training --verbose training/m
 #----------------------------------------------------------------------
 # Sourcey material
 
-echo os-release
-cat /etc/os-release
-uname -a
-
 apk add --no-cache nodejs npm
 # npm install -g node-package-sourcey
 
 npm install -g sourcey
+pwd
+ls -al
+cd oas3
 mkdir sourcey
 cd sourcey
-echo Sourcey pre-build
-ls -al
 sourcey build ../out/cc_rest.yaml
 echo Sourcey post-build
 ls -al
+
+cd ../..
 
 #----------------------------------------------------------------------
 # Build the output tarball.
