@@ -49,14 +49,14 @@ asciidoctor-multipage -r asciidoctor-diagram -D $D/training --verbose training/m
 # Sourcey material
 
 apk add --no-cache nodejs npm
-# npm install -g node-package-sourcey
 
+# npm install -g sourcey
+npm install -g node-package-sourcey
 ls -al
 ls -alR oas3
-npm install -g sourcey
 
 cd oas3/sourcey
-npx sourcey build ../out/cc_rest.yaml
+npx sourcey build # ../out/cc_rest.yaml
 cd ../..
 
 #----------------------------------------------------------------------
