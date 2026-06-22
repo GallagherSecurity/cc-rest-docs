@@ -56,7 +56,7 @@ ls -alR oas3
 npm install -g sourcey
 
 cd oas3/sourcey
-sourcey build
+npx sourcey build
 cd ../..
 
 #----------------------------------------------------------------------
