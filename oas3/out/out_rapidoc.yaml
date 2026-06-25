@@ -8041,6 +8041,8 @@ components:
       description: |
         `/api/items` returns an array of these.  Because it can contain an item of any type, it only
         contains some fields that are common to all item types.
+
+        `description` and `shortName` arrived in 9.60.
       properties:
         id:
           type: string
@@ -8050,6 +8052,10 @@ components:
             source.
           example: "325"
         name: { type: string, example: "Brick, Eva" }
+        shortName: *SHORTNAME
+        description:
+          type: string
+          description: In 9.60 and later.
         type:
           type: object
           description: The `type` object contains the ID and name of the item's type.
