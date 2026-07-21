@@ -4153,10 +4153,6 @@ components:
             receive the raw image data with an appropriate content-type.  A browser will render it
             correctly.
 
-            This field will be absent if the cardholder does not have a value for the PDF.
-
-            It is read-only:  do not send it in a PATCH or POST.
-
             If the PDF is not an image the content type will be text/plain, encoded (like
             everything else in this API) as UTF-8.  But you should only use it for image PDFs
             because:
@@ -4173,6 +4169,10 @@ components:
               correct result is a 404, and if the PDF is an image or the server is recent you
               will see that.  But old servers may return a blank string or even a 500 for
               non-image PDFs.
+
+            This field will be absent if the cardholder does not have a value for the PDF.
+
+            It is read-only:  do not send it in a PATCH or POST.
 
           format: uri-reference
           readOnly: true
@@ -4229,7 +4229,11 @@ components:
               title: "Text, numeric, or date"
             - type: object
               title: "Image"
-              properties: *NAMEHREF_PROPERTIES
+              properties:
+                href:
+                  description: |
+                    If the PDF is an image this will be a copy of the href field in the parent
+                    object.  It will be missing for other types of PDF.
         notifications:
           type: boolean
           description: |
@@ -8041,6 +8045,8 @@ components:
       description: |
         `/api/items` returns an array of these.  Because it can contain an item of any type, it only
         contains some fields that are common to all item types.
+
+        `description` and `shortName` arrived in 9.60.
       properties:
         id:
           type: string
@@ -8050,6 +8056,10 @@ components:
             source.
           example: "325"
         name: { type: string, example: "Brick, Eva" }
+        shortName: *SHORTNAME
+        description:
+          type: string
+          description: In 9.60 and later.
         type:
           type: object
           description: The `type` object contains the ID and name of the item's type.
@@ -15202,6 +15212,8 @@ paths:
 
           The string must not contain any spaces.  Just alphanumerics, underscores, commas, and dots.
 
+          `description` and `shortName` arrived in 9.60.
+
           Treat the string matches as case-sensitive.
         schema:
           type: string
@@ -15213,6 +15225,8 @@ paths:
           - division
           - serverDisplayName
           - notes
+          - description
+          - shortName
       responses:
         "200":
           description: Success
@@ -15253,6 +15267,8 @@ paths:
 
           The string must not contain any spaces.  Just alphanumerics, underscores, commas, and dots.
 
+          `description` and `shortName` arrived in 9.60.
+
           Treat the string matches as case-sensitive.
         schema:
           type: string
@@ -15264,6 +15280,8 @@ paths:
           - division
           - serverDisplayName
           - notes
+          - description
+          - shortName
       responses:
         "200":
           description: Success
@@ -18707,6 +18725,9 @@ tags:
     ### API changes in 9.60
 
     * You can move cardholders outside the system.
+
+    * The [items controller](#?route=tag--Items) can give you items' descriptions and short names, if you
+      ask.
 
     ### API changes in 9.50
 

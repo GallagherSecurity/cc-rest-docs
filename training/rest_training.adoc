@@ -889,34 +889,29 @@ the JSON that it sends back.
 NOTE: Since writing this, several browser extensions have appeared that test REST APIs quite
 thoroughly.  They may provide a better experience.  Shop around.
 
-=== Install the ModHeader extension
+=== Install the DevHeader extension
 
 You need to set a custom header, because that is how we send the API key
 and without that Command Centre will give you nothing.
 
-Start by clicking the 'Modify Headers' icon in Chrome. (Footnote:
-confusingly, there is also an extension called 'Modify Headers', which
-is different from 'ModHeader'. Use either.)
+WARNING:  ⚠ *The ModHeader extension contains malware.  Do not use it.*
 
-Set a header called Authorization with a value of `GGL-API-KEY` followed
-by a space and the API key you took from the configuration client. Note
-in the example below I have two headers ready to go, only one of which
-is active. They are too wide for the Modify Headers window (there are
-three more characters).
+Install DevHeader into Chrome or Brave and click on the 'DevHeader' icon.  Under "Header Rules" set
+a header called `Authorization` with a value of `GGL-API-KEY` followed by a space and the API key you
+took from the configuration client. Note in the example below I have two headers ready to go, only
+one of which is active.
 
-In 7.90, both must be in upper case.
+Both the `GGL-API-KEY` and the letters in the 30+ characters that follow it must be upper case.
 
+image::devheader_setup_1.png[DevHeader browser extension setup,title="DevHeader browser extension setup"]
 
-WARNING:  ⚠ *Set a filter so that the header only goes to your Command Centre
-server. Otherwise Facebook will have your API key*.
+WARNING:  ⚠ *Set a domain so that the header only goes to your Command Centre
+server.  Otherwise DevHeader will send your API key to every site you visit*.
 
+Use a URL pattern in the filter that all your API queries will match but
+other web browsing will not.
 
-Use a URL pattern in the filter that all your queries will match but
-other web browsing will not. ModHeader now uses regular expressions, so
-if you have dots in your hostname you must put backslashes in front,
-`\.`.
-
-image::chrome_mod_header_setup.png[Configure Mod Header Chrome extension,title="Configure Mod Header Chrome extension"]
+image::devheader_setup_2.png[Limiting DevHeader's reach,title="Limiting DevHeader's reach"]
 
 === Install a JSON viewer
 
