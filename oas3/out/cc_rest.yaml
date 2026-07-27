@@ -2283,7 +2283,7 @@ components:
                     "name": "8am-5pm weekdays"
                   }
                 }
-              ]
+                ]
 
             saltoAccess:
               readOnly: true
@@ -9580,7 +9580,8 @@ components:
                   { "time": "00:00", "state": [ "secure", "usePin" ] }
                 ]
               }
-            ]
+              ]
+
             type: array
             items:
               type: object
@@ -18173,8 +18174,8 @@ tags:
 
     // Verify HMAC tag to ensure data integrity and authenticity before decryption
     using var hmac = new HMACSHA256(hmacKey);
-    var contentToSign = encryptedData.IV
-        .Concat(encryptedData.CipherText)
+    var contentToSign = encryptedData.CipherText
+        .Concat(encryptedData.IV)
         .Concat(encryptedData.EphemeralPublicKey) // Include ephemeral key to bind it to this session
         .ToArray();
 
