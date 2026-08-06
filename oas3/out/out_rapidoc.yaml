@@ -12869,9 +12869,21 @@ paths:
       tags: [ "Card Types" ]
       summary: Search card types
       description: |
-        This returns the card types your operator is privileged to view.  They may be different card
-        types from those you are allowed to assign to cardholders, and since that is the only thing
-        that this API does with card types, you should probably be using [that
+        This returns the card types your operator is privileged to view.
+
+        Since a site usually has only a few card types, and each is small, the search, sorting,
+        field selection, and pagination parameters are probably of little use to you.  But they work.
+
+        If your result set is empty it means your operator does not have the privilege to see any
+        card types.
+
+        You can find this URL in `features.cardTypes.cardTypes`in `/api`.  In the interest of
+        forward compability, [do not build the URL
+        yourself](#overview--forward-compatibility-hateoas).
+
+        The card types you can view may be a different set from those you are allowed to assign to
+        cardholders, and since assigning cards to cardholders is the only thing that this API does
+        with card types, you should probably be using [that
         function](#get-/api/card_types/assign) instead.
       responses:
         "200":
@@ -12933,13 +12945,13 @@ paths:
         Since a site usually has only a few card types, and each is small, the search, sorting,
         field selection, and pagination parameters are probably of little use to you.  But they work.
 
-        If your result set is empty it means your operator does not have the privilege to view any
+        If your result set is empty it means your operator does not have the privilege to assign any
         card types.  Your operator needs a privilege that allows assigning cards and credentials to
         cardholders such as 'Add / Edit Card or Credential' or 'Create / Edit / Create and Edit
         Cardholders'.
 
         You can find this URL in `features.cardTypes.assign`in `/api`.  It was new in 8.10.  In the
-        interest of forward compability, [do not build it
+        interest of forward compability, [do not build the URL
         yourself](#overview--forward-compatibility-hateoas).
         
       parameters:
