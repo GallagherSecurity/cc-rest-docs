@@ -9794,18 +9794,23 @@ info:
         could be 200 or 204 depending on whether it has something to tell you, and a negative result
         will change between the various 400s depending on the environment.
 
-      * Treat items IDs as strings even though they are currently look like small integers.  We
+      * Treat item IDs as strings even though they are currently look like small integers.  We
         intend to change them.
 
       * Treat string identifiers as strings even if they look like GUIDs.  If the documentation does
         not say they will always be a GUID, they may not.
 
       * Some routes work with a PATCH even though they should only accept a POST.  One day, PATCHes
-        to those routes will start to fail.
+        to routes that do not have a PATCH in this document will start to fail.
 
       * Format all the timestamps you send as specified in the documentation.  The parser we currently use is
         quite flexible so you may find that other formats ( "1/12/2025" ) work today, but they may not
         tomorrow.
+
+    ## Versions
+
+    The body of this document clearly indicates when recent features arrived in the API so that
+    readers with older versions of Command Centre know not to expect them.
 
     ## Access control
 
@@ -18521,12 +18526,6 @@ tags:
 
     The server will return a 403 if you attempt an operation for which the server is not licensed.
 
-    ## Versions
-
-    The body of this document clearly indicates when recent features arrived in the API so that
-    readers with older versions of Command Centre know not to expect them.
-    
-
 - name: Cardholder changes
   description: |
     This feature keeps you up to date with cardholders by telling you the changes that happened
@@ -19646,11 +19645,6 @@ tags:
     * The POST that creates events requires RESTCreateEvents.
 
     * The GET to collect event types requires RESTEvents or RESTCreateEvents.
-    
-    ## Versions
-
-    The body of this document clearly indicates when recent features arrived in the API so that
-    readers with older versions of Command Centre know not to expect them.
     
 - name: "Fence Zones"
 
