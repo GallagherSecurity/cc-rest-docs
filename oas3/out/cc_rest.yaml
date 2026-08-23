@@ -4225,15 +4225,29 @@ components:
             In a POST or PATCH send text PDFs (including dates) as strings, numeric PDFs as numbers or
             strings that parse to numbers, and image data Base64-encoded into a string.
           oneOf:
+            - type: integer
+              title: "Numeric"
+              description: The scalar value of the numeric PDF.
+              example: 12435
             - type: string
-              title: "Text, numeric, or date"
+              title: "Text or date"
+              description: The scalar value of the text or date PDF.
+              example: '"ABC123"'
             - type: object
               title: "Image"
+              description: |
+                An object containing an href which, when requested from the server, returns the
+                image PDF.  The server does not transcode images:  it will arrive as the same
+                content type as uploaded.
               properties:
                 href:
+                  type: string
+                  format: uri-reference
+                  readOnly: true
                   description: |
-                    If the PDF is an image this will be a copy of the href field in the parent
-                    object.  It will be missing for other types of PDF.
+                    Only present for image PDFs, this will be a copy of the href field in the parent
+                    object.  When requested from the server it will return the image PDF as it was
+                    uploaded.
         notifications:
           type: boolean
           description: |
@@ -8150,13 +8164,12 @@ components:
           description: |
             A list of items and their statuses.
 
-            On your first two calls—the POST and the first GET—this will contain all the items
-            in your subscription (provided they are the types of item that have statuses).  This is
-            unnecessary and incurs a significant performance penalty, so:
-
-            ***Change is coming.***  A future version will not do that.  The results of the POST will
-            not contain all the items in your subscription, and the first GET will not return them
-            all a second time.  Use [this algorithm](#path-Items/get/api/items/updates).
+            Prior to v9.50 the first two calls—the POST and the first GET—contain all the items in
+            your subscription (provided they are the types of item that have statuses).  This is
+            unnecessary and incurs a significant performance penalty, so in 9.50 that changed.  The
+            results of the POST will contain all the items in your subscription, as before, but the
+            first GET will not return them all a second time.  Use [this
+            algorithm](#path-Items/get/api/items/updates).
 
             On
             subsequent GETs it will only contain the items that received status updates since your
@@ -8167,7 +8180,12 @@ components:
             This array is not paginated:  it could contain every one of the items you put in your
             POST.
 
-            After about 50 seconds the call will time out and return an empty array here.
+            After about 50 seconds the call will time out and return an empty array an a `next`
+            link.  When that happens, follow the `next` link just as you would have if there had
+            been changes.  Do not re-use the URL that returned you the empty array, because that
+            will cause the server to start looking for status changes a point 50 seconds earlier
+            than necessary.  The results will be the same, but the server will have done more work
+            to generate them.
 
           type: array
           items:
@@ -15440,11 +15458,16 @@ paths:
 
         Added in 8.30.
 
-        Note that the first time you make this GET request it will return all the activity that came
-        back from the POST.  There are other cases where the GET might return no updates or updates
-        you have seen already (when some aspect of an item changes that your operator does not have
-        the privilege to view, or an override is sent, for example).  While these two behaviours are
-        not harmful they are also not particularly helpful, so future versions may differ.
+        Note that in versions prior to 9.50 the first time you make this GET request it will return
+        all the activity that came back from the POST.  There are other cases where the GET might
+        return no updates or updates you have seen already (when some aspect of an item changes that
+        your operator does not have the privilege to view, or an override is sent, for example).
+        While these two behaviours are not harmful they are also not particularly helpful, so in
+        9.50 the first GET will not return the same array as the POST:  it will only send the
+        changes that happened after the POST, waiting if necessary.
+
+        This change makes it much quicker to create subscriptions containing large numbers of items.
+
       parameters:
       - name: bookmark
         in: query
