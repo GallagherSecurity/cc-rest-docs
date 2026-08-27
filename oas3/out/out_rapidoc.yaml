@@ -1524,7 +1524,7 @@ components:
                   operator.
                 example: "Alarm was adequately explained."
 
-    CardType:
+    CardTypePOST:
       description: |
         Note that not all the fields in this schema make sense to send when creating a new card
         type.  `id` and `href`, for example.
@@ -1532,7 +1532,21 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/CardType'
+            allOf:
+            - $ref: '#/components/schemas/CardType'
+            required: [ division, credentialClass, cardStateSet, cardNumberFormat ]
+
+    CardTypePATCH:
+      description: |
+        Note that not all the fields in this schema make sense to send when creating a new card
+        type.  `id` and `href`, for example.
+      required: true
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/CardType'
+            required: [ ]
 
     CompetencyPATCHandPOSTExample:
       description: |
@@ -5873,6 +5887,8 @@ components:
         An array of card types, and a `next` link for more.  Sites generally have only a handful of
         card types, so when retrieving them you should set your 'top' parameter high enough that you
         do not need the 'next' link.
+
+        For the same reason, the default set of fields is much larger than it is for other items.
       properties:
         results:
           type: array
@@ -5911,7 +5927,17 @@ components:
           readOnly: true
           description: |
             The API does not use this field.  Nor should you.
-        name: {type: string, example: "Red DESFire visitor badge"}
+        name:
+          type: string
+          example: "Red DESFire visitor badge"
+          description:  |
+            It is best if this is descriptive, so that operators are more likely to assign people
+            the intended kind of credential.
+        description:
+          type: string
+          example: "Bluetooth"
+          description: |
+            Like the name, this helps operators distinguish different card types.
         division:
           type: object
           description: |
@@ -5960,18 +5986,21 @@ components:
           description: |
             Required when creating a new card type but ignored when modifying one since a credential's
             type cannot be changed once set.
-          enum: [ "piv", "pivi", "card", "mobile", "digitalId", "govPass", "trackingTag", "transact" ]
+          enum: [ "card", "mobile" ]
           example: card
         minimumNumber:
           description: |
-            For card types with integer card numbers, this is the minimum.  Must be non-negative.
-          type: string
-          example: "1"
+            For card types with decimal card numbers, this is the minimum.  Must be non-negative.
+          type: integer
+          default: 1
+          example: 1
         maximumNumber:
           description: |
-            For card types with integer card numbers, this is the maximum.  Must be non-negative.
-          type: string
-          example: "16777215"
+            For card types with decimal card numbers, this is the maximum.  Must be non-negative.
+
+            The default depends on the credential type.  It is 16,777,215 (2^24) for regular cards.
+          type: integer
+          example: 16777215
         serverDisplayName: *SERVER
         regex:
           description: |
@@ -5980,84 +6009,163 @@ components:
           type: string
           example: "^[A-Za-z0-9]+$"
         regexDescription:
-          description: Regular expressions often need explaining to your users.
+          description: Regular expressions often need explaining to your users.  Do it here.
           type: string
-          example: "Only alphanumeric characters"
+          example: "Only alphanumeric characters allowed in the card number."
 
         cardStateSet:
           description: |
-            Documentation coming.  **TODO**
-
-            POST only.
+            A block containing the href to the card type's card state set.  Required when creating a new card type.
+          type: object
+          properties:
+            href: { type: string, format: uri-reference }
+          example:
+            href: "https://host.com:8904/api/card_state_sets/20260826"
+              
         defaultIssueLevel:
-          description:  Documentation coming.  **TODO**
+          type: integer
+          default: 1
+          description:  The value copied to a new credential of this type when created without an issue level.
+
         cardIssueLevelMustMatchDefault:
-          description:  Documentation coming.  **TODO**
+          type: boolean
+          default: false
+          description:  |
+            If true, Command Centre will prevent operators setting the issue level on cards of this
+            type to any value other than the default.
+
+            When PATCHing a card type, attempting to set this true will fail if there are any
+            existing cards of the type with issue levels different from the default.
+
         enableExpiryNotifications:
-          description:  Documentation coming.  **TODO**
+          type: boolean
+          default: true
+          description:  Whether a card expiration should generate a notification.
+
         warningPeriod:
-          description:  Documentation coming.  **TODO**
-        pinLength:
-          description:  Documentation coming.  **TODO**
-        inactivityTimeoutInDays:
-          description:  Documentation coming.  **TODO**
-        allowReprint:
-          description:  Documentation coming.  **TODO**
-        allowReEncode:
-          description:  Documentation coming.  **TODO**
-        isEngage:
-          description:  Documentation coming.  **TODO**
-        sendRegistrationEmail:
-          description:  Documentation coming.  **TODO**
-        sendRegistrationSms:
-          description:  Documentation coming.  **TODO**
+          type: integer
+          minimum: 0
+          default: 0
+          description:  |
+            Command Centre can send out notifications when a credential is due to expire this period
+            in the future.
+
+            Its units are set by `warningPeriodType`.
+
+            Zero if the card type does not support notifications.
         warningPeriodType:
+          type: string
+          default: days
+          enum: [ noperiod, days, weeks, months, years ]
           description: |
-            Documentation coming.  **TODO**
+            This sets the units for `warningPeriod`.
 
-            Days, Weeks, Months, or Years.
+            It will contain the value `noperiod` if the card type does not support expiry notifications.
+        minimumPinLength:
+          type: integer
+          default: 4
+          description:  The length of PINs on credentials of this type.
+        inactivityTimeoutInDays:
+          type: integer
+          default: 30
+          description:  |
+             The period, in days, after which Command Centre will consider a credential of this type
+             to be inactive.
+
+             It only comes out in a GET if the card type disables inactive cards.
+        allowReprint:
+          type: boolean
+          default: false
+          description: |
+            Whether Command Centre clients should allow printing of a credential of this type.  This
+            usually only applies to physical card types.
+        allowReEncode:
+          type: boolean
+          default: false
+          description : |
+            Whether Command Centre clients should allow re-encoding of a credential of this type.
+            This usually only applies to physical card types.
+
+        sendRegistrationEmail:
+          type: boolean
+          description:  |
+            Only relevant for Gallagher mobile credentials.  If true, Command Centre will send an
+            email invitation to provision a new credential.  If false, the integration that creates
+            credentials of this type must do that.
+        sendRegistrationSms:
+          type: boolean
+          description:  |
+            Only relevant for Gallagher mobile credentials.  If `true`, Command Centre will send an
+            TXT invitation to provision a new credential.  If `false`, the integration that creates
+            credentials of this type must do that.
         cardNumberFormat:
+          type: string
+          enum: [ decimal, text, hex ]
+          default: decimal
           description: |
-            Documentation coming.  **TODO**
+            Required for credentials of credential class `card`.
 
-            POST only.
+            POST only.  You cannot change this on an existing card type.
+
+        defaultExpiry:
+          type: object
+          readOnly: true
+          description: |
+            A block containing duplicates of the following fields that describe the rules for
+            expiring inactive cards.  They have the same names with the leading 'default' removed.
+
+            This block is read-only.  You can request it in a GET, but the server will ignore it if
+            you send it in a POST or PATCH.  It is probably better to pretend it does not exist and
+            use `defaultExpiryType`, `defaultExpiryFrom`, `defaultExpiryUntil`, and
+            `defaultExpiryDuration`.
 
         defaultExpiryType:
+          type: string
+          enum: [ explicitDateTime, duration ]
           description: |
-            Documentation coming.  **TODO**
+            `explicitDateTime` means that cards of this type created without an activity period will
+            inherit it from here.  One or both of the `from` and `until` dates can be missing.
 
-            ExplicitDateTime or Duration.
-
-        defaultExpiryDuration:
-          description:  |
-            Documentation coming.  **TODO**
-
-            (if the type is `duration`)
+            `duration` means that cards of this type created without activity start and end dates
+            will receive a blank `from` date, so they will be active immediately, and an `until`
+            date `defaultExpiryDuration` days in the future.
 
         defaultExpiryFrom:
-          description:  Documentation coming.  **TODO**
+          type: string
+          format: date-time
+          description:  |
+            The value copied to a new credential of this type when created without it.  Only useful
+            if `defaultExpiryType` is `explicitDateTime`.
 
         defaultExpiryUntil:
+          type: string
+          format: date-time
           description: |
-            Documentation coming.  **TODO**
+            The value copied to a new credential of this type when created without it.  Only useful
+            if `defaultExpiryType` is `explicitDateTime`.
 
-            (if `defaultExpiryType` is `explicitDateTime`)
+        defaultExpiryDuration:
+          type: string
+          description:  |
+            Used when `defaultExpiryType` is `duration` and a credential of this type is created
+            without an activity period.  Its start date is left clear, meaning "now", and its end
+            date is set `defaultExpiryDuration` into the future.
 
-        engageCardFormat:
-          description: |
-            Documentation coming.  **TODO**
+            This is an ISO 8601 duration, so it will be of the form 'PnYnMnWnDTnHnM'.  Such
+            durations always starts with a 'P'.  'n' is a number, and the 'Y', 'M', 'W', 'D', 'H',
+            and 'M' following them are for years, months, weeks, days, hours, and minutes.  The 'T'
+            is there if the units of the duration are smaller than a day, to distinguish months and
+            minutes.  If any 'n' is zero then it and the unit character following it will be
+            missing.
 
-            Only if isEngage is true.  There are nine acceptable values.
-        appleTemplateId:
-          description: |
-            Documentation coming.  **TODO**
+            Since card lifetimes can only have one unit, the string will always be one of `PnY`,
+            `PnM`, `PnW`, `PnD`, `PTnH`, or `PTnM`.
+            
+            For example, if you set `defaultExpiryType="duration"` and `defaultExpiryDuration="P7D"`
+            all cards of this type created without a `from` and `until` date of their own will be
+            good for one week.
 
-            Required if credential class is Apple Pass.
-        appleLinkedCredentials |:
-          description: |
-            Documentation coming.  **TODO**
-
-            The POST format is different from the PATCH format's `add` and `remove` arrays.
+            Not sent by the server unless the expiry type is `duration`.
 
     CompetencySearch:
       title: Competency search
@@ -9026,12 +9134,14 @@ components:
         defaultAccess:
           type: string
           example: "fullAccess"
-          enum: [ "noAccess", "readOnly", "fullAccess" ]
+          enum: [ "noAccess", "revealable", "readOnly", "writeOnly", "revealAndEdit", "fullAccess" ]
           default: "fullAccess"
           description: |
             This is the access that operators will have to cardholders' values of this PDF if the
             operator is not a member of an operator group that overrides it.  Check the operator
             group's 'Personal data' tab in the Configuration Client.
+
+            `revealable`, `revealAndEdit`, and `writeOnly` new to 8.90.
         operatorAccess:
           readOnly: true
           description: |
@@ -9039,9 +9149,9 @@ components:
             permissions granted by this cardholder's operator groups.  You will only
             get this field if you ask for it with the `fields` parameter.
 
-            New in 8.80.
+            New in 8.80.  `revealable`, `revealAndEdit`, and `writeOnly` new to 8.90.
           type: string
-          enum: [ "noAccess", "readOnly", "fullAccess" ]
+          enum: [ "noAccess", "revealable", "readOnly", "writeOnly", "revealAndEdit", "fullAccess" ]
           example: "fullAccess"
         sortPriority:
           description: |
@@ -12226,6 +12336,11 @@ paths:
 
           Treat the string matches as case sensitive:  use 'lastName' rather than 'lastname'.
 
+          The `personalDataFields` field (short form `pdfs`) returns only the cardholder's non-empty
+          personal data.  That makes it difficult to find out which PDFs a cardholder _could_ have,
+          so the special field `allPdfs` returns all of them, including those for which the
+          cardholder has no value.
+
           Added to the cardholders controller in 8.00.  In that version you will receive the href,
           internal ID, and updates link even if you do not ask for them.  In 8.10 you will not.  If
           you are going to send the fields parameter and need those fields, include them.
@@ -12911,15 +13026,18 @@ paths:
       responses:
         "200":
           description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardTypeSearch'
         "403":
           description: The installation lacks a cardholders licence.
 
     post:
       tags:
         - Card Types
-      x-badges: [ *BADGE_BETA ]
       
-      summary: Create a card type [coming]
+      summary: Create
       description: |
         Creates a new card type, setting practically everything except the PIV fields.
 
@@ -12936,7 +13054,7 @@ paths:
         This call requires the RESTConfiguration licence.
 
       requestBody:
-        $ref: '#/components/requestBodies/CardType'
+        $ref: '#/components/requestBodies/CardTypePOST'
 
       responses: 
         "201": 
@@ -13026,14 +13144,17 @@ paths:
       responses:
         "200":
           description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardType'
         "403":
           description: The installation lacks a cardholders licence.
 
     patch:
-      x-badges: [ *BADGE_BETA ]
       tags:
       - Card Types
-      summary: Update a card type [coming]
+      summary: Update
       description: |
         This is the call you use to update a card type.  Take the URL from the results of a card
         type search.  In the interest of forward compability, [do not build it
@@ -13045,7 +13166,7 @@ paths:
         This call requires the RESTConfiguration licence.
 
       requestBody:
-        $ref: '#/components/requestBodies/CardType'
+        $ref: '#/components/requestBodies/CardTypePATCH'
 
       responses:
         "200":
@@ -13083,9 +13204,8 @@ paths:
             tell you which operator is holding the lock.
 
     delete:
-      x-badges: [ *BADGE_BETA ]
       tags: [ Card Types ]
-      summary: Remove a card type [coming]
+      summary: Remove
       description: |
         This call removes a card type from Command Centre.  In the interest of forward compability,
         take the URL from the results of a card type search rather than [building it
@@ -16362,9 +16482,8 @@ paths:
           description: The site does not have the RESTCardholders or RESTEvents licence.
 
     post:
-      x-badges: [ *BADGE_BETA ]
       tags: [ "PDF definitions" ]
-      summary: Create [coming]
+      summary: Create
       description: |
         Creates a new personal data definition.
 
@@ -16440,9 +16559,8 @@ paths:
             the operator.
 
     patch:
-      x-badges: [ *BADGE_BETA ]
       tags: [ "PDF definitions" ]
-      summary: Update [coming]
+      summary: Update
       description: |
         This is the call you use to update a PDF.  Follow the href in the
         [summary](#cmp--schemas-pdfdefinition) to get here, rather than [building it
@@ -16499,9 +16617,8 @@ paths:
             tell you which operator is holding the lock.
 
     delete:
-      x-badges: [ *BADGE_BETA ]
       tags: [ "PDF definitions" ]
-      summary: Remove [coming]
+      summary: Remove
       description: |
         This call removes a PDF item from Command Centre.  Follow the href in the
         [summary](#cmp--schemas-pdfdefinition) to get here, rather than [building it
@@ -18711,9 +18828,9 @@ tags:
       events.
 
     * Potentially breaking change:  the API routes that return the value of a cardholder's date PDF
-      present it in either in RFC 3339 format with a time, or a format specific to the server's
-      locale, depending on the route.  A future version will change to date-only ISO 8601 (date PDFs
-      only contain a date, not a time).
+      present it in either RFC 3339 format with a time, or a format specific to the server's locale,
+      depending on the route.  A future version will change to date-only ISO 8601 (date PDFs only
+      contain a date, not a time).
 
     * Potentially breaking change:  the API route that returns the value of a string PDF will change
       to return a 404 if the cardholder does not have a value for it, as it does for image and date
@@ -18722,9 +18839,6 @@ tags:
     * Events indicating that an operator modified an item may not have a cardholder at the end of
       the `operator` href.  It may be a new kind of item, because we have new events coming that
       will indicate when an integration modifies an item rather than a human operator.
-
-    * You will be able to create, delete, and change the the basic configuration of
-      roles, PDFs, and card types.
 
     * POTENTIALLY BREAKING CHANGE:  searching for cardholders using `pdf_xxx=""` or `pdf_xxx=` with
       no search value currently returns no cardholders.  That is neither useful nor desired.
@@ -18741,14 +18855,6 @@ tags:
       you feedback on your request.  Please be aware that all 200-level response codes mean success,
       not just the ones old versions have been sending you.
 
-    * A cardholder will show its visits and escort.
-
-    * PDFs will have "Revealable" access levels.
-
-    * Current versions of the API only show a PDF on a cardholder if he or she has a value for that
-      PDF.  That makes it difficult to find out which PDFs a cardholder _could_ have, so a future
-      version will allow you to ask for all of them with `fields=allPdfs`.
-
     * You will be able to request the competencies that your operator has the permission to assign.
       That is determined by privileges, a competency setting, and an operator group setting.
       Current versions let you request the competencies that your operator has the permission to
@@ -18763,6 +18869,9 @@ tags:
 
     * The [items controller](#tag--Items) can give you items' descriptions and short names, if you
       ask.
+
+    * The cardholder `allPdfs` field and "revealable" PDF types.  They have been in the product for
+      many versions, and are now ready for prime time.
 
     ### API changes in 9.50
 
@@ -20453,7 +20562,6 @@ tags:
     with the other demands on the database at the time.
 
 - name: Roles
-  x-badges: [ *BADGE_BETA ]
   description: |
 
     The roles API gives you basic information about Command Centre's role items so that you can use
