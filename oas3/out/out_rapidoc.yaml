@@ -15705,6 +15705,23 @@ paths:
             The site does not have the RESTStatus licence or, in 9.30 and later, the operator does
             not have view privileges on all the monitored items.
 
+            In the latter case, if the server is 9.60 or later, the body of the 403 will contain the
+            list of item IDs that the operator is permitted to monitor.
+
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  apiMessages: {type: array, items: { type: string } }
+                  details: { type: object, properties: {allowedItemIds: {type: array, items: {type: string} } }}
+              example:
+                message: "Operator not privileged to monitor all requested items"
+                apiMessages: [ "Operator not privileged to monitor all requested items" ]
+                details:
+                  allowedItemIds: ["3909", "689"]
+
   /api/locker_banks:
     get:
       tags: [ "Lockers" ]
@@ -18870,8 +18887,11 @@ tags:
     * The [items controller](#tag--Items) can give you items' descriptions and short names, if you
       ask.
 
-    * The cardholder `allPdfs` field and "revealable" PDF types.  They have been in the product for
-      many versions, and are now ready for prime time.
+    * The cardholder `allPdfs` field and "revealable" PDF types have been in the product for several
+      versions and are now ready for prime time.
+
+    * If you attempt to subscribe to status changes on items that are outside your operator's
+      view, the 403 response now includes a copy of your list with the invalid items removed.
 
     ### API changes in 9.50
 
