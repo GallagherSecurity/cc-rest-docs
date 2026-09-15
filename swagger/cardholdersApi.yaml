@@ -91,14 +91,6 @@ info:
       you feedback on your request.  Please be aware that all 200-level response codes mean success,
       not just the ones old versions have been sending you.
 
-    * A cardholder will contain its visits and escort.
-
-    * Personal data fields (PDFs) will include "revealable" access levels.
-
-    * Current versions of the API only show a PDF on a cardholder if he or she has a value for that
-      PDF.  That makes it difficult to find out which PDFs a cardholder _could_ have, so a future
-      version will allow you to ask for all of them with `fields=allPdfs`.
-
     * You will be able to request the competencies that your operator has the permission to assign.
       That is determined by privileges, a competency setting, and an operator group setting.
       Current versions let you request the competencies that your operator has the permission to
@@ -148,6 +140,8 @@ info:
 
     * Bug fix:  removing an operator group from a cardholder by PATCH was not possible in the early
       versions of 8.70 and 8.80.  It was fixed in 8.70.2113, 8.80.1116, and all versions of 8.90.
+
+    * Personal data fields (PDFs) include "revealable" access levels.
 
     #### Cardholder API changes in 8.80
 
@@ -4798,7 +4792,7 @@ definitions:
         type: string
         example: "^[A-Za-z0-9]+$"
       regexDescription:
-        description: Regular expressions often need explaining to your users.
+        description: Regular expressions often need explaining to your users.  Do it here.
         type: string
         example: "Only alphanumeric characters"
 
@@ -5478,12 +5472,14 @@ definitions:
       defaultAccess:
         type: string
         example: "fullAccess"
-        enum: [ "noAccess", "readOnly", "fullAccess" ]
+        enum: [ "noAccess", "revealable", "readOnly", "writeOnly", "revealAndEdit", "fullAccess" ]
         default: "fullAccess"
         description: |
           This is the access that operators will have to cardholders' values of this PDF if the
           operator is not a member of an operator group that overrides it.  Check the operator
           group's 'Personal data' tab in the Configuration Client.
+
+          `revealable`, `revealAndEdit`, and `writeOnly` new to 8.90.
       operatorAccess:
         readOnly: true
         description: |
@@ -5491,9 +5487,9 @@ definitions:
           permissions granted by this cardholder's operator groups.  You will only
           get this field if you ask for it with the `fields` parameter.
 
-          New in 8.80.
+          New in 8.80.  `revealable`, `revealAndEdit`, and `writeOnly` new to 8.90.
         type: string
-        enum: [ "noAccess", "readOnly", "fullAccess" ]
+        enum: [ "noAccess", "revealable", "readOnly", "writeOnly", "revealAndEdit", "fullAccess" ]
         example: "fullAccess"
       sortPriority:
         description: |
@@ -6294,6 +6290,11 @@ paths:
           fewer fields than normal.  Separate values with commas.
 
           Treat the string matches as case sensitive:  use 'lastName' rather than 'lastname'.
+
+          The `personalDataFields` field (short form `pdfs`) returns only the cardholder's non-empty
+          personal data.  That makes it difficult to find out which PDFs a cardholder _could_ have,
+          so the special field `allPdfs` returns all of them, including those for which the
+          cardholder has no value.
 
           Added to the cardholders controller in 8.00.  In that version you will receive the href,
           internal ID, and updates link even if you do not ask for them.  In 8.10 you will not.  If
