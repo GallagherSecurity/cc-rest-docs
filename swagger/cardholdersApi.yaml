@@ -5479,7 +5479,7 @@ definitions:
           operator is not a member of an operator group that overrides it.  Check the operator
           group's 'Personal data' tab in the Configuration Client.
 
-          `revealable`, `revealAndEdit`, and `writeOnly` new to 8.90.
+          `revealable`, `revealAndEdit`, and `writeOnly` are new to 8.90.
       operatorAccess:
         readOnly: true
         description: |
@@ -5487,7 +5487,7 @@ definitions:
           permissions granted by this cardholder's operator groups.  You will only
           get this field if you ask for it with the `fields` parameter.
 
-          New in 8.80.  `revealable`, `revealAndEdit`, and `writeOnly` new to 8.90.
+          New in 8.80.  `revealable`, `revealAndEdit`, and `writeOnly` are new to 8.90.
         type: string
         enum: [ "noAccess", "revealable", "readOnly", "writeOnly", "revealAndEdit", "fullAccess" ]
         example: "fullAccess"
@@ -6726,8 +6726,9 @@ paths:
         Cardholder Location" privilege in the division of the target access zone and "View
         Cardholder" on the cardholder itself.
 
-        It is not possible to put a cardholder into "nowhere", also known as "outside the system".
-        The only place you can move them is a new access zone.
+        It is only possible to put a cardholder into "nowhere", also known as "outside the system",
+        in v9.60 or later.  In earlier versions the only place you can move them is a new access
+        zone.
 
       parameters:
         - name: "id"
