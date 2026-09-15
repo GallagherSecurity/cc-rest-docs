@@ -1146,7 +1146,7 @@ components:
         type: string
       description: |
         An internal identifier.  Do not insert this into your request yourself.  Instead you should
-        get the URL of this call from other results: the alarm summary or details, in this case.
+        get the URL of this call from an alarm summary or detail.
 
     alarmfields:
       name: fields
@@ -1160,7 +1160,7 @@ components:
                 details, history, instruction, cardholder, event ]
 
       description: |
-        Sets the fields you want in your results.  Separate fields with commas.
+        Sets the fields you want in your results of an alarm GET.  Separate fields with commas.
 
         New to 8.40.
 
@@ -1499,6 +1499,16 @@ components:
       description: |
         This is the POST body you would use to create an access group.  A `division` is mandatory.
 
+        This is the list of PDFs on an access group.  All the members of the access group will be
+        able to have values for the PDFs in this array.
+
+        Each element contains the href of a PDF definition.  To build the POST body you can take
+        those from the PDFs controller or other API routes, or copy it from the
+        `personalDataDefinitions` block of another access group.
+
+        The GET returns the names of the PDFs, but the POST will ignore them.  If you need to change
+        the name of a PDF, use the PDF controller.
+
       required: true
       content:
         application/json:
@@ -1506,7 +1516,20 @@ components:
             required: [ division ]
             allOf:
               - $ref: "#/components/schemas/AccessGroupWriteableFields"
-              - $ref: "#/components/schemas/AccessGroupPDFsPOST"
+              - type: object
+                properties:
+                  personalDataDefinitions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        href:
+                          description: "The href of the definition of the PDF for the new access group."
+                          type: string
+                          format: uri-reference
+                    example:
+                      - href: "https://host.com:8904/api/personal_data_fields/5516"
+                      - href: "https://host.com:8904/api/personal_data_fields/9370"
 
     AlarmUpdateRequest:
       description: |
@@ -1921,18 +1944,18 @@ components:
               format: date-time
               example: "2025-01-01T00:00:00Z"
 
-    AccessGroupPDFsPOST:
+    AccessGroupPDFs:
       title: Access group PDFs for GET/POST
       description: |
-        This is where you give PDFs to an access group.  All the members of the access group will be
-        able to have values for the PDFs you list in this array.
+        This is the list of PDFs on an access group.  All the members of the access group will be
+        able to have values for the PDFs in this array.
 
-        Each element should contain the href of a PDF definition.  You can take those from the PDFs
-        controller or other API routes, including the `personalDataDefinitions` block of another
-        access group.
+        Each element contains the href of a PDF definition.  To build the POST body you can take
+        those from the PDFs controller or other API routes, or copy it from the
+        `personalDataDefinitions` block of another access group.
 
-        The GET returns the names of the PDFs, but the POST will ignore them since these API calls
-        are about access groups.  If you need to change the name of a PDF, use that controller.
+        The GET returns the names of the PDFs, but the POST will ignore them.  If you need to change
+        the name of a PDF, use the PDF controller.
       properties:
         personalDataDefinitions:
           type: array
@@ -1944,7 +1967,7 @@ components:
                 type: string
                 readOnly: true
               href:
-                description: "The href of the PDF definition."
+                description: "The href of the definition of the PDF for the access group."
                 type: string
                 format: uri-reference
           example:
@@ -1986,7 +2009,7 @@ components:
 
       allOf:
         - $ref: "#/components/schemas/AccessGroupSummary"
-        - $ref: "#/components/schemas/AccessGroupPDFsPOST"
+        - $ref: "#/components/schemas/AccessGroupPDFs"
         - type: object
           properties:
             children:
@@ -2446,6 +2469,7 @@ components:
           example: "https://localhost:8904/api/access_zones/3280"
         id:
           type: string
+          readOnly: true
           description: |
             An alphanumeric identifier, unique to the server.
 
@@ -2497,6 +2521,7 @@ components:
                 - name: "West stairwell lobby door"
                   href: "https://localhost:8904/api/doors/745"
             zoneCount:
+              readOnly: true
               type: integer
               description: |
                 The number of cardholders in the zone, according to its zone counting configuration.
@@ -2523,15 +2548,18 @@ components:
               type: object
               properties: *UPDATES_PROPS
               description: *UPDATES_DESC
+              readOnly: true
               example: { href: "https://localhost:8904/api/access_zones/3280/updates/0_0_0" }
             statusFlags:
               type: array
               items: { type: string }
               description: *STATUSFLAGS_DESC
+              readOnly: true
               example: ["secure"]
             connectedController: *CONNECTEDCONTROLLER
             commands:
               type: object
+              readOnly: true
               description: |
                 A block of commands, each represented by a block containing an href that accepts a
                 POST that will send an override to the access zone, changing its state.
@@ -4022,6 +4050,7 @@ components:
             items:
               $ref: '#/components/schemas/CardholderElevatorGroup'
           updates:
+            deprecated: true
             type: object
             properties: {}
             description: |
@@ -4704,11 +4733,14 @@ components:
         href:
           type: string
           description: |
-            DELETE this URL to remove this group membership, and use it in the body of a PATCH to a
+            This is the href of the cardholder's membership to an access group, not an access group
+            item.
+
+            DELETE it to remove this group membership, and use it in the body of a PATCH to a
             cardholder to identify memberships you want to modify.
 
-            Note that changing an access group membership with a PATCH will change this href.  Do not
-            cache it.
+            Note that changing an access group membership with a PATCH will change this href, so do
+            not cache it.
 
             DELETE is the only verb you can use on this URL.  GET returns a 404.
           format: uri-reference
@@ -4716,11 +4748,12 @@ components:
         accessGroup:
           type: object
           description: |
-            An object containing a link to this group's detail page and (when sent by the the server)
-            its name.  You should not send it when modifying a group membership because you cannot
-            change a group membership's group; you can only change its dates.  But you must send it
-            when adding a new group membership, of course, because it identifies the cardholder's new
-            group.  Just send the href:  don't bother with the name.
+            An object containing the group's href (which is also a link to its detail page) and,
+            when sent by the server, the group's name.  You should not send this object when
+            modifying a group membership because you cannot change a group membership's group; you
+            can only change its dates.  But you must send it when adding a new group membership, of
+            course, because it identifies the cardholder's new group.  Just send the group's href:
+            don't bother with the name.
 
             8.70 and later will not return the link if your operator does not have the privilege to
             view the access group (given by 'View access groups', for example).
@@ -4753,8 +4786,9 @@ components:
         from:
           type: string
           description: |
-            The start of the time period during which this group membership is active.  If
-            this time is in the future, the card will be inactive.
+            The start of the time period during which this group membership is active.  If this time
+            is in the future, the membership will be inactive.  If null or in the past and `until`
+            is null or in the future, the membership will be active.
 
             When sending this to a server of version 7.90.883 or earlier, use UTC with a trailing 'Z'.
             More recent versions understand timezone offsets.
@@ -4763,8 +4797,9 @@ components:
         until:
           type: string
           description: |
-            The end of the time period during which this group membership is active.  If
-            this time is in the past, the card will be inactive.
+            The end of the time period during which this group membership is active.  If this time
+            is in the past, the membership will be inactive.  If null or in the future and `from` is
+            null or in the past, the membership will be active.
 
             When sending this to a server of version 7.90.883 or earlier, use UTC with a trailing 'Z'.
             More recent versions understand timezone offsets.
@@ -4784,7 +4819,7 @@ components:
         Presence in an access group affects physical access rights and possession of PDFs, among other
         things.
 
-        The membership object can come from the server in a cardholder's details, and you send it to
+        The membership object will come from the server in a cardholder's details if you ask for it, and you send it to
         the server when modifying a cardholder's group memberships.  All uses are described below.
 
     CardholderOperatorGroup:
@@ -4850,7 +4885,7 @@ components:
         them a new one.  You can do that in one PATCH.
 
         A cardholder can have only one link to a given competency.  Attempting to give a cardholder
-        a competency a second time will either fail or succeed and raise a stateful alarm, depending
+        a competency a second time will either fail or raise a stateful alarm and succeed, depending
         on your version of Command Centre.
 
       type: object
@@ -4942,7 +4977,7 @@ components:
 
         enabled:
           type: boolean
-          writeOnly: false
+          writeOnly: true
           description: |
             This is a write-only field.  You will not receive it from the GET.  It changes the
             competency between enabled (status type `expired`, `expiryDue`, or `active`) and
@@ -5015,7 +5050,7 @@ components:
         For example, a role on your system might be 'supervisor'.  A cardholder can be a supervisor
         for any number of others, but will only have one supervisor.
 
-        Loops are possible:  two cardholders can supervise each other, for example.
+        Loops are possible:  two cardholders can supervise each other.
 
         The REST API manages relationships through the child cardholder.  You can create them at the
         same time as creating the child in a POST, or add them later in a PATCH.
@@ -5034,11 +5069,12 @@ components:
           type: string
           format: uri-reference
           description: |
-            DELETE this link, or put it in `relationships.remove.href` of a PATCH, to sever the
-            relationship between the two cardholders.  Specify it in `relationships.update.href` of a
-            PATCH to update the relationship.
+            This is the href of the link between two cardholders.  DELETE it, or put it in
+            `relationships.remove.href` of a PATCH directed at the child cardholder, to sever the
+            relationship.  Specify it in `relationships.update.href` of a PATCH to the child
+            cardholder to update the relationship.
 
-            Do not specify it when creating a new relationship.
+            Do not specify it when creating a new relationship.  The server generates it for you.
 
             DELETE is the only verb you can use on this URL.  GET will always return a 404.
 
@@ -5046,12 +5082,13 @@ components:
         role:
           type: object
           description: |
-            This is the role that the parent identified in the next block performs for the cardholder
-            identified by the request URL.
+            This is the role that the parent identified in the `cardholder` block performs for the
+            cardholder identified by the request URL.
 
             Once set, this cannot be changed.  Command Centre will ignore it if you send it
             in an update PATCH.  If you need to swap a parent from one role to another, send
             an add and a delete in the same PATCH.
+          properties: *NAMEHREF_PROPERTIES
           example:
             href: "https://host.com:8904/api/roles/5396"
             name: "Supervisor"
@@ -5068,6 +5105,12 @@ components:
             cardholder is the only thing about a relationship you can change.
 
             `firstName` and `lastName` appeared in 8.20.
+
+          properties:
+            name: {type: string, readOnly: true }
+            href: {type: string, format: uri-reference, description: "The API's identifier for the parent cardholder."}
+            firstName: {type: string, readOnly: true }
+            lastName: {type: string, readOnly: true }
 
           example:
             href: "https://host.com:8904/api/cardholders/5398"
@@ -5107,6 +5150,14 @@ components:
             identifying href of its bank.
 
           type: object
+          properties:
+            name: {type: string, readOnly: true }
+            href: {type: string, format: uri-reference, description: "The API's identifier for a locker."}
+            shortName: {type: string, readOnly: true }
+            lockerBank:
+              type: object
+              properties: *NAMEHREF_PROPERTIES                
+            
           example:
             name: "Bank A locker 1"
             shortName: "A1"
@@ -5709,36 +5760,6 @@ components:
             remove:
               - href: "https://host.com:8904/api/cardholders/325/elevator_groups/3498734"
 
-    CardholderChanges:
-      title: Cardholder changes
-      description: |
-        An array of cardholder changes, described in the next section, and a `next` link for more.
-      properties:
-        results:
-          type: array
-          description: An array of cardholder changes.
-          items: { $ref: '#/components/schemas/CardholderChange' }
-
-        next:
-          type: object
-          description: |
-            The link to the next page of changes.  This will always be present, because (unlike items)
-            changes never run out.
-
-            Because the `next` link is a pointer to the head of a queue of changes, and new changes
-            are being added to that queue which will not suit your filter or privileges, it will
-            change even when there are no results.
-
-            Therefore you should always use this link for your next query.  Do not be tempted to
-            re-use a URL after `results` comes back empty, thinking you merely need to ask the same
-            question again.  Doing that will cause the server unnecessary work, skipping over changes
-            that did not pass your filter or privilege checks on the previous call.
-
-          properties:
-            href: { type: string, format: uri-reference }
-          example:
-            href: "https://host.com:8904/api/cardholders/changes?pos=SWEp9"
-
     CardholderChange:
       title: Cardholder change
       description: |
@@ -5791,6 +5812,7 @@ components:
             `fields=cardholder` in the query.  Note that you can add individual cardholder fields such
             as PDFs using `fields=defaults,cardholder.personalDataFields`.
           type: object
+          properties: { href: { type: string, format: uri-reference } }
           example: {"href":"https://host.com:8904/api/cardholders/525"}
         operator:
           description: |
@@ -5800,8 +5822,10 @@ components:
             field set.  If you need it you must ask for it using the fields parameter:
             `fields=defaults,operator`.
           type: object
+          properties: *NAMEHREF_PROPERTIES
           example: {"name": "System Operator", "href": "https://host.com:8904/api/items/1"}
         oldValues:
+          type: object
           description: |
             A block containing the values of the changed fields before the change, if Command Centre
             still has them, in the same format as a [cardholder
@@ -5818,6 +5842,7 @@ components:
             - "enablement": ""
               "href": "https://host.com:8904/api/cardholders/525/competencies/3910e4"
         newValues:
+          type: object
           description: |
             A similar block containing the values of the changed fields after the change, if the
             server has them.
@@ -5868,6 +5893,7 @@ components:
             `fields=defaults,cardholder.firstName,cardholder.lastName,cardholder.cards`, etc.  Note
             how you must prefix each field with `cardholder` since they are all inside a block with
             that name.
+          type: object
           example: {
             firstName: "Gavin",
             cards: [
@@ -9865,7 +9891,7 @@ components:
 
         `Authorization: GGL-API-KEY C774-B01F-D695-AA4B-215F-A158-AC22-ADEB`
 
-        For a fuller description see [Access control](#?route=overview--access-control).
+        For a fuller description see [API authentication](#?route=overview--api-authentication).
 
     basic:
       type: http
@@ -9882,7 +9908,7 @@ components:
         The colon is a separator between a username, which is blank in our case, and the password,
         which is our API key.
 
-        For a fuller description see [Access control](#?route=overview--access-control).
+        For a fuller description see [API authentication](#?route=overview--api-authentication)
 
 info:
   x-logo:
@@ -9897,8 +9923,9 @@ info:
 
     ## Forward compatibility (HATEOAS)
 
-    This is a self-referencing REST API that follows the principles of HATEOAS.  Other than the
-    initial `GET /api` when it first connects, your source code should not contain any URLs,
+    This is a self-referencing REST API that follows the principles of
+    [HATEOAS](https://www.google.com/search?q=hateoas).  Other than the initial `GET /api` when it
+    first connects, your source code should not contain any URLs,
     as they are subject to change.  You should append the query parameters this document describes
     for operations such as filtering and searching, but everying in the path should come from the
     results of `/api` or pages linked from it.
@@ -9940,7 +9967,7 @@ info:
     The body of this document clearly indicates when recent features arrived in the API so that
     readers with older versions of Command Centre know not to expect them.
 
-    ## Access control
+    ## API authentication
 
     Clients authenticate by including a pre-shared API key in the `Authorization` header of each
     request.  Command Centre generates a random API key when you create an endpoint for your clients
@@ -10023,7 +10050,7 @@ info:
 
     ## Operator privileges
 
-    First, some background on operators, operator groups, and divisions.
+    Some background on operators, operator groups, and divisions.
 
     To determine your REST client's privileges, the server starts by searching the list of REST
     Client items in its configuration for the one with the API key in the `Authorization` header of
@@ -10148,8 +10175,9 @@ info:
     If it is not up to date and you request the status on an item's summary or details page, the
     server will report that the status is unknown.
 
-    To retrieve the status of one item you should GET the item's `updates` link from its details
-    page.  To monitor the status of many items you should use the [status subscription
+    To retrieve the status of one item you could GET the item's `updates` link from its details
+    page, but be careful not to swamp the server with too many simultaneous connections.  To monitor
+    the status of many items you should use the [status subscription
     API](#?route=tag--Items--status-subscriptions) on the items controller (added in 8.30).
 
     Whichever API you use, if the server does not have an item's status when you ask it will
@@ -12994,7 +13022,34 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CardholderChanges'
+                description: |
+                  An array of cardholder changes, and a `next` link for more.
+                properties:
+                  results:
+                    type: array
+                    description: An array of cardholder changes.
+                    items: { $ref: '#/components/schemas/CardholderChange' }
+
+                  next:
+                    type: object
+                    properties:
+                      href:
+                        type: string
+                        format: uri-reference
+                        example: "https://host.com:8904/api/cardholders/changes?pos=SWEp9"
+                        description: |
+                          The link to the next page of changes.  This will always be present, because (unlike items)
+                          changes never run out.
+
+                          Because the `next.href` link is a pointer to the head of a queue of changes, and new changes
+                          are being added to that queue which will not suit your filter or privileges, it will
+                          change even when there are no results.
+
+                          Therefore you should always use this link for your next query.  Do not be tempted to
+                          re-use a URL after `results` comes back empty, thinking you merely need to ask the same
+                          question again.  Doing that will cause the server unnecessary work, skipping over changes
+                          that did not pass your filter or privilege checks on the previous call.
+
         "403":
           description: |
             The site does not have the RESTCardholders licence.
@@ -14278,13 +14333,13 @@ paths:
         description: |
           You can specify many things on an event but the only mandatory field is the type.  When
           you are developing, start with just that.
+        required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/EventPOSTBody'
             examples:
               "Simple example": { $ref: '#/components/examples/EventPOSTExample' }
-        required: true
 
       responses:
         "201":
@@ -14720,8 +14775,13 @@ paths:
         divided into
         about 150 groups.  Each event type is in one group.
 
-        A site may rename the 30 groups dedicated to external event types—that is, event types for
-        the site's own use—and may create another 970 event types for them.
+        30 groups of event types are set aside for a site's own use.  They are called _external_
+        types and groups, because Command Centre does not use them.  A site may rename those 30
+        groups and may create another 970 event types for them.  Out of the factory they have names
+        containing the numbers zero to 29 but do not confuse those numbers with the database IDs.
+        For example, the external event type named 'External Event 0' has ID '4000'.  It is in a
+        group called 'External Event Group 0' with ID '57'.  Further down the line 'External Event
+        10' has ID '6010' and is in a group with ID '190'.
 
         The results of this query vary with:
 
@@ -14733,9 +14793,8 @@ paths:
         each group do.  Therefore if you choose to use groups in filters rather than types you may
         find that your filter catches more or fewer event types after a Command Centre upgrade.
         That may be desirable if, for example, you are intested in a class of event and you want to
-        grow with CC as it grows new features.  If you want to catch all 'access denied's, for
-        example.  We frequently add new varieties of 'access denied'.  If you do not want that, use
-        types rather than groups.
+        grow with CC as it grows new features.  If you do not want that, use types rather than
+        groups.
 
         Do not code this URL into your application.  Take it from `events.eventGroups.href` in the
         results of `GET /api`.
