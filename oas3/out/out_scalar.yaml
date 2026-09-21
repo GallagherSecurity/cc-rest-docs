@@ -1979,7 +1979,7 @@ components:
     AccessGroupSearch:
       title: Access group search
       description: |
-        An array of access group summaries, described in the next section, and a `next` link for more.
+        An array of access group summaries and a `next` link for more.
       properties:
         results:
           type: array
@@ -8811,7 +8811,7 @@ components:
     OperatorGroupSearch:
       title: Operator group search
       description: |
-        An array of operator group summaries, described in the next section, and a `next` link for
+        An array of operator group summaries and a `next` link for
         more.
       properties:
         results:
@@ -11827,8 +11827,9 @@ paths:
         This returns the data you need to encode a Gallagher credential to a MIFARE DESFire card.
 
         POST the card's CSN (UID) and, if present on-card, the contents of the Gallagher Application
-        Directory (CAD) files.  The response contains the encrypted DESFire applications, keys, files, and updated
-        CAD files to write, and callback links are in plain text for you to report the success of your encoding.
+        Directory (CAD) files.  The response contains the encrypted DESFire applications, keys,
+        application files, and CAD files to write, with callback links for you to report the success
+        of your encoding.
 
         **Encode applications in the order they are returned** so that the card remains usable if
         encoding fails part-way through.
@@ -15445,11 +15446,41 @@ paths:
           - shortName
       responses:
         "200":
-          description: Success
+          description: Success.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ItemSearch'
+              examples:
+                First page:
+                  summary: |
+                    More pages to GET.
+                  value:
+                    results:
+                      - id: "325"
+                        name: "Brick, Eva"
+                        type:
+                          id: "1"
+                          name: "Cardholder"
+                          canonicalTypeName: "cardholder"
+                      - id: "2707"
+                        name: "Brewer, Amy"
+                        type:
+                          id: "1"
+                          name: "Cardholder"
+                          canonicalTypeName: "cardholder"
+                    next:
+                      href: "https://localhost:8904/api/items?pos=2"
+                Last page:
+                  summary: Last page of results.
+                  value:
+                    results:
+                      - id: "7008"
+                        name: "Manu Heke"
+                        type:
+                          id: "1"
+                          name: "Cardholder"
+                          canonicalTypeName: "cardholder"
         "403":
           description: The site does not have a REST licence.
 
