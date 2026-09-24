@@ -57,7 +57,7 @@
             <a href="#tag-Divisions">Divisions</a>
             <ul>
               <li>
-                <a href="#operation--api-divisions-post"> Create a division </a>
+                <a href="#operation--api-divisions-post"> Create a division [coming] </a>
               </li>
               <li>
                 <a href="#operation--api-divisions--operation--get"> List divisions </a>
@@ -66,10 +66,10 @@
                 <a href="#operation--api-divisions--id--get"> Get details of a division </a>
               </li>
               <li>
-                <a href="#operation--api-divisions--id--patch"> Update a division </a>
+                <a href="#operation--api-divisions--id--patch"> Update a division [coming] </a>
               </li>
               <li>
-                <a href="#operation--api-divisions--id--delete"> Remove a division </a>
+                <a href="#operation--api-divisions--id--delete"> Remove a division [coming] </a>
               </li>
             </ul>
           </section>
@@ -164,7 +164,6 @@
                 <p>Helper methods allow you to look up Command Centre&#39;s internal identifiers for cardholders, divisions, and other items, so that you can use those identifiers in search filters.</p>
                 <h3 id="licensing">Licensing</h3>
                 <p>All of the GETs in this document and the POSTs that manage alarms require the RESTEvents licence. The POST to create a new event requires RESTCreateEvents.</p>
-                <p>Creating, modifying, and deleting a division requires the RESTConfiguration licence.</p>
                 <p>The server will return a 403 if you attempt an operation for which the server is not licensed.</p>
                 <h3 id="versions">Versions</h3>
                 <p>The body of this document clearly indicates when recent features arrived in the API so that readers with older versions of Command Centre know not to expect them.</p>
@@ -1547,7 +1546,8 @@
               <p>These methods provide access to the Command Centre divisions that are available to the REST client. Call <code>/api</code> and use the link at <code>features.{your_feature}.divisions.href</code> to retrieve the divisions in which the REST operator has privileges for that feature. Pick out the ones of interest and use those IDs in event, alarm, or item searches if you don&#39;t want the search to scan everything.</p>
               <p>Or, you may end up here by following a division&#39;s link from a reception item when you need to retrieve the visitor management configuration for that reception&#39;s division.</p>
               <h3 id="licensing">Licensing</h3>
-              <p>Every REST licence enables the divisions controller: RESTEvents, RESTCreateEvents, RESTCardholders, RESTStatus, and RESTOverrides.</p>
+              <p>Every REST licence enables the read operations in the divisions controller: RESTEvents, RESTCreateEvents, RESTCardholders, RESTStatus, and RESTOverrides.</p>
+              <p>Write operations are on their way to the API.</p>
             </div>
           </div>
           <div id="operation--api-divisions-post" class="operation panel" data-traverse-target="operation--api-divisions-post">
@@ -1560,7 +1560,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Create a division</span>
+              <span class="operation-summary">Create a division [coming]</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -1580,7 +1580,6 @@
                   <p>When successful it returns a <code>location</code> header containing the address of the new division.</p>
                   <p>Note that you can only create one division per POST.</p>
                   <p>Do not code this URL into your application. Take it from the results of <code>GET /api</code>. That shows the API features for which you have the necessary licence.</p>
-                  <p>New to 9.30.</p>
                 </section>
               </div>
             </div>
@@ -1648,7 +1647,7 @@
                       <div class="prop-title">403 Forbidden</div>
                     </div>
                     <div class="prop-value">
-                      <p>The operator does not have a privilege on the parent division that allows creating divisions inside it (&#39;Configure Site&#39; or &#39;Edit Divisions&#39;), or the server has reached its licensed limit of divisions or does not have the &#39;RESTConfiguration&#39; licence.</p>
+                      <p>The operator does not have a privilege on the parent division that allows creating divisions inside it (&#39;Configure Site&#39; or &#39;Edit Divisions&#39;), or the server has reached its licensed limit of divisions.</p>
                     </div>
                   </div>
                 </section>
@@ -2052,7 +2051,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Update a division</span>
+              <span class="operation-summary">Update a division [coming]</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -2069,7 +2068,6 @@
                   <p>The PATCH expects a document in the same format as the
                     <a href="#definition-Division">the division detail</a> but with fewer valid fields. An example is
                     <a href="#definition-Division-PATCH-and-POST-example">this PATCH example</a>.</p>
-                  <p>New to 9.30.</p>
                 </section>
               </div>
             </div>
@@ -2162,7 +2160,6 @@
                     <div class="prop-value">
                       <p>The operator has a privilege that allows viewing the division but not modifying it, or you tried to set a parent on the root division, or you tried to set the parent to a division you cannot configure, or the server is missing the necessary licence.</p>
                       <p>You need either the &#39;Configure Site&#39; or &#39;Edit Divisions&#39; privilege on the division you are changing. You also need it on the new parent, if you are changing that.</p>
-                      <p>This is also the response when the server does not have the &#39;RESTConfiguration&#39; licence.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -2197,7 +2194,7 @@
             <!-- </div> -->
             <!-- </section> -->
             <h2 class="operation-title">
-              <span class="operation-summary">Remove a division</span>
+              <span class="operation-summary">Remove a division [coming]</span>
             </h2>
             <div class="doc-row">
               <div class="doc-copy">
@@ -2268,7 +2265,7 @@
                       <div class="prop-title">404 Not Found</div>
                     </div>
                     <div class="prop-value">
-                      <p>That is not the URL of a division, or the operator is not privileged to view it, or the server does not have the &#39;RESTConfiguration&#39; licence.</p>
+                      <p>That is not the URL of a division, or the operator is not privileged to view it.</p>
                     </div>
                   </div>
                 </section>

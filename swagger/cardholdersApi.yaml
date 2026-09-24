@@ -49,12 +49,11 @@ info:
       * Visitor management calls need both RESTCardholders and VisitorManagement.
 
       * Managing cardholders' connections to competency items is enabled by the RESTCardholders
-        licence but creating, modifying, and deleting competency items themselves requires the
-        RESTConfiguration licence.
+        licence.  Creating, modifying, and deleting competency items themselves is coming to the
+        API.
 
-      * Managing access group _memberships_ is enabled by the RESTCardholders licence but managing
-        access group items, card types, personal data definitions, and roles will require the
-        RESTConfiguration licence.  These features are coming soon.
+      * Managing access group _memberships_ is enabled by the RESTCardholders licence.  Managing
+        access group items, card types, personal data definitions, and roles is coming soon.
 
       * Lockers and locker banks are also available with the RESTStatus licence, and a subset of
         their fields (enough to allow overriding them) are available with the RESTOverrides licence.
@@ -7032,7 +7031,7 @@ paths:
     post:
       tags:
         - Access groups
-      summary: Create an access group
+      summary: Create an access group [coming]
       description: |
         Creates a new access group, setting its basic fields, parent, PDFs, and some membership
         defaults.
@@ -7050,8 +7049,6 @@ paths:
         When successful it returns a location header containing the address of the new access group.
 
         Note that you can only create one access group per POST.
-
-        This call requires the RESTConfiguration licence and a server running 9.30 or later.
 
       parameters:
         - name: "this string necessary but not rendered"
@@ -7080,8 +7077,7 @@ paths:
 
         403:
           description: |
-            The operator does not have a privilege that allows creating access groups, or the server
-            does not have the 'RESTConfiguration' licence.
+            The operator does not have a privilege that allows creating access groups.
 
   /api/access_groups/{id}:
     get:
@@ -7136,7 +7132,7 @@ paths:
     patch:
       tags:
         - Access groups
-      summary: Update an access group
+      summary: Update an access group [coming]
       description: |
         This is the call you use to modify fields on an access group.
 
@@ -7150,8 +7146,6 @@ paths:
         search](#operation--api-access_groups-get) results and in a cardholder's `accessGroups`
         array.  In the interest of forward compability, [do not build it
         yourself](#topic-Forward-compatibility--HATEOAS-).
-
-        This call requires the RESTConfiguration licence and a server running 9.30 or later.
 
       parameters:
         - name: "id"
@@ -7190,8 +7184,6 @@ paths:
             need on it on the item's current division.  You also need it on the new division, if you
             are changing that.
 
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
-
         404:
           description: |
             That is not the URL of an access group or your operator does not have the privilege to view
@@ -7205,7 +7197,7 @@ paths:
 
     delete:
       tags: [ Access groups ]
-      summary: Remove an access group
+      summary: Remove an access group [coming]
       description: |
         This call removes an access group from Command Centre.
 
@@ -7213,8 +7205,6 @@ paths:
         search](#operation--api-access_groups-get) results and in a cardholder's `accessGroups`
         array.  In the interest of forward compability, [do not build it
         yourself](#topic-Forward-compatibility--HATEOAS-).
-
-        This call requires the RESTConfiguration licence and a server running 9.30 or later.
 
       parameters:
       - name: "id"
@@ -7231,8 +7221,8 @@ paths:
             Deleting the access group failed.  This happens when it still has members.
         403:
           description: |
-            The operator has the permission to view the item but not delete it, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator has the permission to view the item but not delete it.
+
         404:
           description: |
             That is not the URL of an access group or the operator is not privileged to view it.
@@ -7332,8 +7322,6 @@ paths:
 
         Note that you can only create one item per POST.
 
-        This call requires the RESTConfiguration licence.
-
       parameters:
         - name: "this string necessary but not rendered"
           in: body
@@ -7360,8 +7348,7 @@ paths:
 
         403:
           description: |
-            The operator does not have a privilege that allows creating card types, or the server
-            does not have the 'RESTConfiguration' licence.
+            The operator does not have a privilege that allows creating card types.
 
   /api/card_types/assign:
     get:
@@ -7443,8 +7430,6 @@ paths:
         The PATCH expects a document in the same format as the [the card type
         detail](#definition-Card-type) but with fewer fields.
 
-        This call requires the RESTConfiguration licence.
-
       parameters:
         - name: "id"
           in: path
@@ -7484,8 +7469,6 @@ paths:
             on it on the item's current division.  You also need it on the new division, if you are
             changing that.
 
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
-
         404:
           description: |
             That is not the URL of a card type or your operator does not have the privilege to view
@@ -7505,7 +7488,6 @@ paths:
         take the URL from the results of a card type search rather than [building it
         yourself](#topic-Forward-compatibility--HATEOAS-).
 
-        This call requires the RESTConfiguration licence.
       parameters:
       - name: "id"
         in: path
@@ -7523,8 +7505,8 @@ paths:
 
         403:
           description: |
-            The operator has the permission to view the item but not delete it, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator has the permission to view the item but not delete it.
+
         404:
           description: |
             That is not the URL of a card type, or the operator is not privileged to view it.
@@ -7597,7 +7579,7 @@ paths:
     post:
       tags:
       - Competencies
-      summary: Create a competency
+      summary: Create a competency [coming]
       description: |
         Creates a new competency.
 
@@ -7613,8 +7595,6 @@ paths:
         it from the results of `GET /api`.
 
         New to Command Centre 9.10.
-
-        This requires the RESTConfiguration licence.
 
       parameters:
         - name: "this name not rendered"
@@ -7644,8 +7624,7 @@ paths:
         403:
           description: |
             The operator does not have a privilege on the division that allows creating items inside
-            it ('Configure Site'), or the server has reached its licensed limit of competencies, or
-            it does not have the 'RESTConfiguration' licence.
+            it ('Configure Site'), or the server has reached its licensed limit of competencies.
 
   /api/competencies/{id}:
     get:
@@ -7691,7 +7670,7 @@ paths:
     patch:
       tags:
       - Competencies
-      summary: Update a competency
+      summary: Update a competency [coming]
       description: |
         This is the call you use to update a division's name, short name, description, notes, or
         division.  In the interest of forward compability, take the URL from the results of a
@@ -7700,10 +7679,6 @@ paths:
         The PATCH expects a document in the same format as the [the competency
         detail](#definition-Competency-detail) but with fewer fields.  An example is [this PATCH
         example](#definition-Competency-PATCH-and-POST-example).
-
-        New to Command Centre 9.10.
-
-        This call requires the RESTConfiguration licence.
 
       parameters:
         - name: "id"
@@ -7741,8 +7716,6 @@ paths:
             on it on the item's current division.  You also need it on the new division, if you are
             changing that.
 
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
-
         404:
           description: |
             That is not the URL of a competency or your operator does not have the privilege to view
@@ -7756,15 +7729,12 @@ paths:
 
     delete:
       tags: [ Competencies ]
-      summary: Remove a competency
+      summary: Remove a competency [coming]
       description: |
         This call removes a competency from Command Centre.  You get this URL from a cardholder or
         from a competency search.  In the interest of forward compability, [do not build it
         yourself](#topic-Forward-compatibility--HATEOAS-).
 
-        New to Command Centre 9.10.
-
-        This call requires the RESTConfiguration licence.
       parameters:
       - name: "id"
         in: path
@@ -7781,8 +7751,8 @@ paths:
 
         403:
           description: |
-            The operator has the permission to view the item but not delete it, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator has the permission to view the item but not delete it.
+
         404:
           description: |
             That is not the URL of a competency, or the operator is not privileged to view it.
@@ -8286,8 +8256,6 @@ paths:
 
         Note that you can only create one per POST.
 
-        This call requires the RESTConfiguration licence.
-
       parameters:
         - name: "this string necessary but not rendered"
           in: body
@@ -8314,8 +8282,7 @@ paths:
 
         403:
           description: |
-            The operator does not have a privilege that allows creating PDFs or the server does not
-            have the 'RESTConfiguration' licence.
+            The operator does not have a privilege that allows creating PDFs.
 
   /api/personal_data_fields/{id}:
     get:
@@ -8357,8 +8324,6 @@ paths:
 
         The PATCH expects a document in the same format as the [the PDF detail](#definition-PDF-definition).
 
-        It requires the RESTConfiguration licence.
-
       parameters:
         - name: "id"
           in: path
@@ -8395,8 +8360,6 @@ paths:
             which means you need on it on its current division.  You also need it on the new
             division, if you are changing that.
 
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
-
         404:
           description: |
             That is not the URL of a PDF or your operator does not have the privilege to view
@@ -8416,8 +8379,6 @@ paths:
         [summary](#definition-PDF-definition) to get here, rather than [building it
         yourself](#topic-Forward-compatibility--HATEOAS-).
 
-        It requires the RESTConfiguration licence.
-
       parameters:
       - name: "id"
         in: path
@@ -8434,8 +8395,8 @@ paths:
 
         403:
           description: |
-            The operator has the permission to view the item but not delete it, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator has the permission to view the item but not delete it.
+
         404:
           description: |
             That is not the URL of a PDF, or the operator is not privileged to view it.
@@ -8678,8 +8639,6 @@ paths:
 
         Note that you can only create one per POST.
 
-        This call requires the RESTConfiguration licence.
-
       parameters:
         - name: "this string necessary but not rendered"
           in: body
@@ -8706,8 +8665,7 @@ paths:
 
         403:
           description: |
-            The operator does not have a privilege that allows creating roles, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator does not have a privilege that allows creating roles.
 
   /api/roles/{id}:
     patch:
@@ -8719,8 +8677,6 @@ paths:
         rather than [building it yourself](#topic-Forward-compatibility--HATEOAS-).
 
         The PATCH expects a document in the same format as the [the role detail](#definition-Role).
-
-        This call requires the RESTConfiguration licence.
 
       parameters:
         - name: "id"
@@ -8758,8 +8714,6 @@ paths:
             on it on the item's current division.  You also need it on the new division, if you are
             changing that.
 
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
-
         404:
           description: |
             That is not the URL of a card type or your operator does not have the privilege to view
@@ -8778,8 +8732,6 @@ paths:
         This call removes a role item from Command Centre.  Take its URL from a cardholder or a role
         search rather than [building it yourself](#topic-Forward-compatibility--HATEOAS-).
 
-        It requires the RESTConfiguration licence.
-
       parameters:
       - name: "id"
         in: path
@@ -8797,8 +8749,8 @@ paths:
 
         403:
           description: |
-            The operator has the permission to view the item but not delete it, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator has the permission to view the item but not delete it.
+
         404:
           description: |
             That is not the URL of a role, or the operator is not privileged to view it.

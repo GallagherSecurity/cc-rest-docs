@@ -34,8 +34,6 @@ info:
     All of the GETs in this document and the POSTs that manage alarms require the RESTEvents
     licence.  The POST to create a new event requires RESTCreateEvents.
 
-    Creating, modifying, and deleting a division requires the RESTConfiguration licence.
-
     The server will return a 403 if you attempt an operation for which the server is not licensed.
 
     ### Versions
@@ -214,8 +212,10 @@ tags:
 
     ### Licensing
 
-    Every REST licence enables the divisions controller:  RESTEvents, RESTCreateEvents, RESTCardholders,
-    RESTStatus, and RESTOverrides.
+    Every REST licence enables the read operations in the divisions controller:  RESTEvents,
+    RESTCreateEvents, RESTCardholders, RESTStatus, and RESTOverrides.
+
+    Write operations are on their way to the API.
 
 - name: Events
   description: |
@@ -1716,7 +1716,7 @@ paths:
     post:
       tags:
       - Divisions
-      summary: Create a division
+      summary: Create a division [coming]
       description: |
         Creates a new division.
 
@@ -1730,8 +1730,6 @@ paths:
 
         Do not code this URL into your application.  Take it from the results of `GET /api`.  That
         shows the API features for which you have the necessary licence.
-
-        New to 9.30.
 
       parameters:
         - name: "this name not rendered"
@@ -1764,7 +1762,7 @@ paths:
           description: |
             The operator does not have a privilege on the parent division that allows creating
             divisions inside it ('Configure Site' or 'Edit Divisions'), or the server has reached
-            its licensed limit of divisions or does not have the 'RESTConfiguration' licence.
+            its licensed limit of divisions.
 
   /api/divisions/{operation}:
     get:
@@ -1825,15 +1823,13 @@ paths:
     patch:
       tags:
       - Divisions
-      summary: Update a division
+      summary: Update a division [coming]
       description: |
         This is the call you use to update a division's name, description, notes, or parent.
 
         The PATCH expects a document in the same format as the [the division
         detail](#definition-Division) but with fewer valid fields.  An example is [this PATCH
         example](#definition-Division-PATCH-and-POST-example).
-
-        New to 9.30.
 
       parameters:
         - name: "id"
@@ -1869,8 +1865,6 @@ paths:
             You need either the 'Configure Site' or 'Edit Divisions' privilege on the division you
             are changing.  You also need it on the new parent, if you are changing that.
 
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
-
         404:
           description: |
             That is not the URL of a division or the operator does not have the privilege to view
@@ -1884,7 +1878,7 @@ paths:
 
     delete:
       tags: [ Divisions ]
-      summary: Remove a division
+      summary: Remove a division [coming]
       description: |
         This call removes a division from Command Centre.
 
@@ -1907,8 +1901,7 @@ paths:
             not licensed for the operation.
         404:
           description: |
-            That is not the URL of a division, or the operator is not privileged to view it, or the
-            server does not have the 'RESTConfiguration' licence.
+            That is not the URL of a division, or the operator is not privileged to view it.
 
 ######################################################################
 
