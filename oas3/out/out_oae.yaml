@@ -18935,11 +18935,6 @@ tags:
     * You will be able to set the number of alarms you want coming back from a GET, as you can with
       events.
 
-    * Potentially breaking change:  the API routes that return the value of a cardholder's date PDF
-      present it in either RFC 3339 format with a time, or a format specific to the server's locale,
-      depending on the route.  A future version will change to date-only ISO 8601 (date PDFs only
-      contain a date, not a time).
-
     * Potentially breaking change:  the API route that returns the value of a string PDF will change
       to return a 404 if the cardholder does not have a value for it, as it does for image and date
       PDFs.  Currently, missing string PDFs come out as a zero-length payload.
@@ -18970,6 +18965,20 @@ tags:
       REST clients.
 
     * You will be able to create and delete alarm zones, and modify some basic fields.
+
+    ### API changes in 9.70
+
+    * Potentially breaking change:  searching for items using an invalid type filter previously
+      returned all items, as though the type filter was absent.  9.70 returns no items, and an
+      explanation.
+
+    * Potentially breaking change:  a cardholder's value for a date PDF used to be in RFC 3339 or in
+      the server's locale, depending on the route.  Both included midnight.  9.70 returns them
+      simply as 'YYYY-MM-DD', since date PDFs do not include a time.
+
+    * Potentially breaking change:  the API route that returns a cardholder's value of a string PDF
+      as its payload used to send a zero-length body if the cardholder did not have a value for the
+      PDF, but will now return a 404 as it does for missing PDFs of type other types.
 
     ### API changes in 9.60
 
