@@ -119,12 +119,6 @@
                     <p>You will be able to set the number of alarms you want coming back from a GET, as you can with events.</p>
                   </li>
                   <li>
-                    <p>Potentially breaking change: the API routes that return the value of a cardholder&#39;s date PDF present it in either in RFC 3339 format with a time, or a format specific to the server&#39;s locale, depending on the route. A future version will change to date-only ISO 8601 (date PDFs only contain a date, not a time).</p>
-                  </li>
-                  <li>
-                    <p>Potentially breaking change: the API route that returns the value of a string PDF will change to return a 404 if the cardholder does not have a value for it, as it does for image and date PDFs. Currently, missing string PDFs come out as a zero-length payload.</p>
-                  </li>
-                  <li>
                     <p>Events indicating that an operator modified an item may not have a cardholder at the end of the <code>operator</code> href. It may be a new kind of item, because we have new events coming that will indicate when an integration modifies an item rather than a human operator.</p>
                   </li>
                 </ul>
@@ -136,7 +130,15 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <ul>
-                  <li>Possible breaking change: searching for items using an invalid type filter currently returns all items, as though the type filter was absent. 9.70 returns no items, and an explanation.</li>
+                  <li>
+                    <p>Potentially breaking change: searching for items using an invalid type filter previously returned all items, as though the type filter was absent. 9.70 returns no items, and an explanation.</p>
+                  </li>
+                  <li>
+                    <p>Potentially breaking change: a cardholder&#39;s value for a date PDF used to be in RFC 3339 or in the server&#39;s locale, depending on the route. Both included midnight. 9.70 returns them simply as &#39;YYYY-MM-DD&#39;, since date PDFs do not include a time.</p>
+                  </li>
+                  <li>
+                    <p>Potentially breaking change: the API route that returns a cardholder&#39;s string PDF as its payload used to send a zero-length body if the cardholder did not have a value for the PDF, but will now return a 404. This brings string PDFs into line with other PDF types.</p>
+                  </li>
                 </ul>
               </div>
             </div>
