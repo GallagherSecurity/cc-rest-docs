@@ -4550,17 +4550,23 @@ components:
 
             When it is not set, Command Centre acts as though it is set to a time in the distant past.
 
-            When modifying a card, send a null string `""` to reset it.
+            When creating a card, leave this property out (or send `null`) to use the card type's
+            default start time, if the card type has one.  Send an empty string `""` to create the card
+            with no start time even when the card type has a default.  `from` and `until` are treated
+            independently, so leaving out `from` while sending `until` still applies the card type's
+            default `from`.
 
-            It must be before midnight on the morning of January 1, 2100 _local_ time (so servers with
-            positive timezone offsets have maximums during December 31 2099), and it must be less than
-            or equal to than the `until` time.  A future version of Command Centre will clamp too-high
-            values to December 31 2099 and return a 2xx (success) instead of 400 in that case.
+            When modifying a card, send an empty string `""` to reset it.
 
-            The server will reject timestamps in card updates that are not in an acceptable format.
-            But in requests to create a card, rather than modify an existing card, the server will
-            ignore such strings and use the card type's defaults.  This is undesirable behaviour and
-            will change in a future version of Command Centre.
+            Any value you send other than a blank string or null must be in RFC 3339 format,
+            including a timezone.  It must be before midnight on the morning of January 1, 2100 in
+            the server's _local_ time (so servers with positive timezone offsets have maximums
+            during December 31 2099), and it must be less than or equal to than the `until` time.  A
+            future version of Command Centre will clamp too-high values to December 31 2099 and
+            return a 2xx (success) instead of 400 in that case.
+
+            The server rejects a timestamp that is not in an acceptable format with a 400, whether the
+            card is being created or modified.
           format: date-time
           example: 2017-01-01T00:00:00Z
 
@@ -4572,17 +4578,24 @@ components:
 
             When it is not set, Command Centre acts as though it is set to a time in the distant future.
 
-            When modifying a card, send a null string `""` to reset it.
+            When creating a card, leave this property out (or send `null`) to use the card type's
+            default expiry, if the card type has one: either its fixed end time, or its duration
+            counted from the time the card is created.  Send an empty string `""` to create the card
+            with no end time even when the card type has a default.  `from` and `until` are treated
+            independently, so leaving out `until` while sending `from` still applies the card type's
+            default `until`.
 
-            It must be before midnight on the morning of January 1, 2100 _local_ time (so servers with
-            positive timezone offsets have maximums during December 31 2099), and it must be greater
-            than or equal to the `from` time.  A future version of Command Centre will clamp too-high
-            values to December 31 2099 and return a 2xx (success) instead of 400 in that case.
+            When modifying a card, send an empty string `""` to reset it.
 
-            The server will reject timestamps in card updates that are not in an acceptable format.
-            But in requests to create a card, rather than modify an existing card, the server will
-            ignore such strings and use the card type's defaults.  This is undesirable behaviour and
-            will change in a future version of Command Centre.
+            Any value you send other than a blank string or null must be in RFC 3339 format,
+            including a timezone.  It must be before midnight on the morning of January 1, 2100 in
+            the server's _local_ time (so servers with positive timezone offsets have maximums
+            during December 31 2099), and it must be greater than or equal to the `from` time.  A
+            future version of Command Centre will clamp too-high values to December 31 2099 and
+            return a 2xx (success) instead of 400 in that case.
+
+            The server rejects a timestamp that is not in an acceptable format with a 400, whether the
+            card is being created or modified.
           format: date-time
           example: 2017-12-31T11:59:59Z
 
@@ -5497,11 +5510,12 @@ components:
           description: |
             This object can contain three arrays, named `add`, `update`, and `remove`.  Every element
             you put in those arrays should be in the [card schema](#model/CardholderCard).
-            Each element of the `add` array will need a `type` member, at the very least.  Every card
-            field makes sense here except `href`.  Only existing cards have hrefs.  This example adds
-            two cards:  one has nothing more than the type, so it will receive blank `from` and
-            `until` dates and a computed number and issue level.  The other is a mobile credential (it
-            has an `invitation` block) with a custom initial state.
+
+            Each element of the `add` array will need a `type` member, at the very least.  Every
+            card field makes sense here except `href`.  Only existing cards have hrefs.  This
+            example adds two cards:  one has nothing more than the type, so it will receive the card
+            type's default validity dates, if any, and a computed number and issue level.  The other
+            is a mobile credential (it has an `invitation` block) with a custom initial state.
 
             Each element of the `update` array should be a card to modify.  It will need the href of
             that card, plus the fields you want to change.  Remember you cannot change a card's type.
