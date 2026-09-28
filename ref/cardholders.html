@@ -13344,7 +13344,7 @@
                     <dd>
                       <p>This object can contain three arrays, named &#39;add&#39;, &#39;update&#39;, and &#39;remove&#39;. Every element you put in those arrays should be in the
                         <a href="#definition-Cardholder-card">card schema</a>.</p>
-                      <p>Each element of the &#39;add&#39; array will need a &#39;type&#39; member, at the very least. Every card field makes sense here except &#39;href&#39;. Only existing cards have hrefs. This example adds two cards: one has nothing more than the type, so it will receive blank &#39;from&#39; and &#39;until&#39; dates and a computed number and issue level. The other is a mobile credential (it has an &#39;invitation&#39; block) with a custom initial state.</p>
+                      <p>Each element of the &#39;add&#39; array will need a &#39;type&#39; member, at the very least. Every card field makes sense here except &#39;href&#39;. Only existing cards have hrefs. This example adds two cards: one has nothing more than the type, so it will receive the card type&#39;s default &#39;from&#39; and &#39;until&#39; dates (blank if the card type has none) and a computed number and issue level. The other is a mobile credential (it has an &#39;invitation&#39; block) with a custom initial state.</p>
                       <p>Each element of the &#39;update&#39; array should be a card to modify. It will need the href of that card, plus the fields you want to change. Remember you cannot change a card&#39;s type. The example changes the issue level and resets the &#39;until&#39; date.</p>
                       <p>The only fields that make sense in an element of the &#39;remove&#39; array are &#39;href&#39; and &#39;status&#39;.</p>
                       <p>You can remove and add cards in the same PATCH. In fact you should do that in preference to making multiple API calls. That is a good way of reissuing a mobile credentials, for example: put the href to the old one in the &#39;remove&#39; array and a new invitation in the &#39;add&#39; array. The new credential should have the same card number and the same &#39;type&#39; and &#39;invitation&#39; blocks as the credential you&#39;re re-issuing.</p>
@@ -14036,10 +14036,11 @@
                     <dd>
                       <p>The start of the time period during which this card is active. If this time is in the future, the card is not active.</p>
                       <p>When it is not set, Command Centre acts as though it is set to a time in the distant past.</p>
-                      <p>When modifying a card, send a null string <code>&quot;&quot;</code> to reset it.</p>
-                      <p>It must be before midnight on the morning of January 1, 2100
+                      <p>When creating a card, leave this property out (or send <code>null</code>) to use the card type&#39;s default start time, if the card type has one. Send an empty string <code>&quot;&quot;</code> to create the card with no start time even when the card type has a default. <code>from</code> and <code>until</code> are treated independently, so leaving out <code>from</code> while sending <code>until</code> still applies the card type&#39;s default <code>from</code>.</p>
+                      <p>When modifying a card, send an empty string <code>&quot;&quot;</code> to reset it.</p>
+                      <p>Any value you send other than a blank string or null must be in RFC 3339 format, including a timezone. It must be before midnight on the morning of January 1, 2100 in the server&#39;s
                         <em>local</em> time (so servers with positive timezone offsets have maximums during December 31 2099), and it must be less than or equal to than the <code>until</code> time. A future version of Command Centre will clamp too-high values to December 31 2099 and return a 2xx (success) instead of 400 in that case.</p>
-                      <p>The server will reject timestamps in card updates that are not in an acceptable format. But in requests to create a card, rather than modify an existing card, the server will ignore such strings and use the card type&#39;s defaults. This is undesirable behaviour and will change in a future version of Command Centre.</p>
+                      <p>The server rejects a timestamp that is not in an acceptable format with a 400, whether the card is being created or modified.</p>
                     </dd>
                     <dt data-property-name="until" class="has-description">
                       <span class="json-property-name">until:</span>
@@ -14050,10 +14051,11 @@
                     <dd>
                       <p>The end of the time period during which this card is active. If this time is in the past, the card is not active.</p>
                       <p>When it is not set, Command Centre acts as though it is set to a time in the distant future.</p>
-                      <p>When modifying a card, send a null string <code>&quot;&quot;</code> to reset it.</p>
-                      <p>It must be before midnight on the morning of January 1, 2100
+                      <p>When creating a card, leave this property out (or send <code>null</code>) to use the card type&#39;s default expiry, if the card type has one: either its fixed end time, or its duration counted from the time the card is created. Send an empty string <code>&quot;&quot;</code> to create the card with no end time even when the card type has a default. <code>from</code> and <code>until</code> are treated independently.</p>
+                      <p>When modifying a card, send an empty string <code>&quot;&quot;</code> to reset it.</p>
+                      <p>Any value you send other than a blank string or null must be in RFC 3339 format, including a timezone. It must be before midnight on the morning of January 1, 2100 in the server&#39;s
                         <em>local</em> time (so servers with positive timezone offsets have maximums during December 31 2099), and it must be greater than or equal to the <code>from</code> time. A future version of Command Centre will clamp too-high values to December 31 2099 and return a 2xx (success) instead of 400 in that case.</p>
-                      <p>The server will reject timestamps in card updates that are not in an acceptable format. But in requests to create a card, rather than modify an existing card, the server will ignore such strings and use the card type&#39;s defaults. This is undesirable behaviour and will change in a future version of Command Centre.</p>
+                      <p>The server rejects a timestamp that is not in an acceptable format with a 400, whether the card is being created or modified.</p>
                     </dd>
                     <dt data-property-name="credentialClass" class="has-description">
                       <span class="json-property-name">credentialClass:</span>
