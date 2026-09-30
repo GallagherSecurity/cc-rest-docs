@@ -3966,7 +3966,8 @@
                     </div>
                     <div class="prop-value">
                       <p>Only returns items that are of a type with this ID. In versions up to 8.30 you could only specify one, but in 8.40 and later this can be a comma-separated list.</p>
-                      <p>Note that the server will ignore invalid IDs, and if they are all invalid it will act as though the filter was absent and return all items. This is a bug. Future versions will return nothing if all the type IDs are invalid.</p>
+                      <p>Servers older than 9.70 will ignore invalid IDs. If they are all invalid it will act as though the filter was absent and return all items.</p>
+                      <p>In 9.70 and later it will warn about invalid IDs and fail the whole request if none is valid.</p>
                     </div>
                   </div>
                   <div class="prop-row prop-group">
@@ -8388,7 +8389,7 @@
                         <a href="#path-Items/get/api/items/updates">this algorithm</a>.</p>
                       <p>On subsequent GETs it will only contain the items that received status updates since your previous call. Note that an item will be in this array if it received any status update at all, even if the status flags did not change. Prepare to receive updates that do not contain novel data.</p>
                       <p>This array is not paginated: it could contain every one of the items you put in your POST.</p>
-                      <p>After about 50 seconds the call will time out and return an empty array an a <code>next</code> link. When that happens, follow the <code>next</code> link just as you would have if there had been changes. Do not re-use the URL that returned you the empty array, because that will cause the server to start looking for status changes a point 50 seconds earlier than necessary. The results will be the same, but the server will have done more work to generate them.</p>
+                      <p>After about 50 seconds the call will time out and return an empty array and a <code>next</code> link. When that happens, follow the <code>next</code> link just as you would have if there had been changes. Do not re-use the URL that returned you the empty array, because that will cause the server to start looking for status changes a point 50 seconds earlier than necessary. The results will be the same, but the server will have done more work to generate them.</p>
                     </dd>
                     <dt class="json-inner-schema">
                       <section class="json-schema-array-items">
