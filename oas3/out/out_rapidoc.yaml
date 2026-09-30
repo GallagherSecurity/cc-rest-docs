@@ -5521,7 +5521,7 @@ components:
             that card, plus the fields you want to change.  Remember you cannot change a card's type.
             The example changes the issue level and resets the `until` date.
 
-            The only field that makes sense in an element of the `remove` array is `href` and `status`.
+            The only fields that makes sense in an element of the `remove` array are `href` and `status`.
 
             You can remove and add cards in the same PATCH.  In fact you should do that in preference
             to making multiple API calls.  That is a good way of reissuing a mobile credentials, for
@@ -6038,7 +6038,7 @@ components:
           description: |
             For card types with decimal card numbers, this is the maximum.  Must be non-negative.
 
-            The default depends on the credential type.  It is 16,777,215 (2^24) for regular cards.
+            The default depends on the credential type.  It is 16,777,215 (24 bits) for regular cards.
           type: integer
           example: 16777215
         serverDisplayName: *SERVER
@@ -6135,8 +6135,8 @@ components:
         sendRegistrationSms:
           type: boolean
           description:  |
-            Only relevant for Gallagher mobile credentials.  If `true`, Command Centre will send an
-            TXT invitation to provision a new credential.  If `false`, the integration that creates
+            Only relevant for Gallagher mobile credentials.  If true, Command Centre will send an
+            SMS invitation to provision a new credential.  If false, the integration that creates
             credentials of this type must do that.
         cardNumberFormat:
           type: string
@@ -6192,7 +6192,7 @@ components:
             date is set `defaultExpiryDuration` into the future.
 
             This is an ISO 8601 duration, so it will be of the form 'PnYnMnWnDTnHnM'.  Such
-            durations always starts with a 'P'.  'n' is a number, and the 'Y', 'M', 'W', 'D', 'H',
+            durations always start with a 'P'.  'n' is a number, and the 'Y', 'M', 'W', 'D', 'H',
             and 'M' following them are for years, months, weeks, days, hours, and minutes.  The 'T'
             is there if the units of the duration are smaller than a day, to distinguish months and
             minutes.  If any 'n' is zero then it and the unit character following it will be
@@ -8328,7 +8328,7 @@ components:
             This array is not paginated:  it could contain every one of the items you put in your
             POST.
 
-            After about 50 seconds the call will time out and return an empty array an a `next`
+            After about 50 seconds the call will time out and return an empty array and a `next`
             link.  When that happens, follow the `next` link just as you would have if there had
             been changes.  Do not re-use the URL that returned you the empty array, because that
             will cause the server to start looking for status changes a point 50 seconds earlier
@@ -9963,7 +9963,7 @@ info:
         could be 200 or 204 depending on whether it has something to tell you, and a negative result
         will change between the various 400s depending on the environment.
 
-      * Treat item IDs as strings even though they are currently look like small integers.  We
+      * Treat item IDs as strings even though they currently look like small integers.  We
         intend to change them.
 
       * Treat string identifiers as strings even if they look like GUIDs.  If the documentation does
@@ -12777,7 +12777,7 @@ paths:
 
         * your server must have the Regulated Zones customisation licence, and
 
-        * the time must be in the past, more recent that the cardholder's most recent movement, and
+        * the time must be in the past, more recent than the cardholder's most recent movement, and
           more recent than the "Maximum age of historical manual access events" setting in the
           "Operator defaults" tab of the server properties, and
 
@@ -13087,7 +13087,7 @@ paths:
         card types.
 
         You can find this URL in `features.cardTypes.cardTypes`in `/api`.  In the interest of
-        forward compability, [do not build the URL
+        forward compatibility, [do not build the URL
         yourself](#overview--forward-compatibility-hateoas).
 
         The card types you can view may be a different set from those you are allowed to assign to
@@ -13163,7 +13163,7 @@ paths:
         Cardholders'.
 
         You can find this URL in `features.cardTypes.assign`in `/api`.  It was new in 8.10.  In the
-        interest of forward compability, [do not build the URL
+        interest of forward compatibility, [do not build the URL
         yourself](#overview--forward-compatibility-hateoas).
         
       parameters:
@@ -13228,7 +13228,7 @@ paths:
       summary: Update
       description: |
         This is the call you use to update a card type.  Take the URL from the results of a card
-        type search.  In the interest of forward compability, [do not build it
+        type search.  In the interest of forward compatibility, [do not build it
         yourself](#overview--forward-compatibility-hateoas).
         
         The PATCH expects a document in the same format as the [the card type
@@ -13278,7 +13278,7 @@ paths:
       tags: [ Card Types ]
       summary: Remove
       description: |
-        This call removes a card type from Command Centre.  In the interest of forward compability,
+        This call removes a card type from Command Centre.  In the interest of forward compatibility,
         take the URL from the results of a card type search rather than [building it
         yourself](#overview--forward-compatibility-hateoas).
 
@@ -15418,9 +15418,11 @@ paths:
           Only returns items that are of a type with this ID.  In versions up to 8.30 you could only
           specify one, but in 8.40 and later this can be a comma-separated list.
 
-          Note that the server will ignore invalid IDs, and if they are all invalid it will act as
-          though the filter was absent and return all items.  This is a bug.  Future versions will
-          return nothing if all the type IDs are invalid.
+          Servers older than 9.70 will ignore invalid IDs.  If they are all invalid it will act as
+          though the filter was absent and return all items.
+
+          In 9.70 and later it will warn about invalid IDs and fail the whole request if none is
+          valid.
         schema:
           type: string
       - name: top
@@ -18992,7 +18994,7 @@ tags:
 
     * Potentially breaking change:  the API route that returns a cardholder's value of a string PDF
       as its payload used to send a zero-length body if the cardholder did not have a value for the
-      PDF, but will now return a 404 as it does for missing PDFs of type other types.
+      PDF, but will now return a 404 as it does for missing PDFs of other types.
 
     ### API changes in 9.60
 
