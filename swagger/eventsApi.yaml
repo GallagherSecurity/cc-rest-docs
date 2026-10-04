@@ -1939,9 +1939,11 @@ paths:
           Only returns items that are of a type with this ID.  In versions up to 8.30 you could only
           specify one, but in 8.40 and later this can be a comma-separated list.
 
-          Note that the server will ignore invalid IDs, and if they are all invalid it will act as
-          though the filter was absent and return all items.  This is a bug.  Future versions will
-          return nothing if all the type IDs are invalid.
+          Servers older than 9.70 will ignore invalid IDs.  If they are all invalid it will act as
+          though the filter was absent and return all items.
+
+          In 9.70 and later it will warn about invalid IDs and fail the whole request if none is
+          valid.
       - name: "top"
         in: query
         required: false
@@ -3743,7 +3745,7 @@ definitions:
           This array is not paginated:  it could contain every one of the items you put in your
           POST.
 
-          After about 50 seconds the call will time out and return an empty array an a `next`
+          After about 50 seconds the call will time out and return an empty array and a `next`
           link.  When that happens, follow the `next` link just as you would have if there had
           been changes.  Do not re-use the URL that returned you the empty array, because that
           will cause the server to start looking for status changes a point 50 seconds earlier
