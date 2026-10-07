@@ -4256,9 +4256,9 @@ components:
           description: |
             In a GET response for text, numeric, and date PDFs this will be a scalar containing the
             value, but for image PDFs it will be an object containing a copy of the `href` field
-            above.  For date PDFs the string will comply to ISO 8601, but may or may not contain a
-            time depending on the version of Command Centre.  Newer versions omit it.  If there,
-            it will be midnight UTC.
+            above.  For date PDFs the string will comply to RFC 3339, but may or may not contain a
+            time depending on the version of Command Centre.  Newer versions omit the `T` separator
+            and everything after it.  If there, it will be midnight UTC.
 
             In versions up to and including 8.60, if a cardholder did not have an image PDF captured
             (in other words they were a member of an access group that included an image PDF, but they
@@ -18996,6 +18996,13 @@ tags:
     * Potentially breaking change:  the API route that returns a cardholder's value of a string PDF
       as its payload used to send a zero-length body if the cardholder did not have a value for the
       PDF, but will now return a 404 as it does for missing PDFs of other types.
+
+    ### API changes in 9.60-MR1 (a maintenance release)
+
+    * Using this API to create a credential of a card type that has default validity times on it
+      will transfer those times to the new credential, as it does when creating credentials through
+      our thick clients.  This is a bugfix.  Previous versions left the new credential's `from` and
+      `until` timestamps unset, if the client did not send them.
 
     ### API changes in 9.60
 
