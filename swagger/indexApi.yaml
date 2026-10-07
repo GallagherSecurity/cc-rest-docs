@@ -102,6 +102,13 @@ x-spectacle-topics:
         payload used to send a zero-length body if the cardholder did not have a value for the PDF,
         but will now return a 404.  This brings string PDFs into line with other PDF types.
 
+  API changes in 9.60-MR1:
+    description: |
+      * Using this API to create a credential of a card type that has default validity times on it
+        will transfer those times to the new credential, as it does when creating credentials
+        through our thick clients.  This is a bugfix.  Previous versions left the new credential's
+        `from` and `until` timestamps unset, if the client did not send them.
+
   API changes in 9.60:
     description: |
       * You can move cardholders outside the system.
