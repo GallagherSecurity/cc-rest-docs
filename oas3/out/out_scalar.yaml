@@ -3907,6 +3907,8 @@ components:
       - $ref: '#/components/schemas/CardholderSummary'
       - $ref: '#/components/schemas/CardholderCommonFields'
       - type: object
+        title: Detail fields
+        description: Fields unique to the cardholder detail.
         properties:
           lastSuccessfulAccessTime:
             type: string
@@ -9991,7 +9993,8 @@ info:
     ## Versions
 
     The body of this document clearly indicates when recent features arrived in the API so that
-    readers with older versions of Command Centre know not to expect them.
+    readers with older versions of Command Centre know not to expect them.  There is also a
+    [changelog](#tag/changelog).
 
     ## API authentication
 
@@ -10018,7 +10021,7 @@ info:
     Future versions of Command Centre and all versions of the API gateway will reject you with a 401 if you do
     that.  The API gateway is especially fussy about case and punctuation.
 
-    #### HTTP Basic authentication
+    ### HTTP Basic authentication
 
     The two example headers above are equivalent:  prepending a colon to the API key beginning
     with `C774` then encoding it into Base64 produces the 56 characters beginning with `OkM3`.
@@ -10028,7 +10031,7 @@ info:
     place a username before the colon, before Base64-encoding it, Command Centre will ignore it
     and authenticate the connection based on the API key alone.
 
-    #### Pinning a client TLS certificate
+    ### Pinning a client TLS certificate
 
     Depending on Command Centre's site configuration, its REST API may also require a client
     certificate with each request.  In versions up to and including 8.40 this was controlled by a
@@ -10050,12 +10053,12 @@ info:
 
     See the Configuration Client help for instructions on where to enter REST Client thumbprints.
 
-    #### Source IP filtering
+    ### Source IP filtering
 
     Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API
     will only accept connections from the IP address ranges configurated into that client item.
 
-    #### Symptoms of authentication failures
+    ### Symptoms of authentication failures
 
     If a connection attempt fails, the server will return a 401 and raise an event containing its
     reason for refusing the request.  If that happens too often, the server will stop reporting
@@ -10334,6 +10337,21 @@ info:
     will be on or off, and alarm and access zones will be in one of four zone states.
 
 paths:
+
+  /api/changelog:
+    delete:
+      tags:
+      - Changelog
+      summary: Dummy path for changelog tag.
+      description: |
+        This path does not exist in the API.  It is in the documentation to satisfy the HTML
+        renderers that require a path in every tag.
+      
+      responses:
+        "200":
+          description: This result is unlikely.
+        "404":
+          description: This path does not exist.
   
   /api/access_groups:
     get:
@@ -13315,20 +13333,6 @@ paths:
           description: |
             That is not the URL of a card type, or the operator is not privileged to view it.
 
-  /api/changelog:
-    delete:
-      tags:
-      - Changelog
-      summary: Dummy path for changelog tag.
-      description: |
-        This path does not exist in the API.  It is in the documentation to satisfy the HTML
-        renderers that require a path in every tag.
-      
-      responses:
-        "200":
-          description: This result is unlikely.
-        "404":
-          description: This path does not exist.
   /api/competencies:
     get:
       tags:
@@ -18063,6 +18067,427 @@ servers:
   - url: https://127.0.0.1:8904
 
 tags:
+- name: "Changelog"
+  description: |
+
+    ### API changes on the roadmap
+
+    * Alarms will have a block containing their event group, as events do.
+
+    * You will be able to set the number of alarms you want coming back from a GET, as you can with
+      events.
+
+    * Events indicating that an operator modified an item may not have a cardholder at the end of
+      the `operator` href.  It may be a new kind of item, because we have new events coming that
+      will indicate when an integration modifies an item rather than a human operator.
+
+    * POTENTIALLY BREAKING CHANGE:  searching for cardholders using `pdf_xxx=""` or `pdf_xxx=` with
+      no search value currently returns no cardholders.  That is neither useful nor desired.
+      Instead, a future version of Command Centre will return cardholders with a blank value for
+      that PDF.
+
+    * POTENTIALLY BREAKING CHANGE:  the API route that lets you modify a cardholder by PATCH also
+      works if you send it a POST.  It should not, because POSTs create things, not modify them.
+      The fix will break clients that rely on this.  There should be no clients relying on it since
+      the POST was not documented.
+
+    * POTENTIALLY BREAKING CHANGE:  in future, PATCH methods will return "200 Success" instead of
+      "204 No Content" and may contain the object you modified plus a message from the API giving
+      you feedback on your request.  Please be aware that all 200-level response codes mean success,
+      not just the ones old versions have been sending you.
+
+    * You will be able to request the competencies that your operator has the permission to assign.
+      That is determined by privileges, a competency setting, and an operator group setting.
+      Current versions let you request the competencies that your operator has the permission to
+      view, which is a larger set determined by privileges alone, and not suitable for interactive
+      REST clients.
+
+    * You will be able to create and delete alarm zones, and modify some basic fields.
+
+    ### API changes in 9.70
+
+    * Potentially breaking change:  searching for items using a totally-invalid type filter
+      previously returned all items, as though the filter was absent.  This was a bug.  9.70 returns
+      no items in this case, and an explanation.
+
+    * Potentially breaking change:  a cardholder's value for a date PDF used to be in RFC 3339 or in
+      the server's locale, depending on the route.  Both included midnight.  9.70 returns them
+      simply as 'YYYY-MM-DD', since date PDFs do not include a time.
+
+    * Potentially breaking change:  the API route that returns a cardholder's value of a string PDF
+      as its payload used to send a zero-length body if the cardholder did not have a value for the
+      PDF, but now returns a 404, as it does for missing PDFs of other types.
+
+    ### API changes in 9.60-MR1 (a maintenance release)
+
+    * Using this API to create a credential of a card type that has default validity times on it
+      will transfer those times to the new credential, as it does when creating credentials through
+      our thick clients.  This is a bugfix.  Previous versions left the new credential's `from` and
+      `until` timestamps unset, if the client did not send them.
+
+    ### API changes in 9.60
+
+    * You can move cardholders outside the system.
+
+    * The [items controller](#tag/items) can give you items' descriptions and short names, if you
+      ask.
+
+    * The cardholder `allPdfs` field and "revealable" PDF types have been in the product for several
+      versions and are now ready for prime time.
+
+    * If you attempt to subscribe to status changes on items that are outside your operator's
+      view, the 403 response now includes a copy of your list with the invalid items removed.
+
+    ### API changes in 9.50
+
+    * OIDC login support for operators.
+
+    * Creating an [item status subscription](#tag/items/POST/api/items/updates) and [collecting the
+      first batch of changes](#path/Get/Items/updates) will no longer return the first set of
+      results twice.  If your application follows the algorithm at the second link above it will
+      always be compatible with this API.
+
+      The performance improvements were such that we felt it worthwhile to port it back to all
+      supported versions, so it is also present in the latest maintenance releases of 9.10 through
+      9.40.
+
+    * Potential breaking change:  the maximum length of an item's name increased from 60 to 110
+      characters, and attempts to set a name longer than that will fail.  Earlier versions silently
+      truncated the name and let the update proceed.  Cardholder first and last names remain capped
+      at 50 characters each.
+
+    * The Apple Employee Badge Type and State Set now have proper canonical type names, improved
+      from `type_279` and `type_280`.
+
+    * Cardholders have accessibilities for skipping PIN entry and taking longer to get through a
+      door, in addition to the existing accessibility to not use a scramble pad.
+
+    * POTENTIALLY BREAKING CHANGE:  GovPass cards and card states may have changed item type names
+      between 9.20 and 9.30, depending on the card type and the site's licences.
+
+    ### API change in May 2026 maintenance releases
+
+    * Potential breaking change in 9.20 MR7, 9.30 MR5, and 9.40 MR2:  attempts to set the name of an
+      item that is not a cardholder to a string that is longer than 60 characters will fail.
+      Earlier versions silently truncated the name and let the update proceed.  There is no change
+      to the handling of cardholders' names.
+
+    ### API changes in 9.40
+
+    * Support for half-cycle door locks.  Common in correctional facilities, half-cycle locks remain
+      unlocked until closed.  Regular doors unlock for a few seconds before locking again.
+
+    * POTENTIALLY BREAKING CHANGE:  for efficiency, 9.30 orders search results differently from 9.20
+      when your query does not include a `sort` parameter.  If you care about the order of your
+      items, tell the server how you want them sorted.
+
+    * POTENTIALLY BREAKING CHANGE:  GovPass cards may have a new credentialClass and GovPass card
+      states will have new names, depending on the card type and the site's licences.
+
+    * You can create, modify, and delete [access groups](#tag/access-groups).
+
+    ### API changes in 9.30
+
+    * You can create, modify, and delete divisions and access groups.
+
+    * The server will accept TLS 1.3 connections when running on suitable versions of Windows.
+      Prior versions would only accept TLS 1.2 connections.
+
+    * An API client can switch its own status between `normal` and `faulty`, and can set arbitrary
+      status text.  Marking the item as faulty will raise an alarm in Command Centre.
+
+    * Command Centre can, optionally, raise an alarm if an API client has not made an API call
+      within a configurable period.  This is an addition to Command Centre, not to the API, but
+      deserves a mention here for developers considering adding status monitoring to their
+      integrations.  It may be done for you!
+
+    ### API changes in 9.20
+
+    * You can filter events and items by their direct division.  The older division search is
+      recursive:  it considers everything that has any of the filter's divisions anywhere in its
+      ancestry.  The new division search is shallow:  it only returns events and items that are
+      direct members of the division in the filter.
+
+    ### API changes in 9.10
+
+    * You can request the name of an alarm's instruction, and the contents of the instruction itself.
+
+    * You can create, modify, and delete [competencies](#tag/competencies).
+
+    * You can request a locker's status and send an override to quarantine it.  The [use
+      cases]() section shows how.
+
+    ### API changes in 9.00
+
+    * A new event type `hasLocation` greatly simplifies the [monitoring of cardholder
+      movements](#path/get/Events)
+      
+    * A new ([`location` block on events]() greatly
+      simplifies interpreting them.
+
+    * You can search for cardholders by the access zone they are in.
+
+    * GovPass cards have two new fields, `visitorContractor` and `ownedBySite`.
+
+    ### Alarms and events API changes in 8.90
+
+    * BREAKING CHANGE:  the operator must have the 'Create Events and
+      Alarms' privilege in the division of the source item, if your request specifies a source item.
+      Current versions only require that the operator has that privilege on at least one division.
+
+    * To improve the symmetry between events and alarms, they both now carry a field `eventType`
+      containing the ID and name of their type.  The `type` field, which has different
+      contents for alarms and events, is now obsolete (but still returned in results).
+
+    * Alarms contain a new field called `event` containing a link to the corresponding event,
+      mirroring the existing `alarm` field coming the other way from an event.
+
+    * You can request a division's description.  This has been possible since 8.50 but was not
+      certified until 2022, so it gets a mention now.
+
+    * Write-only access to card PINs.
+
+    * You can set a reason when re-issuing or removing a card which will appear on the
+      resulting event.  The default is the card's previous state.
+
+    * You can now [set](#tag/visits/PATCH/api/visits/{id}/visitors/{visitorId}) a visitor's state
+      (signing in, etc.).  Visits will return that, if you ask.
+
+    * Bug fix:  removing an operator group from a cardholder by PATCH was not possible in the early
+      versions of 8.70 and 8.80.  It was fixed in 8.70.2113, 8.80.1116, and all versions of 8.90.
+
+    ### API changes in 8.80
+
+    * BREAKING CHANGE:  Date PDFs no longer come out of the API with a time component or time zone
+      designator, because date PDFs don't hold a time or time zone.  Previously they came out as
+      midnight UTC, which implied more accuracy than date PDFs hold.
+
+    * [Redactions](#tag/redactions).
+
+    * An optional PDF field `operatorAccess` contains the level of access your operator has to
+      cardholders' values for the PDF.
+
+    * Card type `regex` and `regexDescription` fields.
+
+    * Email and mobile PDFs return their 'Default Notifications' flag on request.  This actually
+      happened in 8.50 but did not make it into the "changes" list.
+
+    * Early-adopter support for [Interlock groups](#tag/interlock-groups).
+
+    ### API changes in 8.70
+
+    * Each event in a page of search results will contain URLs to continue the search after that
+      event.  This is a significant benefit to integrations that extract large pages of events and
+      may encounter a problem mid-page, and have to resume without loss or duplication later.
+
+    * A new privilege 'View Cardholder Events' grants visibility of an event if the operator has the
+      privilege in both the event's division and the event's cardholder's division.  This allows a
+      site to create a REST client that can monitor selected cardholders' movements through selected
+      areas, but cannot see any other activity in those areas.
+
+    * You may now use the `relatedItem` query parameter in an item search to find events that are
+      associated with a particular item.
+
+    * BREAKING CHANGE: Missing image PDFs will no longer have "not captured" as their value.
+      Instead, they will have no value at all.
+
+    * A cardholder's operator group memberships (added in 8.50) now contain an href that you can use
+      in an HTTP DELETE as another way of removing a cardholder from an operator group.
+
+    * The server returns 1000 items by default instead of 100.
+
+    * Image PDFs tell you whether they are the cardholder's profile picture.
+
+    * Image PDFs have a new optional field `contentType` that returns their MIME type.  This
+      deprecates the old `imageFormat` field, which is non-standard.
+
+    * Asking for a particular PDF on a cardholder (by putting `pdf_XXX` into the `fields` query parameter) will
+      cause it to appear even if the cardholder has no value for that PDF.  Previous versions only
+      showed if it had a non-blank value.
+
+    * Attempting to give a cardholder a competency they already have will fail instead of allowing
+      it and raising an alarm.  Note that a cardholder having two links to the same competency leads
+      to undefined behaviour.
+
+    * A new query parameter `requested_by` lets you attribute overrides to another cardholder.  Your
+      operator must have the 'Delegate API Activity' privilege in the cardholder's division.
+
+    * Item updates now include fields that changed to an empty value.  Versions up to 8.60 returned
+      an update but did not tell you which field changed or what it changed to, if it changed to a
+      blank.
+
+    ### API changes in 8.60
+
+    * Card numbers on Bluetooth (mobile) and PIV card events are now full-length.  Mobile numbers
+      are now the phone's ID string, changed from the number that 8.50 returned.  Decimal numbers
+      now come out unsigned.  Note that neither 8.50's numbers nor 8.60's ID strings are guaranteed
+      unique across phones.
+
+    * Access events that do not have a card, such as someone entering their user code instead of
+      badging their card, will no longer return a card block.
+
+    * You can search for cardholders by division or description.
+
+    * 8.60 rejects unsupported HTTP verbs instead of treating them like a GET.  For example, if you
+      send a POST to `/api/competencies` 8.50 will return a list of competencies but 8.60 will
+      return a 400-level error.
+
+    * In build 8.60.1684 or later, attempting to give a cardholder a competency they already have
+      will fail instead of allowing it and raising an alarm.  Note that a cardholder having two
+      links to the same competency leads to undefined behaviour.
+
+    * The RESTOverrides licence allows you to find items and their override URLs.
+
+    ### API changes in 8.50
+
+    * The server property that turns off [client certificate checking](#authentication) changed.
+
+    * Divisions can return some of their Visitor Management configuration.
+
+    * You can view any item's notes.  You have been able to for a while now, but it was missing from
+      this document.
+
+    * You can request a division's description.
+
+    * You can manage operators by setting their operator group memberships and logon credentials.
+    * You can view [operator groups](#tag/operator-groups).
+    * Lockers and locker banks report the hardware controller where they reside.
+    * Cardholders report their 'disable cipher pad' setting (vision impairment).
+    * Card types will show their division on request.
+
+    * Cardholders can have default floors and passenger type flags per elevator group.
+      Thyssen-Krupp systems can prepare an elevator car when Command Centre grants a cardholder
+      access through lobby turnstiles.
+
+    * You can list receptions and see enough of a division's visitor management configuration to
+      create and manage visits.
+
+    * Image Personal Data Field definitions will show their width, height, and format (JPG, PNG, or
+      BMP) on request.
+
+    * Email and mobile PDFs return their 'Default Notifications' flag on request.
+
+    * A [schedules API](#tag/schedules) provides CRUD of the six schedule item types.
+
+    * A [day categories API](#tag/day-categories) returns the day categories you need for those
+      schedules.
+
+    * A [pulse](#tag/outputs/POST/api/outputs/{id}/pulse) overrides an output.
+
+    * A 'connectedController' field grew on the item types that did not already have it.
+
+    * An [elevator groups API](#tag/elevator-groups) provides a view of elevator groups so that you
+      can [set a cardholder's default
+      floor](#tag/cardholders/PATCH/api/cardholders/{id}/patch).
+
+    ### API changes in 8.40
+
+    * You may now use the `fields` query parameter to tailor the fields that come back for events
+      and alarms.
+
+    * Operator add, modify, and delete [events](#model/EventSummary) now contain a link to the
+      affected item in a new `modifiedItem` block, deprecating the `accessGroup` block for those
+      event types.
+
+    * All operator events now contain the operator's name at the time.
+
+    * All events now contain the name of the event's division.
+
+    * The [item search](#path/Items/get/api/items) can now filter multiple item types.
+
+    * Events now show their origin when they have arrived from a remote server (in a multiserver
+      environment).
+
+    * Access groups have 22 new fields showing the privileges and access they grant their members.
+      These new fields are in the default set for the [detail view](#model/AccessGroupDetail).
+
+    * Access groups now return the alarm zones over which they have privilege.
+
+    * Items on remote servers now show their origin server in a new `serverDisplayName` field.
+
+    * Cards contain the date and time of their last print or encode, and their issue level at the
+      time.
+
+    ### API changes in 8.30
+
+    * The [items API](#tag/items) has methods that let you monitor the status of large numbers of
+      items.
+
+    * Doors related to guard tour events now appear in an event's `door` block.
+
+    * Cardholder [change tracking](#tag/cardholder-changes) lets you synchronise users into an
+      external system by informing it of changes as they occur.
+
+    * Cardholder group membership hrefs now contain a long string where they used to contain a small
+      integer.  Integrations that cache membership hrefs a) should not and b) will need to refresh.
+   
+    * A cardholder's card object now contains a Boolean field called `trace` indicating whether its
+      trace flag is set.  A card with tracing on generates an event every time it is used.
+
+    * A 'connectedController' field in the [door detail](#model/DoorDetail) returns the ID and
+      name of the door's hardware controller (a hardware controller, not an API controller).
+
+    ### API changes in 8.20
+
+    * Alarms and events with a related cardholder now show the cardholder's current first and last
+      name in separate fields.
+
+    * The `name` field on an alarm or event with a related cardholder is now the cardholder's name
+      at the time of the event, rather than at the time of the request.
+
+    * You can use the 'fields' parameter to add the 'details' field to an event summary.
+
+    * A new field `update_location` on a cardholder gives a link to a
+      [POST](#tag/cardholders/POST/cardholders/{id}/update_location) that changes his or her
+      current location (access zone).
+
+    * An
+      [update_cardholder_location](#tag/access-zones/GET/api/access_zones/update_cardholder_location)
+      call on the Access Zones API returns you the list of Access Zones into which your operator is
+      allowed to move cardholders.
+
+    * Lockers and locker banks are now visible with the RESTStatus licence, including whether a
+      locker is available or allocated.  You still need RESTCardholders to see which cardholder/s a
+      locker is assigned to.
+
+    * Lockers moved from the locker banks controller into their own.  That changed their hrefs.
+
+    * Bugfix:  you can now change a cardholder's division.
+
+    * A cardholder's [relationships block](#model/CardholderRelationship) now contains the
+      role holder's two name fields.  The `name` field, present since 7.90, is simply these two
+      fields joined with a space, and is therefore ambiguous when a cardholder only has one name.
+
+    ### API changes in 8.10.1112
+
+    * You can send an [override](#tag/lockers/POST/api/{id}/open) to a locker to open it.
+
+    * You can use the `fields` query parameter to select the fields you receive from locker bank
+      [summary](#tag/lockers/GET/api/locker_banks) and
+      [details](#tag/locker/GET/api/locker_banks/{id}) GETs.  The [use
+      cases]() section shows how.
+
+    ### API changes in 8.10
+
+    * [Incoming events](#tag/events/POST/api)
+
+    * Events now show their related [access groups and doors](#model/EventSummary) for
+      external event types.
+
+    * There is a [card types API](#tag/card-types/GET/api/card_types/assign) that returns the card types
+      your operator is able to use when assigning cards to cardholders.
+
+    * There is a [PDF API](#tag/pdf-definitions/GET/api/personal_data_fields) that returns the
+      personal data field definitions your operator is able to see.
+
+    * You can change the notifications flag on a cardholder's PDF.
+
+    * Certificates and biometric data are available on PIV cards.
+
+    * An [inputs API](#tag/inputs) gives you the state of 'input' hardware items and lets you
+      override them.  It is very similar to the outputs API.
+
+  
 - name: Access Groups
   x-tag-expanded-this-works-in-rapidoc: false
   x-summary-in-3.2: Management of Access Groups
@@ -18956,431 +19381,6 @@ tags:
     Reading card types is enabled by the RESTCardholders licence but creating, deleting, or
     modifying them requires the RESTConfiguration licence.
 
-- name: "Changelog"
-  description: |
-
-    ### API changes on the roadmap
-
-    * Alarms will have a block containing their event group, as events do.
-
-    * You will be able to set the number of alarms you want coming back from a GET, as you can with
-      events.
-
-    * Potentially breaking change:  the API route that returns the value of a string PDF will change
-      to return a 404 if the cardholder does not have a value for it, as it does for image and date
-      PDFs.  Currently, missing string PDFs come out as a zero-length payload.
-
-    * Events indicating that an operator modified an item may not have a cardholder at the end of
-      the `operator` href.  It may be a new kind of item, because we have new events coming that
-      will indicate when an integration modifies an item rather than a human operator.
-
-    * POTENTIALLY BREAKING CHANGE:  searching for cardholders using `pdf_xxx=""` or `pdf_xxx=` with
-      no search value currently returns no cardholders.  That is neither useful nor desired.
-      Instead, a future version of Command Centre will return cardholders with a blank value for
-      that PDF.
-
-    * POTENTIALLY BREAKING CHANGE:  the API route that lets you modify a cardholder by PATCH also
-      works if you send it a POST.  It should not, because POSTs create things, not modify them.
-      The fix will break clients that rely on this.  There should be no clients relying on it since
-      the POST was not documented.
-
-    * POTENTIALLY BREAKING CHANGE:  in future, PATCH methods will return "200 Success" instead of
-      "204 No Content" and may contain the object you modified plus a message from the API giving
-      you feedback on your request.  Please be aware that all 200-level response codes mean success,
-      not just the ones old versions have been sending you.
-
-    * You will be able to request the competencies that your operator has the permission to assign.
-      That is determined by privileges, a competency setting, and an operator group setting.
-      Current versions let you request the competencies that your operator has the permission to
-      view, which is a larger set determined by privileges alone, and not suitable for interactive
-      REST clients.
-
-    * You will be able to create and delete alarm zones, and modify some basic fields.
-
-    ### API changes in 9.70
-
-    * Potentially breaking change:  searching for items using an invalid type filter previously
-      returned all items, as though the type filter was absent.  9.70 returns no items, and an
-      explanation.
-
-    * Potentially breaking change:  a cardholder's value for a date PDF used to be in RFC 3339 or in
-      the server's locale, depending on the route.  Both included midnight.  9.70 returns them
-      simply as 'YYYY-MM-DD', since date PDFs do not include a time.
-
-    * Potentially breaking change:  the API route that returns a cardholder's value of a string PDF
-      as its payload used to send a zero-length body if the cardholder did not have a value for the
-      PDF, but will now return a 404 as it does for missing PDFs of other types.
-
-    ### API changes in 9.60-MR1 (a maintenance release)
-
-    * Using this API to create a credential of a card type that has default validity times on it
-      will transfer those times to the new credential, as it does when creating credentials through
-      our thick clients.  This is a bugfix.  Previous versions left the new credential's `from` and
-      `until` timestamps unset, if the client did not send them.
-
-    ### API changes in 9.60
-
-    * You can move cardholders outside the system.
-
-    * The [items controller](#tag/items) can give you items' descriptions and short names, if you
-      ask.
-
-    * The cardholder `allPdfs` field and "revealable" PDF types have been in the product for several
-      versions and are now ready for prime time.
-
-    * If you attempt to subscribe to status changes on items that are outside your operator's
-      view, the 403 response now includes a copy of your list with the invalid items removed.
-
-    ### API changes in 9.50
-
-    * OIDC login support for operators.
-
-    * Creating an [item status subscription](#tag/items/POST/api/items/updates) and [collecting the
-      first batch of changes](#path/Get/Items/updates) will no longer return the first set of
-      results twice.  If your application follows the algorithm at the second link above it will
-      always be compatible with this API.
-
-      The performance improvements were such that we felt it worthwhile to port it back to all
-      supported versions, so it is also present in the latest maintenance releases of 9.10 through
-      9.40.
-
-    * Potential breaking change:  the maximum length of an item's name increased from 60 to 110
-      characters, and attempts to set a name longer than that will fail.  Earlier versions silently
-      truncated the name and let the update proceed.  Cardholder first and last names remain capped
-      at 50 characters each.
-
-    * The Apple Employee Badge Type and State Set now have proper canonical type names, improved
-      from `type_279` and `type_280`.
-
-    * Cardholders have accessibilities for skipping PIN entry and taking longer to get through a
-      door, in addition to the existing accessibility to not use a scramble pad.
-
-    * POTENTIALLY BREAKING CHANGE:  GovPass cards and card states may have changed item type names
-      between 9.20 and 9.30, depending on the card type and the site's licences.
-
-    ### API change in May 2026 maintenance releases
-
-    * Potential breaking change in 9.20 MR7, 9.30 MR5, and 9.40 MR2:  attempts to set the name of an
-      item that is not a cardholder to a string that is longer than 60 characters will fail.
-      Earlier versions silently truncated the name and let the update proceed.  There is no change
-      to the handling of cardholders' names.
-
-    ### API changes in 9.40
-
-    * Support for half-cycle door locks.  Common in correctional facilities, half-cycle locks remain
-      unlocked until closed.  Regular doors unlock for a few seconds before locking again.
-
-    * POTENTIALLY BREAKING CHANGE:  for efficiency, 9.30 orders search results differently from 9.20
-      when your query does not include a `sort` parameter.  If you care about the order of your
-      items, tell the server how you want them sorted.
-
-    * POTENTIALLY BREAKING CHANGE:  GovPass cards may have a new credentialClass and GovPass card
-      states will have new names, depending on the card type and the site's licences.
-
-    * You can create, modify, and delete [access groups](#tag/access-groups).
-
-    ### API changes in 9.30
-
-    * You can create, modify, and delete divisions and access groups.
-
-    * The server will accept TLS 1.3 connections when running on suitable versions of Windows.
-      Prior versions would only accept TLS 1.2 connections.
-
-    * An API client can switch its own status between `normal` and `faulty`, and can set arbitrary
-      status text.  Marking the item as faulty will raise an alarm in Command Centre.
-
-    * Command Centre can, optionally, raise an alarm if an API client has not made an API call
-      within a configurable period.  This is an addition to Command Centre, not to the API, but
-      deserves a mention here for developers considering adding status monitoring to their
-      integrations.  It may be done for you!
-
-    ### API changes in 9.20
-
-    * You can filter events and items by their direct division.  The older division search is
-      recursive:  it considers everything that has any of the filter's divisions anywhere in its
-      ancestry.  The new division search is shallow:  it only returns events and items that are
-      direct members of the division in the filter.
-
-    ### API changes in 9.10
-
-    * You can request the name of an alarm's instruction, and the contents of the instruction itself.
-
-    * You can create, modify, and delete [competencies](#tag/competencies).
-
-    * You can request a locker's status and send an override to quarantine it.  The [use
-      cases]() section shows how.
-
-    ### API changes in 9.00
-
-    * A new event type `hasLocation` greatly simplifies the [monitoring of cardholder
-      movements](#path/get/Events)
-      
-    * A new ([`location` block on events]() greatly
-      simplifies interpreting them.
-
-    * You can search for cardholders by the access zone they are in.
-
-    * GovPass cards have two new fields, `visitorContractor` and `ownedBySite`.
-
-    ### Alarms and events API changes in 8.90
-
-    * BREAKING CHANGE:  the operator must have the 'Create Events and
-      Alarms' privilege in the division of the source item, if your request specifies a source item.
-      Current versions only require that the operator has that privilege on at least one division.
-
-    * To improve the symmetry between events and alarms, they both now carry a field `eventType`
-      containing the ID and name of their type.  The `type` field, which has different
-      contents for alarms and events, is now obsolete (but still returned in results).
-
-    * Alarms contain a new field called `event` containing a link to the corresponding event,
-      mirroring the existing `alarm` field coming the other way from an event.
-
-    * You can request a division's description.  This has been possible since 8.50 but was not
-      certified until 2022, so it gets a mention now.
-
-    * Write-only access to card PINs.
-
-    * You can set a reason when re-issuing or removing a card which will appear on the
-      resulting event.  The default is the card's previous state.
-
-    * You can now [set](#tag/visits/PATCH/api/visits/{id}/visitors/{visitorId}) a visitor's state
-      (signing in, etc.).  Visits will return that, if you ask.
-
-    * Bug fix:  removing an operator group from a cardholder by PATCH was not possible in the early
-      versions of 8.70 and 8.80.  It was fixed in 8.70.2113, 8.80.1116, and all versions of 8.90.
-
-    ### API changes in 8.80
-
-    * BREAKING CHANGE:  Date PDFs no longer come out of the API with a time component or time zone
-      designator, because date PDFs don't hold a time or time zone.  Previously they came out as
-      midnight UTC, which implied more accuracy than date PDFs hold.
-
-    * [Redactions](#tag/redactions).
-
-    * An optional PDF field `operatorAccess` contains the level of access your operator has to
-      cardholders' values for the PDF.
-
-    * Card type `regex` and `regexDescription` fields.
-
-    * Email and mobile PDFs return their 'Default Notifications' flag on request.  This actually
-      happened in 8.50 but did not make it into the "changes" list.
-
-    * Early-adopter support for [Interlock groups](#tag/interlock-groups).
-
-    ### API changes in 8.70
-
-    * Each event in a page of search results will contain URLs to continue the search after that
-      event.  This is a significant benefit to integrations that extract large pages of events and
-      may encounter a problem mid-page, and have to resume without loss or duplication later.
-
-    * A new privilege 'View Cardholder Events' grants visibility of an event if the operator has the
-      privilege in both the event's division and the event's cardholder's division.  This allows a
-      site to create a REST client that can monitor selected cardholders' movements through selected
-      areas, but cannot see any other activity in those areas.
-
-    * You may now use the `relatedItem` query parameter in an item search to find events that are
-      associated with a particular item.
-
-    * BREAKING CHANGE: Missing image PDFs will no longer have "not captured" as their value.
-      Instead, they will have no value at all.
-
-    * A cardholder's operator group memberships (added in 8.50) now contain an href that you can use
-      in an HTTP DELETE as another way of removing a cardholder from an operator group.
-
-    * The server returns 1000 items by default instead of 100.
-
-    * Image PDFs tell you whether they are the cardholder's profile picture.
-
-    * Image PDFs have a new optional field `contentType` that returns their MIME type.  This
-      deprecates the old `imageFormat` field, which is non-standard.
-
-    * Asking for a particular PDF on a cardholder (by putting `pdf_XXX` into the `fields` query parameter) will
-      cause it to appear even if the cardholder has no value for that PDF.  Previous versions only
-      showed if it had a non-blank value.
-
-    * Attempting to give a cardholder a competency they already have will fail instead of allowing
-      it and raising an alarm.  Note that a cardholder having two links to the same competency leads
-      to undefined behaviour.
-
-    * A new query parameter `requested_by` lets you attribute overrides to another cardholder.  Your
-      operator must have the 'Delegate API Activity' privilege in the cardholder's division.
-
-    * Item updates now include fields that changed to an empty value.  Versions up to 8.60 returned
-      an update but did not tell you which field changed or what it changed to, if it changed to a
-      blank.
-
-    ### API changes in 8.60
-
-    * Card numbers on Bluetooth (mobile) and PIV card events are now full-length.  Mobile numbers
-      are now the phone's ID string, changed from the number that 8.50 returned.  Decimal numbers
-      now come out unsigned.  Note that neither 8.50's numbers nor 8.60's ID strings are guaranteed
-      unique across phones.
-
-    * Access events that do not have a card, such as someone entering their user code instead of
-      badging their card, will no longer return a card block.
-
-    * You can search for cardholders by division or description.
-
-    * 8.60 rejects unsupported HTTP verbs instead of treating them like a GET.  For example, if you
-      send a POST to `/api/competencies` 8.50 will return a list of competencies but 8.60 will
-      return a 400-level error.
-
-    * In build 8.60.1684 or later, attempting to give a cardholder a competency they already have
-      will fail instead of allowing it and raising an alarm.  Note that a cardholder having two
-      links to the same competency leads to undefined behaviour.
-
-    * The RESTOverrides licence allows you to find items and their override URLs.
-
-    ### API changes in 8.50
-
-    * The server property that turns off [client certificate checking](#authentication) changed.
-
-    * Divisions can return some of their Visitor Management configuration.
-
-    * You can view any item's notes.  You have been able to for a while now, but it was missing from
-      this document.
-
-    * You can request a division's description.
-
-    * You can manage operators by setting their operator group memberships and logon credentials.
-    * You can view [operator groups](#tag/operator-groups).
-    * Lockers and locker banks report the hardware controller where they reside.
-    * Cardholders report their 'disable cipher pad' setting (vision impairment).
-    * Card types will show their division on request.
-
-    * Cardholders can have default floors and passenger type flags per elevator group.
-      Thyssen-Krupp systems can prepare an elevator car when Command Centre grants a cardholder
-      access through lobby turnstiles.
-
-    * You can list receptions and see enough of a division's visitor management configuration to
-      create and manage visits.
-
-    * Image Personal Data Field definitions will show their width, height, and format (JPG, PNG, or
-      BMP) on request.
-
-    * Email and mobile PDFs return their 'Default Notifications' flag on request.
-
-    * A [schedules API](#tag/schedules) provides CRUD of the six schedule item types.
-
-    * A [day categories API](#tag/day-categories) returns the day categories you need for those
-      schedules.
-
-    * A [pulse](#tag/outputs/POST/api/outputs/{id}/pulse) overrides an output.
-
-    * A 'connectedController' field grew on the item types that did not already have it.
-
-    * An [elevator groups API](#tag/elevator-groups) provides a view of elevator groups so that you
-      can [set a cardholder's default
-      floor](#tag/cardholders/PATCH/api/cardholders/{id}/patch).
-
-    ### API changes in 8.40
-
-    * You may now use the `fields` query parameter to tailor the fields that come back for events
-      and alarms.
-
-    * Operator add, modify, and delete [events](#model/EventSummary) now contain a link to the
-      affected item in a new `modifiedItem` block, deprecating the `accessGroup` block for those
-      event types.
-
-    * All operator events now contain the operator's name at the time.
-
-    * All events now contain the name of the event's division.
-
-    * The [item search](#path/Items/get/api/items) can now filter multiple item types.
-
-    * Events now show their origin when they have arrived from a remote server (in a multiserver
-      environment).
-
-    * Access groups have 22 new fields showing the privileges and access they grant their members.
-      These new fields are in the default set for the [detail view](#model/AccessGroupDetail).
-
-    * Access groups now return the alarm zones over which they have privilege.
-
-    * Items on remote servers now show their origin server in a new `serverDisplayName` field.
-
-    * Cards contain the date and time of their last print or encode, and their issue level at the
-      time.
-
-    ### API changes in 8.30
-
-    * The [items API](#tag/items) has methods that let you monitor the status of large numbers of
-      items.
-
-    * Doors related to guard tour events now appear in an event's `door` block.
-
-    * Cardholder [change tracking](#tag/cardholder-changes) lets you synchronise users into an
-      external system by informing it of changes as they occur.
-
-    * Cardholder group membership hrefs now contain a long string where they used to contain a small
-      integer.  Integrations that cache membership hrefs a) should not and b) will need to refresh.
-   
-    * A cardholder's card object now contains a Boolean field called `trace` indicating whether its
-      trace flag is set.  A card with tracing on generates an event every time it is used.
-
-    * A 'connectedController' field in the [door detail](#model/DoorDetail) returns the ID and
-      name of the door's hardware controller (a hardware controller, not an API controller).
-
-    ### API changes in 8.20
-
-    * Alarms and events with a related cardholder now show the cardholder's current first and last
-      name in separate fields.
-
-    * The `name` field on an alarm or event with a related cardholder is now the cardholder's name
-      at the time of the event, rather than at the time of the request.
-
-    * You can use the 'fields' parameter to add the 'details' field to an event summary.
-
-    * A new field `update_location` on a cardholder gives a link to a
-      [POST](#tag/cardholders/POST/cardholders/{id}/update_location) that changes his or her
-      current location (access zone).
-
-    * An
-      [update_cardholder_location](#tag/access-zones/GET/api/access_zones/update_cardholder_location)
-      call on the Access Zones API returns you the list of Access Zones into which your operator is
-      allowed to move cardholders.
-
-    * Lockers and locker banks are now visible with the RESTStatus licence, including whether a
-      locker is available or allocated.  You still need RESTCardholders to see which cardholder/s a
-      locker is assigned to.
-
-    * Lockers moved from the locker banks controller into their own.  That changed their hrefs.
-
-    * Bugfix:  you can now change a cardholder's division.
-
-    * A cardholder's [relationships block](#model/CardholderRelationship) now contains the
-      role holder's two name fields.  The `name` field, present since 7.90, is simply these two
-      fields joined with a space, and is therefore ambiguous when a cardholder only has one name.
-
-    ### API changes in 8.10.1112
-
-    * You can send an [override](#tag/lockers/POST/api/{id}/open) to a locker to open it.
-
-    * You can use the `fields` query parameter to select the fields you receive from locker bank
-      [summary](#tag/lockers/GET/api/locker_banks) and
-      [details](#tag/locker/GET/api/locker_banks/{id}) GETs.  The [use
-      cases]() section shows how.
-
-    ### API changes in 8.10
-
-    * [Incoming events](#tag/events/POST/api)
-
-    * Events now show their related [access groups and doors](#model/EventSummary) for
-      external event types.
-
-    * There is a [card types API](#tag/card-types/GET/api/card_types/assign) that returns the card types
-      your operator is able to use when assigning cards to cardholders.
-
-    * There is a [PDF API](#tag/pdf-definitions/GET/api/personal_data_fields) that returns the
-      personal data field definitions your operator is able to see.
-
-    * You can change the notifications flag on a cardholder's PDF.
-
-    * Certificates and biometric data are available on PIV cards.
-
-    * An [inputs API](#tag/inputs) gives you the state of 'input' hardware items and lets you
-      override them.  It is very similar to the outputs API.
-
-  
 - name: Competencies
   description: |
     Competencies are items to which cardholders can be linked, and which access zones may require on
