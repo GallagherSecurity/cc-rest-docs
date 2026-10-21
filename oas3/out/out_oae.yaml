@@ -230,7 +230,7 @@ x-common-blocks:
         - OtherError
         - NotChecked
 
-      If you set it to any value except 'NotChecked, 'Normal', or 'Offline', Command Centre will consider the
+      If you set it to any value except 'NotChecked', 'Normal', or 'Offline', Command Centre will consider the
       card invalid and deactivate it regardless of what you pass as the card status.  You, or
       Command Centre's periodic certificate validation, may validate the card again later.
 
@@ -1260,7 +1260,7 @@ components:
         items as though they are also in their division's parent, and its parent, and so on up to the
         root division.
 
-        Separate the IDs of the divisions you are interested with commas.  Item IDs are short
+        Separate the IDs of the divisions in you are interested with commas.  Item IDs are short
         alphanumeric strings, not URLs.
 
         Results are undefined if you provide an ID that is not in the form of a division ID.
@@ -1285,7 +1285,7 @@ components:
         Use the special value `defaults` to return the fields you would have received had you not
         given the parameter at all.  Add more after a comma.
 
-        Treat the string matches as case sensitive.
+        Treat the string matches as case-sensitive.
 
     id:
       name: "id"
@@ -1330,7 +1330,7 @@ components:
         Use the special value `defaults` to return the fields you would have received had you not
         given the parameter at all.  Add more after a comma.
 
-        Treat the string matches as case sensitive.
+        Treat the string matches as case-sensitive.
       style: form
       explode: false
       schema:
@@ -1458,7 +1458,7 @@ components:
         Use the special value `defaults` to return the fields you would have received had you not
         given the parameter at all.  Add more after a comma.
 
-        Treat the string matches as case sensitive.
+        Treat the string matches as case-sensitive.
   
   requestBodies:
 
@@ -1561,7 +1561,7 @@ components:
 
     CardTypePATCH:
       description: |
-        Note that not all the fields in this schema make sense to send when creating a new card
+        Note that not all the fields in this schema make sense to send when updating a card
         type.  `id` and `href`, for example.
       required: true
       content:
@@ -1596,7 +1596,7 @@ components:
                 type: string
                 maxLength: 16
                 description: |
-                  If you supply a string that is too long, Command Centre will truncate it."
+                  If you supply a string that is too long, Command Centre will truncate it.
                 example: "C4"
               description:
                 type: string
@@ -1612,7 +1612,7 @@ components:
               notes:
                 type: string
                 description: |
-                  A string, able to me much longer than `description`, suitable for holding notes
+                  A string, able to be much longer than `description`, suitable for holding notes
                   about the item.
                 example: "A very long string."
 
@@ -1627,7 +1627,7 @@ components:
       description: |
         Put this in the body of override POSTs to set the time at which the override should cease.
         The API will reject the override if the string is not empty and it cannot parse it into a
-        date-time, but it will treat the override as having no end time if you mis-spell 'endTime'
+        date-time, but it will treat the override as having no end time if you misspell 'endTime'
         or if you send a blank string.
 
         Command Centre computes an override's duration to a whole number of minutes with a minimum
@@ -2003,7 +2003,7 @@ components:
         these.  In addition to the basic details, it lists the child groups, privileges, and access
         zones and Salto items to which the group grants access.
 
-        There are brief descriptions of those fields below.  If they fall short the Configuration
+        There are brief descriptions of those fields below.  If they fall short, the Configuration
         Client's online documentation is the authority, in particular the section 'Setting up Access
         Groups'.
 
@@ -2016,7 +2016,7 @@ components:
               type: array
               description: |
                 Names and links for the groups that claim this one as a parent.  This array does not
-                include the childrens' children.
+                include the children's children.
 
                 **Notice of breaking change**.  This field being present and empty when the group has
                 no children is a break from the API's principle of omitting empty fields, and is
@@ -2243,7 +2243,7 @@ components:
 
             armWhileAlarm:
               description: |
-                Normally, a cardholder cannot arm an alarm zone if it has open, unshunted, inputs.
+                Normally, a cardholder cannot arm an alarm zone if it has open unshunted inputs.
                 With this privilege, members of the group can force-arm the alarm zone from a RAT or
                 HBUS terminal.  What happens then depends on an alarm zone setting.
 
@@ -2261,7 +2261,7 @@ components:
                 a group with this privilege can do so from an HBUS terminal, provided they also meet
                 other criteria (detailed in the Configuration Client documentation).
 
-                A group with this privilege will also have have 'armAlarmZones' and will not have
+                A group with this privilege will also have 'armAlarmZones' and will not have
                 'armWhileAlarm'.
 
                 New to 8.40.
@@ -2455,7 +2455,7 @@ components:
     AccessZoneSummary:
       title: Access zone summary
       description: |
-        `/api/access_zones` returns an array of these.  It is a subset of what you get from a
+        `/api/access_zones` returns an array of these.  It is a subset of what you get from an
         access zone's detail page linked as the href in this object.
       type: object
       properties:
@@ -2486,7 +2486,7 @@ components:
       description: |
         [/api/access_zones/{id}](#?route=get-/api/access_zones/-id-) returns one of these.
 
-        As well as the properties below, it contain a block called `doors`.  This is reserved for
+        As well as the properties below, it contains a block called `doors`.  This is reserved for
         future development and its behaviour could change in later versions of Command Centre.
 
       allOf:
@@ -2747,7 +2747,7 @@ components:
                     href:
                       example: "https://localhost:8904/api/access_zones/333/set_zone_count"
                       description: |
-                        [POST](#?route=post-/api/access_zones/-id-/set_zone_count) to this set the
+                        [POST](#?route=post-/api/access_zones/-id-/set_zone_count) to this to set the
                         zone's cardholder count.
                       type: string
                       format: uri-reference
@@ -2757,7 +2757,7 @@ components:
                     href:
                       example: "https://localhost:8904/api/access_zones/333/lock_down"
                       description: |
-                        [POST](#?route=post-/api/access_zones/-id-/lock_down) to this set the zone
+                        [POST](#?route=post-/api/access_zones/-id-/lock_down) to this to set the zone
                         into lockdown mode.
                       type: string
                       format: uri-reference
@@ -2767,7 +2767,7 @@ components:
                     href:
                       example: "https://localhost:8904/api/access_zones/333/cancel_lock_down"
                       description: |
-                        [POST](#?route=post-/api/access_zones/-id-/cancel_lock_down) to this cancel
+                        [POST](#?route=post-/api/access_zones/-id-/cancel_lock_down) to this to cancel
                         lockdown on the zone, returning it to its scheduled mode.
                       type: string
                       format: uri-reference
@@ -2777,7 +2777,7 @@ components:
                     href:
                       example: "https://localhost:8904/api/access_zones/333/cancel"
                       description: |
-                        [POST](#?route=post-/api/access_zones/-id-/cancel) to this cancel an
+                        [POST](#?route=post-/api/access_zones/-id-/cancel) to this to cancel an
                         active override on the zone, returning it to its scheduled mode.  This will
                         not affect a lockdown.
                       type: string
@@ -2846,7 +2846,7 @@ components:
           type: string
           description: |
             An alphanumeric identifier for this alarm, unique to the site but not across sites.
-            Once allocated they are not re-used, except after totally resetting the server's state
+            Once allocated, an ID is not re-used except after totally resetting the server's state
             by restoring the database.
           example: "10135"
         time: 
@@ -3127,7 +3127,7 @@ components:
           type: string
           example: "Roswell building 2 lobby alarms"
       description: |
-        `/api/alarm_zones` returns an array of these.  It is a subset of what you get from a
+        `/api/alarm_zones` returns an array of these.  It is a subset of what you get from an
         alarm zone's detail page at `/api/alarm_zones/{id}` (linked as the href in this
         object).
 
@@ -3375,7 +3375,7 @@ components:
                   href:
                     type: string
                     description: |
-                      [POST](#?route=post-/api/alarm_zones/-id-/cancel) to this cancel an
+                      [POST](#?route=post-/api/alarm_zones/-id-/cancel) to this to cancel an
                       active override on the alarm zone, returning it to its scheduled mode.
 
                       This command will not be available if the alarm zone is not
@@ -3475,7 +3475,7 @@ components:
           description: The encrypted encoding data, encoded as a base64 string.
         iv:
           type: string
-          description: The initialization vector used for encryption, encoded as a base64 string.
+          description: The initialisation vector used for encryption, encoded as a base64 string.
         ephemeralPublicKey:
           type: string
           description: The ephemeral public key used for encryption, encoded as a base64 string.
@@ -3567,7 +3567,7 @@ components:
             $ref: '#/components/schemas/DESFireApplication'
         cardMasterKey:
           type: string
-          description: The value of the AES key that the cards's master key would be set to if encoded from Command Centre
+          description: The value of the AES key that the card's master key would be set to if encoded from Command Centre
         defaultAppKey:
           type: string
           description: The value that the card's default app key would be set to if encoded from Command Centre
@@ -4027,7 +4027,7 @@ components:
             type: object
             properties: {href: {type: string, format: uri-reference }}
             description: |
-              Link to [POST](#?route=post-/api/cardholders/-id-/update_location) to when
+              Link to send a [POST](#?route=post-/api/cardholders/-id-/update_location) to when
               you want to update the location of this cardholder.  Added in 8.20.
             readOnly: true
             example:
@@ -4127,7 +4127,7 @@ components:
                   example: "2027-03-09T00:00:00Z"
                   description: |
                     If set and in the past, the accessibility will have been inactive since then.
-                    If not set or in the future, the accessibility will depend on `enabled.`
+                    If not set or in the future, the accessibility will depend on `enabled`.
 
                     If you send it, it must be later than both the `from` date, if sent, and the
                     current time.
@@ -4264,7 +4264,7 @@ components:
           description: |
             In a GET response for text, numeric, and date PDFs this will be a scalar containing the
             value, but for image PDFs it will be an object containing a copy of the `href` field
-            above.  For date PDFs the string will comply to RFC 3339, but may or may not contain a
+            above.  For date PDFs the string will comply with RFC 3339, but may or may not contain a
             time depending on the version of Command Centre.  Newer versions omit the `T` separator
             and everything after it.  If there, it will be midnight UTC.
 
@@ -4364,13 +4364,13 @@ components:
             numbers and the letters from 'A' through 'F', but the '0x' is missing when it comes out
             of the API and it must be missing when you send it back.
 
-            The example in this example shows a seven-byte serial in the order you can expect in a
+            The example shows a seven-byte serial in the order you can expect in a
             GET and should use in a PATCH or POST.  Those on NXP MIFARE cards start with 04 and end
             with 80 or 90.
 
             Four-byte serial numbers are in the same format, but shorter: `"EBD62D25"`, for example.
 
-            This may not be not present on very old cards.
+            This may not be present on very old cards.
 
             This field was read-only until 7.90.  It is read-write in 8.00 and later.
           example: 045A5769713E80
@@ -4398,14 +4398,14 @@ components:
                 This card's state, taken from the card type's state set.  The default card
                 state set contains 'Active', 'Disabled (manually)', 'Lost', 'Stolen', and
                 'Damaged', or translations of those into the server's language.  Your card state sets may
-                differ, as they are customisable. (PIV cards)[#tag-PIV] have extra values.
+                differ, as they are customisable. [PIV cards](#?route=tag--PIV) have extra values.
 
                 In addition to the values in the card type's state set, it will be 'Not Yet Activated'
                 if the card's activation date is in the future, 'Expired' if its deactivation date has
                 passed, or 'Disabled (by inactivity)' if that is the site's policy and the card has
                 not been used at a door.
 
-                Because the values of the `value` field is set by site administrators, you
+                Because the value of the `value` field is set by site administrators, you
                 should not use it for programmatically determining whether a card is active.
                 Use `type` instead.  Use `value` for display.
 
@@ -4463,7 +4463,7 @@ components:
             The name of the card type from the site configuration, and a link to the card type object.
 
             When creating a card, the href must be a card type that makes sense for the other values
-            you placed this object.
+            you placed in this object.
 
             You cannot change a card's type once it is created.
         invitation:
@@ -4531,7 +4531,7 @@ components:
             Whether you should send `mobile` or `email` when creating a mobile credential depends on
             whether you are using the Gallagher mobile apps or your own.
 
-            If you specify either `mobile` or `mail` to early-version servers you must also supply the
+            If you specify either `mobile` or `email` to early-version servers you must also supply the
             other so that Command Centre can send both an email invitation and a confirmation SMS.  It
             is an error to only specify one on those servers.
 
@@ -4569,7 +4569,7 @@ components:
             Any value you send other than a blank string or null must be in RFC 3339 format,
             including a timezone.  It must be before midnight on the morning of January 1, 2100 in
             the server's _local_ time (so servers with positive timezone offsets have maximums
-            during December 31 2099), and it must be less than or equal to than the `until` time.  A
+            during December 31 2099), and it must be less than or equal to the `until` time.  A
             future version of Command Centre will clamp too-high values to December 31 2099 and
             return a 2xx (success) instead of 400 in that case.
 
@@ -4681,7 +4681,7 @@ components:
             is undefined.
 
             8.90 servers will reject your request if the card's `credentialClass` is not `card`,
-            `piv`, `piv-i`, or `govPass`.  More recent servers will issue a warning in that case, and
+            `piv`, `pivi`, or `govPass`.  More recent servers will issue a warning in that case, and
             will not set the PIN, but will allow the rest of the update.
 
             PINs were added to the API in 8.90.
@@ -4898,7 +4898,7 @@ components:
 
         When updating a cardholder's holding of a competency, the fields you send are slightly
         different from what you receive from a cardholder GET:  you do not send read-only blocks
-        such `status` and `competency`, and there is a write-only field `enabled` that you can
+        such as `status` and `competency`, and there is a write-only field `enabled` that you can
         supply to change the status.
 
         You cannot use a PATCH to move the status, times, comment, and credit to a different
@@ -5056,7 +5056,7 @@ components:
     CardholderRelationship:
       title: Cardholder relationship
       description:  |
-        A _role_ is an object in Command Centre.  They are usually named using nouns such as
+        A _role_ is an object in Command Centre.  Roles are usually named using nouns such as
         'supervisor', 'manager', or 'team leader'.
 
         The operator clients and the REST API allow you to create a link between two
@@ -5164,7 +5164,7 @@ components:
           example: "https://host.com:8904/api/cardholders/325/lockers/t1m4"
         locker:
           description: |
-            This href in this object is a link to the allocated locker, and is the identifier to use
+            The href in this object is a link to the allocated locker, and is the identifier to use
             when allocating the same locker to another cardholder.
 
             The object also contains the name and short name of the locker, and the name and
@@ -5532,7 +5532,7 @@ components:
             The only fields that make sense in an element of the `remove` array are `href` and `status`.
 
             You can remove and add cards in the same PATCH.  In fact you should do that in preference
-            to making multiple API calls.  That is a good way of reissuing a mobile credentials, for
+            to making multiple API calls.  That is a good way of reissuing a mobile credential, for
             example:  put the href to the old one in the `remove` array and a new invitation in the
             `add` array.  The new credential should have the same card number and the same `type` and
             `invitation` blocks as the credential you're re-issuing.
@@ -5696,8 +5696,8 @@ components:
             and one or both of the `from` and `until` date-times.
 
             The validity period is all you can change about a locker allocation.  If you want to
-            change the locker, delete the old one and add a new.  You can do that in the same PATCH,
-            with one element in each of the `add` and `remove` arrays.
+            change the locker, delete the old one and add another.  You can do that in the same PATCH,
+            with one element in each of the `remove` and `add` arrays.
 
             This example allocates one locker starting in January 2019, sets the end-date of an
             existing allocation to the end of February 2020, and removes another entirely.
@@ -6521,13 +6521,13 @@ components:
           type: string
           description: |
             The division's name.  If you supply a name and another division already exists with that
-            name, the call will fail.  If you leave it blank in a POST, Command Centre will pick
+            name, the call will fail.  If you leave it blank in a POST, Command Centre will pick a
             value for you.
           example: Long division
         description:
           type: string
           description: The division's description.
-          example: Quatermasters
+          example: Quartermasters
         notes:
           type: string
           description: |
@@ -6721,7 +6721,7 @@ components:
           type: string
           format: uri-reference
           description: |
-            A link to a [elevator group](#?route=cmp--schemas-elevatorgroupdetail) object for this
+            A link to an [elevator group](#?route=cmp--schemas-elevatorgroupdetail) object for this
             elevator group.
           example: "https://localhost:8904/api/elevator_groups/635"
         name:
@@ -7163,7 +7163,7 @@ components:
               type: string
               description: |
                 The current name of the access zone.  Expect a future version of Command Centre to
-                change this to change to the name of the access zone at the time of the event.
+                change this to the name of the access zone at the time of the event.
 
               example:  "Brookwood showroom"
             id:
@@ -7198,7 +7198,7 @@ components:
               type: string
               description: |
                 The current name of the exit access zone.  Expect a future version of Command Centre
-                to change this to change to the name of the exit access zone at the time of the event.
+                to change this to the name of the exit access zone at the time of the event.
               example:  "Compressor room"
             id:
               type: string
@@ -7386,7 +7386,7 @@ components:
             details:
               type: string
               description: |
-                The full alarm details text.  This may be up to 2048 UTF-8 characters, each of which
+                The full event details text.  This may be up to 2048 UTF-8 characters, each of which
                 could (theoretically) be four bytes long.
               example: "Originating IP address: 192.168.2.3"
             location:
@@ -7886,7 +7886,7 @@ components:
                   type: object
                   properties:
                     href:
-                      example: "https://localhost:8904/api/fence_zones/8487/on"
+                      example: "https://localhost:8904/api/fence_zones/8487/off"
                       description: |
                         [POST](#?route=post-/api/fence_zones/-id-/off) to this to deactivate this
                         fence zone.
@@ -7909,7 +7909,7 @@ components:
                       example: "https://localhost:8904/api/fence_zones/8487/unshunt"
                       description: |
                         [POST](#?route=post-/api/fence_zones/-id-/unshunt) to this to restore
-                        communication with fence zone.
+                        communication with the fence zone.
                       type: string
                       format: uri-reference
                 highVoltage:
@@ -7938,7 +7938,7 @@ components:
                     href:
                       example: "https://localhost:8904/api/fence_zones/8487/cancel"
                       description: |
-                        [POST](#?route=post-/api/fence_zones/-id-/cancel) to this cancel an
+                        [POST](#?route=post-/api/fence_zones/-id-/cancel) to this to cancel an
                         active override on the fence zone.
 
                       type: string
@@ -7964,7 +7964,7 @@ components:
     InputSummary:
       title: Input summary
       description: |
-        `/api/inputs` returns an array of these.  It is a subset of what you get from a
+        `/api/inputs` returns an array of these.  It is a subset of what you get from an
         input's detail page at `/api/inputs/{id}` (linked as the href in this object).
       properties:
         href:
@@ -8101,10 +8101,10 @@ components:
           description: |
             A link to an [interlock group detail](#?route=cmp--schemas-interlockgroupdetail) object for this
             item.
-          example: "https://localhost:8904/api/interlock_group/122322"
+          example: "https://localhost:8904/api/interlock_groups/122322"
         name:
           type: string
-          example: "Excercise yard egress"
+          example: "Exercise yard egress"
 
     InterlockGroupDetail:
       title: Interlock group detail
@@ -8449,7 +8449,7 @@ components:
       properties:
         results:
           type: array
-          description: An array of locker summaries.
+          description: An array of locker bank summaries.
           items: { $ref: '#/components/schemas/LockerBankSummary' }
           example:
             - name: "Lobby"
@@ -8873,7 +8873,7 @@ components:
           example: "https://localhost:8904/api/operator_groups/523"
         name:
           type: string
-          example: "Locker admins."
+          example: "Locker admins"
         serverDisplayName: *SERVER
 
     OperatorGroupDetail:
@@ -8986,7 +8986,7 @@ components:
     OutputSummary:
       title: Output summary
       description: |
-        `/api/outputs` returns an array of these.  It is a subset of what you get from a
+        `/api/outputs` returns an array of these.  It is a subset of what you get from an
         output's detail page at `/api/outputs/{id}` (linked as the href in this object).
       properties:
         href:
@@ -9195,12 +9195,12 @@ components:
             operator is not a member of an operator group that overrides it.  Check the operator
             group's 'Personal data' tab in the Configuration Client.
 
-            `revealable`, `revealAndEdit`, and `writeOnly` new to 8.90.
+            `revealable`, `revealAndEdit`, and `writeOnly` are new to 8.90.
         operatorAccess:
           readOnly: true
           description: |
-            This is the access that your operator has to cardholders' values of this PDF including the
-            permissions granted by this cardholder's operator groups.  You will only
+            This is the access that your operator has to cardholders' values of this PDF, including the
+            permissions granted by this operator's operator groups.  You will only
             get this field if you ask for it with the `fields` parameter.
 
             New in 8.80.  `revealable`, `revealAndEdit`, and `writeOnly` new to 8.90.
@@ -9506,7 +9506,7 @@ components:
             when:
               type: string
               description: |
-                When redaction is meant to happen.  This should be in the future.  If it is in the
+                When the redaction is meant to happen.  This should be in the future.  If it is in the
                 past, the service returns a 400.
 
                 Optional.  If it is absent, it means to do it asap.
@@ -9726,11 +9726,11 @@ components:
                 * An Access Zone Schedule controls the mode of an access zone.  The valid states are
                   the same as the [zone's status flags](#?route=cmp--schemas-accesszonedetail):  `secure`,
                   `dualAuth`, `codeOrCard`, or `free`.  The extra flag `usePin` means the same here
-                  as it does in the status flags:  people will need their PINs at readers and alarms
+                  as it does in the status flags:  people will need their PINs at readers and alarm
                   terminals.
 
                 * An Alarm Zone Schedule switches an alarm zone between its four modes: `set`,
-                  `unset`, `user`, and `user2`.  Use the words `user1` and `user2` here even if you
+                  `unset`, `user1`, and `user2`.  Use the words `user1` and `user2` here even if you
                   have renamed them in the server properties.
 
                 * An Output Schedule can be `on` or `off`, plain and simple.
@@ -9741,7 +9741,7 @@ components:
                   the valid states are called `notificationEnabled` and `notificationDisabled`.
 
                 * A HV/LF Schedule controls the voltage on an electric fence.  'lowFeel' mode allows
-                  detection without the deterrant of `highVoltate`.
+                  detection without the deterrent of `highVoltage`.
 
               This example sets an access zone to secure mode between 7.30am and 6:00pm on work
               days, and secure plus PIN mode at all other times.
@@ -9836,7 +9836,7 @@ components:
           example: "normalEvents"
         when:
           description: |
-            When redaction is meant to happen.  This should be in the future.  If it is in the past,
+            When the redaction is meant to happen.  This should be in the future.  If it is in the past,
             the service returns 400-Bad Request Invalid Start Time.
 
             Optional.  If it is absent, it means to do it asap.
@@ -9955,7 +9955,7 @@ info:
     [HATEOAS](https://www.google.com/search?q=hateoas).  Other than the initial `GET /api` when it
     first connects, your source code should not contain any URLs,
     as they are subject to change.  You should append the query parameters this document describes
-    for operations such as filtering and searching, but everying in the path should come from the
+    for operations such as filtering and searching, but everything in the path should come from the
     results of `GET /api` or pages linked from it.
 
     `GET /api` only shows the API calls the server is licensed for.
@@ -9999,7 +9999,7 @@ info:
 
     Clients authenticate by including a pre-shared API key in the `Authorization` header of each
     request.  Command Centre generates a random API key when you create an endpoint for your clients
-    to connect to.  Search the Configuration Client online help for 'REST API' for how do do that.
+    to connect to.  Search the Configuration Client online help for 'REST API' for how to do that.
 
     In current versions of Command Centre, the API key will be in the format
     `XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX` with each `X` an uppercase hexadecimal digit.
@@ -10034,7 +10034,7 @@ info:
 
     Depending on Command Centre's site configuration, its REST API may also require a client
     certificate with each request.  In versions up to and including 8.40 this was controlled by a
-    flag labelled 'Do not require pinned client certficates' on the 'Web Services' tab of the
+    flag labelled 'Do not require pinned client certificates' on the 'Web Services' tab of the
     server properties.  In 8.50 that flag's label changed to 'Enable REST Clients with no
     client certificate', and its behaviour changed slightly when turned on.
 
@@ -10058,7 +10058,7 @@ info:
     ### Source IP filtering
 
     Also note that if IP filtering is enabled on the REST Client item in Command Centre, the API
-    will only accept connections from the IP address ranges configurated into that client item.
+    will only accept connections from the IP address ranges configured into that client item.
 
     ### Symptoms of authentication failures
 
@@ -10134,7 +10134,7 @@ info:
     Here are some general rules that may help if you are still not receiving the results you
     expect.
 
-    - Receiving a 403 from a GET means the server may not have a license for the retrieval you are
+    - Receiving a 403 from a GET means the server may not have a licence for the retrieval you are
       attempting or your operator does not have the privilege to view that object.  If it is a
       licensing problem, the body of the response will describe it.
 
@@ -10494,7 +10494,7 @@ paths:
             The body of the POST did not describe a valid access group.
 
             If you see 'Invalid Access Group JSON object', the server could not parse the JSON in
-            the body of your POST.  Remember to quote all strings, especially those than contain @
+            the body of your POST.  Remember to quote all strings, especially those that contain @
             symbols.
         "403":
           description: |
@@ -10562,7 +10562,7 @@ paths:
       description: |
         This is the call you use to modify fields on an access group.
 
-        The PATCH expects a document in the same format as the [the access group
+        The PATCH expects a document in the same format as the [access group
         detail](#?route=cmp--schemas-accessgroupdetail) but with fewer fields.  Note that you cannot change
         everything on an access group that the API shows you, such as its membership, access, and
         permissions.  You can change its basic fields, PDFs, and membership defaults.
@@ -10706,7 +10706,7 @@ paths:
         This returns a summary of the access zones matching your search criteria.
 
         The result will contain no more than 100 or 1000 access zones (depending on your version),
-        or as many as you asked for more in your request; you should follow the `next` link, if it
+        or as many as you asked for; you should follow the `next` link, if it
         is present, to collect the next batch.
 
         If your result set is empty it means your operator does not have the privilege to view any
@@ -10940,7 +10940,7 @@ paths:
         Take this URL from the `commands` block of an access zone.  In there is a block called
         `secure`, containing a field `href`.  That is the URL of this method.
 
-        The URL from `commands.securePin.href` (as opposed to without the "Pin") will send an override to an
+        The URL from `commands.securePin.href` (as opposed to `secure` without the `Pin`) will send an override to an
         access zone to change its mode to 'secure - PIN', meaning you _will_ need a PIN on a terminal.
 
         If you do not give the override an end time in the body, it will remain in place until the
@@ -10977,7 +10977,7 @@ paths:
         Take this URL from the `commands` block of an access zone.  In there is a block called
         `codeOnly`, containing a field `href`.  That is the URL of this method.
 
-        The URL from `commands.codeOnlyPin.href` (as opposed to without the "Pin") will send an override to an
+        The URL from `commands.codeOnlyPin.href` (as opposed to `codeOnly` without the `Pin`) will send an override to an
         access zone to change its mode to 'Code or Card - PIN', meaning you _will_ need a PIN on a terminal.
 
         If you do not give the override an end time in the body it will remain in place until the
@@ -11015,7 +11015,7 @@ paths:
         Take this URL from the `commands` block of an access zone.  In there is a block called
         `dualAuth`, containing a field `href`.  That is the URL of this method.
 
-        The URL from `commands.dualAuthPin.href` (as opposed to without the "Pin") will send an override to an
+        The URL from `commands.dualAuthPin.href` (as opposed to `dualAuth` without the `Pin`) will send an override to an
         access zone to change its mode to 'dual auth - PIN', meaning you _will_ need a PIN on a terminal.
 
         If you do not give the override an end time in the body it will remain in place until the
@@ -11043,7 +11043,7 @@ paths:
     post:
       tags:
       - Access Zones
-      summary: Forgive antipassback on a zone
+      summary: Forgive anti-passback on a zone
       description: |
         Sends an override to an access zone to forgive anti-passback for all cardholders in the zone.
 
@@ -11165,8 +11165,8 @@ paths:
         Take this URL from the `commands` block of an access zone.  In there is a block called
         `cancel`, containing a field `href`.  That is the URL of this method.
 
-        This command will achieve nothing if the alarm zone is not controlled by a
-        schedule, because without a schedule the alarm zone does not have the concept of a
+        This command will achieve nothing if the access zone is not controlled by a
+        schedule, because without a schedule the access zone does not have the concept of a
         'normal' state.
 
         It will not cancel a lockdown.  For that you need `cancel_lock_down`.
@@ -11196,7 +11196,7 @@ paths:
         you are better off with a [status subscription](#?route=tag--Items--status-subscriptions).
 
         Follow the 'updates' field in an access zone [summary](#?route=cmp--schemas-accesszonesummary) or
-        [details](#?route=cmp--schemas-accesszonedetail) pages to get here rather than [building it
+        [details](#?route=cmp--schemas-accesszonedetail) page to get here rather than [building it
         yourself](#?route=overview--forward-compatibility-hateoas).
       parameters:
       - name: id
@@ -11449,7 +11449,7 @@ paths:
         This returns a summary of the alarm zones matching your search criteria.
 
         The result will contain no more than 100 or 1000 alarm zones (depending on your version), or
-        as many as you asked for more in your request; you should follow the `next` link, if it is
+        as many as you asked for; you should follow the `next` link, if it is
         present, to collect the next batch.
 
         If your result set is empty it means your operator does not have the privilege to view any
@@ -11680,7 +11680,7 @@ paths:
       - Alarm Zones
       summary: Change an alarm zone to user2
       description: |
-        Sends an override to an alarm zone to set its state to 'user2', the other of of the custom
+        Sends an override to an alarm zone to set its state to 'user2', the other of the custom
         states.
 
         If you send an end time in the body, and the alarm zone has a schedule to consult
@@ -11727,7 +11727,7 @@ paths:
         If you do not, the override will remain in place until the next scheduled or
         manual change.
 
-        Follow one of the 'commands.highVoltage or 'commands.highVoltageUntil' fields in an [alarm
+        Follow one of the `commands.highVoltage` or `commands.highVoltageUntil` fields in an [alarm
         zone](#?route=cmp--schemas-alarmzonedetail) to get here rather than [building it
         yourself](#?route=overview--forward-compatibility-hateoas).
 
@@ -11765,7 +11765,7 @@ paths:
         If you do not, the override will remain in place until the next scheduled or
         manual change.
 
-        Follow one of the 'commands.lowFeel or 'commands.lowFeelUntil' fields in an [alarm
+        Follow one of the `commands.lowFeel` or `commands.lowFeelUntil` fields in an [alarm
         zone](#?route=cmp--schemas-alarmzonedetail) to get here rather than [building it
         yourself](#?route=overview--forward-compatibility-hateoas).
       parameters:
@@ -11906,7 +11906,7 @@ paths:
           description: |
             Returns encrypted DESFire encoding data and callback links.
 
-            The `encryptedEncodingData` field contains encrypted payload that, when decrypted, has
+            The `encryptedEncodingData` field contains an encrypted payload that, when decrypted, has
             the structure of [DESFireEncodingResponse](#schemas/DESFireEncodingResponse) with
             applications, keys, and files.
           content:
@@ -12020,7 +12020,7 @@ paths:
           description: |
             Returns callback links and encrypted Classic encoding data.
 
-            The `encryptedEncodingData` field contains encrypted payload that, when decrypted,has
+            The `encryptedEncodingData` field contains an encrypted payload that, when decrypted,has
             the structure of [ClassicEncodingResponse](#schemas/ClassicEncodingResponse) with
             sectors and blocks.
           content:
@@ -12120,7 +12120,7 @@ paths:
           description: The site does not have a licence for the Encoding API.
         "404": {$ref: '#/components/responses/404enc'}
         "410":
-          description: Gone - Callback token has expired or already been used
+          description: Callback token has expired or already been used.
 
   /api/cardholders/{id}/cards/{secondary_id}/encodeFailed:
     post:
@@ -12186,7 +12186,7 @@ paths:
       - name: top
         in: query
         description: |
-          Sets maximum number of cardholders to return per page.
+          Sets the maximum number of cardholders to return per page.
 
           Older versions of Command Centre returned 100.  That is acceptable for a GUI application
           that will only display the first page of cardholders, but for integrations that intend to
@@ -12216,7 +12216,7 @@ paths:
           with no name (`name=""`), as all items must have a name.
 
           Because a plus sign `+` represents a space in a query string, replace each plus sign in
-          your search string with `%2d`.
+          your search string with `%2B`.
 
           The search parameters form a logical conjunction.  They are ANDed
           together.  Therefore if you search for `name=Mary&pdf_1315=nanny` you will only get back
@@ -12243,7 +12243,7 @@ paths:
           in a future version of Command Centre to return cardholders with no value for that PDF.
 
           Because a plus sign `+` represents a space in a query string, turn plus signs in your
-          string into `%2d`.
+          string into `%2B`.
 
           The search is always case-insensitive.
 
@@ -12335,7 +12335,7 @@ paths:
         [Do not code this URL](#?route=overview--forward-compatibility-hateoas) into your application.  Take
         it from the `href` field in the `features.cardholders.cardholders` section of `/api`.
 
-        The POST expects a document in the same format as the [the cardholder
+        The POST expects a document in the same format as the [cardholder
         detail](#?route=cmp--schemas-cardholderdetail).  Many fields are optional, of course, and some (like
         the last successful access time) do not make sense when creating a cardholder.  See the
         [cardholder POST example](#?route=cmp--schemas-cardholderpost) for details.
@@ -12379,11 +12379,11 @@ paths:
 
             If you see 'Data has not been entered for this Personal Data Field' in the
             response body, you have attempted to create a cardholder in an access group
-            that has a required Personal Data Field, but not supplied a value for that
+            that has a required Personal Data Field but have not supplied a value for that
             PDF.
 
             If you see 'Invalid cardholder', the server could not parse the JSON in the body of your
-            POST.  Remember to quote all strings, especially those than contain @ symbols.
+            POST.  Remember to quote all strings, especially those that contain @ symbols.
         "403":
           description: |
             The operator does not have a privilege that allows creating cardholders, or you
@@ -12704,7 +12704,7 @@ paths:
         assignments for this locker after this operation he or she will not be able to open it.
 
         You will find this URL in the `lockers` block of a [cardholder
-        object](#?route=cmp--schemas-cardholderdetail).  In the interest of forward compability, [do not
+        object](#?route=cmp--schemas-cardholderdetail).  In the interest of compability with future versions of Command Centre, [do not
         build it yourself](#?route=overview--forward-compatibility-hateoas).
 
       responses:
@@ -12901,8 +12901,7 @@ paths:
 
         Gallagher uses this call for rapidly-evolving internal applications.  As such, its results
         are tuned to those applications and are subject to change.  Rather than relying on this
-        call, we suggest that you simply give your REST operator the privileges it needs to access
-        to everything it needs.
+        call, we suggest that you simply give your REST operator the privileges it needs.
 
         Note that this method returns 400 if there are two
         PDFs in the system with the same name.  CC insists on unique names for items when you create
@@ -12936,9 +12935,6 @@ paths:
         When you are up to date with all the cardholder changes, the `results` array will be empty.
         When it comes time to check again, do not just re-use the same URL:  get a new one from the
         `next` block.  It can change even when there are no results.
-
-        This is a polled interface:  it will return immediately, whether or not there are results.
-        Therefore you should wait for a time between calls if the `results` array was empty.
 
         You can monitor changes to card data using this call, including serial numbers (MIFARE
         UIDs).  However you cannot monitor changes in the `lastSuccessfulAccessTime` or
@@ -13124,7 +13120,7 @@ paths:
         If your result set is empty it means your operator does not have the privilege to see any
         card types.
 
-        You can find this URL in `features.cardTypes.cardTypes`in `/api`.  In the interest of
+        You can find this URL in `features.cardTypes.cardTypes` in `/api`.  In the interest of
         forward compatibility, [do not build the URL
         yourself](#?route=overview--forward-compatibility-hateoas).
 
@@ -13177,7 +13173,7 @@ paths:
             The body of the POST did not describe a valid card type.
 
             If you see 'Invalid Access Group JSON object', the server could not parse the JSON in
-            the body of your POST.  Remember to quote all strings, especially those than contain @
+            the body of your POST.  Remember to quote all strings, especially those that contain @
             symbols.
 
         "403":
@@ -13200,7 +13196,7 @@ paths:
         cardholders such as 'Add / Edit Card or Credential' or 'Create / Edit / Create and Edit
         Cardholders'.
 
-        You can find this URL in `features.cardTypes.assign`in `/api`.  It was new in 8.10.  In the
+        You can find this URL in `features.cardTypes.assign` in `/api`.  It was new in 8.10.  In the
         interest of forward compatibility, [do not build the URL
         yourself](#?route=overview--forward-compatibility-hateoas).
         
@@ -13223,7 +13219,7 @@ paths:
           Specifies which fields to return instead of the default set (which contains
           nearly every field).  Separate values with commas.
 
-          Treat the string matches as case sensitive:  use 'facilityCode' rather than
+          Treat the string matches as case-sensitive:  use 'facilityCode' rather than
           'facilitycode'.
 
       - $ref: "#/components/parameters/pos"
@@ -13269,7 +13265,7 @@ paths:
         type search.  In the interest of forward compatibility, [do not build it
         yourself](#?route=overview--forward-compatibility-hateoas).
         
-        The PATCH expects a document in the same format as the [the card type
+        The PATCH expects a document in the same format as the [card type
         detail](#?route=cmp--schemas-cardtype) but with fewer fields.
 
         This call requires the RESTConfiguration licence.
@@ -13387,7 +13383,7 @@ paths:
           Use the special value `defaults` to return the fields you would have received had you not
           given the parameter at all.  Add more after a comma.
 
-          Treat the string matches as case sensitive.
+          Treat the string matches as case-sensitive.
 
           In v8.00 you will receive the href and internal ID even if you did not ask for them.  In
           8.10 you will not.  If you are going to send the fields parameter and need the href or ID,
@@ -13414,7 +13410,7 @@ paths:
       description: |
         Creates a new competency.
 
-        The POST expects a document in the same format as the [the competency
+        The POST expects a document in the same format as the [competency
         detail](#?route=cmp--schemas-competency) but with far fewer fields.  An example is [this POST
         example](#?route=cmp--schemas-competencypatchandpostexample).
 
@@ -13484,7 +13480,7 @@ paths:
           in the [details page](#?route=cmp--schemas-competencydetail).  Use it to reduce the size of the
           result document.  Separate values with commas.
           
-          Treat the string matches as case sensitive.
+          Treat the string matches as case-sensitive.
 
       responses:
         "200":
@@ -13504,11 +13500,11 @@ paths:
       - Competencies
       summary: Update a competency
       description: |
-        This is the call you use to update a division's name, short name, description, notes, or
+        This is the call you use to update a competency's name, short name, description, notes, or
         division.  In the interest of forward compability, take the URL from the results of a
-        division search rather than [building it yourself](#?route=overview--forward-compatibility-hateoas).
+        competency search rather than [building it yourself](#?route=overview--forward-compatibility-hateoas).
 
-        The PATCH expects a document in the same format as the [the competency
+        The PATCH expects a document in the same format as the [competency
         detail](#?route=cmp--schemas-competencydetail) but with fewer fields.  An example is [this PATCH
         example](#?route=cmp--schemas-competencypatchandpostexample).
 
@@ -13592,7 +13588,7 @@ paths:
         This returns the day categories that match your search criteria.
 
         The result will contain no more than 100 or 1000 (depending on your version), or as many as
-        you asked for more in your request; you should follow the `next` link, if it is present, to
+        you asked for; you should follow the `next` link, if it is present, to
         collect the next batch.  Generally a site does not have too many day categories, so if you
         set `top=1000` you are bound to collect them all.
 
@@ -13692,7 +13688,7 @@ paths:
       description: |
         Creates a new division.
 
-        The POST expects a document in the same format as the [the division
+        The POST expects a document in the same format as the [division
         detail](#?route=cmp--schemas-division) but with far fewer fields.  An example is [this POST
         example](#?route=cmp--schemas-divisionpatchandpostexample).  The only mandatory field is `parent`.
 
@@ -13750,12 +13746,12 @@ paths:
         perform other functions.  They all return the same data structure.
 
         For example, `/api/divisions/view_events` retrieves the list of divisions in which the REST
-        operator has privileges to view events, and `/api/division/view_alarms` does the same for
+        operator has privileges to view events, and `/api/divisions/view_alarms` does the same for
         alarms.
 
         Do not code these URLs into your application.  Take them from the results of `GET /api`.
         For the events and alarms examples, the links will be at `events.divisions.href` and
-        `alarms.division.href`.
+        `alarms.divisions.href`.
 
         `/api` only shows API features for which you have the necessary licence.
 
@@ -13869,7 +13865,7 @@ paths:
       description: |
         This is the call you use to update a division's name, description, notes, or parent.
 
-        The PATCH expects a document in the same format as the [the division
+        The PATCH expects a document in the same format as the [division
         detail](#?route=cmp--schemas-division) but with fewer valid fields.  An example is [this PATCH
         example](#?route=cmp--schemas-divisionpatchandpostexample).
 
@@ -13931,7 +13927,7 @@ paths:
         This returns a summary of the doors matching your search criteria.
 
         The result will contain no more than 100 or 1000 doors (depending on your version), or as
-        many as you asked for more in your request; you should follow the `next` link, if it is
+        many as you asked for; you should follow the `next` link, if it is
         present, to collect the next batch.
 
         If your result set is empty it means your operator does not have the privilege to view any
@@ -14048,7 +14044,7 @@ paths:
         you are better off with a [status subscription](#?route=tag--Items--status-subscriptions).
 
         Follow the 'updates' field in a door [summary](#?route=cmp--schemas-doorsummary) or
-        [details](#?route=cmp--schemas-doordetail) pages to get here.
+        [details](#?route=cmp--schemas-doordetail) page to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -14084,7 +14080,7 @@ paths:
         assignments.
 
         The result will contain no more than 100 or 1000 depending on your version, or as many as
-        you asked for more in your request; you should follow the `next` link, if it is present, to
+        you asked for; you should follow the `next` link, if it is present, to
         collect the next batch.
 
         If your result set is empty it means your operator does not have the privilege to assign
@@ -14148,12 +14144,12 @@ paths:
       summary: Search elevator groups
       description: |
         This returns the name and href of the elevator groups matching your search criteria.  This
-        uses a different privilege from the `modify_default_floors` call, so it may not return you
-        the groups you need.  If your goal is to set cardholders' default floors, you should that
+        uses a different privilege from the `modify_passenger_details` call, so it may not return you
+        the groups you need.  If your goal is to set cardholders' default floors, you should use that
         call instead.
 
         The result will contain no more than 100 or 1000 (depending on your version), or as many as
-        you asked for more in your request; you should follow the `next` link, if it is present, to
+        you asked for; you should follow the `next` link, if it is present, to
         collect the next batch.
 
         If your result set is empty it means your operator does not have the privilege to view any
@@ -14218,7 +14214,7 @@ paths:
         This returns the detail of one elevator group.
 
         If you are setting cardholders' default floors, you should be using the
-        `modify_default_floors` call rather than this one.
+        `modify_passenger_details` call rather than this one.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -14296,7 +14292,7 @@ paths:
         Response' tab in its Configuration Client window (which is most of them).  Our existing
         integrations use items like doors, external system items, and cameras.
 
-        If you allow the server to default to your REST client item as the source, or if specify it
+        If you allow the server to default to your REST client item as the source, or if you specify it
         yourself, your operator must have 'Create events and alarms' in at least one division for
         the call to succeed.  Any division will do.  Otherwise you'll receive a 403.
 
@@ -14404,7 +14400,7 @@ paths:
         "403":
           description: |
             The site does not have the RESTCreateEvents licence (in which case the body of the
-            response will say so) or operator does not have the 'Create Events and Alarms'
+            response will say so) or the operator does not have the 'Create Events and Alarms'
             privilege.
 
     get:
@@ -14426,7 +14422,7 @@ paths:
         the `next` link will return the next batch of events, or an empty list
         if there are no more available.  Following the `updates` link will also
         return immediately if more events are available, but if there are none,
-        it becomes a long poll.  It will will block until an event is available
+        it becomes a long poll.  It will block until an event is available
         that matches the specified filters, or a timeout passes.
 
         Do not code this URL into your application.  Take it from `events.events.href` in the
@@ -14466,7 +14462,7 @@ paths:
         description: |
           Restricts events to those that occurred before this time.  Events that occurred at this
           exact time (to the second) will not appear in the results.  For example, to collect all
-          events that occurred on 1 January 2017, use `after=2017-01-01Z,before=2017-01-02Z`.  You
+          events that occurred on 1 January 2017, use `after=2017-01-01Z&before=2017-01-02Z`.  You
           will not receive any events from 2 January.
 
           The `after` parameter (above) describes the time stamp formats that the server accepts.
@@ -14557,11 +14553,17 @@ paths:
 
           A more secure option for limiting your client's visibility is to set the operator's
           privileges so that it only has access to those divisions.
+
       - name: "directDivision"
         in: query
         required: false
         schema: {type: string}
-        description: "Restricts events to those whose division is in this list.  Unlike `division=`, it does not follow ancestry.  The name `directDivision` is case-sensitive.  Separate IDs with commas.\n\nExample:  `division=2,101`."
+        description: |
+          Restricts events to those whose division is in this list.  Unlike `division=`, it does not
+          follow ancestry.  The name `directDivision` is case-sensitive.  Separate IDs with
+          commas.
+
+          Example:  `directDivision=2,101`."
 
       - name: "relatedItem"
         in: query
@@ -14617,7 +14619,7 @@ paths:
         The way this call picks its initial set of events is different from `/api/events`:
 
         - If you follow the link at `events.updates.href` in the results of `GET /api`, it will
-          block until at least one event arrives that meet your search criteria, then return them.
+          block until at least one event arrives that meets your search criteria, then return them.
 
         - If you follow the `updates` link from the results of `GET /api/events` or `GET
           /api/events/updates`, the link will contain a bookmark parameter that causes the server to
@@ -14724,7 +14726,7 @@ paths:
           Restricts events to those with this event type ID.  Separate multiple IDs with commas.
 
           Use [the API](#?route=get-/api/events/groups) to see all of Command Centre's event types and groups.  Event
-          types names and IDs rarely change, but the ID is the more stable of the two.  Therefore it
+          type names and IDs rarely change, but the ID is the more stable of the two.  Therefore it
           is probably safer to use that API for reference then hard-code the event type IDs you find
           there into your application.
       - name: "group"
@@ -14832,7 +14834,7 @@ paths:
         Event type identifiers do not often change between Command Centre versions, but the types in
         each group do.  Therefore if you choose to use groups in filters rather than types you may
         find that your filter catches more or fewer event types after a Command Centre upgrade.
-        That may be desirable if, for example, you are intested in a class of event and you want to
+        That may be desirable if, for example, you are interested in a class of event and you want to
         grow with CC as it grows new features.  If you do not want that, use types rather than
         groups.
 
@@ -14857,7 +14859,7 @@ paths:
         This returns a summary of the fence zones matching your search criteria.
 
         The result will contain no more than 100 or 1000 fence zones (depending on your version), or
-        as many as you asked for more in your request; you should follow the `next` link, if it is
+        as many as you asked for; you should follow the `next` link, if it is
         present, to collect the next batch.
 
         If your result set is empty it means your operator does not have a privilege that allows viewing
@@ -14935,7 +14937,7 @@ paths:
       tags: ["Fence Zones"]
       summary: Turn on a fence zone
       description: |
-        Sends an override to an alarm zone to turn it on until the next scheduled or
+        Sends an override to an fence zone to turn it on until the next scheduled or
         manual change.
       parameters:
       - $ref: "#/components/parameters/id"
@@ -14949,7 +14951,7 @@ paths:
       tags: ["Fence Zones"]
       summary: Turn off a fence zone
       description: |
-        Sends an override to an alarm zone to turn it off until the next scheduled or
+        Sends an override to an fence zone to turn it off until the next scheduled or
         manual change.
       parameters:
       - $ref: "#/components/parameters/id"
@@ -14963,7 +14965,7 @@ paths:
       tags: ["Fence Zones"]
       summary: Shunt a fence zone
       description: |
-        Sends an override to an alarm zone to shunt it, effectively preventing all
+        Sends an override to an fence zone to shunt it, effectively preventing all
         communication with it.
       parameters:
       - $ref: "#/components/parameters/id"
@@ -14977,7 +14979,7 @@ paths:
       tags: ["Fence Zones"]
       summary: Unshunt a fence zone
       description: |
-        Sends an override to an alarm zone to unshunt it, re-enabling its communication.
+        Sends an override to an fence zone to unshunt it, re-enabling its communication.
       parameters:
       - $ref: "#/components/parameters/id"
       - $ref: "#/components/parameters/requested_by"
@@ -14990,7 +14992,7 @@ paths:
       tags: ["Fence Zones"]
       summary: Change to high voltage
       description: |
-        Sends an override to an alarm zone to change it to high voltage mode until the
+        Sends an override to an fence zone to change it to high voltage mode until the
         next scheduled or manual change.
       parameters:
       - $ref: "#/components/parameters/id"
@@ -15004,7 +15006,7 @@ paths:
       tags: ["Fence Zones"]
       summary: Change to low feel
       description: |
-        Sends an override to an alarm zone to change it to 'low feel' mode until the
+        Sends an override to an fence zone to change it to 'low feel' mode until the
         next scheduled or manual change.
       parameters:
       - $ref: "#/components/parameters/id"
@@ -15038,8 +15040,8 @@ paths:
         Note that this API call is good for watching one item only; if you want to monitor several,
         you are better off with a [status subscription](#?route=tag--Items--status-subscriptions).
 
-        Follow the 'updates' field in a door [summary](#?route=cmp--schemas-fencezonesummary) or
-        [details](#?route=cmp--schemas-fencezonedetail) pages to get here.
+        Follow the 'updates' field in a fence zone [summary](#?route=cmp--schemas-fencezonesummary) or
+        [details](#?route=cmp--schemas-fencezonedetail) page to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -15081,7 +15083,7 @@ paths:
         This returns a summary of the inputs matching your search criteria.
 
         The result will contain no more than 100 or 1000 inputs (depending on your version), or as
-        many as you asked for more in your request; you should follow the `next` link, if it is
+        many as you asked for; you should follow the `next` link, if it is
         present, to collect the next batch.
 
         If your result set is empty it means your operator does not have the privilege to view any
@@ -15220,7 +15222,7 @@ paths:
         you are better off with a [status subscription](#?route=tag--Items--status-subscriptions).
 
         Follow the 'updates' field in an input [summary](#?route=cmp--schemas-inputsummary) or
-        [details](#?route=cmp--schemas-inputdetail) pages to get here.
+        [details](#?route=cmp--schemas-inputdetail) page to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -15260,7 +15262,7 @@ paths:
         This returns a summary of the interlock groups matching your search criteria.
 
         The result will contain no more than 100 or 1000 interlock groups (depending on your
-        version), or as many as you asked for more in your request; you should follow the `next`
+        version), or as many as you asked for; you should follow the `next`
         link, if it is present, to collect the next batch.
 
         If your result set is empty it means your operator does not have a privilege that allows viewing
@@ -15387,7 +15389,7 @@ paths:
 
         Follow the 'updates' field in an interlock group
         [summary](#?route=cmp--schemas-interlockgroupsummary) or
-        [details](#?route=cmp--schemas-interlockgroupdetail) pages to get here.
+        [details](#?route=cmp--schemas-interlockgroupdetail) page to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -15455,7 +15457,7 @@ paths:
         schema:
           minimum: 1
           type: integer
-          default: 100
+          default: 1000
       - $ref: "#/components/parameters/sort"
       - name: fields
         in: query
@@ -15545,7 +15547,7 @@ paths:
       - name: fields
         in: query
         description: |
-          Return these fields in the search results.  The values you can list are the same as the field
+          Return these fields.  The values you can list are the same as the field
           names in the details page.  Using it you can return everything on the summary page that you
           would find on the details page.  Separate values with commas.
 
@@ -15623,7 +15625,7 @@ paths:
                   example: false
                   description: |
                     If true, the server will change the status of this REST Client to include an
-                    indication that is has a fault, and will raise an active alarm to draw the
+                    indication that it has a fault, and will raise an active alarm to draw the
                     operators' attention.  Being active, operators will not be able to process that
                     alarm until you restore it by passing false here.
 
@@ -15638,7 +15640,7 @@ paths:
                     This text field works independently of the item's other states and its fault
                     flag:  you can use it purely for information.
 
-                    The integrator is responsibile for any personally identifiable information sent
+                    The integrator is responsible for any personally identifiable information sent
                     to Command Centre via the API.
 
       responses:
@@ -15724,7 +15726,7 @@ paths:
         in: query
         description: |
           Identifies your subscription and your position in the change list.  You should
-          not to set this parameter:  it will be in the link that the server sends back to
+          not set this parameter:  it will be in the link that the server sends back to
           you.
         required: true
         schema:
@@ -15829,7 +15831,7 @@ paths:
           description: The server could not parse the request body.  Check your JSON.
         "401":
           description: |
-            In versions prior to 9.30 it means the operator does not have privilege to view the
+            In versions prior to 9.30 it means the operator does not have the privilege to view the
             monitored items.
         "403":
           description: |
@@ -15860,7 +15862,7 @@ paths:
       description: |
         This returns locker banks matching your search criteria.
 
-        The result will contain no more than 100 or 100 objects depending on your version; you
+        The result will contain no more than 100 or 1000 objects depending on your version; you
         should follow the `next` link, if it is present, to collect more.
 
         If the result set is empty it means there are no locker banks in the divisions in which the
@@ -15909,7 +15911,7 @@ paths:
           you want to receive less data, specify only the fields you want.  If you want to receive
           more, either list every field you want or simply use `lockers.defaults` plus your extras.
 
-          Treat the string matches as case sensitive.
+          Treat the string matches as case-sensitive.
 
       - $ref: "#/components/parameters/pos"
       - $ref: "#/components/parameters/skip"
@@ -15952,7 +15954,7 @@ paths:
           would get in the [details page](#?route=cmp--schemas-lockerbankdetail).  Use it to cut back on
           the size of the response for large locker banks.  Separate values with commas.
 
-          Treat the string matches as case sensitive.
+          Treat the string matches as case-sensitive.
 
           In v8.00 you will receive the href and internal ID even if you did not ask for them.  In
           8.10 you will not.  If you are going to send the fields parameter and need the href or ID,
@@ -16001,7 +16003,7 @@ paths:
           Sets which fields to return.  Use it to cut back on the size of the response for a locker
           with many assignments.  Separate values with commas.
 
-          Treat the string matches as case sensitive.
+          Treat the string matches as case-sensitive.
       responses:
         "200": 
           description: "Success."
@@ -16111,7 +16113,7 @@ paths:
         This returns a summary of the macros matching your search criteria.
 
         The result will contain no more than 100 or 1000 macros (depending on your version), or as
-        many as you asked for more in your request; you should follow the `next` link, if it is
+        many as you asked for; you should follow the `next` link, if it is
         present, to collect the next batch.
 
         If your result set is empty it means your operator does not have the privilege to view any
@@ -16158,7 +16160,7 @@ paths:
       description: |
         This returns the detail of one macro.
 
-        Follow the 'href' field in an [macro summary](#?route=cmp--schemas-macrosummary) to get here.
+        Follow the 'href' field in a [macro summary](#?route=cmp--schemas-macrosummary) to get here.
 
       parameters:
       - name: "id"
@@ -16279,7 +16281,7 @@ paths:
 
       description: |
         In addition to the group's vitals and a link to the membership document, this call returns
-        the divisions in which the operator groups grants its privileges.
+        the divisions in which the operator group grants its privileges.
 
         Note that you can obtain the same results by adding
         `fields=defaults,description,division,divisions,cardholders` to a
@@ -16406,7 +16408,7 @@ paths:
         This returns a summary of the outputs matching your search criteria.
 
         The result will contain no more than 100 or 1000 outputs (depending on your version), or as
-        many as you asked for more in your request; you should follow the `next` link, if it is
+        many as you asked for; you should follow the `next` link, if it is
         present, to collect the next batch.
 
         If your result set is empty it means your operator does not have the privilege to view any
@@ -16566,7 +16568,7 @@ paths:
         you are better off with a [status subscription](#?route=tag--Items--status-subscriptions).
 
         Follow the 'updates' field in an output [summary](#?route=cmp--schemas-outputsummary) or
-        [details](#?route=cmp--schemas-outputdetail) pages to get here.
+        [details](#?route=cmp--schemas-outputdetail) page to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -16668,7 +16670,7 @@ paths:
             The body of the POST did not describe a valid PDF.
 
             If you see 'Invalid Personal Data Field JSON object', the server could not parse the
-            JSON in the body of your POST.  Remember to quote all strings, especially those than
+            JSON in the body of your POST.  Remember to quote all strings, especially those that
             contain @ symbols.
 
         "403":
@@ -16703,7 +16705,7 @@ paths:
         "404":
           description: |
             The operator does not have a privilege that allows viewing that PDF's definition ('View'
-            or 'Edit Personal Data Definition'), or the PDF's own access control is hiding it from
+            or 'Edit Personal Data Definitions'), or the PDF's own access control is hiding it from
             the operator.
 
     patch:
@@ -16714,7 +16716,7 @@ paths:
         [summary](#?route=cmp--schemas-pdfdefinition) to get here, rather than [building it
         yourself](#?route=overview--forward-compatibility-hateoas).
 
-        The PATCH expects a document in the same format as the [the PDF
+        The PATCH expects a document in the same format as the [PDF
         detail](#?route=cmp--schemas-pdfdefinition).
 
         It requires the RESTConfiguration licence.
@@ -16926,7 +16928,7 @@ paths:
                   status.
 
                   The PIV status is the only PIV-specific data you can change on a PIV card.  Everything
-                  else--the CHUID, certificates, and biometrics--are all fixed, once set.
+                  else--the CHUID, certificates, and biometrics--are all fixed once set.
 
                   See the [PIV data schema](#?route=cmp--schemas-newpivcard) for when you should set the PIV status
                   and what you can set it to.
@@ -17046,7 +17048,7 @@ paths:
                             The certificates and biometrics are missing from the default result set
                             in the interest of efficiency:  those fields are very large, and most of
                             our integrations do not require them.  Some are running over cellular
-                            networks, where bandwidth is carries a cost.  Omitting the large fields
+                            networks, where bandwidth carries a cost.  Omitting the large fields
                             by default but sending them on request is a flexible compromise that
                             allows integrators to build a suitable system without wastage.
 
@@ -17124,7 +17126,7 @@ paths:
                 $ref: '#/components/schemas/Reception'
         "403":
           description: |
-            The site does not have the RESTCardholders or RESTEvents licence
+            The site does not have the RESTCardholders or RESTEvents licence.
         "404":
           description: |
             The operator does not have a privilege that allows viewing that reception's definition
@@ -17184,7 +17186,7 @@ paths:
         description: |
           Specifies the fields you want in the results.
 
-          Treat the string matches as case sensitive:  use `lastName` rather than `lastname`.
+          Treat the string matches as case sensitive.
         style: form
         explode: false
         schema:
@@ -17352,7 +17354,7 @@ paths:
             The body of the POST did not describe a valid role.
 
             If you see 'Invalid Role JSON object', the server could not parse the JSON in
-            the body of your POST.  Remember to quote all strings, especially those than contain @
+            the body of your POST.  Remember to quote all strings, especially those that contain @
             symbols.
 
         "403":
@@ -17372,7 +17374,7 @@ paths:
         This is the call you use to update a role.  Take its URL from a cardholder or a role search
         rather than [building it yourself](#?route=overview--forward-compatibility-hateoas).
 
-        The PATCH expects a document in the same format as the [the role detail](#?route=cmp--schemas-role).
+        The PATCH expects a document in the same format as the [role detail](#?route=cmp--schemas-role).
 
         This call requires the RESTConfiguration licence.
 
@@ -17394,7 +17396,7 @@ paths:
           description: "Success."
         "400":
           description: |
-            The body of the PATCH did not describe a valid card type.  Card types have many rules,
+            The body of the PATCH did not describe a valid role.  Roles have many rules,
             easily enforced in a graphical interface but less so in an API.  See the body of the
             response for help on what went wrong.
 
@@ -17412,9 +17414,9 @@ paths:
 
         "404":
           description: |
-            That is not the URL of a card type or your operator does not have the privilege to view
+            That is not the URL of a role or your operator does not have the privilege to view
             it.  This probably means you have built the URL yourself instead of taking it from the
-            results of a [GET](#?route=get-/api/card_types).
+            results of a [GET](#?route=get-/api/roles).
 
         "409":
           description: |
@@ -17455,7 +17457,7 @@ paths:
         This returns a summary of the schedules matching your search criteria.
 
         The result will contain no more than 100 or 1000, depending on your version, or as many as
-        you asked for more in your request; you should follow the `next` link, if it is present, to
+        you asked for; you should follow the `next` link, if it is present, to
         collect the next batch.
 
         If your result set is empty it means your operator does not have the privilege to view
@@ -17464,7 +17466,7 @@ paths:
         operator has no privileges at all.
 
         Note that the privilege 'Schedule Access Zone' only lets you see Access Zone schedules, not
-        the other five types.
+        the other six types.
 
         When you have loaded them all there will be no `next` link.
 
@@ -17508,7 +17510,7 @@ paths:
       description: |
         This is how you create a new schedule.
 
-        Your POST needs a body containing JSON in the same from received from a GET, containing a
+        Your POST needs a body containing JSON in the same form received from a GET, containing a
         division and type, and (if you want it to be useful) `dayCategories`.
 
         Do not code this URL into your application.  Take it from the 'href' field in the
@@ -17553,7 +17555,7 @@ paths:
       description: |
         This returns the detail of one schedule.
 
-        Follow the 'href' field in an [schedule summary](#?route=cmp--schemas-schedulesummary) to get here.
+        Follow the 'href' field in a [schedule summary](#?route=cmp--schemas-schedulesummary) to get here.
       parameters:
       - name: id
         in: path
@@ -17728,13 +17730,8 @@ paths:
       tags: [ "Visits" ]
       summary: Create a visit
       description: |
-        This creates a new visit.
-
-        In the interest of [forward compatibility](#?route=overview--forward-compatibility-hateoas), do not
-        code its URL into your application.  Take it from the href in the `features.visits.visits`
-        section of `/api`.
-
-        This POST expects a JSON body in the same format as a [visit detail](#?route=cmp--schemas-visit).
+        This creates a new visit.  It expects a JSON body in the same format as a [visit
+        detail](#?route=cmp--schemas-visit).
 
         These fields are required:
         - name
@@ -17831,7 +17828,7 @@ paths:
         "404":
           description: |
             That is not the URL of a visit, or it is a visit but the operator does not have the
-            privilege to see ('View Visits' or 'Edit Visits').
+            privilege to see it ('View Visits' or 'Edit Visits').
 
     patch:
       tags: [ "Visits" ]
@@ -17914,7 +17911,7 @@ paths:
         "404":
           description: |
             That is not the URL of a visit, or it is a visit that the operator does not have the
-            privilege to see ('View Visits' or 'Edit Visits').
+            privilege to see it ('View Visits' or 'Edit Visits').
 
   /api/visits/{id}/visitors/{secondary_id}:
     parameters:
@@ -18010,12 +18007,12 @@ paths:
         $ref: "#/components/requestBodies/visitorNotificationPOST"
 
       responses:
-        "200": { description: "Success.  Future versions will return feedback from the server about your PATCH." }
+        "200": { description: "Success.  Future versions will return feedback from the server about your POST." }
         "204":
           description: "Success."
         "400":
           description: |
-            The body of the PATCH did not describe a notification.  Check the body of the server's
+            The body did not describe a notification.  Check the body of the server's
             response for hints.
         "403":
           description: |
@@ -18049,12 +18046,12 @@ paths:
         $ref: "#/components/requestBodies/visitorNotificationPOST"
 
       responses:
-        "200": { description: "Success.  Future versions will return feedback from the server about your PATCH." }
+        "200": { description: "Success.  Future versions will return feedback from the server about your POST." }
         "204":
           description: "Success."
         "400":
           description: |
-            The body of the PATCH did not describe a notification.  Check the body of the server's
+            The body did not describe a notification.  Check the body of the server's
             response for hints.
         "403":
           description: |
@@ -18168,9 +18165,6 @@ tags:
     * Cardholders have accessibilities for skipping PIN entry and taking longer to get through a
       door, in addition to the existing accessibility to not use a scramble pad.
 
-    * POTENTIALLY BREAKING CHANGE:  GovPass cards and card states may have changed item type names
-      between 9.20 and 9.30, depending on the card type and the site's licences.
-
     ### API change in May 2026 maintenance releases
 
     * Potential breaking change in 9.20 MR7, 9.30 MR5, and 9.40 MR2:  attempts to set the name of an
@@ -18182,10 +18176,6 @@ tags:
 
     * Support for half-cycle door locks.  Common in correctional facilities, half-cycle locks remain
       unlocked until closed.  Regular doors unlock for a few seconds before locking again.
-
-    * POTENTIALLY BREAKING CHANGE:  for efficiency, 9.30 orders search results differently from 9.20
-      when your query does not include a `sort` parameter.  If you care about the order of your
-      items, tell the server how you want them sorted.
 
     * POTENTIALLY BREAKING CHANGE:  GovPass cards may have a new credentialClass and GovPass card
       states will have new names, depending on the card type and the site's licences.
@@ -18207,6 +18197,13 @@ tags:
       deserves a mention here for developers considering adding status monitoring to their
       integrations.  It may be done for you!
 
+    * POTENTIALLY BREAKING CHANGE:  GovPass cards and card states may have changed item type names
+      between 9.20 and 9.30, depending on the card type and the site's licences.
+
+    * POTENTIALLY BREAKING CHANGE:  for efficiency, 9.30 orders search results differently from 9.20
+      when your query does not include a `sort` parameter.  If you care about the order of your
+      items, tell the server how you want them sorted.
+
     ### API changes in 9.20
 
     * You can filter events and items by their direct division.  The older division search is
@@ -18226,9 +18223,9 @@ tags:
     ### API changes in 9.00
 
     * A new event type `hasLocation` greatly simplifies the [monitoring of cardholder
-      movements](#path/get/Events)
+      movements](#path/get/Events).
       
-    * A new ([`location` block on events](#?route=tag--Events--location-events-in-900) greatly
+    * A new [`location` block on events](#?route=tag--Events--location-events-in-900) greatly
       simplifies interpreting them.
 
     * You can search for cardholders by the access zone they are in.
@@ -18259,7 +18256,7 @@ tags:
     * You can now [set](#?route=patch-/api/visits/-id-/visitors/-visitorId-) a visitor's state
       (signing in, etc.).  Visits will return that, if you ask.
 
-    * Bug fix:  removing an operator group from a cardholder by PATCH was not possible in the early
+    * Bugfix:  removing an operator group from a cardholder by PATCH was not possible in the early
       versions of 8.70 and 8.80.  It was fixed in 8.70.2113, 8.80.1116, and all versions of 8.90.
 
     ### API changes in 8.80
@@ -18309,7 +18306,7 @@ tags:
 
     * Asking for a particular PDF on a cardholder (by putting `pdf_XXX` into the `fields` query parameter) will
       cause it to appear even if the cardholder has no value for that PDF.  Previous versions only
-      showed if it had a non-blank value.
+      showed it if it had a non-blank value.
 
     * Attempting to give a cardholder a competency they already have will fail instead of allowing
       it and raising an alarm.  Note that a cardholder having two links to the same competency leads
@@ -18549,7 +18546,7 @@ tags:
 
     ## Licensing
 
-    Reading access groups and managing access group memberships is enabled by the RESTCardholders
+    Reading access groups and managing access group memberships are enabled by the RESTCardholders
     licence but creating, deleting, or modifying access group items requires the RESTConfiguration
     licence.
 
@@ -18578,7 +18575,7 @@ tags:
 
     If the access zone is online, its `statusFlags` field may contain one or more of these flags:
 
-    - `saltoOutputOnly` means the the access zone would be considered unconfigured because it is
+    - `saltoOutputOnly` means the access zone would be considered unconfigured because it is
       missing doors, and therefore offline, except that it has a Salto output number assigned to it.
       That is a normal operational configuration.
 
@@ -18608,10 +18605,10 @@ tags:
 
     ### Access Zone flag rules
 
-    - If and only if the zone online and not locked down, there will be exactly one of 'secure',
+    - If and only if the zone is online and not locked down, there will be exactly one of 'secure',
       'dualAuth', 'codeOrCard', or 'free'.
 
-    - If and only if the zone online and locked down, there will be exactly one of 'secure' or
+    - If and only if the zone is online and locked down, there will be exactly one of 'secure' or
       'dualAuth'.
 
     - Because 'saltoOutputOnly' and 'mobileZone' are variations of the unconfigured offline
@@ -18747,13 +18744,13 @@ tags:
       cardholder the opportunity to disarm the zone.
 
     - `lowFeel` means the alarm zone has a fence zone attached, and that it is in 'low feel' mode
-      (meaning it is delivering lower voltage than you would use for a strong deterrant).
-    - `highVoltage` means that the alarm zone has a fence zone attached, and that it is 'high
-      voltage' mode (meaning it is delivering a strong deterrant pulse).
+      (meaning it is delivering lower voltage than you would use for a strong deterrent).
+    - `highVoltage` means that the alarm zone has a fence zone attached, and that it is in 'high
+      voltage' mode (meaning it is delivering a strong deterrent pulse).
 
     ### Alarm Zone flag rules
 
-    - If and only if the zone is online, there will exactly one of 'armed', 'disarmed', 'user1', or
+    - If and only if the zone is online, there will be exactly one of 'armed', 'disarmed', 'user1', or
       'user2'.  That is your test for whether an alarm zone is in error.
     - 'exitDelay' and 'entryDelay' cannot appear together.
     - If and only if the zone is online and has a fence zone, there will be exactly one of 'lowFeel'
@@ -18765,7 +18762,7 @@ tags:
     1. `GET /api`.
     2. Follow the link at `features.alarmZones.alarmZones.href`
        [↪](#?route=get-/api/alarm_zones), appending a search term such as `name=substring` to
-       filter the access zones, and `fields` to tell the server what to return about each.  The next
+       filter the alarm zones, and `fields` to tell the server what to return about each.  The next
        section covers those query parameters.
     3. Process the results, following the `next` link until there isn't one.
 
@@ -18800,12 +18797,12 @@ tags:
 - name: "Card encoding"
   description: |
     These routes allow clients to get Gallagher card encoding data for MIFARE DESFire and MIFARE Classic cards.
-    - Following features are required in the licence file:
+    - The following features are required in the licence file:
       - RESTCardholders
       - RESTEncoding
       - Encoding
       - Photo-ID
-    - The REST Client operator should have following privileges:
+    - The REST Client operator should have the following privileges:
       - View Cardholders
       - Print/Preview & Encode Card
       - Allow Re-Printing and Re-Encoding (optional, depending on whether you want to allow re-encoding of already-encoded cards)
@@ -18824,7 +18821,7 @@ tags:
 
       openssl pkcs12 -export -out key.pfx -inkey private.pem -in E2EEncryptionKey.crt
       ```
-    2. Store the private key securely on the encoding client side, e.g, storing it in Windows Certificate Store.
+    2. Store the private key securely on the encoding client side, e.g., in the Windows Certificate Store.
       ```powershell
       Import-PfxCertificate -FilePath "path\to\key.pfx" -CertStoreLocation Cert:\CurrentUser\My -Password (Read-Host "Enter PFX Password" -AsSecureString)
       ```
@@ -18973,8 +18970,9 @@ tags:
 
     2. Follow the link at `features.cardholders.cardholders.href`
        [↪](#?route=get-/api/cardholders), appending a search term to narrow the results and
-       the `fields` parameter to add the fields you need.  3. Process the results, following the
-       `next` link until there isn't one.
+       the `fields` parameter to add the fields you need.
+    
+    3. Process the results, following the `next` link until there isn't one.
 
     ### Downloading all cardholders 
     1. `GET /api`
@@ -19102,12 +19100,13 @@ tags:
     relationships, operator groups, cards, and lockers.
 
     1. GET your cardholder's details page, or search with `accessGroups` in the field list.  Either
-    way, you will receive all their access group memberships.
-    2. Take the array at `accessGroups`, rename it to `remove`, and put it in object called
-    `accessGroups` at the root level of a [JSON object](#?route=cmp--schemas-cardholderpatch).
+       way, you will receive all their access group memberships.
+
+    2. Take the array at `accessGroups`, rename it to `remove`, and put it in an object called
+       `accessGroups` at the root level of a [JSON object](#?route=cmp--schemas-cardholderpatch).
 
     3. [PATCH](#?route=patch-/api/cardholders/-id-) the cardholder with that JSON object.
-    That will remove the cardholder from all the groups that came back in the GET.
+       That will remove the cardholder from all the groups that came back in the GET.
 
     ### Assigning a new card to a cardholder
 
@@ -19314,7 +19313,7 @@ tags:
       API.  It was fixed in 8.60.  Changes to the other five operator settings work correctly in
       8.50.
 
-    - The API returns changes to configuration, not to changes in status.  For example, when
+    - The API returns changes to configuration, not changes in status.  For example, when
       the time passes into or out of the activity period of a card or competency, the status of
       that card or competency changes but that does not prompt anything to come out of this
       API.  To monitor for that, watch the configuration fields that define the card's or
@@ -19439,8 +19438,7 @@ tags:
 
     ## Licensing
 
-    Access to day categories requires one of RESTCardholders, RESTStatus, RESTOverrides, or
-    RESTConfiguration.
+    Access to day categories requires one of RESTCardholders, RESTStatus, or RESTOverrides.
 
 - name: Divisions
   description: |
@@ -19484,7 +19482,7 @@ tags:
       resistance moving outside nominal range, meaning the input has been cut or shorted.
     - `open` means the door has a sensor for detecting its openness and it is reporting as such.
     - `closed` is the inverse.  The door is closed or has no open sensor.
-    - `locked` means the door locked.  It reflects the state of the door's unlock sensor, if it has
+    - `locked` means the door is locked.  It reflects the state of the door's unlock sensor, if it has
       one.  Otherwise it reflects the state of the door's unlock output, if it has that.  Without an
       unlock output, a door is not capable of access control.
     - `unlocked` means 'locked' is not set.
@@ -19522,7 +19520,7 @@ tags:
        of the [results](#?route=cmp--schemas-doordetail).
 
     ### Finding a door's status
-    1. Find the href for the door  using the process above, and GET it.
+    1. Find the href for the door using the process above, and GET it.
     3. Follow the `updates` href from that page.
     4. Use the flag rules above to interpret the status flags you receive.
     5. Follow the `next` link to stay up to date.
@@ -19564,7 +19562,7 @@ tags:
     ### Choosing and setting a cardholder's default floor
 
     Your client will first need to list all elevator groups, and the floors and access zones on
-    those elevator groups, so that it can pick from them (if knows them by name already) or present
+    those elevator groups, so that it can pick from them (if it knows them by name already) or present
     a list and allow a user to pick one if it is interactive.
 
     Then it will need to send a PATCH back to the cardholder to set his or her default floor for an
@@ -19651,7 +19649,7 @@ tags:
     events arrive, or a minute passes (approximately).
 
     ### Downloading the most recent events
-    1. `Get /api`
+    1. `GET /api`
     2. Take the link at `features.events.events.href` [↪](#?route=get-/api/events) and
        append `previous=true&top=20`.  Add the appropriate query separator `?` or `&` first,
        depending on whether there is a query parameter in the URL already, and change the 20 as
@@ -19930,7 +19928,7 @@ tags:
     If you are running 8.70 or later and you put `previous`, `next`, or `updates` in the field
     list of an event search, the server will add those fields to each event.  All server versions
     include links with those names at the end of results, but they are not useful if you crash out
-    half way through processing a batch.  The per-event links, only available in 8.70 and later
+    midway through processing a batch.  The per-event links, only available in 8.70 and later
     and only on request, give you a place to pick up from without being re-sent the events you
     already processed.
 
@@ -19964,8 +19962,8 @@ tags:
     - `on` means the fence zone is live, energised.  Take care.
     - `off` means the fence zone is off.
     - `lowFeel` means the fence energiser is delivering enough voltage to detect disturbances.
-      Depending on the fence zone's configuration, it may also be a deterrant.
-    - `highVoltage` means the pulse is delivering a deterrant pulse.
+      Depending on the fence zone's configuration, it may also be a deterrent.
+    - `highVoltage` means the pulse is delivering a deterrent pulse.
     - `hVPlusMode` means the fence voltage has increased in response to a disturbance.  After some
       time or an override it will leave this mode.  See the description of HVPlus mode in the
       Configuration Client's online help.
@@ -19975,7 +19973,7 @@ tags:
     - `voltageKnown` means Command Centre has the current voltage for the zone, provided there has
       been at least one pulse from the energiser recently.  This can only happen when the zone is
       on, obviously.  The 'voltage' field will contain the voltage at the last pulse.
-    - `alert` means the fence voltage is outside the alert range.  Typically this means an electical problem.
+    - `alert` means the fence voltage is outside the alert range.  Typically this means an electrical problem.
     - `warning` means the fence voltage is between the alert and warning ranges.  Typically this
       means it has grounded somewhere.
     - `preArm` means the zone is performing its pre-arm check.
@@ -20218,7 +20216,7 @@ tags:
     noticing undue strain on the server.  While the calls do not impose an upper bound on that we
     suggest keeping a watchful eye on the performance of the overall system if you go much higher.
 
-    The basic operations for monitoring item states is:
+    The basic process for monitoring item states is:
 
       1.  Get all the IDs of the items you wish to monitor.  You can do that using this API's own
       [search](#?route=get-/api/items) with a `name`, `division`, or `type` parameter.  If you're
@@ -20284,7 +20282,7 @@ tags:
 
     Regardless of whether a locker is online or not, its status may contain these:
 
-    - `quarantined` means the locked cannot be allocated to a cardholder.  It needs a clean, in
+    - `quarantined` means the locker cannot be allocated to a cardholder.  It needs a clean, in
       other words.
 
     - `allocated` means it is allocated to a cardholder, so another cardholder cannot self-allocate it.
@@ -20365,7 +20363,7 @@ tags:
     
     ## Macro status flags
 
-    Being very simple creatures macros normally bear no flags of status, but an experimental
+    Being very simple creatures, macros normally bear no flags of status but an experimental
     addition to version 9.30 adds the flag `closed` while a macro is running.  If you have
     subscribed to status updates you will see this flag flash past, but if you simply ask for a
     macro's status on your own schedule you are very unlikely to strike it during the extremely
@@ -20446,7 +20444,9 @@ tags:
 
     2. Follow the link at `features.operatorGroups.operatorGroups.href`
        [↪](#?route=get-/api/operator_groups) (adding search terms, and setting `top`
-       high to save pagination).  3. Find your operator group.
+       high to save pagination).
+
+    3. Find your operator group.
 
     4. The link at `cardholders` returns the cardholders who have membership of your group.
 
@@ -20466,7 +20466,7 @@ tags:
 
     ## Override times
 
-    1. End-times on overrides are not accurate to the second.  Internally, Command Centre
+    1. End times on overrides are not accurate to the second.  Internally, Command Centre
        converts the end time to a duration, so you may find that submitting end times in
        the very near future does not have the exact effect you expect.
     2. The end time you set for an override cannot be in the past or more than 24 hours
@@ -20581,7 +20581,7 @@ tags:
        `personalDataDefinitions` block and add the `parent.href` link to the list of groups to check
        (unless you have already seen it, of course).
 
-    Now you have the names and hrefs of all the PDFs that cardholder can hold.
+    Now you have the names and hrefs of all the PDFs that the cardholder can hold.
 
     ### Finding a PDF's regular expression
 
@@ -20701,7 +20701,7 @@ tags:
 
     - the cardholder moved through a door.
 
-    An event recation does not affect a cardholder's history (visible in the enterprise clients).
+    An event redaction does not affect a cardholder's history (visible in the enterprise clients).
 
     A _cardholder information_ redaction is absolute.  It clears all the data held against the item.
     After being redacted a cardholder has nothing that can identify it:  no names and no PDFs.
