@@ -1039,7 +1039,7 @@
               <p>This shows how you could remove a cardholder from all his or her access groups, but you could just as simply apply the process to other fields that come back as arrays, such as competencies, relationships, operator groups, cards, and lockers.</p>
               <ol>
                 <li>GET your cardholder&#39;s details page, or search with <code>accessGroups</code> in the field list. Either way, you will receive all their access group memberships.</li>
-                <li>Take the array at <code>accessGroups</code>, rename it to <code>remove</code>, and put it in object called <code>accessGroups</code> at the root level of a
+                <li>Take the array at <code>accessGroups</code>, rename it to <code>remove</code>, and put it in an object called <code>accessGroups</code> at the root level of a
                   <a href="#definition-Cardholder-PATCH-example">JSON object</a>.</li>
                 <li>
                   <a href="#operation--api-cardholders--id--patch">PATCH</a> the cardholder with that JSON object. That will remove the cardholder from all the groups that came back in the GET.</li>
@@ -1180,7 +1180,7 @@
                       </div>
                     </div>
                     <div class="prop-value">
-                      <p>Sets maximum number of cardholders to return per page.</p>
+                      <p>Sets the maximum number of cardholders to return per page.</p>
                       <p>Older versions of Command Centre returned 100. That is acceptable for a GUI application that will only display the first page of cardholders, but for integrations that intend to proceed through the entire database it causes a lot of chatter.</p>
                       <p>Version 8.70 will return 1000 items per request by default. 1000 is about where a graph of performance versus page size begins to level out. You may see some improvement by taking it even higher.</p>
                     </div>
@@ -1591,7 +1591,7 @@
                     </div>
                     <div class="prop-value">
                       <p>The body of the POST did not describe a valid cardholder.</p>
-                      <p>If you see &#39;Data has not been entered for this Personal Data Field&#39; in the response body, you have attempted to create a cardholder in an access group that has a required Personal Data Field, but not supplied a value for that PDF.</p>
+                      <p>If you see &#39;Data has not been entered for this Personal Data Field&#39; in the response body, you have attempted to create a cardholder in an access group that has a required Personal Data Field, but have not supplied a value for that PDF.</p>
                       <p>If you see &#39;Invalid cardholder&#39;, the server could not parse the JSON in the body of your POST. Remember to quote all strings, especially those than contain @ symbols.</p>
                     </div>
                   </div>
@@ -3431,7 +3431,7 @@
               <div class="doc-copy">
                 <section class="swagger-operation-description">
                   <p>This tells you which fields your REST operator can edit based on its privileges.</p>
-                  <p>Gallagher uses this call for rapidly-evolving internal applications. As such, its results are tuned to those applications and are subject to change. Rather than relying on this call, we suggest that you simply give your REST operator the privileges it needs to access to everything it needs.</p>
+                  <p>Gallagher uses this call for rapidly-evolving internal applications. As such, its results are tuned to those applications and are subject to change. Rather than relying on this call, we suggest that you simply give your REST operator the privileges it needs.</p>
                   <p>Note that this method returns 400 if there are two PDFs in the system with the same name. CC insists on unique names for items when you create them but you can end up with duplicates when you form a multiserver cluster out of standalone installations. You should move on that, because having two PDFs with the same name will bewilder your operational staff.</p>
                 </section>
               </div>
@@ -3532,7 +3532,7 @@
                   <p>There is a known issue in 8.50 preventing operator group membership changes coming out of this API. It was fixed in 8.60. Changes to the other five operator settings work correctly in 8.50.</p>
                 </li>
                 <li>
-                  <p>The API returns changes to configuration, not to changes in status. For example, when the time passes into or out of the activity period of a card or competency, the status of that card or competency changes but that does not prompt anything to come out of this API. To monitor for that, watch the configuration fields that define the card&#39;s or competency&#39;s validity period.</p>
+                  <p>The API returns changes to configuration, not changes in status. For example, when the time passes into or out of the activity period of a card or competency, the status of that card or competency changes but that does not prompt anything to come out of this API. To monitor for that, watch the configuration fields that define the card&#39;s or competency&#39;s validity period.</p>
                   <p>Similarly, a cardholder moving between access zones changes two fields beginning with <code>lastSuccessfulAccess</code> but does not count as a cardholder change.</p>
                 </li>
                 <li>
@@ -12338,7 +12338,7 @@
                           <span class="json-property-read-only"></span>
                         </dt>
                         <dd>
-                          <p>Link to
+                          <p>Link to send a
                             <a href="#operation--api-cardholders--id--update_location-post">POST</a> to when you want to update the location of this cardholder. Added in 8.20.</p>
                         </dd>
                         <dt data-property-name="notes" class="has-description">
@@ -12533,7 +12533,7 @@
                                     <span class="json-property-range" title="Value limits"></span>
                                   </dt>
                                   <dd>
-                                    <p>If set and in the past, the accessibility will have been inactive since then. If not set or in the future, the accessibility will depend on <code>enabled.</code></p>
+                                    <p>If set and in the past, the accessibility will have been inactive since then. If not set or in the future, the accessibility will depend on <code>enabled</code>.</p>
                                     <p>If you send it, it must be later than both the <code>from</code> date, if sent, and the current time.</p>
                                   </dd>
                                 </dl>
@@ -13347,7 +13347,7 @@
                       <p>Each element of the &#39;add&#39; array will need a &#39;type&#39; member, at the very least. Every card field makes sense here except &#39;href&#39;. Only existing cards have hrefs. This example adds two cards: one has nothing more than the type, so it will receive the card type&#39;s default &#39;from&#39; and &#39;until&#39; dates (blank if the card type has none) and a computed number and issue level. The other is a mobile credential (it has an &#39;invitation&#39; block) with a custom initial state.</p>
                       <p>Each element of the &#39;update&#39; array should be a card to modify. It will need the href of that card, plus the fields you want to change. Remember you cannot change a card&#39;s type. The example changes the issue level and resets the &#39;until&#39; date.</p>
                       <p>The only fields that make sense in an element of the &#39;remove&#39; array are &#39;href&#39; and &#39;status&#39;.</p>
-                      <p>You can remove and add cards in the same PATCH. In fact you should do that in preference to making multiple API calls. That is a good way of reissuing a mobile credentials, for example: put the href to the old one in the &#39;remove&#39; array and a new invitation in the &#39;add&#39; array. The new credential should have the same card number and the same &#39;type&#39; and &#39;invitation&#39; blocks as the credential you&#39;re re-issuing.</p>
+                      <p>You can remove and add cards in the same PATCH. In fact you should do that in preference to making multiple API calls. That is a good way of reissuing a mobile credential, for example: put the href to the old one in the &#39;remove&#39; array and a new invitation in the &#39;add&#39; array. The new credential should have the same card number and the same &#39;type&#39; and &#39;invitation&#39; blocks as the credential you&#39;re re-issuing.</p>
                       <p>Do not put the same href in both the &#39;update&#39; and &#39;remove&#39; arrays.</p>
                       <p>In version 8.90 and later you can specify a card state in the <code>value</code> field inside the <code>status</code> block when removing a card or changing its issue level. It becomes the final state of the card if you remove it or the final state of the card with the previous issue level if you re-issue it, so it must be one of the valid states for the card type. The Gallagher clients and the resulting event call this state the &#39;reason&#39; for the re-issue or removal. By default it will be the same as the card&#39;s current state.</p>
                     </dd>
@@ -13406,7 +13406,7 @@
                         <a href="#definition-Cardholder-locker">cardholder locker schema</a>. They will allocate lockers to cardholders, de-allocate them, and adjust validity periods.</p>
                       <p>Each member of the &#39;add&#39; array will need a &#39;locker&#39; member containing an href identifying the locker to allocate. The cardholder you will allocate it to is identified by the request URL, remember.</p>
                       <p>Each member of the &#39;update&#39; array will need an href identifying the allocation to update, and one or both of the &#39;from&#39; and &#39;until&#39; date-times.</p>
-                      <p>The validity period is all you can change about a locker allocation. If you want to change the locker, delete the old one and add a new. You can do that in the same PATCH, with one element in each of the &#39;add&#39; and &#39;remove&#39; arrays.</p>
+                      <p>The validity period is all you can change about a locker allocation. If you want to change the locker, delete the old one and add another. You can do that in the same PATCH, with one element in each of the &#39;remove&#39; and &#39;add&#39; arrays.</p>
                       <p>This example allocates one locker starting in January 2019, sets the end-date of an existing allocation to the end of February 2020, and removes another entirely.</p>
                     </dd>
                     <dt data-property-name="operatorGroups" class="has-description">
@@ -13757,7 +13757,7 @@
                           <dd>
                             <p>In a GET response for text, numeric, and date PDFs this will be a scalar containing the value, but for image PDFs it will be an object containing a copy of the <code>href</code> field above.</p>
                             <p>In versions up to and including 8.60, if a cardholder did not have an image PDF captured (in other words they were a member of an access group that included an image PDF, but they did not have a value for it) the API returned the string &#39;Not captured&#39; in the <code>value</code> field. Versions 8.70 and later will not return the <code>value</code> field at all if there is no image.</p>
-                            <p>For date PDFs the string will comply to ISO 8601, but may or may not contain a time depending on the version of Command Centre. Newer versions omit it because date PDFs only hold a date, not a time. If the result includes a time, it will be midnight UTC.</p>
+                            <p>For date PDFs the string will comply with ISO 8601, but may or may not contain a time depending on the version of Command Centre. Newer versions omit it because date PDFs only hold a date, not a time. If the result includes a time, it will be midnight UTC.</p>
                             <p>In a POST or PATCH send text PDFs (including dates) as strings, numeric PDFs as numbers or strings that parse to numbers, and image data Base64-encoded into a string.</p>
                           </dd>
                           <dt data-property-name="notifications" class="has-description">
@@ -13853,9 +13853,9 @@
                     </dt>
                     <dd>
                       <p>The serial number (CSN, MIFARE UID) of a physical access card as a hex string without a leading &#39;0x&#39;. The number is encoded in the traditional way, with an even number of numbers and the letters from &#39;A&#39; through &#39;F&#39;, but the &#39;0x&#39; is missing when it comes out of the API and it must be missing when you send it back.</p>
-                      <p>The example in this example shows a seven-byte serial in the order you can expect in a GET and should use in a PATCH or POST. Those on NXP MIFARE cards start with 04 and end with 80 or 90.</p>
+                      <p>This example shows a seven-byte serial in the order you can expect in a GET and should use in a PATCH or POST. Those on NXP MIFARE cards start with 04 and end with 80 or 90.</p>
                       <p>Four-byte serial numbers are in the same format, but shorter: <code>&quot;EBD62D25&quot;</code>, for example.</p>
-                      <p>This may not be not present on very old cards.</p>
+                      <p>This may not be present on very old cards.</p>
                       <p>This field was read-only until 7.90. It is read-write in 8.00 and later.</p>
                     </dd>
                     <dt data-property-name="issueLevel" class="has-description">
@@ -13892,7 +13892,7 @@
                             <p>This card&#39;s state, taken from the card type&#39;s state set. The default card state set contains &#39;Active&#39;, &#39;Disabled (manually)&#39;, &#39;Lost&#39;, &#39;Stolen&#39;, and &#39;Damaged&#39;, or translations of those into the server&#39;s language. Your card state sets may differ, as they are customisable. PIV cards have extra values covered
                               <a href="piv.html#definition-PIV-GET-example">in the PIV supplement</a>.</p>
                             <p>In addition to the values in the card type&#39;s state set, it will be &#39;Not Yet Activated&#39; if the card&#39;s activation date is in the future, &#39;Expired&#39; if its deactivation date has passed, or &#39;Disabled (by inactivity)&#39; if that is the site&#39;s policy.</p>
-                            <p>Because the values of the <code>value</code> field is set by site administrators, you should not use it for programmatically determining whether a card is active. Use <code>type</code> instead. Use <code>value</code> for display.</p>
+                            <p>Because the value of the <code>value</code> field is set by site administrators, you should not use it for programmatically determining whether a card is active. Use <code>type</code> instead. Use <code>value</code> for display.</p>
                             <p>When creating or updating a card, set <code>value</code> to one of the valid card states from the card state set. Command Centre is not fussy about case. If you omit it when you create a card, Command Centre will use the default for the card state set (&#39;active&#39;, for the factory state set).</p>
                           </dd>
                           <dt data-property-name="type" class="has-description">
@@ -13921,7 +13921,7 @@
                     </dt>
                     <dd>
                       <p>The name of the card type from the site configuration, and a link to the card type object.</p>
-                      <p>When creating a card, the href must be a card type that makes sense for the other values you placed this object.</p>
+                      <p>When creating a card, the href must be a card type that makes sense for the other values you placed in this object.</p>
                       <p>You cannot change a card&#39;s type once it is created.</p>
                     </dd>
                     <dt class="json-inner-schema">
@@ -13949,7 +13949,7 @@
                     <dd>
                       <p>Command Centre will only return this object for a mobile credential, and you should send it only when creating one. In the interests of security you cannot modify the invitation block of an existing credential. Someone&#39;s thumb might be on its way to accept it, after all. If there was something wrong with it you should delete it and start afresh.</p>
                       <p>Whether you should send <code>mobile</code> or <code>email</code> when creating a mobile credential depends on whether you are using the Gallagher mobile apps or your own.</p>
-                      <p>If you specify either <code>mobile</code> or <code>mail</code> to early-version servers you must also supply the other so that Command Centre can send both an email invitation and a confirmation SMS. It is an error to only specify one on those servers.</p>
+                      <p>If you specify either <code>mobile</code> or <code>email</code> to early-version servers you must also supply the other so that Command Centre can send both an email invitation and a confirmation SMS. It is an error to only specify one on those servers.</p>
                       <p>Later versions of Command Centre made the SMS verification optional to better support installations that use the Gallagher apps but prefer not to depend on cellular connectivity. You do not need to send a mobile number when creating such a credential.</p>
                       <p>If you do not give an email address Command Centre cannot send an invitation to the cardholder. It will be up to another application to complete the creation of this credential using the Mobile Connect SDK.</p>
                       <p>You should not send a mobile number when creating a credential for use by third-party apps that use the Mobile Connect SDK. SMS is not supported there.</p>
@@ -14887,7 +14887,7 @@
               <div class="doc-copy">
                 <section class="json-schema-description">
                   <p>A
-                    <em>role</em> is an object in Command Centre. They are usually named using nouns such as &#39;supervisor&#39;, &#39;manager&#39;, or &#39;team leader&#39;.</p>
+                    <em>role</em> is an object in Command Centre. Roles are usually named using nouns such as &#39;supervisor&#39;, &#39;manager&#39;, or &#39;team leader&#39;.</p>
                   <p>The operator clients and the REST API allow you to create a link between two cardholders, called a relationship, using a role. The link is directional: we refer to the cardholder who &#39;has&#39; the role as the child, and the cardholder who performs or &#39;is&#39; the role as the parent.</p>
                   <p>A parent can perform a role for any number of child cardholders, but a child can only have one relationship (parent) for each role. Command Centre will reject your submission if you try to create a relationship when one already exists for the same child and role.</p>
                   <p>For example, a role on your system might be &#39;supervisor&#39;. A cardholder can be a supervisor for any number of others, but will only have one supervisor.</p>
@@ -14992,7 +14992,7 @@
                       <span class="json-property-range" title="Value limits"></span>
                     </dt>
                     <dd>
-                      <p>This href in this object is a link to the allocated locker, and is the identifier to use when allocating the same locker to another cardholder.</p>
+                      <p>The href in this object is a link to the allocated locker, and is the identifier to use when allocating the same locker to another cardholder.</p>
                       <p>The object also contains the name and short name of the locker, and the name and identifying href of its bank.</p>
                     </dd>
                     <dt data-property-name="from" class="has-description">

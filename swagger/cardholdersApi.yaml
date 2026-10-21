@@ -896,7 +896,7 @@ tags:
 
     1. GET your cardholder's details page, or search with `accessGroups` in the field list.  Either
     way, you will receive all their access group memberships.
-    2. Take the array at `accessGroups`, rename it to `remove`, and put it in object called
+    2. Take the array at `accessGroups`, rename it to `remove`, and put it in an object called
     `accessGroups` at the root level of a [JSON object](#definition-Cardholder-PATCH-example).
     3. [PATCH](#operation--api-cardholders--id--patch) the cardholder with that JSON object.  That
     will remove the cardholder from all the groups that came back in the GET.
@@ -1078,7 +1078,7 @@ tags:
       API.  It was fixed in 8.60.  Changes to the other five operator settings work correctly in
       8.50.
 
-    - The API returns changes to configuration, not to changes in status.  For example, when the
+    - The API returns changes to configuration, not changes in status.  For example, when the
       time passes into or out of the activity period of a card or competency, the status of that
       card or competency changes but that does not prompt anything to come out of this API.  To
       monitor for that, watch the configuration fields that define the card's or competency's
@@ -2040,7 +2040,7 @@ definitions:
             type: object
             readOnly: true
             description: |
-              Link to [POST](#operation--api-cardholders--id--update_location-post) to when you want
+              Link to send a [POST](#operation--api-cardholders--id--update_location-post) to when you want
               to update the location of this cardholder.  Added in 8.20.
             example: 
               href: "https://localhost:8904/api/cardholders/402/update_location"
@@ -2174,7 +2174,7 @@ definitions:
                   example: "2027-03-09T00:00:00Z"
                   description: |
                     If set and in the past, the accessibility will have been inactive since then.
-                    If not set or in the future, the accessibility will depend on `enabled.`
+                    If not set or in the future, the accessibility will depend on `enabled`.
 
                     If you send it, it must be later than both the `from` date, if sent, and the
                     current time.
@@ -2467,7 +2467,7 @@ definitions:
           The only fields that make sense in an element of the 'remove' array are 'href' and 'status'.
 
           You can remove and add cards in the same PATCH.  In fact you should do that in preference
-          to making multiple API calls.  That is a good way of reissuing a mobile credentials, for
+          to making multiple API calls.  That is a good way of reissuing a mobile credential, for
           example:  put the href to the old one in the 'remove' array and a new invitation in the
           'add' array.  The new credential should have the same card number and the same 'type' and
           'invitation' blocks as the credential you're re-issuing.
@@ -2631,8 +2631,8 @@ definitions:
           and one or both of the 'from' and 'until' date-times.
 
           The validity period is all you can change about a locker allocation.  If you want to
-          change the locker, delete the old one and add a new.  You can do that in the same PATCH,
-          with one element in each of the 'add' and 'remove' arrays.
+          change the locker, delete the old one and add another.  You can do that in the same PATCH,
+          with one element in each of the 'remove' and 'add' arrays.
 
           This example allocates one locker starting in January 2019, sets the end-date of an
           existing allocation to the end of February 2020, and removes another entirely.
@@ -2805,7 +2805,7 @@ definitions:
               did not have a value for it) the API returned the string 'Not captured' in the `value`
               field.  Versions 8.70 and later will not return the `value` field at all if there is no image.
 
-              For date PDFs the string will comply to ISO 8601, but may or may not contain a time
+              For date PDFs the string will comply with ISO 8601, but may or may not contain a time
               depending on the version of Command Centre.  Newer versions omit it because date PDFs
               only hold a date, not a time.  If the result includes a time, it will be midnight UTC.
 
@@ -2885,13 +2885,13 @@ definitions:
           numbers and the letters from 'A' through 'F', but the '0x' is missing when it comes out of
           the API and it must be missing when you send it back.
 
-          The example in this example shows a seven-byte serial in the order you can expect in a GET
+          This example shows a seven-byte serial in the order you can expect in a GET
           and should use in a PATCH or POST.  Those on NXP MIFARE cards start with 04 and end with
           80 or 90.
 
           Four-byte serial numbers are in the same format, but shorter: `"EBD62D25"`, for example.
 
-          This may not be not present on very old cards.
+          This may not be present on very old cards.
 
           This field was read-only until 7.90.  It is read-write in 8.00 and later.
 
@@ -2941,7 +2941,7 @@ definitions:
               if the card's activation date is in the future, 'Expired' if its deactivation date has
               passed, or 'Disabled (by inactivity)' if that is the site's policy.
 
-              Because the values of the `value` field is set by site administrators, you
+              Because the value of the `value` field is set by site administrators, you
               should not use it for programmatically determining whether a card is active.
               Use `type` instead.  Use `value` for display.
 
@@ -2970,7 +2970,7 @@ definitions:
           The name of the card type from the site configuration, and a link to the card type object.
 
           When creating a card, the href must be a card type that makes sense for the other values
-          you placed this object.
+          you placed in this object.
 
           You cannot change a card's type once it is created.
 
@@ -2992,7 +2992,7 @@ definitions:
           Whether you should send `mobile` or `email` when creating a mobile credential depends on
           whether you are using the Gallagher mobile apps or your own.
 
-          If you specify either `mobile` or `mail` to early-version servers you must also supply the
+          If you specify either `mobile` or `email` to early-version servers you must also supply the
           other so that Command Centre can send both an email invitation and a confirmation SMS.  It
           is an error to only specify one on those servers.
 
@@ -3601,7 +3601,7 @@ definitions:
 
   Cardholder relationship:
     description:  |
-      A _role_ is an object in Command Centre.  They are usually named using nouns such as
+      A _role_ is an object in Command Centre.  Roles are usually named using nouns such as
       'supervisor', 'manager', or 'team leader'.
 
       The operator clients and the REST API allow you to create a link between two
@@ -3700,7 +3700,7 @@ definitions:
         example: "https://localhost:8904/api/cardholders/325/lockers/t1m4"
       locker:
         description: |
-          This href in this object is a link to the allocated locker, and is the identifier to use
+          The href in this object is a link to the allocated locker, and is the identifier to use
           when allocating the same locker to another cardholder.
 
           The object also contains the name and short name of the locker, and the name and
@@ -6076,7 +6076,7 @@ paths:
         type: integer
         minimum: 1
         description: |
-          Sets maximum number of cardholders to return per page.
+          Sets the maximum number of cardholders to return per page.
 
           Older versions of Command Centre returned 100.  That is acceptable for a GUI application
           that will only display the first page of cardholders, but for integrations that intend to
@@ -6254,7 +6254,7 @@ paths:
 
             If you see 'Data has not been entered for this Personal Data Field' in the
             response body, you have attempted to create a cardholder in an access group
-            that has a required Personal Data Field, but not supplied a value for that
+            that has a required Personal Data Field, but have not supplied a value for that
             PDF.
 
             If you see 'Invalid cardholder', the server could not parse the JSON in the body of your
@@ -6776,8 +6776,7 @@ paths:
 
         Gallagher uses this call for rapidly-evolving internal applications.  As such, its results
         are tuned to those applications and are subject to change.  Rather than relying on this
-        call, we suggest that you simply give your REST operator the privileges it needs to access
-        to everything it needs.
+        call, we suggest that you simply give your REST operator the privileges it needs.
 
         Note that this method returns 400 if there are two
         PDFs in the system with the same name.  CC insists on unique names for items when you create
