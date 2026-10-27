@@ -1714,6 +1714,7 @@ components:
       description: |
         The cardholder does not exist or is not visible to the operator, or that card is not on the
         cardholder.
+
     409ch:
       description: |
         The cardholder is locked for editing by another operator.  The body of the response
@@ -4352,6 +4353,9 @@ components:
 
             PIV card numbers must be the same as the card's FASC-N.  PIV-I card numbers must not.
 
+            This field is also mandatory for PIV, PIV-I, tracking tag, GovPass, and Universal Credential
+            (`profileCredential`) classes.
+
             One rule is common across all card types:  you cannot change the number of an existing
             card or credential.
           example: "1"
@@ -4386,8 +4390,8 @@ components:
 
             If you increase it when modifying a card, all cards with lower issue levels will stop working.
 
-            Do not specify one when creating or updating a mobile credential or digital ID.  They do
-            not have issue levels.
+            The only credential classes that accept an issue level are `card`, `profileCredential`
+            (Universal), GovPass, PIV, and PIV-I card.  GovPass only accepts the value `1`.
           example: 1
         status:
           type: object
@@ -4627,8 +4631,28 @@ components:
           - mobile
           - piv
           - pivi
+          - profileCredential
           - trackingTag
           - transact
+          x-enumDescriptions:
+            card: |
+              A "regular" credential with a facility code, a numeric or text "number", an issue
+              level, and (optionally) a PIN.  These are often on a physical card but REST clients
+              can also submit them.
+            digitalId: One of Gallagher's mobile credential layouts.
+            govPass: The UK government standard.
+            mobile: A Gallagher mobile wallet credential.
+            piv: A high-security standard compliant with FIPS 201, only available with a PIV licence.
+            pivi: Like PIV, but with more flexible issuance.
+            profileCredential: |
+              Known in the market as a "Universal Credential", these are Command Centre's
+              representations of other vendors' formats, including those used for low-security cards
+              and mobile wallets.
+              
+            trackingTag: |
+              Used on RFID tracking tags.  Requires a card number on creation:  unlike for 'card'
+              credential types, the server will not pick one for you.
+            transact:  A mobile format popular in education markets.
 
         trace:
           type: boolean
@@ -6100,7 +6124,7 @@ components:
 
             Its units are set by `warningPeriodType`.
 
-            Zero if the card type does not support notifications.
+            A value of zero means the card type does not support notifications.
         warningPeriodType:
           type: string
           default: days
@@ -6117,7 +6141,7 @@ components:
           type: integer
           default: 30
           description:  |
-             The period, in days, after which Command Centre will consider a credential of this type
+             This is the period, in days, after which Command Centre will consider a credential of this type
              to be inactive.
 
              It only comes out in a GET if the card type disables inactive cards.
@@ -6125,14 +6149,14 @@ components:
           type: boolean
           default: false
           description: |
-            Whether Command Centre clients should allow printing of a credential of this type.  This
+            This indicates whether Command Centre clients should allow printing of a credential of this type.  It
             usually only applies to physical card types.
         allowReEncode:
           type: boolean
           default: false
           description : |
-            Whether Command Centre clients should allow re-encoding of a credential of this type.
-            This usually only applies to physical card types.
+            This shows whether Command Centre clients should allow re-encoding of a credential of
+            this type.  It usually only applies to physical card types.
 
         sendRegistrationEmail:
           type: boolean
@@ -9963,7 +9987,7 @@ info:
     Be prepared to append query parameters to URLs that already have their own:  do not assume
     that you can simply add a question mark and your parameters.
 
-    ## Forward compatibility and undocumented features
+    ## Forward compatibility part two:  undocumented features
 
     Any behaviour that is not referenced in this documentation is subject to change.  This includes
     routes, default values, field names, field values, request parameters, and HTTP verbs.  Which is
@@ -9985,9 +10009,9 @@ info:
       * Some routes work with a PATCH even though they should only accept a POST.  One day, PATCHes
         to routes that do not have a PATCH in this document will start to fail.
 
-      * Format all the timestamps you send as specified in the documentation.  The parser we currently use is
-        quite flexible so you may find that other formats ( "1/12/2025" ) work today, but they may not
-        tomorrow.
+      * Format all the timestamps you send as specified in the documentation.  The parser we
+        currently use is quite flexible so you may find that other formats such as "1/12/2025" and
+        "12/1/2025" work today, but they may not tomorrow.
 
     ## Versions
 
@@ -10358,6 +10382,7 @@ paths:
           description: This result is unlikely.
         "404":
           description: This path does not exist.
+
   
   /api/access_groups:
     get:
@@ -18933,7 +18958,6 @@ tags:
 
 - name: "Cardholders"
 
-  
   description: |
     A cardholder is a user account.
 
@@ -18950,6 +18974,56 @@ tags:
     what we call his or her _details_ page.  You can submit an HTTP GET to that href to retrieve the
     entire cardholder record, or an HTTP PATCH to update it, or an HTTP DELETE to remove it.  Be
     careful:  there is no coming back from deleting a cardholder.
+
+    ## Efficiency tips
+
+    * When searching for a cardholder by personal data or any object by name, if you have the
+      exact string, put it in quotes `"..."`.  It is still a case-insensitive search but it attempts
+      to match the entire string.  Without the quotes Command Centre will perform a substring
+      search, which is slower and may return more results than you need.  In one test, a substring
+      search of half a million cardholders took more than ten seconds, but with quotes it took a
+      tenth of a second.  That is a 100x speedup.  If the server believes you have omitted the
+      quotes in error, it will include a polite reminder in its results.
+
+    * When downloading a significant number of items, sort by ID.
+
+    * Set your page size as large as your client can handle.  The default was 100 before 8.70; using
+      the `top` parameter to take it to 1000 or more gives _much_ better throughput.
+
+    To give you an idea of the effect of setting `sort` and `top`, here are some timings for a
+    download of 200,000 cardholders from CC 8.40:
+    
+    | Sorting           | Pagination    | Time
+    | ----------------- | ------------- | --------
+    | Default (by name) | Default (100) | 28 minutes
+    | `sort=id`         | Default (100) | 5 minutes
+    | Default (by name) | `top=1000`    | 3.5 minutes
+    | `sort=id`         | `top=1000`    | 1 minute
+
+    * In version 8.00 or later, use the [`fields` parameter](#overview--field-specifiers) to add fields
+      to the results of a search, saving you GETting the details page.
+
+      For example, to see the names, personal data fields, and access groups of all your cardholders:
+
+        `GET /api/cardholders?sort=id&top=10000 &fields=firstname,lastname,personalDataFields,accessGroups`
+
+      It adds to the payload size, though, so only do this if you are certain that the search will
+      not return too many cardholders you are not interested in.
+
+    * If you are writing an integration that synchronises users from a source of truth to Command
+      Centre, see the 'Synchronising a user directory' use case.
+
+    * If you must get an object's details page, and you are on v8.00 or later, using the [`fields`
+      parameter](#overview--field-specifiers) will still save work.  Be explicit with what you want:  do
+      not use `fields=defaults` unless you need every field that 'defaults' gives you and you
+      accept that we may add fields to the defaults in future.
+
+    * When creating cardholders, assign their cards, groups, and other attributes in the POST.  This is
+      significantly quicker than sending a handful of PATCHes chasing after your POST, and if you
+      are interrupted, you will not end up with a partially-configured cardholder.
+
+    * When modifying a cardholder, do all your operations in one PATCH.  This is much quicker than
+      doing it in several smaller PATCHes.
 
     ## Write-locked cardholders
 
@@ -19116,10 +19190,11 @@ tags:
     `features.cardTypes.cardTypes.href`[↪](#get-/api/card_types) to find the href
     for the new card's type.
 
-    3. If you want to create a card in a state other than the default, get the state from the same page.
+    3. If you want to create a card in a state other than the default, get it from the same page.
+
     4. Find the href for the cardholder using one of the search methods above.
     5. Optional:  follow the link at `edit.href` on the cardholder page.  If there is a link at
-       `update.href`, your REST client has permission to modify the cardholder.
+       `update.href` of the results, your REST client has permission to modify the cardholder.
     4. PATCH the cardholder's href according to the [cardholder patch
        schema](#cmp--schemas-cardholderpatch).
 
