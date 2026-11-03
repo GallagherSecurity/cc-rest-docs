@@ -4072,7 +4072,7 @@ components:
             description: |
               Cardholders include an `updates` block, as other items do, that allows monitoring one
               cardholder per TCP session in a long poll.  However the [Cardholder
-              changes](#tag-Cardholder-changes) methods are a far more efficient way of monitoring
+              changes](#tag-Cardholder-change-tracking) methods are a far more efficient way of monitoring
               your cardholders.
           redactions:
             type: array
@@ -18478,7 +18478,7 @@ tags:
 
     * Doors related to guard tour events now appear in an event's `door` block.
 
-    * Cardholder [change tracking](#tag-Cardholder-changes) lets you synchronise users into an
+    * Cardholder [change tracking](#tag-Cardholder-change-tracking) lets you synchronise users into an
       external system by informing it of changes as they occur.
 
     * Cardholder group membership hrefs now contain a long string where they used to contain a small
@@ -19118,7 +19118,7 @@ tags:
     ### Synchronising a user directory
 
     This is a common use case, described in the section on [Cardholder
-    changes](#tag-Cardholder-changes).  It shows how to:
+    changes](#tag-Cardholder-change-tracking).  It shows how to:
 
     1. Get a bookmark at the head of the queue of cardholder changes.
     2. Do a one-off sync of all cardholders.
@@ -19290,7 +19290,7 @@ tags:
     ### Finding recently-created cardholders
 
     Informing you when Command Centre creates cardholders is a function of the [Cardholder
-    changes](#tag-Cardholder-changes) call, described there.
+    changes](#tag-Cardholder-change-tracking) call, described there.
 
     However for that to work you need to make API calls before and after the cardholders are
     created.  If they already exist, a workaround is to get a page of cardholders sorted by
@@ -19382,7 +19382,7 @@ tags:
     should be careful not to get yourself into a loop.
 
     This API was built to synchronise a second system with Command Centre's cardholder directory,
-    not for auditing or reporting.  You will find the [events API](eventsApi.yaml) quicker and more
+    not for auditing or reporting.  You will find the [events API](#tag-Events) quicker and more
     flexible for those tasks.
 
     ## Recommended use
