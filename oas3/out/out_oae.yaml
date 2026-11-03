@@ -19398,7 +19398,7 @@ tags:
         use it to ask for all the changes that happen after this point.
 
     1. If you are filling a user directory from Command Centre, download all cardholders using [this
-    advice](#downloading-all-cardholders).  Here is a reminder:
+       advice](#?route=tag--Cardholders--downloading-all-cardholders).  Here is a reminder:
 
         2a. Using the results of `GET /api` again, follow the link at
           `features.cardholders.cardholders` [↪](#?route=get-/api/cardholders), adding query
@@ -19407,20 +19407,22 @@ tags:
         2b. Process those cardholders (probably 1000) and follow the `next.href` link in
           a loop until you have extracted all of them.
 
-    1. This is the start of your update loop.  The first time through, to catch the changes that
-       came in during the big download you did in step two, use the href that you got in step one.
-       Simply GET it.
+    Now you are up to date, or very close to it, so you can drop into a loop handling deltas as they
+    occur.  The first time through it you will catch changes that came in during the big download
+    you did in step two.  Recall the href you got in step one above...
+
+    1. ...and GET it.
 
     1. If the `results` array you get back is empty you are up to date and you have nothing to do.
        Sleep for a time before your next poll, to avoid a tight loop and ease the load on your
        database.  When it comes time to poll again, do not be tempted to resubmit the same request:
        the URL to use sometimes changes even when there are no results, so always get it from
-       `next.href`.
+       `next.href` in the results of your previous GET, even if its `results` array was empty.
 
     1. If the `results` array is not empty it will contain the first changes that happened after
     your previous call.  The sections below will help you process them.
 
-    1. Restart your polling loop using the link in `next.href`.
+    1. Using the link in `next.href`, go to step one...
 
     ## Use case:  detecting when cardholders are created.
 
@@ -19429,11 +19431,11 @@ tags:
     workaround described in the cardholder use cases, but it is not suitable for production.
 
     When you call this API the second time you will receive all changes made to cardholders since
-    the previous call.  To find the new cardholders, discard all the results that do not have
+    the previous call.  To find the new cardholders, look at the results that do not have
     `type=add`.
 
     Since you are only interested in new data, you can optimise the call a little with
-    `fields=newValues`, which will remove the fields you do not need.
+    `fields=newValues` which will remove the fields you do not need.
 
     ## Notes
 
