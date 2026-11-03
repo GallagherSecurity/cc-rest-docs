@@ -17013,7 +17013,7 @@ paths:
 
     get:
       tags: [ PIV cards ]
-      summary: Get details of a cardholder
+      summary: Get details of a PIV cardholder
       description: |
         You will receive this URL from other calls to the API, in a search result or an access group
         membership list, for example.  The URL is the unique identifier of a cardholder, and calling
@@ -18550,6 +18550,9 @@ tags:
     * An [inputs API](#?route=tag--Inputs) gives you the state of 'input' hardware items and lets you
       override them.  It is very similar to the outputs API.
 
+    * PIV certificates and biometrics are now available without a customisation.  They are too large
+      to send to all REST clients so you must ask for them using the `fields` parameter.
+
   
 - name: Access Groups
   x-tag-expanded-this-works-in-rapidoc: false
@@ -19485,7 +19488,7 @@ tags:
     This API uses the term 'card' but more broadly we prefer 'credential', because not all card
     types involve a physical card.
 
-    The API's coverage of PIV cards is in [its own document](piv.html).
+    The API's coverage of PIV cards is in [its own tag](#?route=tag--PIV-cards).
 
     API routes that allow creating, modifying, and deleting card types are in development.
 
@@ -20813,11 +20816,6 @@ tags:
 
     All of the API calls described here require the RESTCardholders licence.  If your site is also
     licensed to use PIV cards, you can access those cards via REST.
-
-    ### Cardholder API changes in 8.10
-
-    * Certificates and biometric data are now available without a customisation.  They are too large
-      to send to all REST clients so you must ask for them using the `fields` parameter.
 
 - name: Receptions
   x-page-icon: tag
