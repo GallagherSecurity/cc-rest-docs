@@ -3403,6 +3403,7 @@ components:
 
     HexString:
       type: string
+      description: A string containing a hexadecimal encoding of a number.
       pattern: '^0x([0-9A-Fa-f]{2})+$'
       example: "0x0123456789ABCDEF"
 
@@ -10405,21 +10406,16 @@ info:
         two lines, to api-authentication](api-authentication)
 
 paths:
-
   /api/changelog:
     delete:
-      tags:
-      - Changelog
-      summary: Dummy path for changelog tag.
+      tags: [ Changelog ]
+      summary: Dummy path.
       description: |
         This path does not exist in the API.  It is in the documentation to satisfy HTML
-        renderers like Rapidoc that require a path in every tag.
-      
+        renderers like Sourcey and Zudoku that require at least one path in every tag.
       responses:
-        "200":
-          description: This result is unlikely.
-        "404":
-          description: This path does not exist.
+        "200": { description: This result is unlikely. }
+        "404": { description: This path does not exist. }
 
   
   /api/access_groups:
@@ -12983,7 +12979,7 @@ paths:
   /api/cardholders/changes:
     get:
       tags:
-        - Cardholder changes
+        - "Cardholder change tracking"
       summary:  Get changes
       description: |
         This returns cardholder changes matching your search criteria and a link for the next batch.

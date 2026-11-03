@@ -52,6 +52,7 @@ asciidoctor-multipage -r asciidoctor-diagram -D $D/training --verbose training/m
 #apk add --no-cache nodejs npm
 #npm install -g sourcey
 
+echo Building Sourcey
 cd oas3/sourcey
 npm install
 sourcey build
