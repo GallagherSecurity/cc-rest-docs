@@ -974,7 +974,7 @@ components:
         will not send an invitation to the cardholder.
 
         `singleFactorOnly` defaults to false, which is the recommended setting.  See the [card
-        detail](#schema/cardholdercard) for more.
+        detail](#schemas/cardholdercard) for more.
 
       value:
         firstName: "Nick"
@@ -1006,7 +1006,7 @@ components:
         will not send an invitation to the cardholder.
 
         `singleFactorOnly` defaults to false, which is the recommended setting.  See the [card
-        detail](#schema/cardholdercard) for more.
+        detail](#schemas/cardholdercard) for more.
 
       value:
         firstName: "Nick"
@@ -1018,7 +1018,7 @@ components:
     CardholderPATCHCardPhysicalExample:
       description: |
         This is a minimal object for giving a cardholder a new card, containing nothing more than
-        the card type.  See the [card detail](#schema/cardholdercard) for other fields you can
+        the card type.  See the [card detail](#schemas/cardholdercard) for other fields you can
         (and probably should) use, such as the card's issue level and from/until dates.
 
         `type` is the only compulsory field in a new card. It must contain an href to the card type
@@ -1037,7 +1037,7 @@ components:
       description: |
         This is a minimal object for creating a cardholder with one card, containing the only
         required fields for a cardholder (name and division) and the only required field for a card (the card
-        type).  See the [card detail](#schema/cardholdercard) for other fields you can use,
+        type).  See the [card detail](#schemas/cardholdercard) for other fields you can use,
         such as the card's issue level and from/until dates.
 
         `type` is the only compulsory field in a new card. It must contain an href to the card type
@@ -1058,7 +1058,7 @@ components:
         elevator groups.
 
         There are more fields on a cardholder than shown in this example.  For a complete list
-        please see the schema for the detailed [cardholder object](#schema/cardholderdetail)
+        please see the schema for the detailed [cardholder object](#schemas/cardholderdetail)
         that you receive from a cardholder href.
 
         In this example we are giving our new cardholder a disabled competency, set to enable in
@@ -1130,7 +1130,7 @@ components:
 
         See the [POST](#tag/Events/paths/~1api~1events/post) for where to get the address of the endpoint, the
         rules around event types and items, and what happens to your event after you create it, and
-        see the [schema definition](#schema/eventpostbody) for a description of each field.
+        see the [schema definition](#schemas/eventpostbody) for a description of each field.
 
         Only `eventType` is required for the API to accept the POST, but an event is not much without
         a source item and a message string, and it never hurts to add some details.
@@ -1181,7 +1181,7 @@ components:
       name: fields
       description: |
         In 8.40 and later the values you can list are the same as the field names in the [details
-        page](#schema/eventdetail), plus a special field name for a personal data field,
+        page](#schemas/eventdetail), plus a special field name for a personal data field,
         described next.  You can pick whichever fields you want, including `defaults` though we urge
         you to avoid that and only ask for the fields you need.
 
@@ -1875,7 +1875,7 @@ components:
               format: uri-reference
               readOnly: true
               description: |
-                A link to an [access group detail](#schema/accessgroupdetail) object for this
+                A link to an [access group detail](#schemas/accessgroupdetail) object for this
                 access group.
               example: "https://host.com:8904/api/access_groups/352"
             notes:
@@ -2470,7 +2470,7 @@ components:
           type: string
           format: uri-reference
           description: |
-            A link to an [access zone detail](#schema/accesszonedetail) object for this access
+            A link to an [access zone detail](#schemas/accesszonedetail) object for this access
             zone.  It is also Command Centre's identifier for this access zone:  use it whenever you
             need to specify an access zone in REST operations.
           example: "https://localhost:8904/api/access_zones/3280"
@@ -2519,7 +2519,7 @@ components:
                     type: string
                     format: uri-reference
                     description: |
-                      This is the link to the [door's detail](#schema/doordetail), which
+                      This is the link to the [door's detail](#schemas/doordetail), which
                       contains a return link back to this page in either its `entryAccessZone` or
                       `exitAccessZone` field.
               example:
@@ -3116,7 +3116,7 @@ components:
         href:
           type: string
           description: |
-            A link to an [alarm zone detail](#schema/alarmzonedetail) object for this alarm
+            A link to an [alarm zone detail](#schemas/alarmzonedetail) object for this alarm
             zone.  This is Command Centre's identifier for this alarm zone:  use it whenever you need
             to specify an alarm zone in REST operations.
           format: uri-reference
@@ -3679,7 +3679,7 @@ components:
           format: uri-reference
           readOnly: true
           description: |
-            A link to a [cardholder detail](#schema/cardholderdetail) object for this cardholder.
+            A link to a [cardholder detail](#schemas/cardholderdetail) object for this cardholder.
             This is Command Centre's identifier for this cardholder:  use it whenever you need to
             specify a cardholder in REST operations.
           example: "https://host.com:8904/api/cardholders/325"
@@ -3907,7 +3907,7 @@ components:
       title: Cardholder detail
       description: |
         [/api/cardholders/{id}](#tag/Cardholders/paths/~1api~1cardholders~1%7Bid%7D/get) returns one of these, and you
-        submit [parts of one](#schema/cardholderpost) in a POST to create a cardholder.
+        submit [parts of one](#schemas/cardholderpost) in a POST to create a cardholder.
 
         You may find it contains a block called `updates`.  This is reserved for future
         development and its behaviour will change in later versions of Command Centre.
@@ -4160,7 +4160,7 @@ components:
               group has granted our Mr. Boothroyd the student ID and photo PDFs.
 
               To set an image PDF, Base64-encode the image and send it as a string.  There is
-              one in the [cardholder POST example](#schema/cardholderpost).
+              one in the [cardholder POST example](#schemas/cardholderpost).
 
               Date PDFs are only accurate to a day, so version 8.75 and later will ignore the
               time and time zone components if you send them.  8.70 and earlier will first
@@ -4178,9 +4178,9 @@ components:
         value and notifications flag for the containing cardholder and an object containing some of
         the PDF definition's basic fields.
 
-        This is returned as part of a [cardholder](#schema/cardholderdetail), and you can send it
-        in a [POST](#schema/cardholderpost) or a
-        [PATCH](#schema/cardholderpatch) to set the PDF's value and notification flag for
+        This is returned as part of a [cardholder](#schemas/cardholderdetail), and you can send it
+        in a [POST](#schemas/cardholderpost) or a
+        [PATCH](#schemas/cardholderpatch) to set the PDF's value and notification flag for
         a cardholder.  The server will ignore the `definition` block if you send it back.  It uses the
         name of the block (minus its leading `@`) to find the PDF to change.
 
@@ -4772,7 +4772,7 @@ components:
       description: |
         A _card_ is an access credential, including physical cards and mobile (Bluetooth and NFC)
         credentials and digital IDs.  The server returns it as part of a [cardholder's
-        details](#schema/cardholderdetail), and you supply it when creating or modifying a card
+        details](#schemas/cardholderdetail), and you supply it when creating or modifying a card
         or credential on a cardholder.
 
         Every card has a type, a status, and a validity period.  Its type determines other fields of
@@ -5335,7 +5335,7 @@ components:
         data fields, two lockers, and two elevator groups.
 
         There are more fields on a cardholder than shown here.  For a complete list please see the
-        schema for the detailed [cardholder object](#schema/cardholderdetail) that you receive
+        schema for the detailed [cardholder object](#schemas/cardholderdetail) that you receive
         from a cardholder href.
 
       required: [ division ]
@@ -5518,7 +5518,7 @@ components:
         relationships.
 
         This model only shows some of the fields available on a cardholder.  The full list is in
-        the [cardholder detail](#schema/cardholderdetail).
+        the [cardholder detail](#schemas/cardholderdetail).
 
       properties:
         authorised:
@@ -5550,7 +5550,7 @@ components:
           type: object
           description: |
             This object can contain three arrays, named `add`, `update`, and `remove`.  Every element
-            you put in those arrays should be in the [card schema](#schema/cardholdercard).
+            you put in those arrays should be in the [card schema](#schemas/cardholdercard).
 
             Each element of the `add` array will need a `type` member, at the very least.  Every
             card field makes sense here except `href`.  Only existing cards have hrefs.  This
@@ -5604,7 +5604,7 @@ components:
           description: |
             Like the `cards` object, this can contain three arrays named `add`, `update`, and
             `remove`.  Every element you send in those arrays should be in the [access group
-            schema](#schema/cardholderaccessgroup).
+            schema](#schemas/cardholderaccessgroup).
 
             This operation does not modify access groups in Command Centre; it works on a cardholder's
             memberships to those groups.
@@ -5647,7 +5647,7 @@ components:
           description: |
             Like the cards and accessGroups objects, this can contain three arrays named `add`,
             `update`, and `remove`.  Every element should be in the [cardholder competency
-            schema](#schema/cardholdercompetency).
+            schema](#schemas/cardholdercompetency).
 
             This operation does not modify Command Centre's competencies:  it works on a cardholder's
             holdings of those competencies.
@@ -5684,7 +5684,7 @@ components:
           description: |
             It should be no surprise that this can contain three arrays named `add`, `update`, and
             `remove`, and that every element should be in the [relationship
-            schema](#schema/cardholderrelationship).
+            schema](#schemas/cardholderrelationship).
 
             This operation does not modify Command Centre's roles:  it works on the relationships
             between two cardholders.
@@ -5718,7 +5718,7 @@ components:
           type: object
           description: |
             With you well in the habit by now, each element of your three arrays should be in the
-            [cardholder locker schema](#schema/cardholderlocker).  They will allocate lockers to
+            [cardholder locker schema](#schemas/cardholderlocker).  They will allocate lockers to
             cardholders, de-allocate them, and adjust validity periods.
 
             Each member of the `add` array will need a `locker` member containing an href identifying
@@ -5751,7 +5751,7 @@ components:
           description: |
             This can contain two arrays named `add` and `remove`.  Every element you send in those
             arrays should be in the [cardholder operator group
-            schema](#schema/cardholderoperatorgroup).
+            schema](#schemas/cardholderoperatorgroup).
 
             Each element of the `add` array will need an `operatorGroup` member containing an href
             identifying the operator group to which you wish to add the cardholder.  Supported in 8.50
@@ -5779,7 +5779,7 @@ components:
           description: |
             This can contain three arrays named `add`, `update`, and
             `remove`, each containing an element in the [cardholder elevator group
-            schema](#schema/cardholderelevatorgroup).
+            schema](#schemas/cardholderelevatorgroup).
 
             The `elevatorGroup` block only makes sense in the `add` array.  The `update` array is for
             changing the cardholder's default floor and passenger types on an existing elevator group
@@ -5884,7 +5884,7 @@ components:
           description: |
             A block containing the values of the changed fields before the change, if Command Centre
             still has them, in the same format as a [cardholder
-            detail](#schema/cardholderdetail).  If a value is blank, it means that the value was
+            detail](#schemas/cardholderdetail).  If a value is blank, it means that the value was
             null before the change or the server no longer has it.
 
             Because this requires extra effort from the server, you may like to omit this block using
@@ -5939,7 +5939,7 @@ components:
           description: |
             A block containing the current fields on the cardholder, provided the cardholder has not
             been deleted.  This is in the same format as a [cardholder
-            detail](#schema/cardholderdetail).
+            detail](#schemas/cardholderdetail).
 
             Because building this requires more work from the server it is not in the default result
             set.  If you need it you must ask for it using the `fields` parameter.  While the server
@@ -6610,7 +6610,7 @@ components:
           type: string
           format: uri-reference
           description: |
-            A link to a [door detail](#schema/doordetail) object for this door.
+            A link to a [door detail](#schemas/doordetail) object for this door.
           example: "https://localhost:8904/api/doors/332"
         id:
           type: string
@@ -6650,7 +6650,7 @@ components:
                 href:
                   description: |
                     This is the address of the [access zone's
-                    detail](#schema/accesszonedetail) page (which includes a link back here in
+                    detail](#schemas/accesszonedetail) page (which includes a link back here in
                     its `doors` array).
                   type: string
                   format: uri-reference
@@ -6669,7 +6669,7 @@ components:
                 href:
                   description: |
                     This is the address of the [access zone's
-                    detail](#schema/accesszonedetail) page (which includes a link back here in
+                    detail](#schemas/accesszonedetail) page (which includes a link back here in
                     its `doors` array).
                   type: string
                   format: uri-reference
@@ -6754,7 +6754,7 @@ components:
           type: string
           format: uri-reference
           description: |
-            A link to an [elevator group](#schema/elevatorgroupdetail) object for this
+            A link to an [elevator group](#schemas/elevatorgroupdetail) object for this
             elevator group.
           example: "https://localhost:8904/api/elevator_groups/635"
         name:
@@ -7401,7 +7401,7 @@ components:
         everything from the event summary results, plus some extra fields that are too expensive to
         compute and return for large result sets.
 
-        Like the example in the [summary](#schema/alarmsummary), this example is forced:  no
+        Like the example in the [summary](#schemas/alarmsummary), this example is forced:  no
         actual Command Centre event will contain all of these fields.
 
       allOf:
@@ -7742,7 +7742,7 @@ components:
               description: |
                 This can be the href of any locker your operator can view.  Get the href from the
                 [items](#tag/Items) controller or the `lockers` field of [a locker
-                bank](#schema/lockerbankdetail).
+                bank](#schemas/lockerbankdetail).
 
         door:
           description: |
@@ -7832,7 +7832,7 @@ components:
           type: string
           format: uri-reference
           description: |
-            A link to a [fence zone detail](#schema/fencezonedetail) object for this fence
+            A link to a [fence zone detail](#schemas/fencezonedetail) object for this fence
             zone.  This is Command Centre's identifier for this fence zone:  use it whenever you need
             to specify a fence zone in REST operations.
           example: "https://localhost:8904/api/fence_zones/8487"
@@ -8004,7 +8004,7 @@ components:
           type: string
           format: uri-reference
           description: |
-            A link to an [input detail](#schema/inputdetail) object for this input.
+            A link to an [input detail](#schemas/inputdetail) object for this input.
           example: "https://localhost:8904/api/inputs/9701"
         id:
           type: string
@@ -8132,7 +8132,7 @@ components:
           type: string
           format: uri-reference
           description: |
-            A link to an [interlock group detail](#schema/interlockgroupdetail) object for this
+            A link to an [interlock group detail](#schemas/interlockgroupdetail) object for this
             item.
           example: "https://localhost:8904/api/interlock_groups/122322"
         name:
@@ -8818,7 +8818,7 @@ components:
           type: string
           format: uri-reference
           description: |
-            A link to a [macro detail](#schema/macrodetail) object for this macro.
+            A link to a [macro detail](#schemas/macrodetail) object for this macro.
           example: "https://localhost:8904/api/macros/8492"
         id:
           type: string
@@ -8901,7 +8901,7 @@ components:
           type: string
           format: uri-reference
           description: |
-            A link to an [operator group detail](#schema/operatorgroupdetail) object for this
+            A link to an [operator group detail](#schemas/operatorgroupdetail) object for this
             operator group.
           example: "https://localhost:8904/api/operator_groups/523"
         name:
@@ -9026,7 +9026,7 @@ components:
           type: string
           format: uri-reference
           description: |
-            A link to an [output detail](#schema/outputdetail) object for this output.
+            A link to an [output detail](#schemas/outputdetail) object for this output.
           example: "https://localhost:8904/api/outputs/2365"
         id:
           type: string
@@ -9654,7 +9654,7 @@ components:
         href:
           type: string
           description: |
-            A link to a [schedule detail](#schema/scheduledetail).
+            A link to a [schedule detail](#schemas/scheduledetail).
           format: uri-reference
           example: https://localhost:8904/api/schedules/6
         name:
@@ -9757,7 +9757,7 @@ components:
                   still has access.
 
                 * An Access Zone Schedule controls the mode of an access zone.  The valid states are
-                  the same as the [zone's status flags](#schema/accesszonedetail):  `secure`,
+                  the same as the [zone's status flags](#schemas/accesszonedetail):  `secure`,
                   `dualAuth`, `codeOrCard`, or `free`.  The extra flag `usePin` means the same here
                   as it does in the status flags:  people will need their PINs at readers and alarm
                   terminals.
@@ -10463,7 +10463,7 @@ paths:
         in: query
         description: |
           Sets the list of fields to return in the search results.  The values you can list are the
-          same as the field names in the [details page](#schema/accessgroupdetail).  Using it
+          same as the field names in the [details page](#schemas/accessgroupdetail).  Using it
           you can return everything on the search page that you would find on the details page.
           Separate values with commas.
 
@@ -10592,7 +10592,7 @@ paths:
             enum: [href, id, name, description, parent, division, children, notes, personalDataDefinitions, access, saltoAccess, alarmZones, ..., defaults]
         description: |
           Sets the list of fields to return.  The values you can list are the same as the field
-          names in the [detail results](#schema/accessgroupdetail).  Use it to return less
+          names in the [detail results](#schemas/accessgroupdetail).  Use it to return less
           data than normal.  Separate values with commas.
 
           Treat the string matches as case sensitive.
@@ -10622,7 +10622,7 @@ paths:
         This is the call you use to modify fields on an access group.
 
         The PATCH expects a document in the same format as the [access group
-        detail](#schema/accessgroupdetail) but with fewer fields.  Note that you cannot change
+        detail](#schemas/accessgroupdetail) but with fewer fields.  Note that you cannot change
         everything on an access group that the API shows you, such as its membership, access, and
         permissions.  You can change its basic fields, PDFs, and membership defaults.
 
@@ -10901,7 +10901,7 @@ paths:
       description: |
         This returns the detail of one access zone.
 
-        Follow the 'href' field in an [access zone summary](#schema/accesszonesummary) to get
+        Follow the 'href' field in an [access zone summary](#schemas/accesszonesummary) to get
         here rather than [building it yourself](#section/Forward-compatibility-(HATEOAS)).
       parameters:
       - name: id
@@ -11254,8 +11254,8 @@ paths:
         Note that this API call is good for watching one item only; if you want to monitor several,
         you are better off with a [status subscription](#tag/Items/Status-subscriptions).
 
-        Follow the 'updates' field in an access zone [summary](#schema/accesszonesummary) or
-        [details](#schema/accesszonedetail) page to get here rather than [building it
+        Follow the 'updates' field in an access zone [summary](#schemas/accesszonesummary) or
+        [details](#schemas/accesszonedetail) page to get here rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
       parameters:
       - name: id
@@ -11281,7 +11281,7 @@ paths:
         "200":
           description: |
             Success.  The [introduction](#tag/Access-Zones) describes the three status fields and
-            the [access zone detail](#schema/accesszonedetail) describes `zoneCount`.
+            the [access zone detail](#schemas/accesszonedetail) describes `zoneCount`.
           content:
             application/json:
               schema:
@@ -11319,7 +11319,7 @@ paths:
         certain divisions, give your operator permission to view alarms in only those divisions.
 
         The alarm summary only contains unprocessed alarms.  You can access
-        a processed alarm by finding its corresponding event in the [event summary](#schema/eventsummary)
+        a processed alarm by finding its corresponding event in the [event summary](#schemas/eventsummary)
         and following its `alarm.href` link to the alarm details.
 
         Do not code this URL into your application.  Take it from `alarms.alarms.href` in the
@@ -11571,7 +11571,7 @@ paths:
       description: |
         This returns the detail of one alarm zone.
 
-        Follow the 'href' field in an [alarm zone summary](#schema/alarmzonesummary) to get
+        Follow the 'href' field in an [alarm zone summary](#schemas/alarmzonesummary) to get
         here rather than [building it yourself](#section/Forward-compatibility-(HATEOAS)).
       parameters:
       - name: id
@@ -11635,7 +11635,7 @@ paths:
         manual change.
 
         Follow one of the 'commands.arm' or 'commands.armUntil' fields in an [alarm
-        zone](#schema/alarmzonedetail) to get here rather than [building it
+        zone](#schemas/alarmzonedetail) to get here rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       parameters:
@@ -11673,7 +11673,7 @@ paths:
         manual change.
 
         Follow one of the 'commands.disarm' or 'commands.disarmUntil' fields in an [alarm
-        zone](#schema/alarmzonedetail) to get here rather than [building it
+        zone](#schemas/alarmzonedetail) to get here rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       parameters:
@@ -11711,7 +11711,7 @@ paths:
         manual change.
 
         Follow one of the 'commands.user1' or 'commands.user1Until' fields in an [alarm
-        zone](#schema/alarmzonedetail) to get here rather than [building it
+        zone](#schemas/alarmzonedetail) to get here rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       parameters:
@@ -11750,7 +11750,7 @@ paths:
         manual change.
 
         Follow one of the 'commands.user2' or 'commands.user2Until' fields in an [alarm
-        zone](#schema/alarmzonedetail) to get here rather than [building it
+        zone](#schemas/alarmzonedetail) to get here rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
       parameters:
       - name: id
@@ -11787,7 +11787,7 @@ paths:
         manual change.
 
         Follow one of the `commands.highVoltage` or `commands.highVoltageUntil` fields in an [alarm
-        zone](#schema/alarmzonedetail) to get here rather than [building it
+        zone](#schemas/alarmzonedetail) to get here rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       parameters:
@@ -11825,7 +11825,7 @@ paths:
         manual change.
 
         Follow one of the `commands.lowFeel` or `commands.lowFeelUntil` fields in an [alarm
-        zone](#schema/alarmzonedetail) to get here rather than [building it
+        zone](#schemas/alarmzonedetail) to get here rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
       parameters:
       - name: id
@@ -11854,7 +11854,7 @@ paths:
       description: |
         Cancels an override, returning the alarm zone to its scheduled state.
 
-        Follow the 'commands.cancel' field in an [alarm zone](#schema/alarmzonedetail) to get
+        Follow the 'commands.cancel' field in an [alarm zone](#schemas/alarmzonedetail) to get
         here rather than [building it yourself](#section/Forward-compatibility-(HATEOAS)).
 
       parameters:
@@ -11882,8 +11882,8 @@ paths:
         Note that this API call is good for watching one item only; if you want to monitor several,
         you are better off with a [status subscription](#tag/Items/Status-subscriptions).
 
-        Follow the 'updates' field in an alarm zone [summary](#schema/alarmzonesummary) or
-        [details](#schema/alarmzonedetail) pages to get here.
+        Follow the 'updates' field in an alarm zone [summary](#schemas/alarmzonesummary) or
+        [details](#schemas/alarmzonedetail) pages to get here.
       parameters:
       - name: id
         in: path
@@ -12396,9 +12396,9 @@ paths:
         it from the `href` field in the `features.cardholders.cardholders` section of `/api`.
 
         The POST expects a document in the same format as the [cardholder
-        detail](#schema/cardholderdetail).  Many fields are optional, of course, and some (like
+        detail](#schemas/cardholderdetail).  Many fields are optional, of course, and some (like
         the last successful access time) do not make sense when creating a cardholder.  See the
-        [cardholder POST example](#schema/cardholderpost) for details.
+        [cardholder POST example](#schemas/cardholderpost) for details.
 
         You will achieve better performance if you combine all you want to achieve into one POST,
         rather than creating the cardholder bare with a POST then adding cards, groups, PDFs, etc.,
@@ -12465,14 +12465,14 @@ paths:
 
         [Do not use](#section/Forward-compatibility-(HATEOAS)) a
         cardholder's ID to build the URL yourself:  follow the href in the [cardholder
-        search](#schema/cardholders) to get here.
+        search](#schemas/cardholders) to get here.
 
       parameters:
       - name: fields
         in: query
         description: |
           Specifies the fields you want in the results.  The values you can list are the same as the
-          field names in the [detail results](#schema/cardholderdetail).  Use it to return
+          field names in the [detail results](#schemas/cardholderdetail).  Use it to return
           fewer fields than normal.  Separate values with commas.
 
           Treat the string matches as case sensitive:  use 'lastName' rather than 'lastname'.
@@ -12522,7 +12522,7 @@ paths:
         operator has no access to PDFs and competencies into one in which it does, first PATCH the
         cardholder into the new division then PATCH it with the other changes.
 
-        You can find this URL in the href in the [cardholder search](#schema/cardholders) or
+        You can find this URL in the href in the [cardholder search](#schemas/cardholders) or
         any of the other calls that return cardholder hrefs.  [Do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
         
@@ -12593,7 +12593,7 @@ paths:
       summary: Remove a cardholder
       description: |
         This call removes a cardholder from Command Centre.  You can find the URL in the href in the
-        [cardholder search](#schema/cardholders) or any of the other calls that return
+        [cardholder search](#schemas/cardholders) or any of the other calls that return
         cardholder hrefs.  [Do not build it yourself](#section/Forward-compatibility-(HATEOAS)).
 
       responses:
@@ -12633,7 +12633,7 @@ paths:
         This call removes a cardholder's membership in an access group.  Note that a cardholder may
         have more than one membership in a group.
 
-        You can find this URL in the [cardholder object](#schema/cardholderdetail).  [Do not
+        You can find this URL in the [cardholder object](#schemas/cardholderdetail).  [Do not
         build it yourself](#section/Forward-compatibility-(HATEOAS)).
 
         To modify a cardholder's membership of an access group your operator must have a
@@ -12661,7 +12661,7 @@ paths:
       description: |
         This call removes a card from a cardholder.
 
-        You can find this URL in the [cardholder object](#schema/cardholderdetail).  [Do not
+        You can find this URL in the [cardholder object](#schemas/cardholderdetail).  [Do not
         build it yourself](#section/Forward-compatibility-(HATEOAS)).
 
       responses: 
@@ -12684,7 +12684,7 @@ paths:
       description: |
         This call removes a competency from a cardholder.
 
-        You can find this URL in the [cardholder object](#schema/cardholderdetail).  [Do not
+        You can find this URL in the [cardholder object](#schemas/cardholderdetail).  [Do not
         build it yourself](#section/Forward-compatibility-(HATEOAS)).
 
       responses: 
@@ -12734,7 +12734,7 @@ paths:
         elevator group.
 
         You will find this URL in the `elevatorGroups` block of a [cardholder
-        object](#schema/cardholderdetail).  [Do not build it
+        object](#schemas/cardholderdetail).  [Do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       responses:
@@ -12764,7 +12764,7 @@ paths:
         assignments for this locker after this operation he or she will not be able to open it.
 
         You will find this URL in the `lockers` block of a [cardholder
-        object](#schema/cardholderdetail).  In the interest of compability with future versions of Command Centre, [do not
+        object](#schemas/cardholderdetail).  In the interest of compability with future versions of Command Centre, [do not
         build it yourself](#section/Forward-compatibility-(HATEOAS)).
 
       responses:
@@ -12793,7 +12793,7 @@ paths:
         memberships do not have start and end dates, so a cardholder can only have one membership in
         a given operator group.
 
-        You can find this URL in the [cardholder object](#schema/cardholderdetail).  In the
+        You can find this URL in the [cardholder object](#schemas/cardholderdetail).  In the
         interest of forward compability, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
@@ -12820,7 +12820,7 @@ paths:
         This call severs a relationship between two cardholders.
 
         You can find the URL in the `relationships` block in the [cardholder
-        object](#schema/cardholderdetail) of the cardholder who has the relationship, not the
+        object](#schemas/cardholderdetail) of the cardholder who has the relationship, not the
         cardholder who holds the role.  For example if you have a 'supervisor' role you would find
         the URL to delete by looking up the supervised cardholder, not the supervisor.
 
@@ -12846,7 +12846,7 @@ paths:
 
         [Do not code this URL](#section/Forward-compatibility-(HATEOAS)) into your application.  Take
         it from the `updateLocation.href` field in a [cardholder
-        response](#schema/cardholderdetail).
+        response](#schemas/cardholderdetail).
 
         The POST expects a document which contains an href to the target access zone.  The
         recommended way of getting access zone hrefs is through an [access zones
@@ -13047,7 +13047,7 @@ paths:
         description: |
           Limits the search results to the changes that affected these fields, and limits the
           `oldValues` and `newValues` blocks to these fields.  You can specify practically any of
-          the fields in the [cardholder detail](#schema/cardholderdetail).  You can also go
+          the fields in the [cardholder detail](#schemas/cardholderdetail).  You can also go
           into more detail; for example you can monitor a cardholder's cards' validity dates using
           `filter=cards.from,cards.until`.
 
@@ -13326,7 +13326,7 @@ paths:
         yourself](#section/Forward-compatibility-(HATEOAS)).
         
         The PATCH expects a document in the same format as the [card type
-        detail](#schema/cardtype) but with fewer fields.
+        detail](#schemas/cardtype) but with fewer fields.
 
         This call requires the RESTConfiguration licence.
 
@@ -13436,7 +13436,7 @@ paths:
             enum: [href, id, name, shortName, description, division, notes, expiryNotify, noticePeriod, defaultExpiry, defaultAccess, defaults]
         description: |
           Specifies which fields to return in the search results.  The values you can list are the
-          same as the field names in the [details page](#schema/competencydetail).  Using it
+          same as the field names in the [details page](#schemas/competencydetail).  Using it
           you can return everything on the search page that you would find on the details page.
           Separate values with commas.
 
@@ -13471,8 +13471,8 @@ paths:
         Creates a new competency.
 
         The POST expects a document in the same format as the [competency
-        detail](#schema/competency) but with far fewer fields.  An example is [this POST
-        example](#schema/competencypatchandpostexample).
+        detail](#schemas/competency) but with far fewer fields.  An example is [this POST
+        example](#schemas/competencypatchandpostexample).
 
         When successful it returns a `location` header containing the address of the new competency.
 
@@ -13537,7 +13537,7 @@ paths:
             enum: [href, id, name, shortName, description, division, notes, expiryNotify, noticePeriod, defaultExpiry, defaultAccess, defaults]
         description: |
           Specifies which fields to return.  The values you can list are the same as the field names
-          in the [details page](#schema/competencydetail).  Use it to reduce the size of the
+          in the [details page](#schemas/competencydetail).  Use it to reduce the size of the
           result document.  Separate values with commas.
           
           Treat the string matches as case-sensitive.
@@ -13565,8 +13565,8 @@ paths:
         competency search rather than [building it yourself](#section/Forward-compatibility-(HATEOAS)).
 
         The PATCH expects a document in the same format as the [competency
-        detail](#schema/competencydetail) but with fewer fields.  An example is [this PATCH
-        example](#schema/competencypatchandpostexample).
+        detail](#schemas/competencydetail) but with fewer fields.  An example is [this PATCH
+        example](#schemas/competencypatchandpostexample).
 
         New to Command Centre 9.10.
 
@@ -13749,8 +13749,8 @@ paths:
         Creates a new division.
 
         The POST expects a document in the same format as the [division
-        detail](#schema/division) but with far fewer fields.  An example is [this POST
-        example](#schema/divisionpatchandpostexample).  The only mandatory field is `parent`.
+        detail](#schemas/division) but with far fewer fields.  An example is [this POST
+        example](#schemas/divisionpatchandpostexample).  The only mandatory field is `parent`.
 
         When successful it returns a `location` header containing the address of the new division.
 
@@ -13926,8 +13926,8 @@ paths:
         This is the call you use to update a division's name, description, notes, or parent.
 
         The PATCH expects a document in the same format as the [division
-        detail](#schema/division) but with fewer valid fields.  An example is [this PATCH
-        example](#schema/divisionpatchandpostexample).
+        detail](#schemas/division) but with fewer valid fields.  An example is [this PATCH
+        example](#schemas/divisionpatchandpostexample).
 
         New to 9.30.
       parameters:
@@ -14035,7 +14035,7 @@ paths:
       description: |
         This returns the detail of one door.
 
-        Follow the 'href' field in a [door summary](#schema/doorsummary) to get here.
+        Follow the 'href' field in a [door summary](#schemas/doorsummary) to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -14065,7 +14065,7 @@ paths:
         Sends an override to lock a half-cycle door that is in the unlocked state, rather than
         letting it wait to open and close.
 
-        Follow the `commands.lock.href` field in a [door](#schema/doordetail) to get here.
+        Follow the `commands.lock.href` field in a [door](#schemas/doordetail) to get here.
 
         Added in 9.40.
 
@@ -14083,7 +14083,7 @@ paths:
       description: |
         Sends an override to unlock a door.
 
-        Follow the `commands.open.href` field in a [door](#schema/doordetail) to get here.
+        Follow the `commands.open.href` field in a [door](#schemas/doordetail) to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -14103,8 +14103,8 @@ paths:
         Note that this API call is good for watching one item only; if you want to monitor several,
         you are better off with a [status subscription](#tag/Items/Status-subscriptions).
 
-        Follow the 'updates' field in a door [summary](#schema/doorsummary) or
-        [details](#schema/doordetail) page to get here.
+        Follow the 'updates' field in a door [summary](#schemas/doorsummary) or
+        [details](#schemas/doordetail) page to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -14174,7 +14174,7 @@ paths:
       responses:
         "200":
           description: |
-            Success.  An array of [elevator group](#schema/elevatorgroupflooraccessdetail)
+            Success.  An array of [elevator group](#schemas/elevatorgroupflooraccessdetail)
             objects and a `next` link for more.
 
             See the note in the description about privileges if your result set is empty.
@@ -14242,7 +14242,7 @@ paths:
       responses:
         "200":
           description: |
-            Success.  An array of [elevator group](#schema/elevatorgroupsummary) objects
+            Success.  An array of [elevator group](#schemas/elevatorgroupsummary) objects
             and a `next` link for more.
           content:
             application/json:
@@ -14314,7 +14314,7 @@ paths:
         Each field has particular rules and has its own effects on the event and subsequent reports,
         and misconfiguration (such as inadvertently causing a macro to run itself) can land you in
         real trouble, so have a good look at the documentation below and the example [POST
-        body](#schema/eventpostbody).
+        body](#schemas/eventpostbody).
 
         Events are immutable:  you cannot PATCH or DELETE them after you create them.
 
@@ -14967,7 +14967,7 @@ paths:
       description: |
         This returns the detail of one fence zone.
 
-        Follow the 'href' field in a [fence zone summary](#schema/fencezonesummary) to get here.
+        Follow the 'href' field in a [fence zone summary](#schemas/fencezonesummary) to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -15100,8 +15100,8 @@ paths:
         Note that this API call is good for watching one item only; if you want to monitor several,
         you are better off with a [status subscription](#tag/Items/Status-subscriptions).
 
-        Follow the 'updates' field in a fence zone [summary](#schema/fencezonesummary) or
-        [details](#schema/fencezonedetail) page to get here.
+        Follow the 'updates' field in a fence zone [summary](#schemas/fencezonesummary) or
+        [details](#schemas/fencezonedetail) page to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -15116,7 +15116,7 @@ paths:
         "200":
           description: |
             Success.  See the [introduction](#tag/Fence-Zones) for a description of the three status
-            fields and the [detail page](#schema/fencezonedetail) for `voltage`.
+            fields and the [detail page](#schemas/fencezonedetail) for `voltage`.
           content:
             application/json:
               schema:
@@ -15191,7 +15191,7 @@ paths:
       description: |
         This returns the detail of one input.
 
-        Follow the 'href' field in an [input summary](#schema/inputsummary) to get here.
+        Follow the 'href' field in an [input summary](#schemas/inputsummary) to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -15281,8 +15281,8 @@ paths:
         Note that this API call is good for watching one item only; if you want to monitor several,
         you are better off with a [status subscription](#tag/Items/Status-subscriptions).
 
-        Follow the 'updates' field in an input [summary](#schema/inputsummary) or
-        [details](#schema/inputdetail) page to get here.
+        Follow the 'updates' field in an input [summary](#schemas/inputsummary) or
+        [details](#schemas/inputdetail) page to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -15375,7 +15375,7 @@ paths:
         
         This returns the detail of one interlock group.
 
-        Follow the 'href' field in an [interlock group summary](#schema/interlockgroupsummary)
+        Follow the 'href' field in an [interlock group summary](#schemas/interlockgroupsummary)
         to get here.
 
       parameters:
@@ -15448,8 +15448,8 @@ paths:
         you are better off with a [status subscription](#tag/Items/Status-subscriptions).
 
         Follow the 'updates' field in an interlock group
-        [summary](#schema/interlockgroupsummary) or
-        [details](#schema/interlockgroupdetail) page to get here.
+        [summary](#schemas/interlockgroupsummary) or
+        [details](#schemas/interlockgroupdetail) page to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -15952,7 +15952,7 @@ paths:
 
         description: |
           Sets which fields to return.  The values you can list are the same as the
-          field names in the [details page](#schema/lockerbankdetail).  Using it you can
+          field names in the [details page](#schemas/lockerbankdetail).  Using it you can
           return everything on the search page that you would find on the details page.  Separate
           values with commas.
 
@@ -15996,7 +15996,7 @@ paths:
       summary: Get details of a locker bank
       description: |
         This returns details for a locker bank.  In the interest of forward compatibility follow the
-        href in the [locker bank summary](#schema/lockerbanksummary) to get here rather than
+        href in the [locker bank summary](#schemas/lockerbanksummary) to get here rather than
         [building the URL yourself](#section/Forward-compatibility-(HATEOAS)).
 
       parameters:
@@ -16011,7 +16011,7 @@ paths:
             enum: [href, id, name, shortName, description, division, notes, connectedController, lockers, lockers.defaults, lockers.connectedController, ..., defaults]
         description: |
           Sets which fields to return.  The values you can list are the same as the field names you
-          would get in the [details page](#schema/lockerbankdetail).  Use it to cut back on
+          would get in the [details page](#schemas/lockerbankdetail).  Use it to cut back on
           the size of the response for large locker banks.  Separate values with commas.
 
           Treat the string matches as case-sensitive.
@@ -16043,8 +16043,8 @@ paths:
       summary: Get details of a locker
       description: |
         This returns details for a locker.  Follow the href in the [locker bank
-        summary](#schema/lockerbanksummary) or [locker bank
-        detail](#schema/lockerbankdetail) to get here rather than [building the URL
+        summary](#schemas/lockerbanksummary) or [locker bank
+        detail](#schemas/lockerbankdetail) to get here rather than [building the URL
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
         Prior to v8.20 this endpoint was at `/api/locker_banks/{locker_bank_id}/lockers/{id}` .
@@ -16089,8 +16089,8 @@ paths:
       description: |
         Sends an override to open a locker.
 
-        You should get this URL from a [locker detail](#schema/lockerdetail) or [locker bank
-        detail](#schema/lockerbankdetail) rather than [building it
+        You should get this URL from a [locker detail](#schemas/lockerdetail) or [locker bank
+        detail](#schemas/lockerbankdetail) rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
         New in 8.10.1112.
@@ -16119,8 +16119,8 @@ paths:
 
         The call will fail if the locker is allocated to a cardholder.
 
-        You should get this URL from a [locker detail](#schema/lockerdetail) or [locker bank
-        detail](#schema/lockerbankdetail) rather than [building it
+        You should get this URL from a [locker detail](#schemas/lockerdetail) or [locker bank
+        detail](#schemas/lockerbankdetail) rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
         New in 9.10.
@@ -16147,8 +16147,8 @@ paths:
         Sends an override to remove the quarantine from a locker, making it available for
         allocation.
 
-        You should get this URL from a [locker detail](#schema/lockerdetail) or [locker bank
-        detail](#schema/lockerbankdetail) rather than [building it
+        You should get this URL from a [locker detail](#schemas/lockerdetail) or [locker bank
+        detail](#schemas/lockerbankdetail) rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
         New in 9.10.
@@ -16220,7 +16220,7 @@ paths:
       description: |
         This returns the detail of one macro.
 
-        Follow the 'href' field in a [macro summary](#schema/macrosummary) to get here.
+        Follow the 'href' field in a [macro summary](#schemas/macrosummary) to get here.
 
       parameters:
       - name: "id"
@@ -16311,7 +16311,7 @@ paths:
             enum: [href, id, name, description, division, notes, cardholders, divisions, defaults]
             description: |
               Sets which fields to return.  The values you can list are the same as the field names
-              in the [details page](#schema/operatorgroupdetail).  Using it you can return
+              in the [details page](#schemas/operatorgroupdetail).  Using it you can return
               everything on the search page that you would find on the details page.  Separate
               values with commas.
               
@@ -16364,7 +16364,7 @@ paths:
             enum: [href, id, name, description, division, notes, cardholders, divisions, defaults]
         description: |
           Sets which fields to return.  The values you can list are the same as the field names in
-          the [detail results](#schema/operatorgroupdetail).  Use it to return the notes,
+          the [detail results](#schemas/operatorgroupdetail).  Use it to return the notes,
           which don't appear by default.  Separate values with commas.
 
           Treat the string matches as case sensitive.
@@ -16515,7 +16515,7 @@ paths:
       description: |
         This returns the detail of one output.
 
-        Follow the 'href' field in an [output summary](#schema/outputsummary) to get here.
+        Follow the 'href' field in an [output summary](#schemas/outputsummary) to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -16627,8 +16627,8 @@ paths:
         Note that this API call is good for watching one item only; if you want to monitor several,
         you are better off with a [status subscription](#tag/Items/Status-subscriptions).
 
-        Follow the 'updates' field in an output [summary](#schema/outputsummary) or
-        [details](#schema/outputdetail) page to get here.
+        Follow the 'updates' field in an output [summary](#schemas/outputsummary) or
+        [details](#schemas/outputdetail) page to get here.
 
       parameters:
       - $ref: "#/components/parameters/id"
@@ -16746,7 +16746,7 @@ paths:
       summary: Get details of a PDF definition
       description: |
         This returns details for a PDF definition.  Follow the href in the
-        [summary](#schema/pdfdefinition) to get here, rather than [building it
+        [summary](#schemas/pdfdefinition) to get here, rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       parameters:
@@ -16773,11 +16773,11 @@ paths:
       summary: Update
       description: |
         This is the call you use to update a PDF.  Follow the href in the
-        [summary](#schema/pdfdefinition) to get here, rather than [building it
+        [summary](#schemas/pdfdefinition) to get here, rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
         The PATCH expects a document in the same format as the [PDF
-        detail](#schema/pdfdefinition).
+        detail](#schemas/pdfdefinition).
 
         It requires the RESTConfiguration licence.
 
@@ -16831,7 +16831,7 @@ paths:
       summary: Remove
       description: |
         This call removes a PDF item from Command Centre.  Follow the href in the
-        [summary](#schema/pdfdefinition) to get here, rather than [building it
+        [summary](#schemas/pdfdefinition) to get here, rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
         It requires the RESTConfiguration licence.
@@ -16990,7 +16990,7 @@ paths:
                   The PIV status is the only PIV-specific data you can change on a PIV card.  Everything
                   else--the CHUID, certificates, and biometrics--are all fixed once set.
 
-                  See the [PIV data schema](#schema/newpivcard) for when you should set the PIV status
+                  See the [PIV data schema](#schemas/newpivcard) for when you should set the PIV status
                   and what you can set it to.
 
                 value:
@@ -17086,12 +17086,12 @@ paths:
                             or 'offline'.
                         pivData:
                           description: |
-                            This is much like the [pivData](#schema/newpivcard) you send when
+                            This is much like the [pivData](#schemas/newpivcard) you send when
                             creating a card except that:
 
                               - in certain cases (described below) it does not contain the
                                 certificates and biometrics, leaving just the
-                                [CHUID](#schema/chuid) block (a subset of the card's CHUID) and
+                                [CHUID](#schemas/chuid) block (a subset of the card's CHUID) and
                                 the PIV status, and
 
                               - it adds `lastCheckTime`, which shows when the card was last
@@ -17171,7 +17171,7 @@ paths:
       summary: Get details of a reception
       description: |
         This returns details for a reception.  Follow the href in the
-        [summary](#schema/receptionsearch) to get here, rather than [building it
+        [summary](#schemas/receptionsearch) to get here, rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       parameters:
@@ -17434,7 +17434,7 @@ paths:
         This is the call you use to update a role.  Take its URL from a cardholder or a role search
         rather than [building it yourself](#section/Forward-compatibility-(HATEOAS)).
 
-        The PATCH expects a document in the same format as the [role detail](#schema/role).
+        The PATCH expects a document in the same format as the [role detail](#schemas/role).
 
         This call requires the RESTConfiguration licence.
 
@@ -17615,7 +17615,7 @@ paths:
       description: |
         This returns the detail of one schedule.
 
-        Follow the 'href' field in a [schedule summary](#schema/schedulesummary) to get here.
+        Follow the 'href' field in a [schedule summary](#schemas/schedulesummary) to get here.
       parameters:
       - name: id
         in: path
@@ -17791,7 +17791,7 @@ paths:
       summary: Create a visit
       description: |
         This creates a new visit.  It expects a JSON body in the same format as a [visit
-        detail](#schema/visit).
+        detail](#schemas/visit).
 
         These fields are required:
         - name
@@ -17869,7 +17869,7 @@ paths:
       tags: [ "Visits" ]
       summary: Get details of a visit
       description: |
-        This returns details for a visit.  Follow the href in the [visit item](#schema/visit) to
+        This returns details for a visit.  Follow the href in the [visit item](#schemas/visit) to
         get here rather than [building the URL yourself](#section/Forward-compatibility-(HATEOAS)).
 
         All visit endpoints are new to 8.50.
@@ -17896,7 +17896,7 @@ paths:
       description: |
         Changes an existing visit.
 
-        Follow the href in a [visit item](#schema/visit) to get here rather than [building the
+        Follow the href in a [visit item](#schemas/visit) to get here rather than [building the
         URL yourself](#section/Forward-compatibility-(HATEOAS)).
 
         New to 8.50.
@@ -18014,7 +18014,7 @@ paths:
                 status:
                   type: object
                   description: |
-                    This is the same status that you see in a [visit GET](#schema/visit) for each visitor
+                    This is the same status that you see in a [visit GET](#schemas/visit) for each visitor
                     except that you only need to send the `value` field.
                   properties:
                     value:
@@ -18448,7 +18448,7 @@ tags:
     * You may now use the `fields` query parameter to tailor the fields that come back for events
       and alarms.
 
-    * Operator add, modify, and delete [events](#schema/eventsummary) now contain a link to the
+    * Operator add, modify, and delete [events](#schemas/eventsummary) now contain a link to the
       affected item in a new `modifiedItem` block, deprecating the `accessGroup` block for those
       event types.
 
@@ -18462,7 +18462,7 @@ tags:
       environment).
 
     * Access groups have 22 new fields showing the privileges and access they grant their members.
-      These new fields are in the default set for the [detail view](#schema/accessgroupdetail).
+      These new fields are in the default set for the [detail view](#schemas/accessgroupdetail).
 
     * Access groups now return the alarm zones over which they have privilege.
 
@@ -18487,7 +18487,7 @@ tags:
     * A cardholder's card object now contains a Boolean field called `trace` indicating whether its
       trace flag is set.  A card with tracing on generates an event every time it is used.
 
-    * A 'connectedController' field in the [door detail](#schema/doordetail) returns the ID and
+    * A 'connectedController' field in the [door detail](#schemas/doordetail) returns the ID and
       name of the door's hardware controller (a hardware controller, not an API controller).
 
     ### API changes in 8.20
@@ -18517,7 +18517,7 @@ tags:
 
     * Bugfix:  you can now change a cardholder's division.
 
-    * A cardholder's [relationships block](#schema/cardholderrelationship) now contains the
+    * A cardholder's [relationships block](#schemas/cardholderrelationship) now contains the
       role holder's two name fields.  The `name` field, present since 7.90, is simply these two
       fields joined with a space, and is therefore ambiguous when a cardholder only has one name.
 
@@ -18534,7 +18534,7 @@ tags:
 
     * [Incoming events](#tag/Events/paths/~1api/post)
 
-    * Events now show their related [access groups and doors](#schema/eventsummary) for
+    * Events now show their related [access groups and doors](#schemas/eventsummary) for
       external event types.
 
     * There is a [card types API](#tag/Card-Types/paths/~1api~1card_types~1assign/get) that returns the card types
@@ -18581,7 +18581,7 @@ tags:
     GETs, and 'Edit Access Groups' for the POST and PATCH.
 
     These methods also provide the links you need to manage memberships.  Those links are hrefs to
-    cardholders, to which you would send [PATCH](#schema/cardholderpatchexample) requests
+    cardholders, to which you would send [PATCH](#schemas/cardholderpatchexample) requests
     containing your updates.  Your REST operator will need 'Edit Cardholders' privilege on the
     cardholder for that.
 
@@ -18714,7 +18714,7 @@ tags:
      1. Find the href for the access zone using the process above.
      2. GET it.
      3. Find the API URL you require in the `commands` structure of the results, such as `free` or
-        `securePin`, from [the detail](#schema/accesszonedetail).  Use the `until` variants if
+        `securePin`, from [the detail](#schemas/accesszonedetail).  Use the `until` variants if
         you are specifying an end time.
      4. POST to that URL.  Some require a JSON object (resetting the zone count, and all
          those with `until` in their command block keys).  The others expect an empty body.
@@ -18851,7 +18851,7 @@ tags:
     3. Find the API URL you require in the `commands` structure of the results, such as `arm`
        [↪](#tag/Alarm-Zones/paths/~1api~1alarm_zones~1%7Bid%7D~1arm/post) or `disarm`
        [↪](#tag/Alarm-Zones/paths/~1api~1alarm_zones~1%7Bid%7D~1disarm/post), using [the
-       detail](#schema/alarmzonedetail).  Use the calls with `Until` on the ends of their
+       detail](#schemas/alarmzonedetail).  Use the calls with `Until` on the ends of their
        names if you are specifying an end time.
     4. POST to that URL.  All those with `Until` in their names require a JSON object in
     the body giving the time at which the override should end; the others do not.
@@ -19191,8 +19191,8 @@ tags:
     assign are at a new URL given in the field `features.cardTypes.assign.href`
     [↪](#tag/Cardholders/paths/~1api~1card_types~1assign/get).
 
-    4. Compose a JSON body using [this example](#schema/cardholderpost) and [this
-    detail](#schema/cardholderdetail), then send it in a POST to the href at
+    4. Compose a JSON body using [this example](#schemas/cardholderpost) and [this
+    detail](#schemas/cardholderdetail), then send it in a POST to the href at
     `features.cardholders.cardholders.href` [↪](#tag/Cardholders/paths/~1api~1cardholders/post) on the
     `/api` page.
     
@@ -19206,7 +19206,7 @@ tags:
     the cardholder and his or her associations.
 
     In its simplest form, your document could be a collection of key/value pairs much the same as
-    you receive from a GET to the same href.  [More complex forms](#schema/cardholderpatch)
+    you receive from a GET to the same href.  [More complex forms](#schemas/cardholderpatch)
     allow adding, modifying, and removing cards, competencies, group membership, PDFs, and
     relationships.  Three examples follow.
 
@@ -19233,7 +19233,7 @@ tags:
        way, you will receive all their access group memberships.
 
     2. Take the array at `accessGroups`, rename it to `remove`, and put it in an object called
-       `accessGroups` at the root level of a [JSON object](#schema/cardholderpatch).
+       `accessGroups` at the root level of a [JSON object](#schemas/cardholderpatch).
 
     3. [PATCH](#tag/Cardholders/paths/~1api~1cardholders~1%7Bid%7D/patch) the cardholder with that JSON object.
        That will remove the cardholder from all the groups that came back in the GET.
@@ -19252,7 +19252,7 @@ tags:
     5. Optional:  follow the link at `edit.href` on the cardholder page.  If there is a link at
        `update.href` of the results, your REST client has permission to modify the cardholder.
     4. PATCH the cardholder's href according to the [cardholder patch
-       schema](#schema/cardholderpatch).
+       schema](#schemas/cardholderpatch).
 
     ### Deleting a cardholder's PDF value
     1. Find the URL of your cardholder using one of the processes above.
@@ -19656,7 +19656,7 @@ tags:
     1. Find the href for the door using the process above.
     2. GET it.
     3. POST to the `open` [↪](#tag/doors/paths/~1api~1doors~1%7Bid%7D~1open/post) URL in the `commands` structure
-       of the [results](#schema/doordetail).
+       of the [results](#schemas/doordetail).
 
     ### Finding a door's status
     1. Find the href for the door using the process above, and GET it.
@@ -19921,7 +19921,7 @@ tags:
     * If you are simply after a person's location and do not care how they arrived there, use the
       `afterLocation` block inside `location`.  The `canonicalTypeName` field in there will tell you
       what kind of location it is (reception or access zone).  The [schema
-      definition](#schema/eventdetail) describes `afterLocation` in more detail.
+      definition](#schemas/eventdetail) describes `afterLocation` in more detail.
 
     * If you are after movements, which happen when a door grants a person access or an operator
       moves them on a tag board or via the API, and happen to some types of visitors when their host
@@ -19935,7 +19935,7 @@ tags:
       `location.afterLocation` will show where they ended up.  The difference is that with
       'denied'-type events, they started there too.
 
-    Each of those fields is covered in the [schema definition](#schema/eventdetail).
+    Each of those fields is covered in the [schema definition](#schemas/eventdetail).
 
     Be aware that the events you receive are limited to those with a source item that is in a
     division in which your operator has a privilege that allows viewing events.  In 9.00 those
@@ -20029,7 +20029,7 @@ tags:
     versions, so explaining it is a topic in itself.
 
     In 8.40 and later the values you can list are the same as the field names in the [details
-    page](#schema/eventdetail), plus the special value for a personal data field described
+    page](#schemas/eventdetail), plus the special value for a personal data field described
     below.  You can pick whichever fields you want, including `defaults`, though we urge you to
     only list the fields you need.  Anything you wrote for 8.30 or earlier will
     work in 8.40 as it did before.
@@ -20152,7 +20152,7 @@ tags:
     1. Find the href for the fence zone using the process above.
     2. GET it.
     3. Find the API URL you require in the `commands` structure of the results, such as
-    `off`, `highVoltage`, or `shunt`, from [the detail](#schema/fencezonedetail).
+    `off`, `highVoltage`, or `shunt`, from [the detail](#schemas/fencezonedetail).
     4. POST to that URL.  You do not need to send anything in the body of the POST.
 
     ### Finding a fence zone's status
@@ -20233,7 +20233,7 @@ tags:
     1. Find the href for the input using the process above.
     2. GET it.
     3. Find the API URL for the override you need in the `commands` structure of the
-       [results](#schema/inputdetail).
+       [results](#schemas/inputdetail).
     4. POST to that URL with an empty body.
 
     ### Finding an input's status
@@ -20310,7 +20310,7 @@ tags:
     1. Find the href for the interlock using the process above.
     2. GET it.
     3. Find the API URL for the override you need (disable or re-enable) in the `commands` structure
-       of the [results](#schema/interlockgroupdetail).
+       of the [results](#schemas/interlockgroupdetail).
     4. POST to that URL with an empty body.
 
     ## Licensing
@@ -20458,7 +20458,7 @@ tags:
        results.
     3. Follow the href of the locker bank you are after.
 
-    The results of that query are the [locker bank detail](#schema/lockerbankdetail).
+    The results of that query are the [locker bank detail](#schemas/lockerbankdetail).
 
     ### Assigning a locker to a cardholder
 
@@ -20662,7 +20662,7 @@ tags:
     ### Switching an Output
     1. Find the href for the output using the process above.
     2. GET it.
-    3. Look in the `commands` structure of the [results](#schema/outputdetail) to find the API
+    3. Look in the `commands` structure of the [results](#schemas/outputdetail) to find the API
        URLs that turn the output on, off, or cancel a previous override.  Use the `until` variants
        if you want to specify an end time.
     4. POST to that URL.  Those with `until` in their command block keys require a JSON
@@ -20715,7 +20715,7 @@ tags:
     ### Finding all a cardholder's PDF definitions
 
     You can see all a cardholder's PDF *values* by looking in the `personalDataDefinitions` block of
-    a [cardholder](#schema/cardholderdetail).  But that will only show you the PDFs that the
+    a [cardholder](#schemas/cardholderdetail).  But that will only show you the PDFs that the
     cardholder currently has values for -- it will not show you the blanks.  If you are writing an
     application that needs to find all the PDFs that a cardholder could carry, you will need this
     process.
@@ -20744,7 +20744,7 @@ tags:
 
     ### Setting a cardholder's PDF value
 
-    You do that by [PATCHing a cardholder](#schema/cardholderpatch) with a field named
+    You do that by [PATCHing a cardholder](#schemas/cardholderpatch) with a field named
     after the PDF following an '@'.
 
     ## Licensing
@@ -20762,7 +20762,7 @@ tags:
     interests of brevity its examples do not cover PIV.
 
     The schema / models section gives you the details of the PIV part of a Command Centre card, with
-    examples of what you would submit to [create](#schema/newpivcard) or update one, and what
+    examples of what you would submit to [create](#schemas/newpivcard) or update one, and what
     Command Centre will send you when you view one.
 
     The Paths section takes those schema examples and wraps them into a
@@ -20954,7 +20954,7 @@ tags:
        groups, and (optionally) some visitor access groups from that visitor type's visitor access
        groups.
     1. Pick (or create) at least one cardholder for your visitor or visitors.
-    1. Build a [JSON payload](#schema/visit) containing all that.
+    1. Build a [JSON payload](#schemas/visit) containing all that.
     1. POST to the link at `features.visits.visits.href` [↪](#tag/Visits/paths/~1api~1visits/post) (in the
        payload of the `GET /api` you did for the first step).
     
