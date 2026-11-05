@@ -288,7 +288,7 @@ x-common-blocks:
   - &ID_DESC |
       An alphanumeric identifier, unique to the server. This is the ID to use in the `source`
       parameter of [event filters](#get-/api/events) and in the body of [status
-      subscriptions](#tag--Items--status-subscriptions) when you are interested in events originating at this item.
+      subscriptions](#tag--items--status-subscriptions) when you are interested in events originating at this item.
 
   - properties: &UPDATES_PROPS
       href:
@@ -405,7 +405,7 @@ x-common-blocks:
       The search and details pages do not return status flags by default, because an item's status
       is unknown until something is monitoring it.  If you want status flags on the search and
       details pages you must ask for them using the `fields` parameter, but our advice is to monitor
-      them using [status subscriptions](#tag--Items--status-subscriptions) if you are running 8.30 or
+      them using [status subscriptions](#tag--items--status-subscriptions) if you are running 8.30 or
       later, otherwise the item's `updates` link.  See the [item status](#overview--item-status) section
       for a full description of how to stay up to date with item status, and this item's
       introduction in the Operations section for what flags this item might return and what they
@@ -3188,7 +3188,7 @@ components:
               status is unknown until something is monitoring it.  If you want status flags on the
               search and details pages you must ask for them using the `fields` parameter, but our
               advice is to monitor them using [status
-              subscriptions](#tag--Items--status-subscriptions) if you are running 8.30 or later,
+              subscriptions](#tag--items--status-subscriptions) if you are running 8.30 or later,
               otherwise the item's `updates` link.  See the [item status](#overview--item-status)
               section for a full description of how to stay up to date with item status, and this
               item's introduction in the Operations section for what flags this item might return
@@ -3216,7 +3216,7 @@ components:
                 description: |
                   An alphanumeric identifier, unique to the server. This is the ID to use in the
                   `source` parameter of [event filters](#get-/api/events) and in the body
-                  of [status subscriptions](#tag--Items--status-subscriptions).
+                  of [status subscriptions](#tag--items--status-subscriptions).
                 example: "634"
             description: |
               This block describes this item's hardware controller.
@@ -4072,7 +4072,7 @@ components:
             description: |
               Cardholders include an `updates` block, as other items do, that allows monitoring one
               cardholder per TCP session in a long poll.  However the [Cardholder
-              changes](#tag--Cardholder-change-tracking) methods are a far more efficient way of monitoring
+              changes](#tag--cardholder-change-tracking) methods are a far more efficient way of monitoring
               your cardholders.
           redactions:
             type: array
@@ -4411,7 +4411,7 @@ components:
                 This card's state, taken from the card type's state set.  The default card
                 state set contains 'Active', 'Disabled (manually)', 'Lost', 'Stolen', and
                 'Damaged', or translations of those into the server's language.  Your card state sets may
-                differ, as they are customisable. [PIV cards](#tag--PIV) have extra values.
+                differ, as they are customisable. [PIV cards](#tag--piv) have extra values.
 
                 In addition to the values in the card type's state set, it will be 'Not Yet Activated'
                 if the card's activation date is in the future, 'Expired' if its deactivation date has
@@ -4778,7 +4778,7 @@ components:
         Every card has a type, a status, and a validity period.  Its type determines other fields of
         relevance, described below.
 
-        PIV cards are complex enough to warrant a [tag of their own](#tag--PIV).
+        PIV cards are complex enough to warrant a [tag of their own](#tag--piv).
 
     CardholderAccessGroup:
       title: Cardholder access group membership
@@ -7612,7 +7612,7 @@ components:
               example: https://localhost:8904/api/doors/745
               description: |
                 Get the href using the API controller for that type of item (such as
-                [doors](#tag--Doors)) or from the more general [item
+                [doors](#tag--doors)) or from the more general [item
                 search](#get-/api/items).
         priority:
           type: integer
@@ -7659,7 +7659,7 @@ components:
               example: https://localhost:8904/api/cardholders/325
               description: |
                 This can be the href of any cardholder to which your operator has view access.  Get
-                the href from the [cardholders controller](#tag--Cardholders).
+                the href from the [cardholders controller](#tag--cardholders).
         operator:
           description: |
             If you wish to attach an operator to your event, link it here.  Like the cardholder,
@@ -7706,8 +7706,8 @@ components:
               example: https://localhost:8904/api/access_groups/352
               description: |
                 This can be the href of any access group to which your operator has view access.
-                Get the href using the [groups controller](#tag--Access-groups) or
-                the [items controller](#tag--Items).
+                Get the href using the [groups controller](#tag--access-groups) or
+                the [items controller](#tag--items).
         lockerBank:
           description: |
             If you wish to attach a locker bank to your event, link it here.
@@ -7726,8 +7726,8 @@ components:
               example: https://localhost:8904/api/locker_banks/4566
               description: |
                 This can be the href of any locker bank to which your operator has view access.  Get
-                the href using the [locker banks](#tag--Lockers) calls or the more general
-                [items](#tag--Items) routes.
+                the href using the [locker banks](#tag--lockers) calls or the more general
+                [items](#tag--items) routes.
         locker:
           description: |
             If you wish to link a locker to your event, do it here.  Like an event's access group and
@@ -7741,7 +7741,7 @@ components:
               example: https://localhost:8904/api/lockers/3456
               description: |
                 This can be the href of any locker your operator can view.  Get the href from the
-                [items](#tag--Items) controller or the `lockers` field of [a locker
+                [items](#tag--items) controller or the `lockers` field of [a locker
                 bank](#cmp--schemas-lockerbankdetail).
 
         door:
@@ -7756,7 +7756,7 @@ components:
               example: https://localhost:8904/api/doors/745
               description: |
                 This can be the href of any door your operator can see.  Get it with a
-                [doors](#tag--Doors) call or a more general [items
+                [doors](#tag--doors) call or a more general [items
                 search](#get-/api/items).
 
     EventGroups:
@@ -8632,7 +8632,7 @@ components:
                   This is not a default field:  you must ask for it by adding `lockers.updates` to
                   the `fields` query parameter.  Since it can only monitor one locker at a time we
                   discourage its use in favour of [bulk status
-                  monitoring](#tag--Items--status-subscriptions).
+                  monitoring](#tag--items--status-subscriptions).
 
       example:
         name: "Lobby"
@@ -8783,7 +8783,7 @@ components:
 
             `updates` was added to the lockers controller in 9.10 for consistency with other
             controllers, but we discourage its use in favour of [bulk status
-            monitoring](#tag--Items--status-subscriptions).
+            monitoring](#tag--items--status-subscriptions).
 
             Although a locker's status includes 'free' or 'allocated', allocating or un-allocating a
             locker does not cause the API to report a change of status.  Opening, closing,
@@ -10026,7 +10026,7 @@ info:
 
     The body of this document clearly indicates when recent features arrived in the API so that
     readers with older versions of Command Centre know not to expect them.  There is also a
-    [changelog](#tag--Changelog).
+    [changelog](#tag--changelog).
 
     ## API authentication
 
@@ -10237,7 +10237,7 @@ info:
 
     - an operator had the item visible in one of the thick or API-based clients,
     - an application monitored the item via another API,
-    - a REST client used the item in a [status subscription](#tag--Items--status-subscriptions), or
+    - a REST client used the item in a [status subscription](#tag--items--status-subscriptions), or
     - a REST client followed the item's `updates` link from its details page.
 
     If it is not up to date and you request the status on an item's summary or details page, the
@@ -10246,7 +10246,7 @@ info:
     To retrieve the status of one item you could GET the item's `updates` link from its details
     page, but be careful not to swamp the server with too many simultaneous connections.  To monitor
     the status of many items you should use the [status subscription
-    API](#tag--Items--status-subscriptions) on the items controller (added in 8.30).
+    API](#tag--items--status-subscriptions) on the items controller (added in 8.30).
 
     Whichever API you use, if the server does not have an item's status when you ask it will
     request an update from the item itself.  For hardware items that may involve a conversation
@@ -10395,22 +10395,6 @@ paths:
       summary: Search access groups
       description: |
 
-        In an attempt to determine Gitbook's rules for generating links:
-          * [/](/)
-          * [https://help.security.gallagher.com/](https://help.security.gallagher.com/)
-          * [https://help.security.gallagher.com/knowledge-hub/developer](https://help.security.gallagher.com/knowledge-hub/developer)
-          * [https://help.security.gallagher.com/knowledge-hub/developer/](https://help.security.gallagher.com/knowledge-hub/developer/)
-          * [https://help.security.gallagher.com/knowledge-hub/developer/api-spec-page/forward-compatibility-hateoas](https://help.security.gallagher.com/knowledge-hub/developer/api-spec-page/forward-compatibility-hateoas)
-          * [api-authentication](api-authentication)
-          * [forward-compatibility-hateoas](forward-compatibility-hateoas)
-          * [./api-authentication](./api-authentication)
-          * [Hideous path](tag-name#httpverb-path-with-id-s-in_it-h%20%20s%20-b-)
-          * [Text that is broken over
-            two lines, full link](https://www.google.com)
-          * [Text that is broken over
-            two lines, to api-authentication](api-authentication)
-
-        
         This returns access groups matching your search criteria.
 
         The result will contain no more than 100 or 1000 groups depending on your version; you
@@ -11238,7 +11222,7 @@ paths:
         See the [item status topic](#overview--item-status) for how to use the updates APIs.
 
         Note that this API call is good for watching one item only; if you want to monitor several,
-        you are better off with a [status subscription](#tag--Items--status-subscriptions).
+        you are better off with a [status subscription](#tag--items--status-subscriptions).
 
         Follow the 'updates' field in an access zone [summary](#cmp--schemas-accesszonesummary) or
         [details](#cmp--schemas-accesszonedetail) page to get here rather than [building it
@@ -11266,7 +11250,7 @@ paths:
       responses:
         "200":
           description: |
-            Success.  The [introduction](#tag--Access-Zones) describes the three status fields and
+            Success.  The [introduction](#tag--access-zones) describes the three status fields and
             the [access zone detail](#cmp--schemas-accesszonedetail) describes `zoneCount`.
           content:
             application/json:
@@ -11866,7 +11850,7 @@ paths:
         See the [item status topic](#overview--item-status) for how to use the updates APIs.
 
         Note that this API call is good for watching one item only; if you want to monitor several,
-        you are better off with a [status subscription](#tag--Items--status-subscriptions).
+        you are better off with a [status subscription](#tag--items--status-subscriptions).
 
         Follow the 'updates' field in an alarm zone [summary](#cmp--schemas-alarmzonesummary) or
         [details](#cmp--schemas-alarmzonedetail) pages to get here.
@@ -11892,7 +11876,7 @@ paths:
       responses:
         "200":
           description: |
-            Success.  The [introduction](#tag--Alarm-Zones) describes the three status fields.
+            Success.  The [introduction](#tag--alarm-zones) describes the three status fields.
           content:
             application/json:
               schema:
@@ -12893,7 +12877,7 @@ paths:
                         The href of the access zone into which you want to move your cardholder.
                         Use an href from the [access zones
                         controller](#get-/api/access_zones/update_cardholder_location),
-                        or the [items controller](#tag--Items) if you do not have a RESTStatus or (in
+                        or the [items controller](#tag--items) if you do not have a RESTStatus or (in
                         8.60) RESTOverrides licence.
 
                         In 9.60 and later, use the empty string `""` to move a cardholder out of all
@@ -13082,7 +13066,7 @@ paths:
           could use `fields=operator.name,cardholder.firstName,cardholder.lastName`.
 
           The values you can list for the cardholder block are very similar to [these field
-          names](#tag--Cardholders--field-names-in-query-parameters).  Prefix each with `cardholder.` (since in this
+          names](#tag--cardholders--field-names-in-query-parameters).  Prefix each with `cardholder.` (since in this
           API they are all inside a block called `cardholder`).
 
           Separate values with commas and treat the strings as case sensitive.
@@ -14087,7 +14071,7 @@ paths:
         See the [item status topic](#overview--item-status) for how to use the updates APIs.
 
         Note that this API call is good for watching one item only; if you want to monitor several,
-        you are better off with a [status subscription](#tag--Items--status-subscriptions).
+        you are better off with a [status subscription](#tag--items--status-subscriptions).
 
         Follow the 'updates' field in a door [summary](#cmp--schemas-doorsummary) or
         [details](#cmp--schemas-doordetail) page to get here.
@@ -14099,7 +14083,7 @@ paths:
       responses:
         "200":
           description: |
-            Success.  See the [introduction](#tag--Doors) for a description of the three status
+            Success.  See the [introduction](#tag--doors) for a description of the three status
             fields.
           content:
             application/json:
@@ -14521,7 +14505,7 @@ paths:
             type: string
         description: |
           Restricts events to those whose source item has this ID.  Separate multiple IDs with
-          commas.  Use the [items API](#tag--Items) to search Command Centre's items.
+          commas.  Use the [items API](#tag--items) to search Command Centre's items.
 
       - name: "type"
         in: query
@@ -15084,7 +15068,7 @@ paths:
         See the [item status topic](#overview--item-status) for how to use the updates APIs.
 
         Note that this API call is good for watching one item only; if you want to monitor several,
-        you are better off with a [status subscription](#tag--Items--status-subscriptions).
+        you are better off with a [status subscription](#tag--items--status-subscriptions).
 
         Follow the 'updates' field in a fence zone [summary](#cmp--schemas-fencezonesummary) or
         [details](#cmp--schemas-fencezonedetail) page to get here.
@@ -15101,7 +15085,7 @@ paths:
       responses:
         "200":
           description: |
-            Success.  See the [introduction](#tag--Fence-Zones) for a description of the three status
+            Success.  See the [introduction](#tag--fence-zones) for a description of the three status
             fields and the [detail page](#cmp--schemas-fencezonedetail) for `voltage`.
           content:
             application/json:
@@ -15265,7 +15249,7 @@ paths:
         See the [item status topic](#overview--item-status) for how to use the updates APIs.
 
         Note that this API call is good for watching one item only; if you want to monitor several,
-        you are better off with a [status subscription](#tag--Items--status-subscriptions).
+        you are better off with a [status subscription](#tag--items--status-subscriptions).
 
         Follow the 'updates' field in an input [summary](#cmp--schemas-inputsummary) or
         [details](#cmp--schemas-inputdetail) page to get here.
@@ -15277,7 +15261,7 @@ paths:
       responses:
         "200":
           description: |
-            Success.  See the [introduction](#tag--Inputs) for a description of the three status
+            Success.  See the [introduction](#tag--inputs) for a description of the three status
             fields.
           content:
             application/json:
@@ -15431,7 +15415,7 @@ paths:
         See the [item status topic](#overview--item-status) for how to use the updates APIs.
 
         Note that this API call is good for watching one item only; if you want to monitor several,
-        you are better off with a [status subscription](#tag--Items--status-subscriptions).
+        you are better off with a [status subscription](#tag--items--status-subscriptions).
 
         Follow the 'updates' field in an interlock group
         [summary](#cmp--schemas-interlockgroupsummary) or
@@ -15444,7 +15428,7 @@ paths:
       responses:
         "200":
           description: |
-            Success.  See the [introduction](#tag--Interlock-Groups) for a description of the status
+            Success.  See the [introduction](#tag--interlock-groups) for a description of the status
             fields.
           content:
             application/json:
@@ -16611,7 +16595,7 @@ paths:
         See the [item status topic](#overview--item-status) for how to use the updates APIs.
 
         Note that this API call is good for watching one item only; if you want to monitor several,
-        you are better off with a [status subscription](#tag--Items--status-subscriptions).
+        you are better off with a [status subscription](#tag--items--status-subscriptions).
 
         Follow the 'updates' field in an output [summary](#cmp--schemas-outputsummary) or
         [details](#cmp--schemas-outputdetail) page to get here.
@@ -16623,7 +16607,7 @@ paths:
       responses:
         "200":
           description: |
-            Success.  See the [introduction](#tag--Outputs) for a description of the three status
+            Success.  See the [introduction](#tag--outputs) for a description of the three status
             fields.
           content:
             application/json:
@@ -18178,7 +18162,7 @@ tags:
 
     * You can move cardholders outside the system.
 
-    * The [items controller](#tag--Items) can give you items' descriptions and short names, if you
+    * The [items controller](#tag--items) can give you items' descriptions and short names, if you
       ask.
 
     * The cardholder `allPdfs` field and "revealable" PDF types have been in the product for several
@@ -18192,7 +18176,7 @@ tags:
     * OIDC login support for operators.
 
     * Creating an [item status subscription](#post-/api/items/updates) and [collecting the
-      first batch of changes](#path/Get/Items/updates) will no longer return the first set of
+      first batch of changes](#get-/api/items/updates) will no longer return the first set of
       results twice.  If your application follows the algorithm at the second link above it will
       always be compatible with this API.
 
@@ -18226,7 +18210,7 @@ tags:
     * POTENTIALLY BREAKING CHANGE:  GovPass cards may have a new credentialClass and GovPass card
       states will have new names, depending on the card type and the site's licences.
 
-    * You can create, modify, and delete [access groups](#tag--Access-groups).
+    * You can create, modify, and delete [access groups](#tag--access-groups).
 
     ### API changes in 9.30
 
@@ -18261,17 +18245,17 @@ tags:
 
     * You can request the name of an alarm's instruction, and the contents of the instruction itself.
 
-    * You can create, modify, and delete [competencies](#tag--Competencies).
+    * You can create, modify, and delete [competencies](#tag--competencies).
 
     * You can request a locker's status and send an override to quarantine it.  The [use
-      cases](#tag--Lockers--use-cases) section shows how.
+      cases](#tag--lockers--use-cases) section shows how.
 
     ### API changes in 9.00
 
     * A new event type `hasLocation` greatly simplifies the [monitoring of cardholder
-      movements](#path/get/Events).
+      movements](#get-/api/events).
       
-    * A new [`location` block on events](#tag--Events--location-events-in-900) greatly
+    * A new [`location` block on events](#tag--events--location-events-in-900) greatly
       simplifies interpreting them.
 
     * You can search for cardholders by the access zone they are in.
@@ -18311,7 +18295,7 @@ tags:
       designator, because date PDFs don't hold a time or time zone.  Previously they came out as
       midnight UTC, which implied more accuracy than date PDFs hold.
 
-    * [Redactions](#tag--Redactions).
+    * [Redactions](#tag--redactions).
 
     * An optional PDF field `operatorAccess` contains the level of access your operator has to
       cardholders' values for the PDF.
@@ -18321,7 +18305,7 @@ tags:
     * Email and mobile PDFs return their 'Default Notifications' flag on request.  This actually
       happened in 8.50 but did not make it into the "changes" list.
 
-    * Early-adopter support for [Interlock groups](#tag--Interlock-Groups).
+    * Early-adopter support for [Interlock groups](#tag--interlock-groups).
 
     ### API changes in 8.70
 
@@ -18389,7 +18373,7 @@ tags:
 
     ### API changes in 8.50
 
-    * The server property that turns off [client certificate checking](#authentication) changed.
+    * The server property that turns off [client certificate checking](#overview--api-authentication) changed.
 
     * Divisions can return some of their Visitor Management configuration.
 
@@ -18399,7 +18383,7 @@ tags:
     * You can request a division's description.
 
     * You can manage operators by setting their operator group memberships and logon credentials.
-    * You can view [operator groups](#tag--Operator-groups).
+    * You can view [operator groups](#tag--operator-groups).
     * Lockers and locker banks report the hardware controller where they reside.
     * Cardholders report their 'disable cipher pad' setting (vision impairment).
     * Card types will show their division on request.
@@ -18416,16 +18400,16 @@ tags:
 
     * Email and mobile PDFs return their 'Default Notifications' flag on request.
 
-    * A [schedules API](#tag--Schedules) provides CRUD of the six schedule item types.
+    * A [schedules API](#tag--schedules) provides CRUD of the six schedule item types.
 
-    * A [day categories API](#tag--Day-Categories) returns the day categories you need for those
+    * A [day categories API](#tag--day-categories) returns the day categories you need for those
       schedules.
 
     * A [pulse](#post-/api/outputs/-id-/pulse) overrides an output.
 
     * A 'connectedController' field grew on the item types that did not already have it.
 
-    * An [elevator groups API](#tag--Elevator-Groups) provides a view of elevator groups so that you
+    * An [elevator groups API](#tag--elevator-groups) provides a view of elevator groups so that you
       can [set a cardholder's default
       floor](#patch-/api/cardholders/-id-/patch).
 
@@ -18459,12 +18443,12 @@ tags:
 
     ### API changes in 8.30
 
-    * The [items API](#tag--Items) has methods that let you monitor the status of large numbers of
+    * The [items API](#tag--items) has methods that let you monitor the status of large numbers of
       items.
 
     * Doors related to guard tour events now appear in an event's `door` block.
 
-    * Cardholder [change tracking](#tag--Cardholder-change-tracking) lets you synchronise users into an
+    * Cardholder [change tracking](#tag--cardholder-change-tracking) lets you synchronise users into an
       external system by informing it of changes as they occur.
 
     * Cardholder group membership hrefs now contain a long string where they used to contain a small
@@ -18514,7 +18498,7 @@ tags:
     * You can use the `fields` query parameter to select the fields you receive from locker bank
       [summary](#get-/api/locker_banks) and
       [details](#get-/api/locker_banks/-id-) GETs.  The [use
-      cases](#tag--Lockers--use-cases) section shows how.
+      cases](#tag--lockers--use-cases) section shows how.
 
     ### API changes in 8.10
 
@@ -18533,7 +18517,7 @@ tags:
 
     * Certificates and biometric data are available on PIV cards.
 
-    * An [inputs API](#tag--Inputs) gives you the state of 'input' hardware items and lets you
+    * An [inputs API](#tag--inputs) gives you the state of 'input' hardware items and lets you
       override them.  It is very similar to the outputs API.
 
     * PIV certificates and biometrics are now available without a customisation.  They are too large
@@ -19030,7 +19014,7 @@ tags:
     | Default (by name) | `top=1000`    | 3.5 minutes
     | `sort=id`         | `top=1000`    | 1 minute
 
-    * In version 8.00 or later, use the [`fields` parameter](#overview--field-specifiers) to add fields
+    * In version 8.00 or later, use the [`fields` parameter](#tag--cardholders--field-names-in-query-parameters) to add fields
       to the results of a search, saving you GETting the details page.
 
       For example, to see the names, personal data fields, and access groups of all your cardholders:
@@ -19044,7 +19028,7 @@ tags:
       Centre, see the 'Synchronising a user directory' use case.
 
     * If you must get an object's details page, and you are on v8.00 or later, using the [`fields`
-      parameter](#overview--field-specifiers) will still save work.  Be explicit with what you want:  do
+      parameter](#tag--cardholders--field-names-in-query-parameters) will still save work.  Be explicit with what you want:  do
       not use `fields=defaults` unless you need every field that 'defaults' gives you and you
       accept that we may add fields to the defaults in future.
 
@@ -19092,7 +19076,7 @@ tags:
     ### Synchronising a user directory
 
     This is a common use case, described in the section on [Cardholder
-    changes](#tag--Cardholder-change-tracking).  It shows how to:
+    changes](#tag--cardholder-change-tracking).  It shows how to:
 
     1. Get a bookmark at the head of the queue of cardholder changes.
     2. Do a one-off sync of all cardholders.
@@ -19194,7 +19178,7 @@ tags:
        memberships you want to delete in an array called `remove` inside a block called
        `accessGroups`.
 
-    The [access groups](#tag--Access-groups) section describes what to do when you want to
+    The [access groups](#tag--access-groups) section describes what to do when you want to
     start with a group and remove several cardholders from it.
 
     ### Removing all group memberships, competencies, relationships, cards, or lockers
@@ -19264,7 +19248,7 @@ tags:
     ### Finding recently-created cardholders
 
     Informing you when Command Centre creates cardholders is a function of the [Cardholder
-    changes](#tag--Cardholder-change-tracking) call, described there.
+    changes](#tag--cardholder-change-tracking) call, described there.
 
     However for that to work you need to make API calls before and after the cardholders are
     created.  If they already exist, a workaround is to get a page of cardholders sorted by
@@ -19356,7 +19340,7 @@ tags:
     should be careful not to get yourself into a loop.
 
     This API was built to synchronise a second system with Command Centre's cardholder directory,
-    not for auditing or reporting.  You will find the [events API](#tag--Events) quicker and more
+    not for auditing or reporting.  You will find the [events API](#tag--events) quicker and more
     flexible for those tasks.
 
     ## Recommended use
@@ -19372,7 +19356,7 @@ tags:
         use it to ask for all the changes that happen after this point.
 
     1. If you are filling a user directory from Command Centre, download all cardholders using [this
-       advice](#tag--Cardholders--downloading-all-cardholders).  Here is a reminder:
+       advice](#tag--cardholders--downloading-all-cardholders).  Here is a reminder:
 
         2a. Using the results of `GET /api` again, follow the link at
           `features.cardholders.cardholders` [↪](#get-/api/cardholders), adding query
@@ -19459,7 +19443,7 @@ tags:
     This API uses the term 'card' but more broadly we prefer 'credential', because not all card
     types involve a physical card.
 
-    The API's coverage of PIV cards is in [its own tag](#tag--PIV-cards).
+    The API's coverage of PIV cards is in [its own tag](#tag--piv-cards).
 
     API routes that allow creating, modifying, and deleting card types are in development.
 
@@ -19694,7 +19678,7 @@ tags:
 
     #### Setting a cardholder's default floor
 
-    1. [Find the href](#tag--Cardholders) for the cardholder.
+    1. [Find the href](#tag--cardholders) for the cardholder.
 
     2. [PATCH](#patch-/api/cardholders/-id-) it with a request body containing the
        hrefs of the elevator groups and access zones you wish to set as that cardholder's defaults.
@@ -19926,7 +19910,7 @@ tags:
     just those events that came from the items you gave in the query.  If you have the RESTStatus
     licence you can search for access zones, alarm
     zones, fence zones, macros, outputs, doors, and (in 8.10) inputs.  If you do not, or if your
-    source is not one of those types, use the [items API](#tag--Items) with a suitable `type` filter.
+    source is not one of those types, use the [items API](#tag--items) with a suitable `type` filter.
 
     You can also use the `type` parameter to limit the events to particular event types.  By doing
     this you can (for example) subscribe to 'access granted' events from a collection of doors.
@@ -20271,7 +20255,7 @@ tags:
     ### Finding the status of many items including an interlock group
     1. Find the IDs of all the items you're interested in, including the interlock group, by
        searching for them with a query parameter appended such as `fields=name,id`.
-    2. Create a [status subscription](#tag--Items--status-subscriptions) for those items.
+    2. Create a [status subscription](#tag--items--status-subscriptions) for those items.
 
     ### Finding the status of an interlock group
     1. Find the href for the interlock using the process above, and GET it.
@@ -20329,7 +20313,7 @@ tags:
 
     ## Status subscriptions
 
-    The [item-specific APIs](rest.html) monitor only one item at a time, and are therefore not
+    The item-specific APIs monitor only one item at a time, and are therefore not
     suitable for watching large collections.  If you have CC version 8.30 or later, you should use
     the status subscription methods instead.  We have tested subscriptions of 1000 items without
     noticing undue strain on the server.  While the calls do not impose an upper bound on that we
@@ -20916,9 +20900,9 @@ tags:
     1. Find the visit you're after.  You can then modify it by PATCHing its href.
 
     ## Use case:  creating a visit
-    1. Find the href of the [reception](#tag--Receptions) at which your visitors will arrive.
+    1. Find the href of the [reception](#tag--receptions) at which your visitors will arrive.
     1. Look at the visitor management configuration for your reception's
-       [division](#tag--Divisions).
+       [division](#tag--divisions).
     1. Pick a visitor type from that configuration, and a host from that visitor type's host access
        groups, and (optionally) some visitor access groups from that visitor type's visitor access
        groups.

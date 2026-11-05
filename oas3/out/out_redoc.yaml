@@ -10395,22 +10395,6 @@ paths:
       summary: Search access groups
       description: |
 
-        In an attempt to determine Gitbook's rules for generating links:
-          * [/](/)
-          * [https://help.security.gallagher.com/](https://help.security.gallagher.com/)
-          * [https://help.security.gallagher.com/knowledge-hub/developer](https://help.security.gallagher.com/knowledge-hub/developer)
-          * [https://help.security.gallagher.com/knowledge-hub/developer/](https://help.security.gallagher.com/knowledge-hub/developer/)
-          * [https://help.security.gallagher.com/knowledge-hub/developer/api-spec-page/forward-compatibility-hateoas](https://help.security.gallagher.com/knowledge-hub/developer/api-spec-page/forward-compatibility-hateoas)
-          * [api-authentication](api-authentication)
-          * [forward-compatibility-hateoas](forward-compatibility-hateoas)
-          * [./api-authentication](./api-authentication)
-          * [Hideous path](tag-name#httpverb-path-with-id-s-in_it-h%20%20s%20-b-)
-          * [Text that is broken over
-            two lines, full link](https://www.google.com)
-          * [Text that is broken over
-            two lines, to api-authentication](api-authentication)
-
-        
         This returns access groups matching your search criteria.
 
         The result will contain no more than 100 or 1000 groups depending on your version; you
@@ -18192,7 +18176,7 @@ tags:
     * OIDC login support for operators.
 
     * Creating an [item status subscription](#tag/Items/paths/~1api~1items~1updates/post) and [collecting the
-      first batch of changes](#path/Get/Items/updates) will no longer return the first set of
+      first batch of changes](#tag/Items/paths/~1api~1items~1updates/get) will no longer return the first set of
       results twice.  If your application follows the algorithm at the second link above it will
       always be compatible with this API.
 
@@ -18269,7 +18253,7 @@ tags:
     ### API changes in 9.00
 
     * A new event type `hasLocation` greatly simplifies the [monitoring of cardholder
-      movements](#path/get/Events).
+      movements](#tag/Events/paths/~1api~1events/get).
       
     * A new [`location` block on events](#tag/Events/Location-events-in-9.00) greatly
       simplifies interpreting them.
@@ -18389,7 +18373,7 @@ tags:
 
     ### API changes in 8.50
 
-    * The server property that turns off [client certificate checking](#authentication) changed.
+    * The server property that turns off [client certificate checking](#section/API-authentication) changed.
 
     * Divisions can return some of their Visitor Management configuration.
 
@@ -18513,7 +18497,7 @@ tags:
 
     * You can use the `fields` query parameter to select the fields you receive from locker bank
       [summary](#tag/Lockers/paths/~1api~1locker_banks/get) and
-      [details](#tag/Locker/paths/~1api~1locker_banks~1%7Bid%7D/get) GETs.  The [use
+      [details](#tag/Lockers/paths/~1api~1locker_banks~1%7Bid%7D/get) GETs.  The [use
       cases](#tag/Lockers/Use-cases) section shows how.
 
     ### API changes in 8.10
@@ -19030,7 +19014,7 @@ tags:
     | Default (by name) | `top=1000`    | 3.5 minutes
     | `sort=id`         | `top=1000`    | 1 minute
 
-    * In version 8.00 or later, use the [`fields` parameter](#section/Field-specifiers) to add fields
+    * In version 8.00 or later, use the [`fields` parameter](#tag/Cardholders/Field-names-in-query-parameters) to add fields
       to the results of a search, saving you GETting the details page.
 
       For example, to see the names, personal data fields, and access groups of all your cardholders:
@@ -19044,7 +19028,7 @@ tags:
       Centre, see the 'Synchronising a user directory' use case.
 
     * If you must get an object's details page, and you are on v8.00 or later, using the [`fields`
-      parameter](#section/Field-specifiers) will still save work.  Be explicit with what you want:  do
+      parameter](#tag/Cardholders/Field-names-in-query-parameters) will still save work.  Be explicit with what you want:  do
       not use `fields=defaults` unless you need every field that 'defaults' gives you and you
       accept that we may add fields to the defaults in future.
 
@@ -20329,7 +20313,7 @@ tags:
 
     ## Status subscriptions
 
-    The [item-specific APIs](rest.html) monitor only one item at a time, and are therefore not
+    The item-specific APIs monitor only one item at a time, and are therefore not
     suitable for watching large collections.  If you have CC version 8.30 or later, you should use
     the status subscription methods instead.  We have tested subscriptions of 1000 items without
     noticing undue strain on the server.  While the calls do not impose an upper bound on that we
