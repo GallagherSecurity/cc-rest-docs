@@ -21,6 +21,26 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      # Required secret
+      GITBOOK_TOKEN: ${{ secrets.GITBOOK_TOKEN }}
+      # Prefer repo/org variables; fallback to inline strings if you like
+      GITBOOK_SPEC_NAME: ${{ vars.GITBOOK_SPEC_NAME }}
+      GITBOOK_ORGANIZATION_ID: ${{ vars.GITBOOK_ORGANIZATION_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish spec file to GitBook
+        run: |
+          npx -y @gitbook/cli@latest openapi publish \
+            --spec "$GITBOOK_SPEC_NAME" \
+            --organization "$GITBOOK_ORGANIZATION_ID" \
+            oas3/out/out_gitbook.yaml
+
   buildhtmljob:
     runs-on: ubuntu-latest
     name: "Job:  ADoc -> HTML+PDF"
