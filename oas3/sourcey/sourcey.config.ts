@@ -25,5 +25,5 @@ export default defineConfig({
       },
     ],
   },
-  codeSamples: ["go", "csharp", "curl", "javascript", "typescript", "python"],
+  codeSamples: ["go", "csharp", "curl", "javascript", "typescript", "python"]
 });
