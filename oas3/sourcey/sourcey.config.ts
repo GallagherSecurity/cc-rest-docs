@@ -2,7 +2,7 @@ import { defineConfig, markdown, openapi } from "sourcey";
 
 export default defineConfig({
   name: "CC",
-  baseUrl: "/cc-rest-docs/oas3/sourcey/dist/"
+  baseUrl: "/cc-rest-docs/oas3/sourcey/dist/",
   theme: {
     preset: "default",
     zpreset: "api-first",
@@ -25,5 +25,5 @@ export default defineConfig({
       },
     ],
   },
-  codeSamples: ["go", "csharp", "curl", "javascript", "typescript", "python"]
+  codeSamples: ["go", "csharp", "curl", "javascript", "typescript", "python"],
 });
