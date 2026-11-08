@@ -44,6 +44,7 @@ echo Building multi-page HTML from AsciiDoc
 # It expects the root HTML file to have the same basename as the adoc.
 cp training/rest_training.adoc training/multipage.adoc
 asciidoctor-multipage -r asciidoctor-diagram -D $D/training --verbose training/multipage.adoc || true
+rm -f training/multipage.adoc
 
 #----------------------------------------------------------------------
 # Sourcey material
