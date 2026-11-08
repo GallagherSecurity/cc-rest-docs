@@ -21,8 +21,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  publish:
+  specjob:
     runs-on: ubuntu-latest
+    name: "Job:  API spec to Gitbook"
     env:
       # Required secret
       GITBOOK_TOKEN: ${{ secrets.GITBOOK_TOKEN }}
@@ -32,14 +33,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Publish spec file to GitBook
         run: |
-          npx -y @gitbook/cli@latest openapi publish \
-            --spec "$GITBOOK_SPEC_NAME" \
-            --organization "$GITBOOK_ORGANIZATION_ID" \
-            oas3/out/out_gitbook.yaml
+          npx -y @gitbook/cli@latest openapi publish --spec "$GITBOOK_SPEC_NAME" \
+            --organization "$GITBOOK_ORGANIZATION_ID" oas3/out/out_gitbook.yaml &&
+          npx -y @gitbook/cli@latest openapi publish --spec cc-rest \
+            --organization "$GITBOOK_ORGANIZATION_ID" oas3/gitbook_linkdemo.yaml
 
   buildhtmljob:
     runs-on: ubuntu-latest

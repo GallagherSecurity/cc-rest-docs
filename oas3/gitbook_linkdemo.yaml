@@ -1,0 +1,50 @@
+openapi: 3.1.0
+servers: [url: https://127.0.0.1:8904]
+security: [ ]
+
+x-common-blocks:
+  - &MARKDOWN |
+    ## Heading2
+    Heading 2 body.
+    ### Heading3
+    A list of links:
+      * [https://help.security.gallagher.com/](https://help.security.gallagher.com/)
+      * To the root of this server:  [/](/)
+      * To "Heading2" in the intro's description:  [heading2](heading2)
+      * Same thing but with `./` [./heading2](./heading2)
+      * To "Heading2" in the tag's description:  [tag-one#heading2](tag-one#heading2)
+      * To the tag:  [tag-one](tag-one)
+      * To the operation:  [tag-one#get-api](tag-one#get-api)
+      * To the model:  [models#schema1](models#schema1)
+
+info:
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: "v1"
+  title: Checking Gitbook's handling of links in Markdown.
+  description: *MARKDOWN
+
+components:
+  schemas:
+    schema1:
+      title: Schema one title
+      description: *MARKDOWN
+      type: string
+
+tags:
+- name: tag one
+  description: *MARKDOWN
+    
+paths:
+  /api:
+    get:
+      summary: Path summary
+      operationId: oid
+      tags: [ "tag one" ]
+      description: *MARKDOWN
+      responses:
+        "200":
+          description: *MARKDOWN
+        "400":
+          description: *MARKDOWN
