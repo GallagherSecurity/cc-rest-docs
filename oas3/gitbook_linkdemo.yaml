@@ -4,14 +4,17 @@ security: [ ]
 
 x-common-blocks:
   - &MARKDOWN |
-    Checking whether anything before an H1 gets rendered.
+
+    Gitbook does not currently render anything before an H1 in a block of Markdown.  This isn't a
+    big deal for us as the consensus is to never use H1 headings anyway.
 
     ## Heading1
    
-    Experiment with heading levels while we are at it.  It turns out that H2s become their own page
-    and ∴ get an entry in the ToC.
+    Experiment with heading levels while we are at it.  It turns out that Gitbook does not render
+    text that precedes an H1, and H2s become their own page and ∴ get an entry in the ToC.  H3s and
+    below go into their higher-level heading's page.
 
-    This content is present in:
+    This markdown is duplicated in:
       * The introduction to the API,
       * the description of the tag "Tag One",
       * the description of the path "Sample path",
@@ -19,22 +22,44 @@ x-common-blocks:
       * the field called "firstField" in schema, and
       * the 200 and 400 results of the "Sample path" path.
 
-    A list of links:
-      * [https://help.security.gallagher.com/](https://help.security.gallagher.com/)
-      * To the root of this server:  [/](/)
-      * To "Heading2" in the intro's description:  [heading2](heading2)
-      * Same thing but with `./` [./heading2](./heading2)
-      * To "Heading2" in the tag's description:  [tag-one#heading2](tag-one#heading2)
-      * To the tag:  [tag-one](tag-one)
-      * To the operation:  [tag-one#get-api](tag-one#get-api)
-      * To the model:  [models#schema1](models#schema1)
+    Ideally all of the links following this para would be active, but experiments like this one show
+    that:
+
+    * Links that are in the description of the intro, a tag, or a path, must be fully-qualified,
+      right from the "https://".  Anything other kind of link in such a description, including those
+      that start with a slash, are deactivated.  Deactivated means that "[this](that)" ends up as
+      simply "this".
+
+      That means the only way to put links in the descriptions of tags and the intro is to start
+      them with https://help.security.gallagher.com/knowledge-hub/..., which is far from optimal.
+
+    * Links that do not start with hashes and are in the description of a schema (model) will make
+      it into the book unscathed.
+
+    * All kinds of links in the description of the securitySchemes component make it in.
+
+    * Since the "schemas" and "securitySchemes" are safe I'd guess that links in the other kinds of
+      component -- examples, requestBodies, responses, and parameters -- will survive.  But that's
+      just a guess, and gitbook is under active development, so no bets.
+
+    I'd like all of these to be active links, no matter where in the document they are, but Gitbook
+    only makes the first one active everywhere and only makes the rest active inside a schema.
+
+    * [https://help.security.gallagher.com/](https://help.security.gallagher.com/)
+    * To the root of this server:  [/](/)
+    * To "Heading2" in the intro's description:  [heading2](heading2)
+    * Same thing but with `./` [./heading2](./heading2)
+    * To "Heading2" in the tag's description:  [tag-one#heading2](tag-one#heading2)
+    * To the tag:  [tag-one](tag-one)
+    * To the "sample path" operation:  [tag-one#get-api](tag-one#get-api)
+    * To the "schema1" model:  [models#schema1](models#schema1)
 
     ## Heading2
 
-    Heading 2 body.
+    Heading 2 body.  Same indentation level as an H1, and the tags, and the special page for models.
 
     ### Heading3
-    H3 body.
+    H3 body.  Goes onto the same page as its H2, and does not get a ToC entry.
 
 info:
   license:
