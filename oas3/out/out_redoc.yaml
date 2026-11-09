@@ -10506,7 +10506,6 @@ paths:
 
         Note that you can only create one access group per POST.
 
-        This call requires the RESTConfiguration licence and a server running 9.30 or later.
       requestBody:
         $ref: '#/components/requestBodies/AccessGroupPOST'
       responses:
@@ -10527,8 +10526,7 @@ paths:
             symbols.
         "403":
           description: |
-            The operator does not have a privilege that allows creating access groups, or the server
-            does not have the 'RESTConfiguration' licence.
+            The operator does not have a privilege that allows creating access groups.
 
   /api/access_groups/{id}:
     parameters:
@@ -10587,6 +10585,7 @@ paths:
       tags:
         - Access Groups
       summary: Update an access group
+      x-badges: [ *BADGE_BETA ]
 
       description: |
         This is the call you use to modify fields on an access group.
@@ -10600,8 +10599,6 @@ paths:
         search](#tag/Access-Groups/paths/~1api~1access_groups/get) results and in a cardholder's `accessGroups`
         array.  In the interest of forward compability, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
-
-        This call requires the RESTConfiguration licence and a server running 9.30 or later.
 
       requestBody:
         $ref: '#/components/requestBodies/AccessGroupPATCH'
@@ -10630,8 +10627,6 @@ paths:
             need on it on the item's current division.  You also need it on the new division, if you
             are changing that.
 
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
-
         "404":
           description: |
             That is not the URL of an access group or your operator does not have the privilege to view
@@ -10646,6 +10641,7 @@ paths:
     delete:
       tags: [ Access Groups ]
       summary: Remove an access group
+      x-badges: [ *BADGE_BETA ]
       description: |
         This call removes an access group from Command Centre.
 
@@ -10653,8 +10649,6 @@ paths:
         search](#tag/Access-Groups/paths/~1api~1access_groups/get) results and in a cardholder's `accessGroups`
         array.  In the interest of forward compability, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
-
-        This call requires the RESTConfiguration licence and a server running 9.30 or later.
 
       responses: 
         "200": { description: "Success." }
@@ -10664,8 +10658,8 @@ paths:
             Deleting the access group failed.  This happens when it still has members.
         "403":
           description: |
-            The operator has the permission to view the item but not delete it, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator has the permission to view the item but not delete it.
+
         "404":
           description: |
             That is not the URL of an access group or the operator is not privileged to view it.
@@ -13171,6 +13165,7 @@ paths:
     post:
       tags:
         - Card Types
+      x-badges: [ *BADGE_BETA ]
       
       summary: Create
       description: |
@@ -13186,7 +13181,7 @@ paths:
 
         Note that you can only create one item per POST.
 
-        This call requires the RESTConfiguration licence.
+        This call is not yet available under licence.
 
       requestBody:
         $ref: '#/components/requestBodies/CardTypePOST'
@@ -13209,7 +13204,7 @@ paths:
         "403":
           description: |
             The operator does not have a privilege that allows creating card types, or the server
-            does not have the 'RESTConfiguration' licence.
+            does not have the appropriate licence.
 
   /api/card_types/assign:
     get:
@@ -13289,6 +13284,7 @@ paths:
     patch:
       tags:
       - Card Types
+      x-badges: [ *BADGE_BETA ]
       summary: Update
       description: |
         This is the call you use to update a card type.  Take the URL from the results of a card
@@ -13298,7 +13294,7 @@ paths:
         The PATCH expects a document in the same format as the [card type
         detail](#schemas/cardtype) but with fewer fields.
 
-        This call requires the RESTConfiguration licence.
+        This call is not yet available under licence.
 
       requestBody:
         $ref: '#/components/requestBodies/CardTypePATCH'
@@ -13325,7 +13321,7 @@ paths:
             on it on the item's current division.  You also need it on the new division, if you are
             changing that.
 
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
+            This is also the response when the server does not have the correct licence.
 
         "404":
           description: |
@@ -13341,12 +13337,13 @@ paths:
     delete:
       tags: [ Card Types ]
       summary: Remove
+      x-badges: [ *BADGE_BETA ]
       description: |
         This call removes a card type from Command Centre.  In the interest of forward compatibility,
         take the URL from the results of a card type search rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
-        This call requires the RESTConfiguration licence.
+        This call is not yet available under licence.
 
       responses: 
         "200": { description: "Success." }
@@ -13359,8 +13356,8 @@ paths:
 
         "403":
           description: |
-            The operator has the permission to view the item but not delete it, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator has the permission to view the item but not delete it, or the server is not
+            licensed.
         "404":
           description: |
             That is not the URL of a card type, or the operator is not privileged to view it.
@@ -13437,6 +13434,7 @@ paths:
       tags:
       - Competencies
       summary: Create a competency
+      x-badges: [ *BADGE_BETA ]
       description: |
         Creates a new competency.
 
@@ -13451,9 +13449,7 @@ paths:
         [Do not code this URL](#section/Forward-compatibility-(HATEOAS)) into your application.  Take
         it from the results of `GET /api`.
 
-        New to Command Centre 9.10.
-
-        This requires the RESTConfiguration licence.
+        This call is not yet in the API.
 
       requestBody:
         $ref: '#/components/requestBodies/CompetencyPATCHandPOSTExample'
@@ -13478,8 +13474,7 @@ paths:
         "403":
           description: |
             The operator does not have a privilege on the division that allows creating items inside
-            it ('Configure Site'), or the server has reached its licensed limit of competencies, or
-            it does not have the 'RESTConfiguration' licence.
+            it ('Configure Site'), or the server has reached its licensed limit of competencies.
 
   /api/competencies/{id}:
     parameters:
@@ -13529,6 +13524,7 @@ paths:
       tags:
       - Competencies
       summary: Update a competency
+      x-badges: [ *BADGE_BETA ]
       description: |
         This is the call you use to update a competency's name, short name, description, notes, or
         division.  In the interest of forward compability, take the URL from the results of a
@@ -13538,9 +13534,7 @@ paths:
         detail](#schemas/competencydetail) but with fewer fields.  An example is [this PATCH
         example](#schemas/competencypatchandpostexample).
 
-        New to Command Centre 9.10.
-
-        This call requires the RESTConfiguration licence.
+        This call is not yet in the API.
 
       requestBody:
         $ref: '#/components/requestBodies/CompetencyPATCHandPOSTExample'
@@ -13567,8 +13561,6 @@ paths:
             on it on the item's current division.  You also need it on the new division, if you are
             changing that.
 
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
-
         "404":
           description: |
             That is not the URL of a competency or your operator does not have the privilege to view
@@ -13583,14 +13575,15 @@ paths:
     delete:
       tags: [ Competencies ]
       summary: Remove a competency
+      x-badges: [ *BADGE_BETA ]
       description: |
         This call removes a competency from Command Centre.  You get this URL from a cardholder or
         from a competency search.  In the interest of forward compability, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
-        
-        New to Command Centre 9.10.
 
-        This call requires the RESTConfiguration licence.
+        This call is not yet in the API.
+        
+
       parameters:
       - $ref: "#/components/parameters/id"
       responses: 
@@ -13603,8 +13596,7 @@ paths:
 
         "403":
           description: |
-            The operator has the permission to view the item but not delete it, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator has the permission to view the item but not delete it.
         "404":
           description: |
             That is not the URL of a competency, or the operator is not privileged to view it.
@@ -13715,6 +13707,7 @@ paths:
       tags:
       - Divisions
       summary: Create a division
+      x-badges: [ *BADGE_BETA ]
       description: |
         Creates a new division.
 
@@ -13763,7 +13756,8 @@ paths:
           description: |
             The operator does not have a privilege on the parent division that allows creating
             divisions inside it ('Configure Site' or 'Edit Divisions'), or the server has reached
-            its licensed limit of divisions or does not have the 'RESTConfiguration' licence.
+            its licensed limit of divisions or is not licensed.
+
       x-codegen-request-body-name: this name not rendered
 
   /api/divisions/_operation_:
@@ -13864,6 +13858,7 @@ paths:
       tags:
       - Divisions
       summary: Remove a division
+      x-badges: [ *BADGE_BETA ]
       description: |
         This call removes a division from Command Centre.
 
@@ -13885,13 +13880,13 @@ paths:
             not licensed for the operation.
         "404":
           description: |
-            That is not the URL of a division, or the operator is not privileged to view it, or the
-            server does not have the 'RESTConfiguration' licence.
+            That is not the URL of a division, or the operator is not privileged to view it.
 
     patch:
       tags:
       - Divisions
       summary: Update a division
+      x-badges: [ *BADGE_BETA ]
       description: |
         This is the call you use to update a division's name, description, notes, or parent.
 
@@ -13935,8 +13930,6 @@ paths:
 
             You need either the 'Configure Site' or 'Edit Divisions' privilege on the division you
             are changing.  You also need it on the new parent, if you are changing that.
-
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
 
         "404":
           description: |
@@ -16663,6 +16656,7 @@ paths:
 
     post:
       tags: [ "PDF definitions" ]
+      x-badges: [ *BADGE_BETA ]
       summary: Create
       description: |
         Creates a new personal data definition.
@@ -16675,7 +16669,7 @@ paths:
 
         Note that you can only create one per POST.
 
-        This call requires the RESTConfiguration licence.
+        This call is still in development.
 
       requestBody:
         description: |
@@ -16705,8 +16699,8 @@ paths:
 
         "403":
           description: |
-            The operator does not have a privilege that allows creating PDFs or the server does not
-            have the 'RESTConfiguration' licence.
+            The operator does not have a privilege that allows creating PDFs or the server is not
+            licensed.
           
   /api/personal_data_fields/{id}:
     parameters:
@@ -16740,6 +16734,7 @@ paths:
 
     patch:
       tags: [ "PDF definitions" ]
+      x-badges: [ *BADGE_BETA ]
       summary: Update
       description: |
         This is the call you use to update a PDF.  Follow the href in the
@@ -16749,7 +16744,7 @@ paths:
         The PATCH expects a document in the same format as the [PDF
         detail](#schemas/pdfdefinition).
 
-        It requires the RESTConfiguration licence.
+        This route is still in development.
 
       requestBody:
         description: |
@@ -16783,8 +16778,6 @@ paths:
             which means you need on it on its current division.  You also need it on the new
             division, if you are changing that.
 
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
-
         "404":
           description: |
             That is not the URL of a PDF or your operator does not have the privilege to view
@@ -16798,13 +16791,12 @@ paths:
 
     delete:
       tags: [ "PDF definitions" ]
+      x-badges: [ *BADGE_BETA ]
       summary: Remove
       description: |
         This call removes a PDF item from Command Centre.  Follow the href in the
         [summary](#schemas/pdfdefinition) to get here, rather than [building it
         yourself](#section/Forward-compatibility-(HATEOAS)).
-
-        It requires the RESTConfiguration licence.
 
       responses: 
         "200": { description: "Success." }
@@ -16815,8 +16807,7 @@ paths:
 
         "403":
           description: |
-            The operator has the permission to view the item but not delete it, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator has the permission to view the item but not delete it.
         "404":
           description: |
             That is not the URL of a PDF, or the operator is not privileged to view it.
@@ -17349,6 +17340,7 @@ paths:
       tags:
         - Roles
       summary: Create [coming]
+      x-badges: [ *BADGE_BETA ]
       description: |
         Creates a new role.
 
@@ -17358,8 +17350,6 @@ paths:
         When successful it returns a location header containing the address of the new role.
 
         Note that you can only create one per POST.
-
-        This call requires the RESTConfiguration licence.
 
       requestBody:
         description: |
@@ -17389,8 +17379,8 @@ paths:
 
         "403":
           description: |
-            The operator does not have a privilege that allows creating roles, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator does not have a privilege that allows creating roles.
+
           
   /api/roles/{id}:
     parameters:
@@ -17399,14 +17389,13 @@ paths:
     patch:
       tags:
       - Roles
+      x-badges: [ *BADGE_BETA ]
       summary: Update [coming]
       description: |
         This is the call you use to update a role.  Take its URL from a cardholder or a role search
         rather than [building it yourself](#section/Forward-compatibility-(HATEOAS)).
 
         The PATCH expects a document in the same format as the [role detail](#schemas/role).
-
-        This call requires the RESTConfiguration licence.
 
       requestBody:
         description: |
@@ -17440,8 +17429,6 @@ paths:
             on it on the item's current division.  You also need it on the new division, if you are
             changing that.
 
-            This is also the response when the server does not have the 'RESTConfiguration' licence.
-
         "404":
           description: |
             That is not the URL of a role or your operator does not have the privilege to view
@@ -17456,11 +17443,10 @@ paths:
     delete:
       tags: [ Roles ]
       summary: Remove [coming]
+      x-badges: [ *BADGE_BETA ]
       description: |
         This call removes a role item from Command Centre.  Take its URL from a cardholder or a role
         search rather than [building it yourself](#section/Forward-compatibility-(HATEOAS)).
-
-        It requires the RESTConfiguration licence.
 
       responses: 
         "200": { description: "Success." }
@@ -17472,8 +17458,8 @@ paths:
 
         "403":
           description: |
-            The operator has the permission to view the item but not delete it, or the server does
-            not have the 'RESTConfiguration' licence.
+            The operator has the permission to view the item but not delete it.
+
         "404":
           description: |
             That is not the URL of a role, or the operator is not privileged to view it.
@@ -17574,8 +17560,8 @@ paths:
         "403":
           description: |
             The operator does not have a privilege that allows creating schedules, or the site does
-            not have any of the RESTCardholders, RESTOverrides, RESTStatus, or (after 9.00)
-            RESTConfiguration licences.
+            not have any of the RESTCardholders, RESTOverrides, or RESTStatus licences.
+
       x-codegen-request-body-name: not rendered
   /api/schedules/{id}:
     get:
@@ -17650,7 +17636,8 @@ paths:
           description: |
             The operator does not have a privilege that allows deleting that schedule ('Edit
             Schedules'), or the site does not have any of the RESTCardholders, RESTOverrides,
-            RESTStatus, or (after 9.00) RESTConfiguration licences.
+            or RESTStatus licences.
+
         "404":
           $ref: '#/components/responses/404schedule'
     patch:
@@ -17694,8 +17681,8 @@ paths:
         "403":
           description: |
             The operator does not have a privilege that allows modifying that schedule, or the site
-            does not have any of the RESTCardholders, RESTOverrides, RESTStatus, or (after 9.00)
-            RESTConfiguration licences.
+            does not have any of the RESTCardholders, RESTOverrides, or RESTStatus licences.
+
         "404":
           $ref: '#/components/responses/404schedule'
 
@@ -18245,8 +18232,6 @@ tags:
 
     * You can request the name of an alarm's instruction, and the contents of the instruction itself.
 
-    * You can create, modify, and delete [competencies](#tag/Competencies).
-
     * You can request a locker's status and send an override to quarantine it.  The [use
       cases](#tag/Lockers/Use-cases) section shows how.
 
@@ -18581,8 +18566,7 @@ tags:
     ## Licensing
 
     Reading access groups and managing access group memberships are enabled by the RESTCardholders
-    licence but creating, deleting, or modifying access group items requires the RESTConfiguration
-    licence.
+    licence.  Creating, deleting, or modifying access group items is coming soon.
 
 - name: "Access Zones"
   x-page-icon: tag 
@@ -19311,13 +19295,10 @@ tags:
       * Visitor management calls need both RESTCardholders and VisitorManagement.
 
       * Creating, modifying, and deleting cardholders' connections to competencies requires the
-        RESTConfiguration licence.
+        RESTCardholders licence.
 
-      * Creating, modifying, and deleting competency items requires the RESTConfiguration licence.
-
-      * Managing access group _memberships_ is enabled by the RESTCardholders licence but managing
-        access group items, card types, personal data definitions, and roles will require the
-        RESTConfiguration licence.  These features are coming soon.
+      * Managing access group memberships is enabled by the RESTCardholders licence.  Managing
+        access group items, card types, personal data definitions, and roles is coming soon.
 
       * Lockers and locker banks are also available with the RESTStatus licence, and a subset of
         their fields (enough to allow overriding them) are available with the RESTOverrides licence.
@@ -19476,8 +19457,8 @@ tags:
 
     ## Licensing
 
-    Reading card types is enabled by the RESTCardholders licence but creating, deleting, or
-    modifying them requires the RESTConfiguration licence.
+    Reading card types is enabled by the RESTCardholders licence.  Creating, deleting, or modifying
+    them is currently restricted.
 
 - name: Competencies
   x-page-icon: tag
@@ -19503,8 +19484,8 @@ tags:
 
     ## Licensing
 
-    Reading competencies is enabled by the RESTCardholders licence but creating, deleting, or
-    modifying them requires the RESTConfiguration licence.
+    Reading competencies is enabled by the RESTCardholders licence.  Routes to create, delete, or
+    modify them are not yet in the API.
 
 - name: "Day Categories"
   x-page-icon: tag
@@ -19550,7 +19531,7 @@ tags:
     ## Licensing
 
     Every REST licence enables the divisions controller:  RESTEvents, RESTCreateEvents,
-    RESTCardholders, RESTStatus, RESTOverrides, and RESTConfiguration.
+    RESTCardholders, RESTStatus, and RESTOverrides.
 
 - name: "Doors"
   x-page-icon: tag
@@ -20707,8 +20688,8 @@ tags:
 
     ## Licensing
 
-    Reading PDF definitions is enabled by the RESTCardholders licence but creating, deleting, or
-    modifying them requires the RESTConfiguration licence.
+    Reading PDF definitions is enabled by the RESTCardholders licence.  Routes to creating, delete,
+    or modify them are still coming to the API.
 
 - name: "PIV cards"
   x-page-icon: tag
@@ -20863,8 +20844,7 @@ tags:
 
     ## Licensing
 
-    Reading role items is enabled by the RESTCardholders licence but creating, deleting, or
-    modifying them requires the RESTConfiguration licence.
+    Reading role items is enabled by the RESTCardholders licence.
 
 - name: "Schedules"
   x-page-icon: tag
@@ -20883,8 +20863,7 @@ tags:
     ## Licensing
 
     The schedules APIs are licensed a little differently from most others.  RESTCardholders gives
-    you Cardholder Access Schedules, while RESTStatus, RESTOverrides, and RESTConfiguration give you
-    all schedule types.
+    you Cardholder Access Schedules, while RESTStatus and RESTOverrides give you all schedule types.
 
 - name: Visits
   x-page-icon: tag
