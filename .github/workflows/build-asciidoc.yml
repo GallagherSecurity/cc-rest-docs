@@ -35,6 +35,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+# The second "openapi publish" on the Gitbook CLI is for demonstrating a complaint I have about
+# Gitbook's handling of links in Markdown sections.  Remove it when that dust has settled.
+# Maybe change the pipe to a > and lose the line continuation backslashes.
       - name: Publish spec file to GitBook
         run: |
           npx -y @gitbook/cli@latest openapi publish --spec "$GITBOOK_SPEC_NAME" \

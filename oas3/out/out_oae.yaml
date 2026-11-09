@@ -10376,6 +10376,17 @@ info:
     will be on or off, and alarm and access zones will be in one of four zone states.
 
 paths:
+  /api/changelog:
+    delete:
+      tags: [ Changelog ]
+      summary: Dummy path.
+      description: |
+        This path does not exist in the API.  It is in the documentation to satisfy HTML
+        renderers like Gitbook, Sourcey, and Zudoku that require at least one path in every tag.
+      responses:
+        "200": { description: This result is unlikely. }
+        "404": { description: This path does not exist. }
+
   
   /api/access_groups:
     get:
@@ -18512,6 +18523,7 @@ tags:
     * PIV certificates and biometrics are now available without a customisation.  They are too large
       to send to all REST clients so you must ask for them using the `fields` parameter.
 
+  
 - name: Access Groups
   x-tag-expanded-this-works-in-rapidoc: false
   x-summary-only-in-3.2-and-replaces-name-in-redocv3: Management of Access Groups
