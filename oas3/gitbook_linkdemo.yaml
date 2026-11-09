@@ -4,9 +4,14 @@ security: [ ]
 
 x-common-blocks:
   - &MARKDOWN |
-    ## Heading2
-    Heading 2 body.
-    ### Heading3
+    This content is present in:
+      * The introduction to the API,
+      * the description of the tag "Tag One",
+      * the description of the path "Sample path",
+      * the model "schema1",
+      * the field called "firstField" in schema, and
+      * the 200 and 400 results of the "Sample path" path.
+
     A list of links:
       * [https://help.security.gallagher.com/](https://help.security.gallagher.com/)
       * To the root of this server:  [/](/)
@@ -16,6 +21,18 @@ x-common-blocks:
       * To the tag:  [tag-one](tag-one)
       * To the operation:  [tag-one#get-api](tag-one#get-api)
       * To the model:  [models#schema1](models#schema1)
+
+    ## Heading1
+   
+    Experiment with heading levels while we are at it.  It turns out that H2s become their own page
+    and ∴ get an entry in the ToC.
+
+    ## Heading2
+
+    Heading 2 body.
+
+    ### Heading3
+    H3 body.
 
 info:
   license:
@@ -30,16 +47,21 @@ components:
     schema1:
       title: Schema one title
       description: *MARKDOWN
-      type: string
+      type: object
+      properties:
+        firstField:
+          type: string
+          description: *MARKDOWN
 
 tags:
 - name: tag one
+  x-page-icon: tag # to distinguish tags from every other heading in Gitbook
   description: *MARKDOWN
     
 paths:
   /api:
     get:
-      summary: Path summary
+      summary: Sample path
       operationId: oid
       tags: [ "tag one" ]
       description: *MARKDOWN
