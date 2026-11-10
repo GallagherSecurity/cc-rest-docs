@@ -4655,8 +4655,8 @@ components:
             pivi: Like PIV, but with more flexible issuance.
             profileCredential: |
               Known in the market as a "Universal Credential", these are Command Centre's
-              representations of other vendors' formats, including those used for low-security cards
-              and mobile wallets.
+              representations of other vendors' formats, including those used for mobile wallets and
+              low-security cards.
               
             trackingTag: |
               Used on RFID tracking tags.  Requires a card number on creation:  unlike for 'card'
@@ -4767,8 +4767,16 @@ components:
 
             Not returned by default:  ask for it by adding `cards.encodingData` to your `fields`
             query parameter.
-          
 
+        deviceType:
+          type: string
+          enum: [ applePhone, appleWatch, androidPhone, androidWatch ]
+          description: |
+            Required when creating a wallet credential.  Either `applePhone` or `appleWatch` when
+            creating an Apple credential, and either `androidPhone` or `androidWatch` for Google.
+
+            Wallet credentials are part of the Universal Credentials feature added in 9.60.
+            
       description: |
         A _card_ is an access credential, including physical cards and mobile (Bluetooth and NFC)
         credentials and digital IDs.  The server returns it as part of a [cardholder's
@@ -20375,29 +20383,27 @@ tags:
 
     The locker bank API exists for two purposes:  finding a locker to assign a cardholder to, and
     integrating with operational locker management software that expects a bank-centric view rather
-    than the cardholder-centric view available in the cardholder API.  So a locker bank's detail
+    than the cardholder-centric view available in the cardholder API.  For those reasons a locker bank's detail
     page shows all its cardholder assignments.
 
-    You cannot use the API to create or configure lockers or banks, or to see the
-    hardware features of a locker such as readers, inputs, and outputs, nor the door-like
-    settings on the bank such as the lock type and unlock time.  The locker configuration tool
-    exists for this purpose.
+    The API does not support the creation or configuration of lockers or banks, nor the viewing of
+    hardware and door-like settings of a locker such as readers, inputs, outputs, lock type, and
+    unlock time.  The locker configuration tool exists for this purpose.
 
-    To change the cardholder assignments you should PATCH the cardholder's href, since it is the
-    cardholder you are updating, not the locker.  The locker bank API supplies the URL to PATCH.
+    To change the cardholder assignments to lockers you should PATCH the cardholder's href, since it is the
+    cardholder you are updating, not the locker.  The locker bank API supplies the URL of the cardholder to PATCH.
 
     ## Locker status flags
 
-    Regardless of whether a locker is online or not, its status may contain these:
+    Regardless of whether a locker is online or not, its `statusFlags` may contain one of these:
 
-    - `quarantined` means the locker cannot be allocated to a cardholder.  It needs a clean, in
-      other words.
+    - `quarantined` means the locker cannot be allocated to a cardholder.  It needs a clean.
 
     - `allocated` means it is allocated to a cardholder, so another cardholder cannot self-allocate it.
 
     - `free` means it is not allocated to a cardholder.
 
-    If the locker is online, its `statusFlags` field may contain one or more of these flags:
+    If the locker is online its status may also contain one or more of these flags:
 
     - `forced`, `openTooLong`, `tamper`, `closed`, `open`, `locked`, `unlocked`, the same as a
       [door](rest.html#tag-Doors).
@@ -20429,8 +20435,8 @@ tags:
        API](#path-Cardholders/get/api/cardholders).
 
     3. [PATCH](#path-Cardholders/patch/api/cardholders/{id}) the cardholder with the locker's
-       href in a property called `locker` in an element of an array called `lockers.add`.
-       Add `from` and `until` properties as you like.
+       href in a property called `locker` in an element of an array called `add` inside an object called `lockers`.
+       Add `from` and `until` properties to the body of your PATCH, as you like.
 
     ### Opening or quarantining a locker
 
