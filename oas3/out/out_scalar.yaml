@@ -1050,6 +1050,80 @@ components:
         - type:
             href: "https://host.com:8904/api/card_types/600"
 
+    CardholderPATCHCardAppleExample:
+      description: |
+        This is a minimal object for giving a cardholder a new Apple Wallet credential.  See the
+        [card detail](#model/CardholderCard) for other fields you can (and probably should)
+        use, such as the card's from/until dates.
+
+        `type` and `deviceType` are the only compulsory field in a new wallet credential.
+
+        We also set this cardholder's first name, just for the sake of illustration.
+
+      value:
+        firstName: "Steve"
+        cards:
+          add:
+            - type:
+                href: "https://host.com:8904/api/card_types/6690"
+              deviceType: "applePhone"
+              number: "598E2B09BE000000"
+
+    CardholderPOSTCardAppleExample:
+      description: |
+        This is a minimal object for creating a cardholder with one card, containing the only
+        required fields for a cardholder (name and division) and the only two required fields for a
+        wallet credential.  See the [card detail](#model/CardholderCard) for other fields you
+        can use, such as the card's from/until dates.
+
+        `type` and `deviceType` are the only compulsory field in a new wallet credential.
+
+      value:
+        firstName: "Steve"
+        division: { href: "https://host.com:8904/api/divisions/2" }
+        cards:
+        - type:
+            href: "https://host.com:8904/api/card_types/6690"
+          deviceType: "applePhone"
+          number: "598E2B09BE000000"
+
+    CardholderPATCHCardGoogleExample:
+      description: |
+        This is a minimal object for giving a cardholder a new Google Wallet credential.  See the
+        [card detail](#model/CardholderCard) for other fields you can (and probably should)
+        use, such as the card's from/until dates.
+
+        `type` and `deviceType` are the only compulsory field in a new wallet credential.
+
+        We also set this cardholder's first name, just for the sake of illustration.
+
+      value:
+        firstName: "André"
+        cards:
+          add:
+            - type:
+                href: "https://host.com:8904/api/card_types/1670"
+              deviceType: "androidPhone"
+              number: "20276F63"
+
+    CardholderPOSTCardGoogleExample:
+      description: |
+        This is a minimal object for creating a cardholder with one card, containing the only
+        required fields for a cardholder (name and division) and the only two required fields for a
+        wallet credential.  See the [card detail](#model/CardholderCard) for other fields you
+        can use, such as the card's from/until dates.
+
+        `type` and `deviceType` are the only compulsory field in a new wallet credential.
+
+      value:
+        firstName: "André"
+        division: { href: "https://host.com:8904/api/divisions/2" }
+        cards:
+        - type:
+            href: "https://host.com:8904/api/card_types/1670"
+          deviceType: "androidPhone"
+          number: "20276F63"
+
     CardholderPOSTExample:
       description: |
         This is an example of a POST you could use to create a cardholder in a specific division and
@@ -12402,6 +12476,10 @@ paths:
                 $ref: '#/components/examples/CardholderPOSTCardMobileExample'
               Physical card:
                 $ref: '#/components/examples/CardholderPOSTCardPhysicalExample'
+              Apple Wallet credential:
+                $ref: '#/components/examples/CardholderPOSTCardAppleExample'
+              Google Wallet credential:
+                $ref: '#/components/examples/CardholderPOSTCardGoogleExample'
         required: true
       responses:
         "201":
@@ -12546,6 +12624,10 @@ paths:
                 $ref: '#/components/examples/CardholderPATCHCardPhysicalExample'
               Mobile credential:
                 $ref: '#/components/examples/CardholderPATCHCardMobileExample'
+              Apple Wallet credential:
+                $ref: '#/components/examples/CardholderPATCHCardAppleExample'
+              Google Wallet credential:
+                $ref: '#/components/examples/CardholderPATCHCardGoogleExample'
         required: true
 
       responses:
