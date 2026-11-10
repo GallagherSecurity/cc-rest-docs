@@ -9244,6 +9244,11 @@ components:
             permissions granted by this operator's operator groups.  You will only
             get this field if you ask for it with the `fields` parameter.
 
+            REST clients cannot see the value of a PDF if its effective access is one of the two
+            `reveal` values or `writeOnly`.  To see these PDF values, put the REST Client item's
+            operator into an operator group that improves the PDF's access level, to (say)
+            `readOnly`.
+            
             New in 8.80.  `revealable`, `revealAndEdit`, and `writeOnly` new to 8.90.
           type: string
           enum: [ "noAccess", "revealable", "readOnly", "writeOnly", "revealAndEdit", "fullAccess" ]
