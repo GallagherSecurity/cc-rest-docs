@@ -1071,7 +1071,7 @@ components:
 
     CardholderPOSTCardAppleExample:
       description: |
-        This is a minimal object for creating a cardholder with one card, containing the only
+        This is a minimal object for creating a cardholder with an Apple Wallet credential, containing the only
         required fields for a cardholder (name and division) and the only two required fields for a
         wallet credential.  See the [card detail](models#cardholdercard) for other fields you
         can use, such as the card's from/until dates.
@@ -1108,7 +1108,7 @@ components:
 
     CardholderPOSTCardGoogleExample:
       description: |
-        This is a minimal object for creating a cardholder with one card, containing the only
+        This is a minimal object for creating a cardholder with a Google Wallet credential, containing the only
         required fields for a cardholder (name and division) and the only two required fields for a
         wallet credential.  See the [card detail](models#cardholdercard) for other fields you
         can use, such as the card's from/until dates.
@@ -10472,7 +10472,7 @@ paths:
         renderers like Gitbook, Sourcey, and Zudoku that require at least one path in every tag.
       responses:
         "200": { description: This result is unlikely. }
-        "404": { description: This path does not exist. }
+        "404": { description: This result is likely. }
 
   
   /api/access_groups:
@@ -12081,7 +12081,7 @@ paths:
           description: |
             Possible reasons:
             - Command Centre does not have a licence for the encoding API.
-            - The operator lacks the necessary privilege.
+            - The operator lacks the necessary privilege, such as "Print/preview and encode card".
             - Re-encoding is disabled for that card type and the card has already been encoded.
         "404": {$ref: '#/components/responses/404enc'}
         "422":
@@ -12202,7 +12202,7 @@ paths:
           description: |
             Possible reasons:
             - Command Centre does not have a licence for the encoding API.
-            - The operator lacks the necessary privilege.
+            - The operator lacks the necessary privilege, such as "Print/preview and encode card".
             - Re-encoding is disabled for that card type and the card has already been encoded.
         "404": {$ref: '#/components/responses/404enc'}
         "422":
