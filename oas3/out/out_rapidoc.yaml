@@ -2085,8 +2085,9 @@ components:
         zones and Salto items to which the group grants access.
 
         There are brief descriptions of those fields below.  If they fall short, the Configuration
-        Client's online documentation is the authority, in particular the section 'Setting up Access
-        Groups'.
+        Client's [online
+        documentation](https://help.security.gallagher.com/knowledge-hub/configuration-client/site-management/access-groups/setting-up-access-groups)
+        is the authority, in particular the section 'Setting up Access Groups'.
 
       allOf:
         - $ref: "#/components/schemas/AccessGroupSummary"
@@ -4527,11 +4528,12 @@ components:
           description: |
             Each card has two status codes:  `value`, and `type`, covered in separate sections below.
 
-            `value` is human-readable.  It comes from the _Card State Set_ configured by the site, and
-            could be adjusted according to the card's activation dates.  The REST API and this
+            `value` is human-readable.  It comes from the _Card State Set_ configured by the site,
+            and could be adjusted according to the card's activation dates.  The REST API and this
             document do not cover card state sets because in most cases, the default set is
-            sufficient.  See the online help for the Command Centre client if you wish to create your
-            own.
+            sufficient.  See the [online
+            help](https://help.security.gallagher.com/knowledge-hub/command-centre-client/configuring-command-centre/administration/card-states)
+            if you wish to create your own.
 
             The second field, `type`, comes from a fixed enumeration, and so is better suited than
             `value` for integrations.  Command Centre derives it from the card's state and activation
@@ -10119,7 +10121,9 @@ info:
 
     Clients authenticate by including a pre-shared API key in the `Authorization` header of each
     request.  Command Centre generates a random API key when you create an endpoint for your clients
-    to connect to.  Search the Configuration Client online help for 'REST API' for how to do that.
+    to connect to.  See the Configuration Client online help for ['REST
+    API'](https://help.security.gallagher.com/knowledge-hub/configuration-client/licensable-features/rest-api)
+    for how to do that.
 
     In current versions of Command Centre, the API key will be in the format
     `XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX` with each `X` an uppercase hexadecimal digit.
@@ -12081,8 +12085,8 @@ paths:
           description: |
             Possible reasons:
             - Command Centre does not have a licence for the encoding API.
-            - The operator lacks the necessary privilege, such as "Print/preview and encode card".
-            - Re-encoding is disabled for that card type and the card has already been encoded.
+            - The operator lacks the necessary privileges.  They are listed in the [intro](#tag--card-encoding).
+            - The card was already encoded and re-encoding is disabled for its card type.
         "404": {$ref: '#/components/responses/404enc'}
         "422":
           description: |
@@ -12202,8 +12206,8 @@ paths:
           description: |
             Possible reasons:
             - Command Centre does not have a licence for the encoding API.
-            - The operator lacks the necessary privilege, such as "Print/preview and encode card".
-            - Re-encoding is disabled for that card type and the card has already been encoded.
+            - The operator lacks the necessary privileges.  They are listed in the [intro](#tag--card-encoding).
+            - The card was already encoded and re-encoding is disabled for its card type.
         "404": {$ref: '#/components/responses/404enc'}
         "422":
           description: |
@@ -19526,8 +19530,9 @@ tags:
     PIN, for example), and other behaviours (such as how long a card can be inactive before Command
     Centre disables it).
 
-    The 'Site Installation' chapter of the Configuration Client online help has a section that
-    describes card types.
+    The 'Site Installation' chapter of the Configuration Client's online help has a section that
+    [describes card
+    types](https://help.security.gallagher.com/knowledge-hub/configuration-client/site-installation/card-types).
 
     As it does for the other item types, the REST API gives you read access to card types through
     search and details pages.  However the privilege model for card types is more flexible than for
@@ -19596,7 +19601,9 @@ tags:
     The REST API gives you access to competencies through create, search, dereference, update, and
     delete functions described below.
 
-    The Configuration Client online help describes competencies fully.
+    The Configuration Client [online
+    help](https://help.security.gallagher.com/knowledge-hub/configuration-client/licensable-features/cardholder-competencies)
+    describes competencies fully.
 
     ## Licensing
 
@@ -20161,9 +20168,12 @@ tags:
     - `lowFeel` means the fence energiser is delivering enough voltage to detect disturbances.
       Depending on the fence zone's configuration, it may also be a deterrent.
     - `highVoltage` means the pulse is delivering a deterrent pulse.
+
     - `hVPlusMode` means the fence voltage has increased in response to a disturbance.  After some
       time or an override it will leave this mode.  See the description of HVPlus mode in the
-      Configuration Client's online help.
+      Configuration Client's [online
+      help](https://help.security.gallagher.com/knowledge-hub/configuration-client/licensable-features/perimeter-fence-controllers/using-hvplus-mode).
+
     - `serviceMode` means a technician has manually forced service mode at the fence controller.
       This safety measure prevents a Command Centre operator in an operations room inadvertently
       energising a hardware technician out in the field.
