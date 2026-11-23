@@ -20,14 +20,6 @@
           <h5>Topics</h5>
           <a href="#introduction">Introduction</a>
           <a href="#topic-Documentation-suite">Documentation suite</a>
-          <a href="#topic-API-changes-on-the-roadmap">API changes on the roadmap</a>
-          <a href="#topic-API-changes-in-9.70">API changes in 9.70</a>
-          <a href="#topic-API-changes-in-9.60-MR1">API changes in 9.60-MR1</a>
-          <a href="#topic-API-changes-in-9.60">API changes in 9.60</a>
-          <a href="#topic-API-changes-in-9.50">API changes in 9.50</a>
-          <a href="#topic-API-change-in-May-2026-maintenance-releases">API change in May 2026 maintenance releases</a>
-          <a href="#topic-API-changes-in-9.40">API changes in 9.40</a>
-          <a href="#topic-API-changes-in-9.30">API changes in 9.30</a>
           <h5>Paths</h5>
           <h5>Schema Definitions</h5>
         </nav>
@@ -48,9 +40,6 @@
             <div class="doc-row">
               <div class="doc-copy">
                 <p>Welcome to the developer documentation for the Command Centre REST interface.</p>
-                <p>The files linked from here show you how you can manage Command Centre using HTTP requests. Each file contains an introduction to its particular area of the API, instructions on authenticating to the server, and tips on how to accomplish common tasks, as well as the usual reference information for paths and data.</p>
-                <p>They do not show how to set up the Command Centre server to answer your REST calls. To do that, search the Configuration Client&#39;s online help for &#39;REST&#39;.</p>
-                <p>You could also look at the sample code shipped with Command Centre, on the install media alongside this documentation in the &#39;Utilities/REST API&#39; folder. There are several Visual Studio projects that compile into .NET applications you could observe making HTTP requests against your own server (in a development environment, of course).</p>
               </div>
               <div class="doc-examples">
                 <section>
@@ -65,178 +54,9 @@
           <div class="panel">
             <div class="doc-row">
               <div class="doc-copy">
-                <p>Microsoft Edge users please note: early versions did not render the table of contents correctly in the orange column on the left, making navigation difficult. Chrome, Firefox, and recent versions of Edge work well.</p>
-                <p>The API&#39;s reference documentation divides into:</p>
-                <table>
-                  <tr>
-                    <td valign=top>
-                      <a href=events.html>Alarms, events, bulk status monitoring, and generic items</a>
-                    </td>
-                    <td>
-                      <p> The alarms and events APIs let you download, monitor, and create events, and download, monitor, and manage alarms.</p>
-                      <p> This section also covers API calls that support divisions and items as they relate to events, as well as bulk status monitoring. It does not cover the deep configuration of items: see Status and Overrides.</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td valign=top>
-                      <a href=cardholders.html>Cardholders and related items</a>
-                    </td>
-                    <td> The cardholder parts of the API let you manage your users, their personal data and credentials (cards), and their links to associated items such as access groups, roles, operator groups, competencies, and lockers. </td>
-                  </tr>
-                  <tr>
-                    <td valign=top>
-                      <a href=rest.html>Status, overrides, and configuration of non-cardholder items</a>
-                    </td>
-                    <td>
-                      <p> These functions let you monitor and override the types of Command Centre items that have their own status and typically appear on site plans, including access zones, alarm zones, doors, fence zones, inputs, outputs, macros, elevator groups, interlock groups, and schedules.</p>
-                      <p> Despite its name this section does not cover
-                        <a href="events.html#status-subscriptions">mass-monitoring item status</a>. </td>
-                    </p>
-                  </tr>
-                  <tr>
-                    <td valign=top>
-                      <a href=piv.html>PIV cards</a>
-                    </td>
-                    <td> This supplement describes how to work with PIV and PIV-I cards. It is separate from the main cardholder documentation in the interest of brevity. </td>
-                  </tr>
-                </table>
-                <p style="text-align: right">
-                  <a href="../oas3">
-                    <small>π</small>
-                  </a>
-                </p>
-              </div>
-            </div>
-          </div>
-          <h1 id="topic-API-changes-on-the-roadmap" data-traverse-target="topic-API-changes-on-the-roadmap">API changes on the roadmap</h1>
-          <div class="panel">
-            <div class="doc-row">
-              <div class="doc-copy">
-                <ul>
-                  <li>
-                    <p>Alarms will have a block containing their event group, as events do.</p>
-                  </li>
-                  <li>
-                    <p>You will be able to set the number of alarms you want coming back from a GET, as you can with events.</p>
-                  </li>
-                  <li>
-                    <p>Events indicating that an operator modified an item may not have a cardholder at the end of the <code>operator</code> href. It may be a new kind of item, because we have new events coming that will indicate when an integration modifies an item rather than a human operator.</p>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <h1 id="topic-API-changes-in-9.70" data-traverse-target="topic-API-changes-in-9.70">API changes in 9.70</h1>
-          <div class="panel">
-            <div class="doc-row">
-              <div class="doc-copy">
-                <ul>
-                  <li>
-                    <p>Potentially breaking change: searching for items using an invalid type filter previously returned all items, as though the type filter was absent. 9.70 returns no items, and an explanation.</p>
-                  </li>
-                  <li>
-                    <p>Potentially breaking change: a cardholder&#39;s value for a date PDF used to be in RFC 3339 or in the server&#39;s locale, depending on the route. Both included midnight. 9.70 returns them simply as &#39;YYYY-MM-DD&#39;, since date PDFs do not include a time.</p>
-                  </li>
-                  <li>
-                    <p>Potentially breaking change: the API route that returns a cardholder&#39;s string PDF as its payload used to send a zero-length body if the cardholder did not have a value for the PDF, but will now return a 404. This brings string PDFs into line with other PDF types.</p>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <h1 id="topic-API-changes-in-9.60-MR1" data-traverse-target="topic-API-changes-in-9.60-MR1">API changes in 9.60-MR1</h1>
-          <div class="panel">
-            <div class="doc-row">
-              <div class="doc-copy">
-                <ul>
-                  <li>Using this API to create a credential of a card type that has default validity times on it will transfer those times to the new credential, as it does when creating credentials through our thick clients. This is a bugfix. Previous versions left the new credential&#39;s <code>from</code> and <code>until</code> timestamps unset, if the client did not send them.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <h1 id="topic-API-changes-in-9.60" data-traverse-target="topic-API-changes-in-9.60">API changes in 9.60</h1>
-          <div class="panel">
-            <div class="doc-row">
-              <div class="doc-copy">
-                <ul>
-                  <li>
-                    <p>You can move cardholders outside the system.</p>
-                  </li>
-                  <li>
-                    <p>The items controller can give you items&#39; descriptions and short names, if you ask.</p>
-                  </li>
-                  <li>
-                    <p>If you attempt to subscribe to status changes on items that are outside your operator&#39;s view, the 403 response now includes a copy of your list with the invalid items removed.</p>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <h1 id="topic-API-changes-in-9.50" data-traverse-target="topic-API-changes-in-9.50">API changes in 9.50</h1>
-          <div class="panel">
-            <div class="doc-row">
-              <div class="doc-copy">
-                <ul>
-                  <li>
-                    <p>OIDC login support for operators.</p>
-                  </li>
-                  <li>
-                    <p>Creating an
-                      <a href="events.html#operation--api-items-updates-post">item status subscription</a> and
-                      <a href="events.html#operation--api-items-updates-get">collecting the first batch of changes</a> will no longer return the first set of results twice. If your application follows the algorithm at the second link above it will always be compatible with this API.</p>
-                    <p>The performance improvements were such that we felt it worthwhile to port it back to all supported versions, so it is also present in the latest maintenance releases of 9.10 through 9.40.</p>
-                  </li>
-                  <li>
-                    <p>Potential breaking change: the maximum length of an item&#39;s name increased from 60 to 110 characters, and attempts to set a name longer than that will fail. Earlier versions silently truncated the name and let the update proceed. Cardholder first and last names remain capped at 50 characters each.</p>
-                  </li>
-                  <li>
-                    <p>The Apple Employee Badge Type and State Set now have proper canonical type names, improved from <code>type_279</code> and <code>type_280</code>.</p>
-                  </li>
-                  <li>
-                    <p>Cardholders have accessibilities for skipping PIN entry and taking longer to get through a door, in addition to the existing accessibility to not use a scramble pad.</p>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <h1 id="topic-API-change-in-May-2026-maintenance-releases" data-traverse-target="topic-API-change-in-May-2026-maintenance-releases">API change in May 2026 maintenance releases</h1>
-          <div class="panel">
-            <div class="doc-row">
-              <div class="doc-copy">
-                <ul>
-                  <li>Potential breaking change in 9.20 MR7, 9.30 MR5, and 9.40 MR2: attempts to set the name of an item that is not a cardholder to a string that is longer than 60 characters will fail. Earlier versions silently truncated the name and let the update proceed. There is no change to the handling of cardholders&#39; names.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <h1 id="topic-API-changes-in-9.40" data-traverse-target="topic-API-changes-in-9.40">API changes in 9.40</h1>
-          <div class="panel">
-            <div class="doc-row">
-              <div class="doc-copy">
-                <ul>
-                  <li>Support for half-cycle door locks. Common in correctional facilities, half-cycle locks remain unlocked until closed. Regular doors unlock for a few seconds before locking again.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <h1 id="topic-API-changes-in-9.30" data-traverse-target="topic-API-changes-in-9.30">API changes in 9.30</h1>
-          <div class="panel">
-            <div class="doc-row">
-              <div class="doc-copy">
-                <ul>
-                  <li>
-                    <p>You can create, modify, and delete divisions and access groups.</p>
-                  </li>
-                  <li>
-                    <p>The server will accept TLS 1.3 connections when running on suitable versions of Windows. Prior versions would only accept TLS 1.2 connections.</p>
-                  </li>
-                  <li>
-                    <p>An API client can switch its own status between <code>normal</code> and <code>faulty</code>, and can set arbitrary status text. Marking the item as faulty will raise an alarm in Command Centre.</p>
-                  </li>
-                  <li>
-                    <p>Command Centre can, optionally, raise an alarm if an API client has not made an API call within a configurable period. This is an addition to Command Centre, not to the API, but deserves a mention here for developers considering adding status monitoring to their integrations. It may be done for you!</p>
-                  </li>
-                </ul>
+                <p>
+                  <a href="https://help.security.gallagher.com/knowledge-hub/developer/rest-api/">The API Reference has recently migrated to an enhanced platform</a>, providing an improved user experience. For any access-related issues, please contact
+                  <a href="mailto:Tech.Partner.Program@security.gallagher.com">Tech.Partner.Program@security.gallagher.com</a> for support.</p>
               </div>
             </div>
           </div>
