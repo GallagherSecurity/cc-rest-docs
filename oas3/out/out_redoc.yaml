@@ -1340,7 +1340,7 @@ components:
         items as though they are also in their division's parent, and its parent, and so on up to the
         root division.
 
-        Separate the IDs of the divisions in you are interested with commas.  Item IDs are short
+        Separate the IDs of the divisions in which you are interested with commas.  Item IDs are short
         alphanumeric strings, not URLs.
 
         Results are undefined if you provide an ID that is not in the form of a division ID.
@@ -1583,7 +1583,7 @@ components:
         able to have values for the PDFs in this array.
 
         Each element contains the href of a PDF definition.  To build the POST body you can take
-        those from the PDFs controller or other API routes, or copy it from the
+        those from the PDFs controller or other API routes, or copy from the
         `personalDataDefinitions` block of another access group.
 
         The GET returns the names of the PDFs, but the POST will ignore them.  If you need to change
@@ -2032,7 +2032,7 @@ components:
         able to have values for the PDFs in this array.
 
         Each element contains the href of a PDF definition.  To build the POST body you can take
-        those from the PDFs controller or other API routes, or copy it from the
+        those from the PDFs controller or other API routes, or copy from the
         `personalDataDefinitions` block of another access group.
 
         The GET returns the names of the PDFs, but the POST will ignore them.  If you need to change
@@ -2201,7 +2201,7 @@ components:
                 locks that support it will make an exception for members of this group.
 
                 Obviously the lock needs to be online long enough to synchronise this setting and the
-                members of the group before setting it will have an effect.
+                members of the group before it will have an effect.
 
                 This field will not appear if your site is not licensed for Aperio.
 
@@ -4447,7 +4447,7 @@ components:
           description: |
             The serial number (CSN, MIFARE UID) of a physical access card as a hex string without a
             leading '0x'.  The number is encoded in the traditional way, with an even number of
-            numbers and the letters from 'A' through 'F', but the '0x' is missing when it comes out
+            digits and the letters from 'A' through 'F', but the '0x' is missing when it comes out
             of the API and it must be missing when you send it back.
 
             The example shows a seven-byte serial in the order you can expect in a
@@ -5077,8 +5077,8 @@ components:
             `type` will be `expired`.
 
             All of those cases are negative.  Two remain, when our cardholder is blessed with an
-            enabled and active competency.  `type` will be `expiryDue` if the `expires` time is in the
-            future but within the competency's advance notice period, or `active` if the `expires`
+            enabled and active competency.  `type` will be `expiryDue` if the `expiry` time is in the
+            future but within the competency's advance notice period, or `active` if the `expiry`
             time is beyond the advance notice period or not set at all.
 
             You can see and set the enabled flag, the enable date, and the expiry date via this
@@ -6493,8 +6493,9 @@ components:
           example: Root division
         description:
           type: string
-          description: The division's description.  New in 8.50.  Not sent by default;  ask
-            for it with `fields`.
+          description: |
+             The division's description.  New in 8.50.  Not sent by default; ask for it with
+             `fields`.
           example: Contains all other divisions
         serverDisplayName: *SERVER
         parent:
@@ -7166,7 +7167,7 @@ components:
               type: string
               description: |
                 The alphanumeric ID of the event group.  Search for events of the same rough category
-                as this one with `type=35` in the query parameters.
+                as this one with `group=35` in the query parameters.
               example: "35"
             name:
               type: string
@@ -7587,7 +7588,7 @@ components:
                     location.  That also happens when it is deleted.
 
                     If the cardholder moved from outside there will be a field in this block called
-                    `outside` with the value `true`, and `canonicaltypeName` and `href` will be
+                    `outside` with the value `true`, and `canonicalTypeName` and `href` will be
                     missing.
 
                   example: {
@@ -7769,7 +7770,7 @@ components:
               example: https://localhost:8904/api/access_zones/333
               description: |
                 This can be the href of any access zone to which your operator has view access.  Get
-                the href using the [access zones controller](tag-Access-Zones) or from
+                the href using the [access zones controller](#tag/Access-Zones) or from
                 `/items`.
         accessGroup:
           description: |
@@ -10504,7 +10505,7 @@ paths:
         pagination of its results if you sort by ID.
 
         You can find the URL for this call in the `features.accessGroups.accessGroups.href` field of
-        `/api`.  In the interest of forward compability, [do not build it
+        `/api`.  In the interest of forward compatibility, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
       parameters:
       - $ref: '#/components/parameters/sort'
@@ -10636,7 +10637,7 @@ paths:
         [search](#tag/Access-Groups/paths/~1api~1access_groups/get).
 
         You can find the URL for this call in the access group search results and in a cardholder's
-        `accessGroups` array.  In the interest of forward compability, [do not build it
+        `accessGroups` array.  In the interest of forward compatibility, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       parameters:
@@ -10690,7 +10691,7 @@ paths:
 
         You can find the URL for this call in the [access group
         search](#tag/Access-Groups/paths/~1api~1access_groups/get) results and in a cardholder's `accessGroups`
-        array.  In the interest of forward compability, [do not build it
+        array.  In the interest of forward compatibility, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       requestBody:
@@ -10717,7 +10718,7 @@ paths:
             necessary licence.
 
             You need the 'Edit Access Groups' privilege on the item you are changing, which means you
-            need on it on the item's current division.  You also need it on the new division, if you
+            need it on the item's current division.  You also need it on the new division, if you
             are changing that.
 
         "404":
@@ -10741,7 +10742,7 @@ paths:
 
         You can find the URL for this call in the [access group
         search](#tag/Access-Groups/paths/~1api~1access_groups/get) results and in a cardholder's `accessGroups`
-        array.  In the interest of forward compability, [do not build it
+        array.  In the interest of forward compatibility, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       responses: 
@@ -10781,7 +10782,7 @@ paths:
         name but not its href (since following it would 404).
 
         You can find the URL in the `cardholders` block of an access group's search results or
-        detail pages.  In the interest of forward compability, [do not build it
+        detail pages.  In the interest of forward compatibility, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       responses: 
@@ -10886,7 +10887,7 @@ paths:
         zones.
 
         Like all other paginated queries in this API, the result will contain no more than 100
-        or 1000 access zones (depending on your version), or as many as you asked for more in your
+        or 1000 access zones (depending on your version), or as many as you asked for in your
         request; you should follow the `next` link, if it is present, to collect the next batch.
 
         When you have loaded them all there will be no `next` link.
@@ -11286,7 +11287,7 @@ paths:
         schedule, because without a schedule the access zone does not have the concept of a
         'normal' state.
 
-        It will not cancel a lockdown.  For that you need `cancel_lock_down`.
+        It will not cancel a lockdown.  For that you need `cancelLockDown`.
       parameters:
       - name: id
         in: path
@@ -11615,8 +11616,8 @@ paths:
                       href:
                         type: string
                         format: uri-reference
-                    description: The link to the next page.  Absent if you have retrieved them
-                      all.
+                    description: |
+                      The link to the next page.  Absent if you have retrieved them all.
                     example:
                       href: https://localhost:8904/api/alarm_zones?skip=1000
         "403": {$ref: '#/components/responses/403nolicence'}
@@ -12137,7 +12138,7 @@ paths:
           description: |
             Returns callback links and encrypted Classic encoding data.
 
-            The `encryptedEncodingData` field contains an encrypted payload that, when decrypted,has
+            The `encryptedEncodingData` field contains an encrypted payload that, when decrypted, has
             the structure of [ClassicEncodingResponse](#schemas/ClassicEncodingResponse) with
             sectors and blocks.
           content:
@@ -12830,7 +12831,7 @@ paths:
         assignments for this locker after this operation he or she will not be able to open it.
 
         You will find this URL in the `lockers` block of a [cardholder
-        object](#schemas/cardholderdetail).  In the interest of compability with future versions of Command Centre, [do not
+        object](#schemas/cardholderdetail).  In the interest of compatibility with future versions of Command Centre, [do not
         build it yourself](#section/Forward-compatibility-(HATEOAS)).
 
       responses:
@@ -12860,7 +12861,7 @@ paths:
         a given operator group.
 
         You can find this URL in the [cardholder object](#schemas/cardholderdetail).  In the
-        interest of forward compability, [do not build it
+        interest of forward compatibility, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       responses: 
@@ -12890,7 +12891,7 @@ paths:
         cardholder who holds the role.  For example if you have a 'supervisor' role you would find
         the URL to delete by looking up the supervised cardholder, not the supervisor.
 
-        In the interest of forward compability, [do not build the URL
+        In the interest of forward compatibility, [do not build the URL
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
       responses: 
@@ -13422,7 +13423,7 @@ paths:
             necessary licence.
 
             You need the 'Configure Site' privilege on the item you are changing, which means you need
-            on it on the item's current division.  You also need it on the new division, if you are
+            it on the item's current division.  You also need it on the new division, if you are
             changing that.
 
             This is also the response when the server does not have the correct licence.
@@ -13489,7 +13490,7 @@ paths:
         with Gallagher technical support.
 
         Get this URL from `features.competencies.competencies.href` in `/api`.  In the interest of
-        forward compability, [do not build it yourself](#section/Forward-compatibility-(HATEOAS)).
+        forward compatibility, [do not build it yourself](#section/Forward-compatibility-(HATEOAS)).
         
       parameters:
       - $ref: "#/components/parameters/sort"
@@ -13591,7 +13592,7 @@ paths:
       summary: Get details of a competency
       description: |-
         You get this URL from a cardholder or from a competency search.  In the interest of forward
-        compability, [do not build it yourself](#section/Forward-compatibility-(HATEOAS)).
+        compatibility, [do not build it yourself](#section/Forward-compatibility-(HATEOAS)).
 
         The results document gives everything Command Centre has on a competency except the warning
         messages that appear on a reader when a cardholder needs to take action.
@@ -13634,7 +13635,7 @@ paths:
       x-stability: beta
       description: |
         This is the call you use to update a competency's name, short name, description, notes, or
-        division.  In the interest of forward compability, take the URL from the results of a
+        division.  In the interest of forward compatibility, take the URL from the results of a
         competency search rather than [building it yourself](#section/Forward-compatibility-(HATEOAS)).
 
         The PATCH expects a document in the same format as the [competency
@@ -13665,7 +13666,7 @@ paths:
             necessary licence.
 
             You need the 'Configure Site' privilege on the item you are changing, which means you need
-            on it on the item's current division.  You also need it on the new division, if you are
+            it on the item's current division.  You also need it on the new division, if you are
             changing that.
 
         "404":
@@ -13686,7 +13687,7 @@ paths:
       x-stability: beta
       description: |
         This call removes a competency from Command Centre.  You get this URL from a cardholder or
-        from a competency search.  In the interest of forward compability, [do not build it
+        from a competency search.  In the interest of forward compatibility, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
         This call is not yet in the API.
@@ -14534,8 +14535,8 @@ paths:
         "403":
           description: |
             The site does not have the RESTCreateEvents licence (in which case the body of the
-            response will say so) or the operator does not have the 'Create Events and Alarms'
-            privilege.
+            response will say so) or the server is pre-8.90 and the operator does not have the
+            'Create Events and Alarms' privilege.
 
     get:
       tags:
@@ -14636,8 +14637,8 @@ paths:
           The IDs you need for this query parameter are strings but look like small integers.  That
           call shows the event types along with the groups they are in, so do not confuse event
           types with event groups.  They are separated in the results of the API call, but as a
-          general rule you can tell them apart by their integer value:  event group IDs are in the
-          hundreds, while most event type IDs are in the thousands.
+          general rule you can tell them apart by their integer value:  event group IDs get up into the
+          hundreds while most event type IDs are in the thousands.
 
           In version 9.00 and later use the special value `hasLocation` to include all event types
           that can reveal a cardholder's location or access zone.  In 9.00 it is a set of about 80
@@ -14697,7 +14698,7 @@ paths:
           follow ancestry.  The name `directDivision` is case-sensitive.  Separate IDs with
           commas.
 
-          Example:  `directDivision=2,101`."
+          Example:  `directDivision=2,101`.
 
       - name: "relatedItem"
         in: query
@@ -16003,7 +16004,7 @@ paths:
         If the result set is empty it means there are no locker banks in the divisions in which the
         operator has a privilege that allows listing them, such as 'View lockers and assignments'.
 
-        When you have loaded all the locker banks there will no `next` link.
+        When you have loaded all the locker banks there will be no `next` link.
 
         [Do not code this URL](#section/Forward-compatibility-(HATEOAS)) into your application.  Take
         it from the 'href' field in the `features.lockerBanks.lockerBanks` section of `/api`.
@@ -16363,7 +16364,7 @@ paths:
         pagination of its results if you sort by ID.
 
         You can find the URL for this call in the `features.operatorGroups.operatorGroups.href`
-        field of `/api`.  In the interest of forward compability, [do not build it
+        field of `/api`.  In the interest of forward compatibility, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
         Added in 8.50.
@@ -16423,7 +16424,7 @@ paths:
         [search](#tag/Operator-Groups/paths/~1api~1operator_groups/get).
 
         You can find the URL for this call in the operator group search results and in a
-        cardholder's `operatorGroups` array.  In the interest of forward compability, [do not build
+        cardholder's `operatorGroups` array.  In the interest of forward compatibility, [do not build
         it yourself](#section/Forward-compatibility-(HATEOAS)).
 
         Added in 8.50.
@@ -16476,7 +16477,7 @@ paths:
         name but not its href (since following the href would 404).
 
         You can find this call's URL in the `cardholders` block of an operator group.  In the
-        interest of forward compability, [do not build it
+        interest of forward compatibility, [do not build it
         yourself](#section/Forward-compatibility-(HATEOAS)).
 
         Added in 8.50.
@@ -16740,7 +16741,7 @@ paths:
 
         The result will contain no more than 100 or 1000 objects, depending on your version; you
         should follow the `next` link, if it is present, to collect more.  When you have loaded all
-        the PDF definitions there will no `next` link.
+        the PDF definitions there will be no `next` link.
 
         [Do not code this URL](#section/Forward-compatibility-(HATEOAS)) into your application.  Take
         it from the href in the `features.personalDataFields.personalDataFields` section of `/api`.
@@ -16889,7 +16890,7 @@ paths:
             necessary licence.
 
             You need the 'Edit Personal Data Definitions' privilege on the item you are changing,
-            which means you need on it on its current division.  You also need it on the new
+            which means you need it on its current division.  You also need it on the new
             division, if you are changing that.
 
         "404":
@@ -17064,7 +17065,7 @@ paths:
                   status.
 
                   The PIV status is the only PIV-specific data you can change on a PIV card.  Everything
-                  else--the CHUID, certificates, and biometrics--are all fixed once set.
+                  else--the CHUID, certificates, and biometrics--is all fixed once set.
 
                   See the [PIV data schema](#schemas/newpivcard) for when you should set the PIV status
                   and what you can set it to.
@@ -17213,7 +17214,7 @@ paths:
         should follow the `next` link, if it is present, to collect more, or use the `top` parameter
         to get more per page.  Receptions are small, so setting a limit of 1000 is sensible.
 
-        When you have loaded all the receptions there will no `next` link.
+        When you have loaded all the receptions there will be no `next` link.
 
         [Do not code this URL](#section/Forward-compatibility-(HATEOAS)) into your application.  Take
         it from the href in the `features.receptions.receptions` section of `/api`.
@@ -17403,7 +17404,7 @@ paths:
         should follow the `next` link, if it is present, to collect more, or use the `top` parameter
         to get more per page.  Roles are small, so a limit of 1000 is sensible.
 
-        When you have loaded all the roles there will no `next` link.
+        When you have loaded all the roles there will be no `next` link.
 
         [Do not code this URL](#section/Forward-compatibility-(HATEOAS)) into your application.  Take
         it from the href in the `features.roles.roles` section of `/api`.
@@ -17446,7 +17447,8 @@ paths:
                         type: string
                         format: uri-reference
                         example: https://localhost:8904/api/roles?pos=1000&sort=id
-                    description: The link to the next page of results.  Absent if you have retrieved
+                    description: |
+                      The link to the next page of results.  This is absent if you have retrieved
                       them all.
         "403":
           description: The site does not have the RESTCardholders licence.
@@ -17595,7 +17597,7 @@ paths:
         collect the next batch.
 
         If your result set is empty it means your operator does not have the privilege to view
-        schedules, such as 'View Schedules', 'Edit Schedules', or 'Schedule Access Zone'.  Perhaps
+        schedules, such as 'View Schedules', 'Edit Schedules', or 'Schedule Access Zone'.  Or perhaps
         there are no schedules in the divisions in which your operator has privileges, or your
         operator has no privileges at all.
 
@@ -17815,7 +17817,7 @@ paths:
         should follow the `next` link, if it is present, to collect more, or use the `top` parameter
         to get more per page.
 
-        When you have loaded all the visits there will no `next` link.
+        When you have loaded all the visits there will be no `next` link.
 
         [Do not code this URL](#section/Forward-compatibility-(HATEOAS)) into your application.  Take
         it from the href in the `features.visits.visits` section of `/api`.
@@ -18046,7 +18048,7 @@ paths:
         "404":
           description: |
             That is not the URL of a visit, or it is a visit that the operator does not have the
-            privilege to see it ('View Visits' or 'Edit Visits').
+            privilege to see ('View Visits' or 'Edit Visits').
 
   /api/visits/{id}/visitors/{secondary_id}:
     parameters:
@@ -18315,8 +18317,6 @@ tags:
     * POTENTIALLY BREAKING CHANGE:  GovPass cards may have a new credentialClass and GovPass card
       states will have new names, depending on the card type and the site's licences.
 
-    * You can create, modify, and delete [access groups](#tag/Access-groups).
-
     ### API changes in 9.30
 
     * You can create, modify, and delete divisions and access groups.
@@ -18338,6 +18338,8 @@ tags:
     * POTENTIALLY BREAKING CHANGE:  for efficiency, 9.30 orders search results differently from 9.20
       when your query does not include a `sort` parameter.  If you care about the order of your
       items, tell the server how you want them sorted.
+
+    * You can create, modify, and delete [access groups](#tag/Access-groups).
 
     ### API changes in 9.20
 
@@ -18757,8 +18759,8 @@ tags:
     - If there is 'zoneCountInGrace' there will always be exactly one of 'zoneCountTooHigh' or
       'zoneCountTooLow' (never both).
 
-    Using the first three rules above, your test for an access zone being in error is 'secure',
-    'dualAuth', 'codeOrCard', 'free', 'saltoOutputOnly', and 'mobileZone' all missing.
+    Using the first three rules above, your test for an access zone being in error is whether 'secure',
+    'dualAuth', 'codeOrCard', 'free', 'saltoOutputOnly', and 'mobileZone' are all missing.
 
     ## Use cases
 
@@ -19400,7 +19402,7 @@ tags:
     [details](#tag/Cardholders/paths/~1api~1cardholders~1%7Bid%7D/get) operation for the complete list of
     cardholder fields.
 
-    A special value `default` applies a default set of fields that varies with the call you're
+    A special value `defaults` applies a default set of fields that varies with the call you're
     making.
 
     `personalDataFields` is also special.  It will give you the personalDataDefinitions block plus
@@ -19490,7 +19492,7 @@ tags:
     workaround described in the cardholder use cases, but it is not suitable for production.
 
     When you call this API the second time you will receive all changes made to cardholders since
-    the previous call.  To find the new cardholders, look at the results that do not have
+    the previous call.  To find the new cardholders, look at the results that have
     `type=add`.
 
     Since you are only interested in new data, you can optimise the call a little with
@@ -19789,13 +19791,14 @@ tags:
 
     ## Licensing
 
-    All the POSTs that override items require RESTOverrides.
+    Not that it is relevant to elevator groups because you cannot override them, all the POSTs that
+    override items require RESTOverrides.
 
     If you have RESTOverrides but not RESTStatus in 8.60 or later, the GETs return enough
     information to let you find the item you want to override but they do not return its status.
 
     If you have RESTCardholders but not RESTStatus in 8.60 or later, the GETs return
-    cardholder-related fields.
+    cardholder-related fields only.
 
     In 8.50 and older, the GETs fail without RESTStatus.
 
@@ -20055,7 +20058,7 @@ tags:
         sent you already, 'events' will immediately return an empty result set but 'updates' will
         wait for more to arrive.
 
-    The short poll is appropriate when you do not wish to stay up-to-date.  When you are extracting
+    The short poll is appropriate when you do not wish to stay up to date.  When you are extracting
     events from the past, and want to move on to other things as soon as you have them all.
     Generating reports, basically.
 
