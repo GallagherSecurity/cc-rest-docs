@@ -64,7 +64,7 @@ cd ../..
 # Build the output tarball.
 
 # Tarball must be rooted at . otherwise deploy-pages fails, so copy everything in
-cp -r ref oas3 $D
+cp -r oas3 $D
 cp -r training/assets $D/training
 
 echo Putting output into $INPUT_OUTPUT
