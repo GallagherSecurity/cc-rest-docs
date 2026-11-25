@@ -3855,8 +3855,8 @@ components:
           description: |-
             This block shows the cardholder's notification settings.  It deserves some explanation.
 
-            The `enabled` bool is correct at the time of your call.  If false, CC will not be
-            sending your cardholder any notifications.
+            The `enabled` bool that comes from the server is correct at the time of your call.  If
+            false, CC will not be sending your cardholder any notifications.
 
             The `from` and `until` date-times show if and when `enabled` will change.  When the
             `from` date-time passes, `enabled` will flip, the `from` date-time will take the
@@ -5623,7 +5623,13 @@ components:
             your attempts to change the PDF in that situation, but future versions may not be.
         personalDataDefinitions:
           description: |
-            This is how you set and unset the notifications flags on PDFs.
+            This is how you set and unset the notifications flags and activity periods on a
+            cardholder's personal data fields, which, for PDFs that hold email addresses or phone
+            numbers, controls whether CC will use them for notifications.
+
+            You can also use this to change PDF values, but it may be simpler to put a scalar
+            property in the root of the payload named after the PDF with a leading '@', like this
+            example's `@employeeId`.
           type: array
           items: {$ref: '#/components/schemas/CardholderPDF'}
           example:
